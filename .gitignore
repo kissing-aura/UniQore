@@ -1,5 +1,6 @@
 .DS_Store
 assets/*.mp4
+!assets/hero-bg.mp4
 .agents/
 .claude/
 skills-lock.json
