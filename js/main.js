@@ -15,23 +15,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Custom cursor tracking ──
   const cursor = document.getElementById('cursor');
   const follower = document.getElementById('cursor-follower');
-  if (cursor && follower && !('ontouchstart' in window)) {
-    let mx = 0, my = 0, fx = 0, fy = 0;
+  if (cursor && follower && !('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches) {
+    let mx = -999, my = -999, fx = -999, fy = -999;
+    let started = false;
 
     document.addEventListener('mousemove', (e) => {
       mx = e.clientX;
       my = e.clientY;
       cursor.style.left = mx + 'px';
       cursor.style.top  = my + 'px';
+      if (!started) {
+        // Snap follower to cursor on first move — no 0,0 slide
+        fx = mx; fy = my;
+        started = true;
+        follower.style.opacity = '1';
+        lerpFollower();
+      }
     });
 
-    (function lerpFollower() {
+    follower.style.opacity = '0';
+
+    function lerpFollower() {
       fx += (mx - fx) * 0.11;
       fy += (my - fy) * 0.11;
       follower.style.left = fx + 'px';
       follower.style.top  = fy + 'px';
       requestAnimationFrame(lerpFollower);
-    })();
+    }
 
     document.querySelectorAll('a, button, [role="button"], .stack-tag, .niche-card__tags span').forEach(el => {
       el.addEventListener('mouseenter', () => {
