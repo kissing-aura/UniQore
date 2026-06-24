@@ -23,29 +23,32 @@ body.loaded { opacity: 1; }
 /* ── Custom cursor ── */
 .cursor {
   position: fixed;
+  top: 0; left: 0;
   width: 8px; height: 8px;
   background: var(--color-accent);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
-  mix-blend-mode: difference;
+  will-change: transform;
+  /* NO transition on transform — JS handles smoothness */
+  transition: width 0.15s ease, height 0.15s ease, opacity 0.15s ease;
 }
 .cursor-follower {
   position: fixed;
+  top: 0; left: 0;
   width: 32px; height: 32px;
   border: 1px solid rgba(245, 197, 24, 0.4);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: all 0.15s ease;
+  will-change: transform;
+  /* only transition size/color — NOT transform/left/top */
+  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
-.cursor--hover { transform: translate(-50%, -50%) scale(3); }
+.cursor--hover { width: 20px; height: 20px; }
 .cursor-follower--hover {
-  width: 48px; height: 48px;
-  border-color: rgba(245, 197, 24, 0.2);
+  width: 52px; height: 52px;
+  border-color: rgba(245, 197, 24, 0.15);
 }
 
 /* ── Aurora glow animation ── */
