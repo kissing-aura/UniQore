@@ -8,7 +8,6 @@
   function lerp(a, b, n) { return a + (b - a) * n; }
 
   // ── State ─────────────────────────────────────────────
-  let lenis = null;
   const frameState = { el: null, wrap: null, cRX: 0, cRY: -3, tRX: 0, tRY: -3 };
   const glows = [
     { el: null, x: 0, y: 0, fx: -42, fy: -30, spd: 0.05 },
@@ -18,22 +17,8 @@
   const tilts   = [];
   const mouse   = { nx: 0, ny: 0 };
 
-  // ── Lenis init ────────────────────────────────────────
-  function initLenis() {
-    if (typeof Lenis === 'undefined') return;
-    if (window.innerWidth < 900) return;
-    lenis = new Lenis({
-      duration: 1.2,
-      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 0.9,
-    });
-    window._lenis = lenis;
-  }
-
   // ── Single RAF loop ───────────────────────────────────
-  function tick(time) {
-    if (lenis) lenis.raf(time);
+  function tick() {
 
     // Hero frame 3D tilt
     const f = frameState;
@@ -76,7 +61,6 @@
 
   // ── DOM setup ─────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
-    initLenis();
 
     frameState.el   = document.querySelector('.hero__frame');
     frameState.wrap = document.querySelector('.hero__right');
