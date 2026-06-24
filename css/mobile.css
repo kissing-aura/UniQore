@@ -1,0 +1,184 @@
+/* ── Tablet: 768px – 1024px ── */
+@media (max-width: 1024px) {
+  .container { padding: 0 24px; }
+
+  /* Trust */
+  .trust__grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Before/After */
+  .ba-header,
+  .ba-row { grid-template-columns: 160px 1fr 1fr; }
+
+  /* Mockups */
+  .mockups__grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .mockup-showcase:last-child { grid-column: span 2; }
+  .mockup-showcase__window--mobile { max-width: 280px; }
+
+  /* Market compare */
+  .market-compare { flex-direction: column; }
+  .market-compare__arrow { transform: rotate(90deg); }
+  .market-compare__item { width: 100%; }
+
+  /* Split hero: stack vertically on tablet */
+  .hero__split { grid-template-columns: 1fr; gap: 48px; padding: 60px 0 40px; }
+  .hero__right { max-width: 560px; }
+  .hero__metrics { gap: 0; padding: 24px 0 32px; }
+  .hero__metric { padding: 0 28px; }
+  .hero__metric-num { font-size: 32px; }
+
+  .hero__stats { grid-template-columns: repeat(2, 1fr); }
+  .services__grid { grid-template-columns: repeat(2, 1fr); }
+  .service-card--wide { grid-column: span 2; }
+  .cases__grid { grid-template-columns: 1fr; }
+  .case-card--wide { grid-column: span 1; }
+  .niches__inner { grid-template-columns: 1fr; gap: 40px; }
+  .niches__headline { position: static; }
+  .testimonials__grid { grid-template-columns: 1fr; gap: 2px; }
+  .testimonial-card:first-child { grid-row: span 1; border-right: none; border-bottom: 2px solid rgba(255,255,255,0.05); }
+  .guarantees__grid { grid-template-columns: repeat(2, 1fr); }
+  .faq__inner { grid-template-columns: 1fr; gap: 32px; }
+  .stack__groups { grid-template-columns: 1fr; gap: 32px; }
+  .process__steps { grid-template-columns: repeat(2, 1fr); }
+  .process__steps::before { display: none; }
+  .pricing__card { grid-template-columns: 1fr; }
+  .contact__inner { grid-template-columns: 1fr; gap: 48px; }
+  .compare-table__header,
+  .compare-table__row { grid-template-columns: 1.5fr 1fr 1fr 1fr; }
+}
+
+/* ── Mobile: up to 768px ── */
+@media (max-width: 768px) {
+  section { padding: var(--section-padding-mobile); }
+  .container { padding: 0 20px; }
+
+  /* Trust */
+  .trust__grid { grid-template-columns: 1fr; }
+  .trust { padding: 40px 0; }
+
+  /* Before/After */
+  .ba-table { overflow-x: auto; }
+  .ba-header,
+  .ba-row { grid-template-columns: 120px 1fr 1fr; min-width: 560px; }
+  .ba-header__empty, .ba-row__label { padding: 14px 16px; }
+  .ba-header__col, .ba-row__before, .ba-row__after { padding: 14px 16px; font-size: 12px; }
+
+  /* Mockups */
+  .mockups__grid { grid-template-columns: 1fr; gap: 32px; }
+  .mockup-showcase__window--mobile { max-width: 100%; }
+  .mockup-showcase__window { max-height: 320px; overflow: hidden; }
+  .mockup-showcase:last-child { display: none; }
+
+  /* Market compare */
+  .market-compare { flex-direction: column; gap: 12px; padding: 20px; }
+  .market-compare__arrow { transform: rotate(90deg); font-size: 14px; }
+
+  /* Section title mobile */
+  .section-title { font-size: clamp(36px, 9vw, 56px); margin-bottom: 40px; }
+
+  /* Nav */
+  .nav__links { display: none; }
+  .nav__cta   { display: none; }
+  .nav__burger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: auto;
+    padding: 4px;
+  }
+  .nav__burger span {
+    display: block;
+    width: 22px; height: 2px;
+    background: var(--color-text-primary);
+    transition: all var(--transition-base);
+    transform-origin: center;
+  }
+  .nav__burger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav__burger.open span:nth-child(2) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* Mobile menu */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--color-bg);
+    z-index: 99;
+    padding: 100px 40px 40px;
+    flex-direction: column;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu ul { display: flex; flex-direction: column; gap: 24px; }
+  .mobile-menu a {
+    font-size: 28px;
+    font-family: var(--font-display);
+    color: var(--color-text-primary);
+  }
+  .mobile-menu .btn {
+    margin-top: 24px;
+    font-size: 16px;
+  }
+
+  /* Hero */
+  .hero { padding-top: 88px; min-height: auto; }
+  .hero__inner { min-height: auto; }
+  .hero__split { grid-template-columns: 1fr; gap: 36px; padding: 48px 0 32px; }
+  .hero__right { display: none; }
+  .hero__metrics {
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 24px 0 32px;
+  }
+  .hero__metric {
+    flex: 0 0 50%;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .hero__metric:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.05); padding-right: 20px; }
+  .hero__metric:nth-child(even) { padding-left: 20px; }
+  .hero__metric:nth-last-child(-n+2):not(.hero__metric-sep) { border-bottom: none; }
+  .hero__metric-sep { display: none; }
+  .hero__metric-num { font-size: 30px; }
+  .hero__left { gap: 28px; }
+  .hero__actions { flex-direction: column; gap: 10px; }
+  .hero__actions .btn { width: 100%; justify-content: center; }
+
+  /* Cards */
+  .services__grid { grid-template-columns: 1fr; }
+  .service-card--wide { grid-column: span 1; }
+  .service-card { padding: 28px 24px; }
+  .niches__inner { grid-template-columns: 1fr; gap: 32px; }
+  .niche-row__tags { display: none; }
+  .niche-row__name { font-size: 22px; }
+  .testimonials__grid { grid-template-columns: 1fr; gap: 1px; }
+  .guarantees__grid { grid-template-columns: 1fr; }
+  .guarantee-card { padding: 28px 24px; }
+  .faq__inner { grid-template-columns: 1fr; gap: 24px; }
+  .stack__groups { grid-template-columns: 1fr; gap: 24px; }
+  .case-card    { padding: 28px 24px; }
+  .case-card__metrics { flex-wrap: wrap; gap: 16px; }
+
+  /* Process */
+  .process__steps { grid-template-columns: 1fr; gap: 32px; }
+
+  /* Pricing */
+  .pricing__left,
+  .pricing__right  { padding: 32px 24px; }
+  .pricing__price-val { font-size: 36px; }
+  .compare-table   { overflow-x: auto; }
+  .compare-table__header,
+  .compare-table__row { min-width: 500px; }
+
+  /* Contact */
+  .contact__inner { grid-template-columns: 1fr; gap: 40px; }
+
+  /* Footer */
+  .footer__inner { flex-direction: column; gap: 32px; }
+
+  /* Cursor off on touch */
+  .cursor, .cursor-follower { display: none; }
+}
+
+/* ── Small mobile: up to 480px ── */
+@media (max-width: 480px) {
+  .hero__stats { grid-template-columns: 1fr 1fr; }
+  .hero__stat-num { font-size: 22px; }
+}
