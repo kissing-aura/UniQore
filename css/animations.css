@@ -187,3 +187,43 @@ body.loaded { opacity: 1; }
   opacity: 1;
   transform: translateX(0);
 }
+
+/* ── Hero title — clip-path word reveal (cinematic) ── */
+.hero__title .word-reveal {
+  opacity: 1;
+  transform: none;
+  clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+  transition: clip-path 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hero__title .word-reveal--in {
+  clip-path: polygon(0 0%, 100% 0%, 100% 100%, 0 100%);
+}
+
+/* ── Hero frame light reflection (JS-driven --light-x/y) ── */
+.hero__frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--light-x, 50%) var(--light-y, 35%),
+    rgba(255, 255, 255, 0.07) 0%,
+    transparent 58%
+  );
+  transition: background 0.1s ease;
+}
+
+/* ── Section depth separators ── */
+section + section {
+  position: relative;
+}
+
+/* ── Reduced motion — disable clip-path reveal ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero__title .word-reveal {
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+}

@@ -1916,3 +1916,55 @@
     rgba(255,255,255,0.04) 100%
   );
 }
+
+/* ── AI-generated atmosphere image break ── */
+.atm-img {
+  width: 100%;
+  height: 420px;
+  position: relative;
+  overflow: hidden;
+}
+.atm-img__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  opacity: 0.55;
+  transform: scale(1.04);
+  transition: transform 12s ease;
+  display: block;
+}
+.atm-img:hover .atm-img__photo {
+  transform: scale(1.0);
+}
+.atm-img::before,
+.atm-img::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 45%;
+  z-index: 1;
+  pointer-events: none;
+}
+.atm-img::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--color-bg), transparent);
+}
+.atm-img::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--color-bg), transparent);
+}
+
+/* ── Niches AI background image ── */
+.niches__bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+  filter: saturate(0.6);
+}

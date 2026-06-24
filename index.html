@@ -26,6 +26,9 @@
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/mobile.css">
 
+  <!-- Lenis smooth scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
   <!-- tsParticles -->
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js" defer></script>
 
@@ -95,7 +98,6 @@
               <em>ваш бизнес</em><br>
               за 4–6 дней
             </h1>
-            <p class="hero__subtitle">CRM, Telegram-боты, аналитика. Под ключ. Без шаблонов.</p>
             <div class="hero__actions">
               <a href="#contact" class="btn btn--accent btn--lg">Обсудить проект</a>
               <a href="#cases" class="btn btn--ghost btn--lg">Смотреть кейсы →</a>
@@ -443,6 +445,7 @@
 
     <!-- NICHES SECTION -->
     <section class="niches" id="niches">
+      <img src="assets/ai-dashboard.jpg" alt="" class="niches__bg-img" aria-hidden="true" loading="lazy">
       <canvas id="particle-canvas" class="niches__particles" aria-hidden="true"></canvas>
       <div class="container">
         <div class="niches__inner">
@@ -551,6 +554,11 @@
         </div>
       </div>
     </section>
+
+    <!-- ATMOSPHERE BREAK -->
+    <div class="atm-img" aria-hidden="true">
+      <img src="assets/ai-nodes.jpg" alt="" class="atm-img__photo" loading="lazy">
+    </div>
 
     <!-- MOCKUPS SECTION -->
     <section class="mockups" id="mockups">
@@ -1222,6 +1230,7 @@
   <script src="js/particles.js"></script>
   <script src="js/form.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/premium.js"></script>
 
 </body>
 </html>
