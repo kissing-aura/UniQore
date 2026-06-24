@@ -30,6 +30,7 @@
   .hero__stats { grid-template-columns: repeat(2, 1fr); }
   .services__grid { grid-template-columns: repeat(2, 1fr); }
   .service-card--wide { grid-column: span 2; }
+  .cases__track { padding: 32px 0 48px; }
   .cases__grid { grid-template-columns: 1fr; }
   .case-card--wide { grid-column: span 1; }
   .niches__inner { grid-template-columns: 1fr; gap: 40px; }

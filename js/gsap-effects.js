@@ -37,21 +37,16 @@
         const scrollDist = casesGrid.scrollWidth - window.innerWidth;
 
         if (scrollDist > 0) {
-          // Pin position: center cards vertically in viewport
-          const trackPadTop = 48;
-          const gridH = casesGrid.offsetHeight;
-          const targetTop = window.innerHeight / 2 - trackPadTop - gridH / 2;
-          const startPct = Math.round(Math.max(5, Math.min(45, targetTop / window.innerHeight * 100)));
-
-          // Buffer: 280px of scroll before horizontal starts + 280px after it ends
-          // so first and last cards are fully visible even when scrolling fast
-          const buffer = 280;
+          // start:'top top' = pin fires only after niches section fully scrolled away
+          // Buffer: pause 300px before and after horizontal scroll so
+          // first/last cards are always fully visible
+          const buffer = 300;
           const totalScroll = buffer + scrollDist + buffer;
 
           gsap.timeline({
             scrollTrigger: {
               trigger: casesTrack,
-              start: `top ${startPct}%`,
+              start: 'top top',
               pin: true,
               scrub: 1.5,
               end: () => `+=${totalScroll}`,

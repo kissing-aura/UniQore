@@ -428,7 +428,7 @@ section { padding: var(--section-padding); }
 
 .cases__track {
   overflow: hidden;
-  padding: 48px 0 80px;
+  padding: 220px 0 180px;
   cursor: grab;
 }
 .cases__track:active { cursor: grabbing; }
