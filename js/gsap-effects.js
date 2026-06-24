@@ -33,23 +33,34 @@
       const casesGrid  = document.querySelector('.cases__grid');
 
       if (casesTrack && casesGrid) {
-        // Measure after layout settles
         ScrollTrigger.refresh();
         const scrollDist = casesGrid.scrollWidth - window.innerWidth;
 
         if (scrollDist > 0) {
-          gsap.to(casesGrid, {
-            x: -scrollDist,
-            ease: 'none',
+          // Pin position: center cards vertically in viewport
+          const trackPadTop = 48;
+          const gridH = casesGrid.offsetHeight;
+          const targetTop = window.innerHeight / 2 - trackPadTop - gridH / 2;
+          const startPct = Math.round(Math.max(5, Math.min(45, targetTop / window.innerHeight * 100)));
+
+          // Buffer: 280px of scroll before horizontal starts + 280px after it ends
+          // so first and last cards are fully visible even when scrolling fast
+          const buffer = 280;
+          const totalScroll = buffer + scrollDist + buffer;
+
+          gsap.timeline({
             scrollTrigger: {
               trigger: casesTrack,
-              start: 'top top',
+              start: `top ${startPct}%`,
               pin: true,
-              scrub: 1,
-              end: () => `+=${casesGrid.scrollWidth - window.innerWidth}`,
+              scrub: 1.5,
+              end: () => `+=${totalScroll}`,
               invalidateOnRefresh: true,
             },
-          });
+          })
+          .fromTo(casesGrid, { x: 0 }, { x: 0, duration: buffer, ease: 'none' })
+          .fromTo(casesGrid, { x: 0 }, { x: -scrollDist, duration: scrollDist, ease: 'none' })
+          .fromTo(casesGrid, { x: -scrollDist }, { x: -scrollDist, duration: buffer, ease: 'none' });
         }
       }
     }
