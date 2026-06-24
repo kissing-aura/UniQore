@@ -37,25 +37,35 @@
         const scrollDist = casesGrid.scrollWidth - window.innerWidth;
 
         if (scrollDist > 0) {
-          // start:'top top' = pin fires only after niches section fully scrolled away
-          // Buffer: pause 300px before and after horizontal scroll so
-          // first/last cards are always fully visible
-          const buffer = 300;
-          const totalScroll = buffer + scrollDist + buffer;
+          // Force-reveal case cards when track pins — IO doesn't update fast
+          // enough for position:fixed elements, causing opacity:0 black screen
+          const revealOnPin = () => {
+            casesTrack.querySelectorAll('[data-reveal]:not(.revealed)').forEach(el => {
+              el.classList.add('revealed');
+            });
+          };
+
+          // Start buffer: cards visible before horizontal begins
+          // End buffer: last card visible before page scrolls down
+          const startBuffer = 150;
+          const endBuffer = 200;
+          const totalScroll = startBuffer + scrollDist + endBuffer;
 
           gsap.timeline({
             scrollTrigger: {
               trigger: casesTrack,
               start: 'top top',
               pin: true,
-              scrub: 1.5,
+              scrub: 1,
               end: () => `+=${totalScroll}`,
               invalidateOnRefresh: true,
+              onEnter: revealOnPin,
+              onEnterBack: revealOnPin,
             },
           })
-          .fromTo(casesGrid, { x: 0 }, { x: 0, duration: buffer, ease: 'none' })
+          .fromTo(casesGrid, { x: 0 }, { x: 0, duration: startBuffer, ease: 'none' })
           .fromTo(casesGrid, { x: 0 }, { x: -scrollDist, duration: scrollDist, ease: 'none' })
-          .fromTo(casesGrid, { x: -scrollDist }, { x: -scrollDist, duration: buffer, ease: 'none' });
+          .fromTo(casesGrid, { x: -scrollDist }, { x: -scrollDist, duration: endBuffer, ease: 'none' });
         }
       }
     }
