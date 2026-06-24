@@ -203,46 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('mouseleave', () => { spot.style.opacity = '0'; });
   });
 
-  // ── 9. 3D tilt on case cards with preview images ──
-  document.querySelectorAll('.case-card--with-img').forEach(card => {
-    const MAX = 7;
-    let raf = null;
-    let targetRX = 0, targetRY = 0, curRX = 0, curRY = 0;
-
-    function lerp(a, b, t) { return a + (b - a) * t; }
-
-    function animTilt() {
-      curRX = lerp(curRX, targetRX, 0.12);
-      curRY = lerp(curRY, targetRY, 0.12);
-      card.style.transform = `perspective(900px) rotateX(${curRX}deg) rotateY(${curRY}deg) translateZ(6px)`;
-      card.style.boxShadow = `${-curRY * 2.5}px ${curRX * 2.5}px 44px rgba(0,0,0,0.45), 0 0 60px rgba(245,197,24,0.07)`;
-      if (Math.abs(curRX - targetRX) > 0.02 || Math.abs(curRY - targetRY) > 0.02) {
-        raf = requestAnimationFrame(animTilt);
-      } else {
-        raf = null;
-        if (targetRX === 0 && targetRY === 0) {
-          card.style.transform = '';
-          card.style.boxShadow = '';
-        }
-      }
-    }
-
-    card.addEventListener('mousemove', (e) => {
-      const r = card.getBoundingClientRect();
-      const dx = ((e.clientX - r.left) / r.width - 0.5) * 2;
-      const dy = ((e.clientY - r.top) / r.height - 0.5) * 2;
-      targetRY = dx * MAX;
-      targetRX = -dy * MAX;
-      if (!raf) raf = requestAnimationFrame(animTilt);
-    }, { passive: true });
-
-    card.addEventListener('mouseleave', () => {
-      targetRX = 0; targetRY = 0;
-      if (!raf) raf = requestAnimationFrame(animTilt);
-    });
-  });
-
-  // ── 10. Niche rows stagger on scroll ──
+  // ── 9. Niche rows stagger on scroll ──
   const nicheObs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;

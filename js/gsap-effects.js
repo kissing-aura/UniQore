@@ -43,6 +43,7 @@
             ease: 'none',
             scrollTrigger: {
               trigger: casesTrack,
+              start: 'top top',
               pin: true,
               scrub: 1,
               end: () => `+=${casesGrid.scrollWidth - window.innerWidth}`,
