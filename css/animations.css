@@ -102,17 +102,16 @@ body.loaded { opacity: 1; }
   .card-spotlight       { display: none; }
 }
 
-/* ── Word reveal ── */
+/* ── Word reveal — GSAP handles .section-title words via clip-path ── */
 .word-reveal {
   display: inline-block;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
+  clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+  will-change: clip-path;
 }
+/* Fallback for non-GSAP path (hero__title via IntersectionObserver) */
 .word-reveal--in {
-  opacity: 1;
-  transform: translateY(0);
+  clip-path: polygon(0 0%, 100% 0%, 100% 100%, 0 100%);
+  transition: clip-path 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ── Process connector line draw ── */

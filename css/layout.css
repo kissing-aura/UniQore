@@ -424,13 +424,27 @@ section { padding: var(--section-padding); }
 .service-card--wide { grid-column: span 2; }
 
 /* ── Cases grid ── */
-.cases__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
-  background: var(--color-border);
+.cases__header { padding-bottom: 0; }
+
+.cases__track {
+  overflow: hidden;
+  padding: 48px 0 80px;
+  cursor: grab;
 }
-.case-card--wide { grid-column: span 2; }
+.cases__track:active { cursor: grabbing; }
+
+.cases__grid {
+  display: flex;
+  gap: 2px;
+  width: max-content;
+  background: var(--color-border);
+  will-change: transform;
+}
+
+.case-card {
+  width: min(440px, 80vw);
+  flex-shrink: 0;
+}
 
 /* ── Process ── */
 .process__steps {

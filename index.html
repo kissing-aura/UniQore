@@ -26,6 +26,10 @@
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/mobile.css">
 
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+
   <!-- tsParticles -->
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js" defer></script>
 
@@ -463,12 +467,14 @@
 
     <!-- CASES SECTION -->
     <section class="cases" id="cases">
-      <div class="container">
+      <div class="container cases__header">
         <div class="section-label">Кейсы</div>
         <h2 class="section-title">Системы которые<br><em>уже работают</em></h2>
+      </div>
+      <div class="cases__track">
         <div class="cases__grid">
 
-          <article class="case-card" data-reveal>
+          <article class="case-card">
             <div class="case-card__meta">
               <span class="case-card__tag">Посуточная аренда</span>
               <span class="case-card__time">3 дня</span>
@@ -484,7 +490,7 @@
             </div>
           </article>
 
-          <article class="case-card" data-reveal data-reveal-delay="1">
+          <article class="case-card">
             <div class="case-card__meta">
               <span class="case-card__tag">Мебельный импорт</span>
               <span class="case-card__time">5 дней</span>
@@ -500,7 +506,7 @@
             </div>
           </article>
 
-          <article class="case-card" data-reveal data-reveal-delay="2">
+          <article class="case-card">
             <div class="case-card__meta">
               <span class="case-card__tag">Цифровые товары</span>
               <span class="case-card__time">4 дня</span>
@@ -516,7 +522,7 @@
             </div>
           </article>
 
-          <article class="case-card" data-reveal data-reveal-delay="3">
+          <article class="case-card">
             <div class="case-card__meta">
               <span class="case-card__tag">Автосервис</span>
               <span class="case-card__time">6 дней</span>
@@ -532,7 +538,7 @@
             </div>
           </article>
 
-          <article class="case-card case-card--wide" data-reveal>
+          <article class="case-card">
             <div class="case-card__meta">
               <span class="case-card__tag">Стоматология</span>
               <span class="case-card__time">6 дней</span>
@@ -544,7 +550,7 @@
             </div>
             <div class="case-card__result">
               <span class="case-card__result-val">92%</span>
-              <span class="case-card__result-label">точность AI-диагностики · экономия 4ч/день · +22% LTV пациентов</span>
+              <span class="case-card__result-label">точность AI · экономия 4ч/день · +22% LTV</span>
             </div>
           </article>
 
@@ -1219,6 +1225,7 @@
   <script src="js/form.js"></script>
   <script src="js/main.js"></script>
   <script src="js/premium.js"></script>
+  <script src="js/gsap-effects.js" defer></script>
 
 </body>
 </html>

@@ -433,7 +433,6 @@
 
 .cases {
   position: relative;
-  overflow: hidden;
 }
 .cases::before {
   content: '';

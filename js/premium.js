@@ -129,19 +129,7 @@
       el.addEventListener('mouseleave', () => (c.on = false));
     });
 
-    // Hero scroll parallax
-    const heroLeft  = document.querySelector('.hero__left');
-    const heroVideo = document.querySelector('.hero__video');
-    window.addEventListener('scroll', () => {
-      const y = window.scrollY;
-      if (y > window.innerHeight) return;
-      if (heroLeft && heroLeft.classList.contains('revealed')) {
-        heroLeft.style.transform = `translateY(${(y * -0.09).toFixed(1)}px)`;
-      }
-      if (heroVideo) {
-        heroVideo.style.transform = `translateY(${(y * 0.18).toFixed(1)}px)`;
-      }
-    }, { passive: true });
+    // Hero scroll parallax handled by GSAP in gsap-effects.js
 
     requestAnimationFrame(tick);
   });
