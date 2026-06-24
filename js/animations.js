@@ -203,43 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('mouseleave', () => { spot.style.opacity = '0'; });
   });
 
-  // ── 9. Case card screenshot preview popup ──
-  const previewCards = document.querySelectorAll('[data-preview]');
-  if (previewCards.length) {
-    const popup = document.createElement('div');
-    popup.className = 'case-preview-popup';
-    popup.innerHTML = `
-      <div class="case-preview-popup__frame">
-        <div class="case-preview-popup__bar">
-          <span class="case-preview-popup__dot"></span>
-          <span class="case-preview-popup__dot"></span>
-          <span class="case-preview-popup__dot"></span>
-        </div>
-        <img class="case-preview-popup__img" src="" alt="" loading="lazy">
-      </div>
-      <div class="case-preview-popup__arrow"></div>`;
-    document.body.appendChild(popup);
-
-    const popupImg = popup.querySelector('.case-preview-popup__img');
-    let hideTimer = null;
-
-    previewCards.forEach(card => {
-      card.addEventListener('mouseenter', () => {
-        clearTimeout(hideTimer);
-        const src = card.dataset.preview;
-        if (popupImg.src !== location.origin + '/' + src) popupImg.src = src;
-        const r = card.getBoundingClientRect();
-        popup.style.left = (r.left + r.width / 2) + 'px';
-        popup.style.top = r.top + 'px';
-        popup.classList.add('visible');
-      });
-      card.addEventListener('mouseleave', () => {
-        hideTimer = setTimeout(() => popup.classList.remove('visible'), 80);
-      });
-    });
-  }
-
-  // ── 10. Niche rows stagger on scroll ──
+  // ── 9. Niche rows stagger on scroll ──
   const nicheObs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;

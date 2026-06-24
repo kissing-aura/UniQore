@@ -164,9 +164,10 @@
   .faq__inner { grid-template-columns: 1fr; gap: 24px; }
   .stack__groups { grid-template-columns: 1fr; gap: 24px; }
   .case-card    { padding: 28px 24px; }
-  .case-card--with-img { padding: 0; }
-  .case-card--with-img .case-card__inner { padding: 20px 24px 28px; }
-  .case-card__preview { height: 180px; }
+  .case-card--has-top { padding: 0; }
+  .case-card__top { height: 160px; }
+  .case-card__num { font-size: 80px; padding-right: 16px; }
+  .case-card__body { padding: 20px 24px 28px; }
   .case-card__metrics { flex-wrap: wrap; gap: 16px; }
 
   /* Process */
