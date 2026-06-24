@@ -1,6 +1,9 @@
-/* premium.js — Lenis + 3D tilt + magnetic + parallax */
+/* premium.js — Lenis + 3D tilt + magnetic + parallax (desktop only) */
 (function () {
   'use strict';
+
+  // All effects are hover/mouse-based — skip entirely on touch devices
+  if ('ontouchstart' in window || !window.matchMedia('(pointer: fine)').matches) return;
 
   function lerp(a, b, n) { return a + (b - a) * n; }
 
@@ -18,6 +21,7 @@
   // ── Lenis init ────────────────────────────────────────
   function initLenis() {
     if (typeof Lenis === 'undefined') return;
+    if (window.innerWidth < 900) return;
     lenis = new Lenis({
       duration: 1.2,
       easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

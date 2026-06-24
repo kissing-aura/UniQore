@@ -78,7 +78,7 @@
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-      <video class="hero__video" autoplay muted loop playsinline preload="metadata">
+      <video class="hero__video" autoplay muted loop playsinline preload="none" id="hero-video">
         <source src="assets/hero-bg.mp4" type="video/mp4">
       </video>
       <div class="hero__video-overlay"></div>
@@ -1182,42 +1182,34 @@
   <script>
     window.addEventListener('load', function () {
       if (typeof tsParticles === 'undefined') return;
+      // Skip on mobile/touch — particles are too expensive
+      if ('ontouchstart' in window || window.innerWidth < 900) return;
       tsParticles.load('tsparticles', {
         fullScreen: { enable: false },
         background: { color: { value: 'transparent' } },
-        fpsLimit: 30,
+        fpsLimit: 24,
         detectRetina: false,
         pauseOnOutsideViewport: true,
         particles: {
-          number: { value: 60, density: { enable: true, value_area: 900 } },
+          number: { value: 28, density: { enable: false } },
           color: { value: '#ffffff' },
           shape: { type: 'circle' },
-          opacity: { value: { min: 0.08, max: 0.5 } },
-          size: { value: { min: 0.4, max: 2.5 }, random: true },
-          links: {
-            enable: true,
-            distance: 120,
-            color: '#ffffff',
-            opacity: 0.1,
-            width: 0.55
-          },
+          opacity: { value: { min: 0.06, max: 0.35 } },
+          size: { value: { min: 0.4, max: 2.0 }, random: true },
+          links: { enable: false },
           move: {
             enable: true,
-            speed: 0.3,
+            speed: 0.25,
             direction: 'none',
             random: true,
             outModes: { default: 'out' }
           }
         },
         interactivity: {
-          detectsOn: 'window',
           events: {
-            onHover: { enable: true, mode: 'grab' },
+            onHover: { enable: false },
             onClick: { enable: false },
             resize: true
-          },
-          modes: {
-            grab: { distance: 140, links: { opacity: 0.25 } }
           }
         }
       });

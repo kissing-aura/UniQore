@@ -2,6 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Page load fade-in
   document.body.classList.add('loaded');
 
+  // Hero video: only load on desktop (saves bandwidth + GPU on mobile)
+  const heroVideo = document.getElementById('hero-video');
+  if (heroVideo) {
+    if (!('ontouchstart' in window) && window.innerWidth >= 900) {
+      heroVideo.load();
+    } else {
+      heroVideo.style.display = 'none';
+    }
+  }
+
   // ── Custom cursor tracking ──
   const cursor = document.getElementById('cursor');
   const follower = document.getElementById('cursor-follower');
