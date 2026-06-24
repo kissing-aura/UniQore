@@ -41,7 +41,8 @@
 .btn--accent:hover {
   background: #f7cd30;
   border-color: #f7cd30;
-  box-shadow: 0 0 52px rgba(245, 197, 24, 0.42);
+  box-shadow: 0 0 52px rgba(245, 197, 24, 0.48), 0 4px 24px rgba(0,0,0,0.3);
+  transform: translateY(-1px);
 }
 .btn--accent:hover::after { left: 140%; }
 .btn--accent:active {
@@ -56,6 +57,7 @@
 }
 .btn--ghost:hover {
   color: var(--color-text-primary);
-  border-color: rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-1px);
 }

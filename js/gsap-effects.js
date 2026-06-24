@@ -75,5 +75,5 @@
   }
 
   // Wait for deferred GSAP to be ready
-  window.addEventListener('load', () => setTimeout(init, 80));
+  window.addEventListener('load', () => setTimeout(init, 300));
 })();

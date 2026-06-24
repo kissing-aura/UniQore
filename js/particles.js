@@ -28,7 +28,7 @@
 
     _populate() {
       this.pts = [];
-      const count = Math.min(Math.floor((this.w * this.h) / 10000), 50);
+      const count = Math.min(Math.floor((this.w * this.h) / 14000), 22);
       for (let i = 0; i < count; i++) {
         const hub = Math.random() < 0.14;
         this.pts.push({
@@ -59,27 +59,7 @@
       const { ctx, w, h, pts } = this;
       ctx.clearRect(0, 0, w, h);
 
-      const MAX = 110;
-
-      // Lines
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[i].x - pts[j].x;
-          const dy = pts[i].y - pts[j].y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < MAX * MAX) {
-            const alpha = 0.22 * (1 - Math.sqrt(d2) / MAX);
-            ctx.beginPath();
-            ctx.moveTo(pts[i].x, pts[i].y);
-            ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
-            ctx.lineWidth = 0.55;
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Dots
+      // Dots only — no O(n²) line loop
       pts.forEach(p => {
         if (p.hub) {
           const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.5);

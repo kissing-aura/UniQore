@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── 7. Cursor glow on dark sections ──
   const glowSections = document.querySelectorAll(
-    '.services, .cases, .niches, .testimonials, .guarantees, .process, .faq, .stack, .pricing, .trust, .before-after, .mockups'
+    '.services, .cases, .niches, .testimonials, .guarantees, .process, .faq, .stack, .pricing, .trust, .before-after, .mockups, .team'
   );
   let glowRects = [];
   let rectsDirty = true;
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   // ── 8. Card spotlight (antimetal pattern) ──
-  document.querySelectorAll('.service-card, .case-card, .guarantee-card, .trust-card, .mockup-showcase').forEach(card => {
+  document.querySelectorAll('.service-card, .case-card, .guarantee-card, .trust-card, .mockup-showcase, .team-card').forEach(card => {
     const spot = document.createElement('div');
     spot.className = 'card-spotlight';
     card.appendChild(spot);
@@ -192,8 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
       spotTicking = true;
       requestAnimationFrame(() => {
         const r = card.getBoundingClientRect();
-        spot.style.left = (e.clientX - r.left) + 'px';
-        spot.style.top  = (e.clientY - r.top) + 'px';
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        spot.style.transform = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`;
         spot.style.opacity = '1';
         spotTicking = false;
       });

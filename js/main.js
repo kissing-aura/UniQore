@@ -139,9 +139,18 @@ document.addEventListener('DOMContentLoaded', () => {
         revealObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.04, rootMargin: '0px 0px 60px 0px' });
 
   document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+  // Fallback: reveal any still-hidden elements 2.5s after load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('[data-reveal]:not(.revealed)').forEach(el => {
+        el.classList.add('revealed');
+      });
+    }, 2500);
+  });
 
   // Counter animation for hero stats
   function animateCounter(el) {
