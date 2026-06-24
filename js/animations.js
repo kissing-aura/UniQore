@@ -218,6 +218,12 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.boxShadow = `${-curRY * 2.5}px ${curRX * 2.5}px 44px rgba(0,0,0,0.45), 0 0 60px rgba(245,197,24,0.07)`;
       if (Math.abs(curRX - targetRX) > 0.02 || Math.abs(curRY - targetRY) > 0.02) {
         raf = requestAnimationFrame(animTilt);
+      } else {
+        raf = null;
+        if (targetRX === 0 && targetRY === 0) {
+          card.style.transform = '';
+          card.style.boxShadow = '';
+        }
       }
     }
 
@@ -232,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     card.addEventListener('mouseleave', () => {
       targetRX = 0; targetRY = 0;
-      raf = requestAnimationFrame(animTilt);
+      if (!raf) raf = requestAnimationFrame(animTilt);
     });
   });
 

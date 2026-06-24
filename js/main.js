@@ -145,6 +145,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
 
+  // Immediately reveal above-fold elements (hero content visible on first paint)
+  setTimeout(() => {
+    const vh = window.innerHeight;
+    document.querySelectorAll('[data-reveal]:not(.revealed)').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh && r.bottom > 0) el.classList.add('revealed');
+    });
+  }, 80);
+
   // Fallback: reveal any still-hidden elements 2.5s after load
   window.addEventListener('load', () => {
     setTimeout(() => {

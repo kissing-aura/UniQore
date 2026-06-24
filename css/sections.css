@@ -709,7 +709,7 @@
 /* ── Case card with screenshot preview ── */
 .case-card--with-img {
   padding: 0;
-  overflow: visible;
+  overflow: hidden;
   will-change: transform;
   transition: box-shadow 0.35s ease;
 }
