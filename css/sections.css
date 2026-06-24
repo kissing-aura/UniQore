@@ -706,6 +706,37 @@
   box-shadow: 0 0 80px rgba(245, 197, 24, 0.04);
 }
 
+/* ── Case card with screenshot preview ── */
+.case-card--with-img {
+  padding: 0;
+  overflow: visible;
+  will-change: transform;
+  transition: box-shadow 0.35s ease;
+}
+.case-card--with-img:hover {
+  background: var(--color-surface);
+}
+.case-card__preview {
+  overflow: hidden;
+  height: 230px;
+  position: relative;
+}
+.case-card__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.case-card--with-img:hover .case-card__preview img {
+  transform: scale(1.04);
+}
+.case-card__inner {
+  padding: 28px 36px 36px;
+}
+
 .case-card__meta {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 20px;
