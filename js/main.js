@@ -3,12 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('loaded');
 
   // Hero video: only load on desktop (saves bandwidth + GPU on mobile)
-  const heroVideo = document.getElementById('hero-video');
+  const heroVideo = document.getElementById('video-a');
   if (heroVideo) {
     if (!('ontouchstart' in window) && window.innerWidth >= 900) {
       heroVideo.load();
+      const vB = document.getElementById('video-b');
+      if (vB) vB.load();
     } else {
-      heroVideo.style.display = 'none';
+      document.querySelectorAll('.hero__video').forEach(v => v.style.display = 'none');
     }
   }
 
@@ -204,10 +206,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!vA || !vB) return;
 
     let active = vA, standby = vB, busy = false;
+    // Init z-index so standby can appear over active regardless of DOM order
+    vA.style.zIndex = '1';
+    vB.style.zIndex = '0';
 
     function crossfade() {
       if (busy) return;
       busy = true;
+      // Bring standby on top before fade
+      standby.style.zIndex = '2';
+      active.style.zIndex = '1';
       standby.currentTime = 0;
       standby.play().catch(() => {});
       standby.style.opacity = '1';
