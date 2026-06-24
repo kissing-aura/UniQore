@@ -693,6 +693,7 @@
   cursor: default;
   position: relative;
   overflow: hidden;
+  border-radius: 12px;
 }
 .case-card::after {
   content: '';
