@@ -62,8 +62,8 @@
 <body>
 
   <!-- CUSTOM CURSOR -->
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-follower" id="cursor-follower"></div>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="cursor-follower" id="cursor-follower" aria-hidden="true"></div>
 
   <!-- NAVIGATION -->
   <nav class="nav" id="nav">
@@ -100,10 +100,10 @@
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-      <video class="hero__video" muted playsinline preload="none" id="video-a">
+      <video class="hero__video" muted playsinline preload="none" id="video-a" aria-hidden="true">
         <source src="assets/hero-bg.mp4" type="video/mp4">
       </video>
-      <video class="hero__video hero__video--b" muted playsinline preload="none" id="video-b">
+      <video class="hero__video hero__video--b" muted playsinline preload="none" id="video-b" aria-hidden="true">
         <source src="assets/hero-bg.mp4" type="video/mp4">
       </video>
       <div class="hero__video-overlay"></div>
@@ -132,6 +132,10 @@
 
           <!-- Правая колонка: видео в premium frame -->
           <div class="hero__right">
+            <div class="hero__mockup-toast" aria-hidden="true">
+              <span class="mockup-live-dot"></span>
+              <span>Новая заявка · 2 мин назад</span>
+            </div>
             <div class="hero__frame">
               <div class="hero__frame-bar">
                 <div class="mockup-dots"><span></span><span></span><span></span></div>
@@ -345,8 +349,7 @@
     <!-- SERVICES SECTION -->
     <section class="services" id="services">
       <div class="container">
-        <div class="section-label">Что строим</div>
-        <h2 class="section-title">Полная автоматизация<br><em>под вашу нишу</em></h2>
+          <h2 class="section-title">Полная автоматизация<br><em>под вашу нишу</em></h2>
         <div class="services__grid">
 
           <div class="service-card service-card--wide" data-index="01" data-reveal>
@@ -405,7 +408,7 @@
                 <path d="M18 20V10M12 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
             </div>
-            <h3>Видьте бизнес целиком<br>каждое утро</h3>
+            <h3>Видите бизнес целиком<br>каждое утро</h3>
             <ul class="service-card__features">
               <li>Отчёт в Telegram до того как вы проснулись</li>
               <li>Конверсия воронки без Excel и формул</li>
@@ -421,7 +424,6 @@
     <!-- BEFORE / AFTER SECTION -->
     <section class="before-after" id="before-after">
       <div class="container">
-        <div class="section-label">Трансформация</div>
         <h2 class="section-title">Как меняется<br><em>ваш рабочий день</em></h2>
         <div class="ba-table" data-reveal>
           <div class="ba-header">
@@ -608,7 +610,6 @@
               </div>
             </div>
           </article>
-          </article>
 
         </div>
       </div>
@@ -622,7 +623,6 @@
     <!-- MOCKUPS SECTION -->
     <section class="mockups" id="mockups">
       <div class="container">
-        <div class="section-label">Результат</div>
         <h2 class="section-title">Посмотрите что<br><em>получает клиент</em></h2>
         <div class="mockups__grid">
 
@@ -808,7 +808,6 @@
     <!-- HOW IT WORKS -->
     <section class="process" id="process">
       <div class="container">
-        <div class="section-label">Как работаем</div>
         <h2 class="section-title">От запроса до<br><em>работающей системы</em></h2>
         <div class="process__steps">
 
@@ -911,7 +910,6 @@
       <div class="container">
         <div class="team__inner">
           <div class="team__left" data-reveal>
-            <div class="section-label">Команда</div>
             <h2 class="section-title">Кто делает<br><em>проекты</em></h2>
             <p class="team__desc">Работаем небольшой командой разработчиков. Без длинных согласований, менеджеров и посредников. Поэтому можем запускать проекты за дни, а не месяцы.</p>
           </div>
@@ -1061,67 +1059,67 @@
           <div class="faq__list" data-reveal>
 
             <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-1">
                 <span>Сколько стоит разработка?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
-              <div class="faq-item__a" hidden><p>Базовая система — от $900 единоразово за разработку. Поддержка и обновления — $150 в месяц. Стоимость не зависит от ниши — только от объёма функций. Точная цена фиксируется в ТЗ до начала работы.</p></div>
+              <div class="faq-item__a" id="faq-a-1" hidden><p>Базовая система — от $900 единоразово за разработку. Поддержка и обновления — $150 в месяц. Стоимость не зависит от ниши — только от объёма функций. Точная цена фиксируется в ТЗ до начала работы.</p></div>
             </div>
 
             <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-2">
                 <span>Как быстро готова система?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
-              <div class="faq-item__a" hidden><p>4–6 рабочих дней с момента подписания ТЗ. День 1–2 — аудит и документация, дни 3–7 — разработка, последний день — развёртывание и обучение команды. Каждый день — апдейт о прогрессе.</p></div>
+              <div class="faq-item__a" id="faq-a-2" hidden><p>4–6 рабочих дней с момента подписания ТЗ. День 1–2 — аудит и документация, дни 3–7 — разработка, последний день — развёртывание и обучение команды. Каждый день — апдейт о прогрессе.</p></div>
             </div>
 
             <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-3">
                 <span>Работаете по договору?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
-              <div class="faq-item__a" hidden><p>Да, заключаем договор перед стартом. В нём — объём работ, сроки, стоимость и условия поддержки. NDA подписываем по запросу. Работаем с юридическими и физическими лицами.</p></div>
+              <div class="faq-item__a" id="faq-a-3" hidden><p>Да, заключаем договор перед стартом. В нём — объём работ, сроки, стоимость и условия поддержки. NDA подписываем по запросу. Работаем с юридическими и физическими лицами.</p></div>
             </div>
 
             <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-4">
                 <span>Что если потом нужны изменения?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
-              <div class="faq-item__a" hidden><p>Первые 30 дней после сдачи — правки бесплатно. После — в рамках поддержки ($150/мес) включены мелкие доработки. Крупные изменения или новые модули оцениваем отдельно — обычно от $200.</p></div>
+              <div class="faq-item__a" id="faq-a-4" hidden><p>Первые 30 дней после сдачи — правки бесплатно. После — в рамках поддержки ($150/мес) включены мелкие доработки. Крупные изменения или новые модули оцениваем отдельно — обычно от $200.</p></div>
             </div>
 
             <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-5">
                 <span>Чем вы отличаетесь от Bitrix24 и amoCRM?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
-              <div class="faq-item__a" hidden><p>Bitrix24 и amoCRM — универсальные продукты, которые нужно «подгонять» под ваш бизнес. Мы строим систему под ваши процессы с нуля: только нужные функции, никакого лишнего. Плюс нативная Telegram-интеграция без дорогих плагинов.</p></div>
+              <div class="faq-item__a" id="faq-a-5" hidden><p>Bitrix24 и amoCRM — универсальные продукты, которые нужно «подгонять» под ваш бизнес. Мы строим систему под ваши процессы с нуля: только нужные функции, никакого лишнего. Плюс нативная Telegram-интеграция без дорогих плагинов.</p></div>
             </div>
 
             <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-6">
                 <span>Что нужно подготовить для старта?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
-              <div class="faq-item__a" hidden><p>Только 60 минут вашего времени на аудит. Мы сами разберёмся в процессах и предложим решение. VPS-сервер настраиваем сами ($5–15/мес у вас или у нас). Больше ничего не нужно.</p></div>
+              <div class="faq-item__a" id="faq-a-6" hidden><p>Только 60 минут вашего времени на аудит. Мы сами разберёмся в процессах и предложим решение. VPS-сервер настраиваем сами ($5–15/мес у вас или у нас). Больше ничего не нужно.</p></div>
             </div>
 
             <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-7">
                 <span>Что если вы перестанете работать?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
-              <div class="faq-item__a" hidden><p>Весь исходный код передаётся вам после оплаты. Система стоит на вашем сервере. Любой другой разработчик сможет продолжить работу с кодом. Вы не зависите от нас — это принципиальная позиция.</p></div>
+              <div class="faq-item__a" id="faq-a-7" hidden><p>Весь исходный код передаётся вам после оплаты. Система стоит на вашем сервере. Любой другой разработчик сможет продолжить работу с кодом. Вы не зависите от нас — это принципиальная позиция.</p></div>
             </div>
 
             <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-8">
                 <span>Работаете ли вы с моей нишей?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
-              <div class="faq-item__a" hidden><p>Работаем с любым малым и средним бизнесом в СНГ и Европе. Посуточная аренда, автосервисы, импортёры, медклиники, интернет-магазины, Telegram-бизнесы. Если у вас бизнес — у нас есть решение.</p></div>
+              <div class="faq-item__a" id="faq-a-8" hidden><p>Работаем с любым малым и средним бизнесом в СНГ и Европе. Посуточная аренда, автосервисы, импортёры, медклиники, интернет-магазины, Telegram-бизнесы. Если у вас бизнес — у нас есть решение.</p></div>
             </div>
 
           </div>

@@ -6,14 +6,19 @@ body {
   background: var(--color-bg);
 }
 
+p {
+  text-wrap: pretty;
+}
+
 h1, h2, h3 {
   font-family: var(--font-display);
   font-weight: 400;
   line-height: 1.05;
+  text-wrap: balance;
 }
 
 .hero__title {
-  font-size: clamp(56px, 9vw, 108px);
+  font-size: clamp(56px, 9vw, 96px);
   font-weight: 400;
   line-height: 0.95;
   letter-spacing: -0.04em;
@@ -33,12 +38,8 @@ h1, h2, h3 {
 }
 .section-title em {
   font-style: italic;
-  background: linear-gradient(130deg, #F5C518 0%, #FFE566 45%, #E8AF00 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: text-shimmer 5s linear infinite;
+  color: var(--color-accent);
+  text-shadow: 0 0 48px rgba(245, 197, 24, 0.35);
 }
 
 .section-label {

@@ -135,6 +135,28 @@ body {
   box-shadow: 0 8px 28px rgba(0,0,0,0.18);
 }
 
+/* ── Focus visible (keyboard navigation) ── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+/* ── Hero toast slide-in ── */
+@keyframes toast-slide-in {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toast-border-pulse {
+  0%, 100% { border-color: rgba(74,222,128,0.28); box-shadow: 0 8px 28px rgba(0,0,0,0.55), 0 0 16px rgba(74,222,128,0.08); }
+  50%       { border-color: rgba(74,222,128,0.5);  box-shadow: 0 8px 28px rgba(0,0,0,0.55), 0 0 24px rgba(74,222,128,0.18); }
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   [data-reveal]         { opacity: 1; transform: none; transition: none; }
@@ -145,6 +167,15 @@ body {
   .word-reveal          { opacity: 1 !important; transform: none !important; transition: none !important; }
   .process__steps::before { transform: none !important; transition: none !important; }
   .card-spotlight       { display: none; }
+  .hero__mockup-toast   { animation: none; opacity: 1; }
+  .hero__title em       { animation: none; }
+  .hero .btn--accent    { animation: none; }
+  .hero__glow--1, .hero__glow--2, .hero__glow--3 { animation: none; }
+  .dot--green           { animation: none; box-shadow: none; }
+  .niche-row            { opacity: 1; transform: none; transition: none; }
+  .scroll-hint__icon    { animation: none; }
+  .mockup-window        { animation: none; }
+  .mockup-live-dot      { animation: none; }
 }
 
 /* ── Word reveal ── */
@@ -183,7 +214,7 @@ body {
 
 /* ── CRM bar animation ── */
 .ui-mockup__bar {
-  transition: height 0.65s cubic-bezier(0.34, 1.2, 0.64, 1);
+  transition: height 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ── Trust cards stagger entrance ── */
@@ -245,17 +276,6 @@ body {
 .niche-row--in {
   opacity: 1;
   transform: translateX(0);
-}
-
-/* ── Hero title — clip-path word reveal (cinematic) ── */
-.hero__title .word-reveal {
-  opacity: 1;
-  transform: none;
-  clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
-  transition: clip-path 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.hero__title .word-reveal--in {
-  clip-path: polygon(0 0%, 100% 0%, 100% 100%, 0 100%);
 }
 
 /* ── Hero frame light reflection (JS-driven --light-x/y) ── */

@@ -48,7 +48,7 @@
 }
 .trust-card__desc {
   font-size: 12px;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   line-height: 1.55;
   letter-spacing: 0.01em;
 }
@@ -558,12 +558,8 @@
 }
 .niches__big-text em {
   font-style: italic;
-  background: linear-gradient(130deg, #F5C518 0%, #FFE566 45%, #E8AF00 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: text-shimmer 5s linear infinite;
+  color: var(--color-accent);
+  text-shadow: 0 0 60px rgba(245,197,24,0.45), 0 0 120px rgba(245,197,24,0.2);
 }
 .niches__list {
   display: flex;
@@ -685,7 +681,7 @@
 }
 .service-card__features li {
   font-size: 12px;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   padding-left: 16px;
   position: relative;
   letter-spacing: 0.01em;
@@ -1160,6 +1156,7 @@
   border: 1px solid rgba(255,255,255,0.07);
   padding: 14px 18px;
   font-size: 14px;
+  font-family: var(--font-body);
   color: var(--color-text-primary);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   outline: none;
@@ -1171,7 +1168,7 @@
   box-shadow: 0 0 24px rgba(245, 197, 24, 0.06), inset 0 0 16px rgba(245, 197, 24, 0.02);
 }
 .form-group input::placeholder,
-.form-group textarea::placeholder { color: rgba(255,255,255,0.15); }
+.form-group textarea::placeholder { color: rgba(255,255,255,0.45); }
 .form__privacy {
   font-size: 11px;
   color: var(--color-text-muted);
@@ -2144,8 +2141,36 @@
   color: var(--color-text-muted);
   line-height: 1.75;
   padding: 16px 20px;
-  border-left: 2px solid rgba(245,197,24,0.3);
+  border: 1px solid rgba(245,197,24,0.18);
   background: rgba(245,197,24,0.03);
+}
+
+/* ── Hero live toast notification ── */
+.hero__mockup-toast {
+  position: absolute;
+  bottom: 72px;
+  right: -16px;
+  background: rgba(10,10,10,0.97);
+  border: 1px solid rgba(74,222,128,0.28);
+  border-radius: 8px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.68);
+  z-index: 20;
+  pointer-events: none;
+  white-space: nowrap;
+  animation:
+    toast-slide-in 0.55s cubic-bezier(0.22,1,0.36,1) 2s both,
+    toast-border-pulse 3.5s ease-in-out 2.8s infinite;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6), 0 0 16px rgba(74,222,128,0.07);
+}
+@media (max-width: 1024px) {
+  .hero__mockup-toast { display: none; }
 }
 
 /* ── Niches AI background image ── */
