@@ -1302,5 +1302,14 @@
   <script src="js/premium.js" defer></script>
   <script src="js/gsap-effects.js" defer></script>
 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' })
+          .then(r => r.update())
+          .catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
