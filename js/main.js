@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroVideo) {
     if (!('ontouchstart' in window) && window.innerWidth >= 900) {
       heroVideo.load();
+      heroVideo.play().catch(() => {});
       const vB = document.getElementById('video-b');
       if (vB) vB.load();
     } else {
