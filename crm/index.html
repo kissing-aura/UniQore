@@ -18,141 +18,241 @@
   </div>
 
   <nav class="nav">
+    <div class="nav__group-label">Главное</div>
     <a class="nav__item active" data-view="dashboard">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
       Дашборд
+      <span class="nav__badge hidden" id="badge-dashboard"></span>
     </a>
     <a class="nav__item" data-view="kanban">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="5" height="18" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="3" width="5" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="17" y="3" width="5" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="5" height="18" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="3" width="5" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="17" y="3" width="5" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
       Pipeline
     </a>
     <a class="nav__item" data-view="leads">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.5"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.5"/></svg>
       Лиды
+    </a>
+    <a class="nav__item" data-view="tasks">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="1.5"/></svg>
+      Задачи
+      <span class="nav__badge hidden" id="badge-tasks"></span>
+    </a>
+    <a class="nav__item" data-view="clients">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 21h18M9 21V7l7-4v18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="13" width="3" height="8" stroke="currentColor" stroke-width="1.5"/></svg>
+      Клиенты
+    </a>
+
+    <div class="nav__group-label" style="margin-top:8px">Аналитика</div>
+    <a class="nav__item" data-view="analytics">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M18 20V10M12 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Аналитика
+    </a>
+    <a class="nav__item" data-view="finance">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="1.5"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.5"/></svg>
+      Финансы
+      <span class="nav__badge nav__badge--red hidden" id="badge-finance"></span>
+    </a>
+
+    <div class="nav__divider"></div>
+    <a class="nav__item" data-view="settings">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5"/></svg>
+      Настройки
     </a>
   </nav>
 
   <div class="sidebar__footer">
-    <button class="sidebar__btn" id="addLeadSide">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg>
-      Новый лид
-    </button>
-    <button class="sidebar__btn sidebar__btn--ghost" id="exportBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="1.5"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="1.5"/></svg>
-      Экспорт
-    </button>
+    <button class="btn-primary w-full" id="addLeadSide">+ Новый лид</button>
   </div>
 </aside>
 
 <main class="main">
   <header class="topbar">
-    <div class="topbar__left">
-      <h1 class="topbar__title" id="pageTitle">Дашборд</h1>
-    </div>
+    <h1 class="topbar__title" id="pageTitle">Дашборд</h1>
     <div class="topbar__right">
-      <div class="topbar__search-wrap">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="topbar__search-icon"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="1.5"/></svg>
-        <input type="text" class="topbar__search" id="globalSearch" placeholder="Поиск лидов...">
+      <div class="search-wrap">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" class="search-icon"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="1.5"/></svg>
+        <input class="topbar__search" id="globalSearch" placeholder="Поиск...">
       </div>
       <button class="btn-primary" id="addLeadTop">+ Новый лид</button>
     </div>
   </header>
 
-  <!-- DASHBOARD -->
+  <!-- ── DASHBOARD ───────────────────────────────────────── -->
   <div class="view" id="view-dashboard">
-    <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-card__label">Выручка в воронке</div>
-        <div class="kpi-card__val" id="kpi-revenue">0 ₽</div>
-        <div class="kpi-card__sub" id="kpi-revenue-sub">из всех активных лидов</div>
+    <div class="kpi-row" id="dashKpi"></div>
+    <div class="dash-grid">
+      <div class="card">
+        <div class="card__head">Воронка <span style="color:var(--t3);font-weight:400;font-size:11px">(по количеству)</span></div>
+        <canvas id="funnelCanvas" height="180"></canvas>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-card__label">Лидов всего</div>
-        <div class="kpi-card__val" id="kpi-total">0</div>
-        <div class="kpi-card__sub" id="kpi-total-sub">—</div>
+      <div class="card">
+        <div class="card__head">Источники лидов</div>
+        <canvas id="sourceCanvas" height="180"></canvas>
+        <div id="sourceLegend" class="legend"></div>
       </div>
-      <div class="kpi-card kpi-card--accent">
-        <div class="kpi-card__label">Конверсия</div>
-        <div class="kpi-card__val" id="kpi-conv">0%</div>
-        <div class="kpi-card__sub">закрыто от всех лидов</div>
+      <div class="card">
+        <div class="card__head">Follow-up сегодня <span class="tag tag--red" id="fuBadge" style="display:none"></span></div>
+        <div id="fuList"></div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-card__label">Горячих лидов</div>
-        <div class="kpi-card__val kpi-card__val--hot" id="kpi-hot">0</div>
-        <div class="kpi-card__sub">требуют внимания сейчас</div>
+      <div class="card">
+        <div class="card__head">Горячие лиды 🔥</div>
+        <div id="hotList"></div>
       </div>
-    </div>
-
-    <div class="dash-body">
-      <div class="dash-col dash-col--main">
-        <div class="section-card">
-          <div class="section-card__head">Pipeline воронка</div>
-          <canvas id="funnelCanvas" height="200"></canvas>
-        </div>
-        <div class="section-card">
-          <div class="section-card__head">
-            Follow-up сегодня
-            <span class="badge badge--hot" id="followupCount" style="display:none"></span>
-          </div>
-          <div id="followupList"></div>
-        </div>
+      <div class="card">
+        <div class="card__head">Задачи на сегодня</div>
+        <div id="dashTasks"></div>
       </div>
-      <div class="dash-col dash-col--side">
-        <div class="section-card">
-          <div class="section-card__head">Горячие лиды 🔥</div>
-          <div id="hotLeadsList"></div>
-        </div>
-        <div class="section-card">
-          <div class="section-card__head">Последние добавленные</div>
-          <div id="recentList"></div>
-        </div>
+      <div class="card">
+        <div class="card__head">Последние лиды</div>
+        <div id="recentList"></div>
       </div>
     </div>
   </div>
 
-  <!-- KANBAN -->
+  <!-- ── PIPELINE ─────────────────────────────────────────── -->
   <div class="view hidden" id="view-kanban">
     <div class="kanban" id="kanbanBoard"></div>
   </div>
 
-  <!-- LEADS TABLE -->
+  <!-- ── ЛИДЫ ─────────────────────────────────────────────── -->
   <div class="view hidden" id="view-leads">
-    <div class="table-toolbar">
-      <input type="text" class="t-search" id="tableSearch" placeholder="Поиск...">
-      <select class="t-select" id="filterStage">
-        <option value="">Все этапы</option>
-        <option value="new">Новый</option>
-        <option value="contact">Связались</option>
-        <option value="demo">Демо</option>
-        <option value="proposal">КП</option>
-        <option value="won">Оплата</option>
-        <option value="lost">Архив</option>
-      </select>
-      <select class="t-select" id="filterPriority">
-        <option value="">Любой приоритет</option>
-        <option value="hot">🔴 Горячий</option>
-        <option value="warm">🟡 Тёплый</option>
-        <option value="cold">🔵 Холодный</option>
-      </select>
-      <select class="t-select" id="filterService">
-        <option value="">Все услуги</option>
-        <option value="crm">CRM</option>
-        <option value="bot">Бот</option>
-        <option value="analytics">Аналитика</option>
-        <option value="full">Полный пакет</option>
-        <option value="other">Другое</option>
-      </select>
+    <div class="toolbar">
+      <input class="t-input" id="tableSearch" placeholder="Поиск...">
+      <select class="t-select" id="filterStage"><option value="">Все этапы</option><option value="new">Новый</option><option value="contact">Связались</option><option value="demo">Демо</option><option value="proposal">КП</option><option value="won">Оплата</option><option value="lost">Архив</option></select>
+      <select class="t-select" id="filterPriority"><option value="">Приоритет</option><option value="hot">🔴 Горячий</option><option value="warm">🟡 Тёплый</option><option value="cold">🔵 Холодный</option></select>
+      <select class="t-select" id="filterService"><option value="">Услуга</option><option value="crm">CRM</option><option value="bot">Бот</option><option value="analytics">Аналитика</option><option value="full">Полный пакет</option><option value="other">Другое</option></select>
+      <button class="btn-ghost" id="exportCsv">↓ CSV</button>
     </div>
     <div class="table-wrap">
-      <table class="table">
-        <thead><tr>
-          <th>Имя</th><th>Контакт</th><th>Услуга</th>
-          <th>Этап</th><th>Приоритет</th><th>Бюджет</th>
-          <th>Follow-up</th><th>Добавлен</th><th></th>
-        </tr></thead>
+      <table class="table" id="leadsTable">
+        <thead><tr><th>Имя</th><th>Контакт</th><th>Компания</th><th>Услуга</th><th>Этап</th><th>Приоритет</th><th>Бюджет</th><th>Follow-up</th><th>Добавлен</th><th></th></tr></thead>
         <tbody id="tableBody"></tbody>
       </table>
       <div class="table-empty hidden" id="tableEmpty">Лидов нет</div>
+    </div>
+  </div>
+
+  <!-- ── ЗАДАЧИ ────────────────────────────────────────────── -->
+  <div class="view hidden" id="view-tasks">
+    <div class="toolbar">
+      <div class="task-quick-add">
+        <input class="t-input" id="taskInput" placeholder="Новая задача... (Enter)">
+        <input class="t-input" style="width:160px" type="date" id="taskDate">
+        <select class="t-select" id="taskPriority"><option value="medium">Обычная</option><option value="high">🔴 Срочная</option><option value="low">🔵 Обычная</option></select>
+        <button class="btn-primary" id="taskAddBtn">Добавить</button>
+      </div>
+      <select class="t-select" id="taskFilter"><option value="open">Открытые</option><option value="today">Сегодня</option><option value="overdue">Просроченные</option><option value="done">Выполненные</option><option value="all">Все</option></select>
+    </div>
+    <div id="tasksBoard"></div>
+  </div>
+
+  <!-- ── КЛИЕНТЫ ───────────────────────────────────────────── -->
+  <div class="view hidden" id="view-clients">
+    <div class="kpi-row" id="clientKpi"></div>
+    <div class="clients-grid" id="clientsGrid"></div>
+  </div>
+
+  <!-- ── АНАЛИТИКА ─────────────────────────────────────────── -->
+  <div class="view hidden" id="view-analytics">
+    <div class="kpi-row" id="analyticsKpi"></div>
+    <div class="analytics-grid">
+      <div class="card card--wide">
+        <div class="card__head">Лиды по неделям (последние 8 недель)</div>
+        <canvas id="weeklyCanvas" height="180"></canvas>
+      </div>
+      <div class="card">
+        <div class="card__head">Выручка по этапам</div>
+        <canvas id="revenueCanvas" height="180"></canvas>
+      </div>
+      <div class="card">
+        <div class="card__head">Источники</div>
+        <canvas id="sourceCanvas2" height="160"></canvas>
+        <div id="sourceLegend2" class="legend"></div>
+      </div>
+      <div class="card card--wide">
+        <div class="card__head">Топ сделки по бюджету</div>
+        <div id="topDeals"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ФИНАНСЫ ───────────────────────────────────────────── -->
+  <div class="view hidden" id="view-finance">
+    <div class="kpi-row" id="financeKpi"></div>
+    <div class="toolbar">
+      <select class="t-select" id="invFilter"><option value="">Все</option><option value="draft">Черновик</option><option value="sent">Выставлен</option><option value="paid">Оплачен</option><option value="overdue">Просрочен</option></select>
+      <button class="btn-primary" id="addInvBtn">+ Счёт</button>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Клиент</th><th>Услуга</th><th>Сумма</th><th>Выставлен</th><th>Срок оплаты</th><th>Статус</th><th></th></tr></thead>
+        <tbody id="invBody"></tbody>
+      </table>
+      <div class="table-empty hidden" id="invEmpty">Счетов нет</div>
+    </div>
+  </div>
+
+  <!-- ── НАСТРОЙКИ ─────────────────────────────────────────── -->
+  <div class="view hidden" id="view-settings">
+    <div class="settings-grid">
+      <div class="card">
+        <div class="card__head">Telegram уведомления</div>
+        <div class="setting-row">
+          <label>Bot Token</label>
+          <input class="t-input" id="sTgToken" placeholder="1234567890:ABC...">
+        </div>
+        <div class="setting-row">
+          <label>Chat ID</label>
+          <input class="t-input" id="sTgChat" placeholder="-100123456789">
+        </div>
+        <div class="setting-row" style="flex-direction:row;gap:8px">
+          <button class="btn-primary" id="saveTg">Сохранить</button>
+          <button class="btn-ghost" id="testTg">Тест уведомления</button>
+        </div>
+        <div class="setting-hint">Когда форма на сайте отправит заявку — придёт сообщение в Telegram. Бот нужно создать через @BotFather.</div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">Данные</div>
+        <div class="setting-row">
+          <label>Экспорт всего в JSON</label>
+          <button class="btn-ghost" id="exportJson">↓ Скачать backup</button>
+        </div>
+        <div class="setting-row">
+          <label>Импорт из JSON</label>
+          <input type="file" id="importFile" accept=".json" style="display:none">
+          <button class="btn-ghost" id="importBtn">↑ Загрузить</button>
+        </div>
+        <div class="setting-row">
+          <label>Экспорт лидов в CSV</label>
+          <button class="btn-ghost" id="exportCsvSet">↓ CSV</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">Внешний вид</div>
+        <div class="setting-row" style="flex-direction:row;align-items:center;justify-content:space-between">
+          <label style="margin:0">Акцентный цвет</label>
+          <input type="color" id="accentColor" value="#f5c518" style="width:40px;height:30px;border:none;background:none;cursor:pointer">
+        </div>
+        <div class="setting-row" style="flex-direction:row;align-items:center;justify-content:space-between">
+          <label style="margin:0">Название компании</label>
+          <input class="t-input" id="companyName" placeholder="Uniqore" style="width:160px">
+        </div>
+        <button class="btn-primary" style="margin-top:8px" id="saveAppearance">Применить</button>
+      </div>
+
+      <div class="card card--danger">
+        <div class="card__head" style="color:var(--red)">Опасная зона</div>
+        <div class="setting-row">
+          <label>Удалить все лиды</label>
+          <button class="btn-danger" id="clearLeads">Удалить лиды</button>
+        </div>
+        <div class="setting-row">
+          <label>Удалить всё</label>
+          <button class="btn-danger" id="clearAll">Сбросить CRM</button>
+        </div>
+      </div>
     </div>
   </div>
 </main>
@@ -167,81 +267,35 @@
     <form id="leadForm" class="modal__body">
       <input type="hidden" id="fId">
       <div class="f-row">
-        <div class="f-col">
-          <label>Имя *</label>
-          <input id="fName" type="text" placeholder="Иван Петров" required>
+        <div class="f-col"><label>Имя *</label><input id="fName" placeholder="Иван Петров" required></div>
+        <div class="f-col"><label>Контакт *</label><input id="fContact" placeholder="@username или +7..." required></div>
+      </div>
+      <div class="f-row">
+        <div class="f-col"><label>Компания</label><input id="fCompany" placeholder="ООО..."></div>
+        <div class="f-col"><label>Бюджет (₽)</label><input id="fBudget" type="number" placeholder="50000"></div>
+      </div>
+      <div class="f-row">
+        <div class="f-col"><label>Услуга</label>
+          <select id="fService"><option value="crm">CRM</option><option value="bot">Бот</option><option value="analytics">Аналитика</option><option value="full">Полный пакет</option><option value="other">Другое</option></select>
         </div>
-        <div class="f-col">
-          <label>Контакт *</label>
-          <input id="fContact" type="text" placeholder="@username или +7..." required>
+        <div class="f-col"><label>Источник</label>
+          <select id="fSource"><option value="site">Сайт</option><option value="tg">Telegram</option><option value="ref">Рекомендация</option><option value="cold">Холодный охват</option><option value="other">Другое</option></select>
         </div>
       </div>
       <div class="f-row">
-        <div class="f-col">
-          <label>Компания</label>
-          <input id="fCompany" type="text" placeholder="ООО Ромашка">
+        <div class="f-col"><label>Этап</label>
+          <select id="fStage"><option value="new">Новый</option><option value="contact">Связались</option><option value="demo">Демо</option><option value="proposal">КП отправлено</option><option value="won">Оплата ✓</option><option value="lost">Архив</option></select>
         </div>
-        <div class="f-col">
-          <label>Бюджет (₽)</label>
-          <input id="fBudget" type="number" placeholder="50000">
+        <div class="f-col"><label>Приоритет</label>
+          <select id="fPriority"><option value="warm">🟡 Тёплый</option><option value="hot">🔴 Горячий</option><option value="cold">🔵 Холодный</option></select>
         </div>
       </div>
       <div class="f-row">
-        <div class="f-col">
-          <label>Услуга</label>
-          <select id="fService">
-            <option value="crm">CRM</option>
-            <option value="bot">Бот</option>
-            <option value="analytics">Аналитика</option>
-            <option value="full">Полный пакет</option>
-            <option value="other">Другое</option>
-          </select>
-        </div>
-        <div class="f-col">
-          <label>Источник</label>
-          <select id="fSource">
-            <option value="site">Сайт</option>
-            <option value="tg">Telegram</option>
-            <option value="ref">Рекомендация</option>
-            <option value="other">Другое</option>
-          </select>
-        </div>
+        <div class="f-col"><label>Следующий шаг</label><input id="fNextAction" placeholder="Позвонить, отправить КП..."></div>
+        <div class="f-col"><label>Дата follow-up</label><input id="fNextDate" type="date"></div>
       </div>
-      <div class="f-row">
-        <div class="f-col">
-          <label>Этап</label>
-          <select id="fStage">
-            <option value="new">Новый</option>
-            <option value="contact">Связались</option>
-            <option value="demo">Демо</option>
-            <option value="proposal">КП отправлено</option>
-            <option value="won">Оплата ✓</option>
-            <option value="lost">Архив</option>
-          </select>
-        </div>
-        <div class="f-col">
-          <label>Приоритет</label>
-          <select id="fPriority">
-            <option value="warm">🟡 Тёплый</option>
-            <option value="hot">🔴 Горячий</option>
-            <option value="cold">🔵 Холодный</option>
-          </select>
-        </div>
-      </div>
-      <div class="f-row">
-        <div class="f-col">
-          <label>Следующий шаг</label>
-          <input id="fNextAction" type="text" placeholder="Позвонить, отправить КП...">
-        </div>
-        <div class="f-col">
-          <label>Дата follow-up</label>
-          <input id="fNextDate" type="date">
-        </div>
-      </div>
-      <div class="f-col" style="margin-top:4px">
-        <label>Заметки</label>
-        <textarea id="fNotes" rows="3" placeholder="Детали переговоров, пожелания..."></textarea>
-      </div>
+      <div class="f-col"><label>Теги (через запятую)</label><input id="fTags" placeholder="горячий, повторный, b2b"></div>
+      <div class="f-col"><label>Заметки</label><textarea id="fNotes" rows="3" placeholder="Детали, пожелания..."></textarea></div>
       <div class="modal__foot">
         <button type="button" class="btn-ghost" id="formCancel">Отмена</button>
         <button type="submit" class="btn-primary">Сохранить</button>
@@ -255,40 +309,68 @@
   <div class="modal modal--wide">
     <div class="modal__head">
       <div>
-        <div id="dName" style="font-size:18px;font-weight:700"></div>
-        <div id="dCompany" style="font-size:13px;color:var(--t3);margin-top:2px"></div>
+        <div id="dName" style="font-size:17px;font-weight:700;line-height:1.2"></div>
+        <div id="dSub" style="font-size:12px;color:var(--t3);margin-top:3px"></div>
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="icon-btn icon-btn--accent" id="dEdit">✏️</button>
-        <button class="icon-btn icon-btn--danger" id="dDelete">🗑</button>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="icon-btn" id="dEdit" title="Редактировать">✏️</button>
+        <button class="icon-btn" id="dConvert" title="Создать счёт">💰</button>
+        <button class="icon-btn icon-btn--danger" id="dDelete" title="Удалить">🗑</button>
         <button class="icon-btn" id="detailClose">✕</button>
       </div>
     </div>
-    <div class="detail">
-      <div class="detail__left">
-        <div class="detail-section">
-          <div class="ds-label">Этап</div>
-          <div class="stage-track" id="stageTrack"></div>
-        </div>
+    <div class="detail-layout">
+      <div class="detail-main">
+        <div class="stage-track" id="stageTrack"></div>
         <div class="detail-grid" id="dGrid"></div>
-        <div class="detail-section" id="dNextWrap">
-          <div class="ds-label">Следующий шаг</div>
-          <div id="dNext" class="ds-val"></div>
-        </div>
-        <div class="detail-section">
-          <div class="ds-label">Заметки</div>
-          <div id="dNotes" class="ds-val" style="white-space:pre-wrap"></div>
+        <div id="dTagsWrap"></div>
+        <div id="dNextWrap" class="info-block"></div>
+        <div class="info-block">
+          <div class="block-label">Заметки</div>
+          <div id="dNotes" class="block-val"></div>
         </div>
       </div>
-      <div class="detail__right">
-        <div class="ds-label" style="margin-bottom:10px">История</div>
-        <div id="dActivity" class="activity"></div>
-        <div class="activity-input">
-          <input type="text" id="actInput" placeholder="Добавить запись...">
+      <div class="detail-side">
+        <div class="block-label" style="margin-bottom:10px">История</div>
+        <div id="dActivity" class="activity-log"></div>
+        <div class="act-add">
+          <input id="actInput" placeholder="Добавить запись...">
           <button id="actAdd">→</button>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- MODAL: Invoice form -->
+<div class="overlay hidden" id="invOverlay">
+  <div class="modal">
+    <div class="modal__head">
+      <span id="invTitle">Новый счёт</span>
+      <button class="icon-btn" id="invClose">✕</button>
+    </div>
+    <form id="invForm" class="modal__body">
+      <input type="hidden" id="iId">
+      <div class="f-row">
+        <div class="f-col"><label>Клиент *</label><input id="iClient" placeholder="Имя клиента" required></div>
+        <div class="f-col"><label>Сумма (₽) *</label><input id="iAmount" type="number" placeholder="50000" required></div>
+      </div>
+      <div class="f-row">
+        <div class="f-col"><label>Услуга</label><input id="iService" placeholder="CRM, бот..."></div>
+        <div class="f-col"><label>Статус</label>
+          <select id="iStatus"><option value="draft">Черновик</option><option value="sent">Выставлен</option><option value="paid">Оплачен</option><option value="overdue">Просрочен</option></select>
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-col"><label>Дата выставления</label><input id="iIssue" type="date"></div>
+        <div class="f-col"><label>Срок оплаты</label><input id="iDue" type="date"></div>
+      </div>
+      <div class="f-col"><label>Примечание</label><textarea id="iNote" rows="2" placeholder="Детали..."></textarea></div>
+      <div class="modal__foot">
+        <button type="button" class="btn-ghost" id="invCancel">Отмена</button>
+        <button type="submit" class="btn-primary">Сохранить</button>
+      </div>
+    </form>
   </div>
 </div>
 
