@@ -4,110 +4,137 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Uniqore CRM</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="crm.css">
 </head>
 <body>
 
-<!-- Sidebar -->
 <aside class="sidebar">
-  <div class="sidebar__logo">
-    <span class="sidebar__logo-mark">U</span>
-    <span class="sidebar__logo-text">Uniqore CRM</span>
+  <div class="sidebar__brand">
+    <div class="sidebar__logo">U</div>
+    <div>
+      <div class="sidebar__name">Uniqore</div>
+      <div class="sidebar__sub">CRM</div>
+    </div>
   </div>
-  <nav class="sidebar__nav">
-    <a href="#" class="sidebar__link active" data-view="dashboard">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+
+  <nav class="nav">
+    <a class="nav__item active" data-view="dashboard">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
       Дашборд
     </a>
-    <a href="#" class="sidebar__link" data-view="pipeline">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <a class="nav__item" data-view="kanban">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="5" height="18" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="3" width="5" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="17" y="3" width="5" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
       Pipeline
     </a>
-    <a href="#" class="sidebar__link" data-view="leads">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" stroke="currentColor" stroke-width="1.5"/><path d="M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.5"/><path d="M21 21v-2a4 4 0 00-3-3.85" stroke="currentColor" stroke-width="1.5"/></svg>
+    <a class="nav__item" data-view="leads">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.5"/></svg>
       Лиды
     </a>
   </nav>
-  <div class="sidebar__bottom">
-    <button class="sidebar__export" id="exportBtn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="1.5"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="1.5"/></svg>
+
+  <div class="sidebar__footer">
+    <button class="sidebar__btn" id="addLeadSide">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+      Новый лид
+    </button>
+    <button class="sidebar__btn sidebar__btn--ghost" id="exportBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="1.5"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="1.5"/></svg>
       Экспорт
     </button>
   </div>
 </aside>
 
-<!-- Main -->
 <main class="main">
-
-  <!-- Header -->
   <header class="topbar">
-    <div class="topbar__title" id="viewTitle">Дашборд</div>
-    <button class="btn-add" id="addLeadBtn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg>
-      Новый лид
-    </button>
+    <div class="topbar__left">
+      <h1 class="topbar__title" id="pageTitle">Дашборд</h1>
+    </div>
+    <div class="topbar__right">
+      <div class="topbar__search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="topbar__search-icon"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="1.5"/></svg>
+        <input type="text" class="topbar__search" id="globalSearch" placeholder="Поиск лидов...">
+      </div>
+      <button class="btn-primary" id="addLeadTop">+ Новый лид</button>
+    </div>
   </header>
 
-  <!-- DASHBOARD VIEW -->
+  <!-- DASHBOARD -->
   <div class="view" id="view-dashboard">
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-card__val" id="stat-total">0</div>
-        <div class="stat-card__label">Всего лидов</div>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-card__label">Выручка в воронке</div>
+        <div class="kpi-card__val" id="kpi-revenue">0 ₽</div>
+        <div class="kpi-card__sub" id="kpi-revenue-sub">из всех активных лидов</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-card__val accent" id="stat-new">0</div>
-        <div class="stat-card__label">Новых</div>
+      <div class="kpi-card">
+        <div class="kpi-card__label">Лидов всего</div>
+        <div class="kpi-card__val" id="kpi-total">0</div>
+        <div class="kpi-card__sub" id="kpi-total-sub">—</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-card__val" id="stat-active">0</div>
-        <div class="stat-card__label">В работе</div>
+      <div class="kpi-card kpi-card--accent">
+        <div class="kpi-card__label">Конверсия</div>
+        <div class="kpi-card__val" id="kpi-conv">0%</div>
+        <div class="kpi-card__sub">закрыто от всех лидов</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-card__val green" id="stat-won">0</div>
-        <div class="stat-card__label">Закрыто</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card__val" id="stat-conv">0%</div>
-        <div class="stat-card__label">Конверсия</div>
+      <div class="kpi-card">
+        <div class="kpi-card__label">Горячих лидов</div>
+        <div class="kpi-card__val kpi-card__val--hot" id="kpi-hot">0</div>
+        <div class="kpi-card__sub">требуют внимания сейчас</div>
       </div>
     </div>
 
-    <div class="dash-grid">
-      <div class="dash-card">
-        <div class="dash-card__head">
-          <span>Последние лиды</span>
-          <a href="#" data-view="leads" class="dash-card__more">Все →</a>
+    <div class="dash-body">
+      <div class="dash-col dash-col--main">
+        <div class="section-card">
+          <div class="section-card__head">Pipeline воронка</div>
+          <canvas id="funnelCanvas" height="200"></canvas>
         </div>
-        <div id="recentLeads" class="recent-list"></div>
+        <div class="section-card">
+          <div class="section-card__head">
+            Follow-up сегодня
+            <span class="badge badge--hot" id="followupCount" style="display:none"></span>
+          </div>
+          <div id="followupList"></div>
+        </div>
       </div>
-      <div class="dash-card">
-        <div class="dash-card__head">Воронка</div>
-        <div id="funnelChart" class="funnel"></div>
+      <div class="dash-col dash-col--side">
+        <div class="section-card">
+          <div class="section-card__head">Горячие лиды 🔥</div>
+          <div id="hotLeadsList"></div>
+        </div>
+        <div class="section-card">
+          <div class="section-card__head">Последние добавленные</div>
+          <div id="recentList"></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- PIPELINE VIEW -->
-  <div class="view hidden" id="view-pipeline">
-    <div class="pipeline" id="pipelineBoard"></div>
+  <!-- KANBAN -->
+  <div class="view hidden" id="view-kanban">
+    <div class="kanban" id="kanbanBoard"></div>
   </div>
 
-  <!-- LEADS VIEW -->
+  <!-- LEADS TABLE -->
   <div class="view hidden" id="view-leads">
-    <div class="leads-toolbar">
-      <input type="text" class="search-input" id="searchInput" placeholder="Поиск по имени, контакту...">
-      <select class="filter-select" id="filterStage">
+    <div class="table-toolbar">
+      <input type="text" class="t-search" id="tableSearch" placeholder="Поиск...">
+      <select class="t-select" id="filterStage">
         <option value="">Все этапы</option>
         <option value="new">Новый</option>
         <option value="contact">Связались</option>
         <option value="demo">Демо</option>
-        <option value="proposal">КП отправлено</option>
+        <option value="proposal">КП</option>
         <option value="won">Оплата</option>
         <option value="lost">Архив</option>
       </select>
-      <select class="filter-select" id="filterService">
+      <select class="t-select" id="filterPriority">
+        <option value="">Любой приоритет</option>
+        <option value="hot">🔴 Горячий</option>
+        <option value="warm">🟡 Тёплый</option>
+        <option value="cold">🔵 Холодный</option>
+      </select>
+      <select class="t-select" id="filterService">
         <option value="">Все услуги</option>
         <option value="crm">CRM</option>
         <option value="bot">Бот</option>
@@ -116,48 +143,51 @@
         <option value="other">Другое</option>
       </select>
     </div>
-    <table class="leads-table">
-      <thead>
-        <tr>
-          <th>Имя</th>
-          <th>Контакт</th>
-          <th>Услуга</th>
-          <th>Этап</th>
-          <th>Источник</th>
-          <th>Дата</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="leadsTableBody"></tbody>
-    </table>
-    <div class="leads-empty hidden" id="leadsEmpty">Лидов нет. Добавь первый.</div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr>
+          <th>Имя</th><th>Контакт</th><th>Услуга</th>
+          <th>Этап</th><th>Приоритет</th><th>Бюджет</th>
+          <th>Follow-up</th><th>Добавлен</th><th></th>
+        </tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="table-empty hidden" id="tableEmpty">Лидов нет</div>
+    </div>
   </div>
-
 </main>
 
-<!-- MODAL: Add/Edit Lead -->
-<div class="modal-overlay hidden" id="modalOverlay">
+<!-- MODAL: Lead form -->
+<div class="overlay hidden" id="formOverlay">
   <div class="modal">
     <div class="modal__head">
-      <span id="modalTitle">Новый лид</span>
-      <button class="modal__close" id="modalClose">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="1.5"/></svg>
-      </button>
+      <span id="formTitle">Новый лид</span>
+      <button class="icon-btn" id="formClose">✕</button>
     </div>
-    <form class="modal__form" id="leadForm">
-      <input type="hidden" id="leadId">
-      <div class="form-row">
-        <div class="form-group">
+    <form id="leadForm" class="modal__body">
+      <input type="hidden" id="fId">
+      <div class="f-row">
+        <div class="f-col">
           <label>Имя *</label>
-          <input type="text" id="fName" placeholder="Иван Иванов" required>
+          <input id="fName" type="text" placeholder="Иван Петров" required>
         </div>
-        <div class="form-group">
+        <div class="f-col">
           <label>Контакт *</label>
-          <input type="text" id="fContact" placeholder="@telegram или +7..." required>
+          <input id="fContact" type="text" placeholder="@username или +7..." required>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
+      <div class="f-row">
+        <div class="f-col">
+          <label>Компания</label>
+          <input id="fCompany" type="text" placeholder="ООО Ромашка">
+        </div>
+        <div class="f-col">
+          <label>Бюджет (₽)</label>
+          <input id="fBudget" type="number" placeholder="50000">
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-col">
           <label>Услуга</label>
           <select id="fService">
             <option value="crm">CRM</option>
@@ -167,7 +197,7 @@
             <option value="other">Другое</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="f-col">
           <label>Источник</label>
           <select id="fSource">
             <option value="site">Сайт</option>
@@ -177,8 +207,8 @@
           </select>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
+      <div class="f-row">
+        <div class="f-col">
           <label>Этап</label>
           <select id="fStage">
             <option value="new">Новый</option>
@@ -189,53 +219,73 @@
             <option value="lost">Архив</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Бюджет (₽)</label>
-          <input type="number" id="fBudget" placeholder="50000">
+        <div class="f-col">
+          <label>Приоритет</label>
+          <select id="fPriority">
+            <option value="warm">🟡 Тёплый</option>
+            <option value="hot">🔴 Горячий</option>
+            <option value="cold">🔵 Холодный</option>
+          </select>
         </div>
       </div>
-      <div class="form-group">
-        <label>Заметки</label>
-        <textarea id="fNotes" rows="3" placeholder="Детали, комментарии..."></textarea>
+      <div class="f-row">
+        <div class="f-col">
+          <label>Следующий шаг</label>
+          <input id="fNextAction" type="text" placeholder="Позвонить, отправить КП...">
+        </div>
+        <div class="f-col">
+          <label>Дата follow-up</label>
+          <input id="fNextDate" type="date">
+        </div>
       </div>
-      <div class="modal__actions">
-        <button type="button" class="btn-cancel" id="modalCancel">Отмена</button>
-        <button type="submit" class="btn-save">Сохранить</button>
+      <div class="f-col" style="margin-top:4px">
+        <label>Заметки</label>
+        <textarea id="fNotes" rows="3" placeholder="Детали переговоров, пожелания..."></textarea>
+      </div>
+      <div class="modal__foot">
+        <button type="button" class="btn-ghost" id="formCancel">Отмена</button>
+        <button type="submit" class="btn-primary">Сохранить</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- MODAL: Lead Detail -->
-<div class="modal-overlay hidden" id="detailOverlay">
+<!-- MODAL: Lead detail -->
+<div class="overlay hidden" id="detailOverlay">
   <div class="modal modal--wide">
     <div class="modal__head">
-      <span id="detailName"></span>
-      <div class="modal__head-actions">
-        <button class="btn-icon" id="editFromDetail">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="1.5"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.5"/></svg>
-        </button>
-        <button class="btn-icon btn-icon--danger" id="deleteFromDetail">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="1.5"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.5"/></svg>
-        </button>
-        <button class="modal__close" id="detailClose">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="1.5"/></svg>
-        </button>
+      <div>
+        <div id="dName" style="font-size:18px;font-weight:700"></div>
+        <div id="dCompany" style="font-size:13px;color:var(--t3);margin-top:2px"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="icon-btn icon-btn--accent" id="dEdit">✏️</button>
+        <button class="icon-btn icon-btn--danger" id="dDelete">🗑</button>
+        <button class="icon-btn" id="detailClose">✕</button>
       </div>
     </div>
-    <div class="detail-body">
-      <div class="detail-info" id="detailInfo"></div>
-      <div class="detail-stage-bar" id="detailStageBar"></div>
-      <div class="detail-notes">
-        <div class="detail-notes__label">Заметки</div>
-        <div id="detailNotes" class="detail-notes__text"></div>
+    <div class="detail">
+      <div class="detail__left">
+        <div class="detail-section">
+          <div class="ds-label">Этап</div>
+          <div class="stage-track" id="stageTrack"></div>
+        </div>
+        <div class="detail-grid" id="dGrid"></div>
+        <div class="detail-section" id="dNextWrap">
+          <div class="ds-label">Следующий шаг</div>
+          <div id="dNext" class="ds-val"></div>
+        </div>
+        <div class="detail-section">
+          <div class="ds-label">Заметки</div>
+          <div id="dNotes" class="ds-val" style="white-space:pre-wrap"></div>
+        </div>
       </div>
-      <div class="detail-activity">
-        <div class="detail-notes__label">История</div>
-        <div id="detailActivity" class="activity-log"></div>
-        <div class="activity-add">
-          <input type="text" id="activityInput" placeholder="Добавить запись...">
-          <button id="activityAddBtn">+</button>
+      <div class="detail__right">
+        <div class="ds-label" style="margin-bottom:10px">История</div>
+        <div id="dActivity" class="activity"></div>
+        <div class="activity-input">
+          <input type="text" id="actInput" placeholder="Добавить запись...">
+          <button id="actAdd">→</button>
         </div>
       </div>
     </div>
