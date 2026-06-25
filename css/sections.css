@@ -1540,6 +1540,11 @@
   padding: 10px 12px;
   position: relative;
   overflow: hidden;
+  display: grid;
+  grid-template-areas: "num delta" "label label";
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 0 4px;
 }
 .ui-mockup__kpi::before {
   content: '';
@@ -1549,26 +1554,30 @@
   background: linear-gradient(90deg, transparent, rgba(245,197,24,0.4), transparent);
 }
 .ui-mockup__kpi-num {
-  font-size: 16px;
+  grid-area: num;
+  font-size: 15px;
   font-weight: 500;
   color: rgba(255,255,255,0.9);
   line-height: 1.2;
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 .ui-mockup__kpi-label {
+  grid-area: label;
   font-size: 9px;
   color: rgba(255,255,255,0.3);
-  margin-top: 2px;
+  margin-top: 3px;
 }
 .ui-mockup__kpi-delta {
-  position: absolute;
-  top: 8px; right: 10px;
+  grid-area: delta;
+  align-self: center;
   font-size: 9px;
   color: #4ade80;
   background: rgba(74,222,128,0.08);
   padding: 2px 5px;
   border-radius: 100px;
   border: 1px solid rgba(74,222,128,0.15);
+  white-space: nowrap;
 }
 
 /* Chart */
@@ -1794,27 +1803,36 @@
   border: 1px solid rgba(255,255,255,0.05);
   border-radius: 6px;
   padding: 7px 8px;
-  position: relative;
+  display: grid;
+  grid-template-areas: "val delta" "label label";
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 0 4px;
 }
 .ms-stat__val {
+  grid-area: val;
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 500;
   color: rgba(255,255,255,0.88);
   line-height: 1.2;
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 .ms-stat__label {
+  grid-area: label;
   font-size: 8px;
   color: rgba(255,255,255,0.28);
-  margin-top: 1px;
+  margin-top: 2px;
 }
 .ms-stat__delta {
-  position: absolute; top: 6px; right: 6px;
+  grid-area: delta;
+  align-self: center;
   font-size: 8px; color: #4ade80;
   background: rgba(74,222,128,0.08);
   padding: 1px 4px; border-radius: 100px;
   border: 1px solid rgba(74,222,128,0.15);
+  white-space: nowrap;
 }
 .ms-list { display: flex; flex-direction: column; gap: 4px; }
 .ms-row {
