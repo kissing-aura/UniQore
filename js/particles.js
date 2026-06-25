@@ -94,22 +94,31 @@
 
   // Boot
   function init() {
-    const canvas = document.getElementById('particle-canvas');
-    if (!canvas) return;
+    const isMobile = 'ontouchstart' in window || window.innerWidth < 900;
 
-    // Skip on mobile
-    if (window.innerWidth < 768) {
-      canvas.style.display = 'none';
-      return;
+    // Hero particles
+    const heroCanvas = document.getElementById('hero-particles');
+    if (heroCanvas && !isMobile) {
+      new ParticleNet(heroCanvas);
     }
 
-    let net = null;
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting && !net) net = new ParticleNet(canvas);
-      });
-    }, { threshold: 0 });
-    obs.observe(canvas);
+    // Niches section particles
+    const nicheCanvas = document.getElementById('particle-canvas');
+    if (nicheCanvas) {
+      if (window.innerWidth < 768) {
+        nicheCanvas.style.display = 'none';
+        return;
+      }
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            new ParticleNet(nicheCanvas);
+            obs.disconnect();
+          }
+        });
+      }, { threshold: 0 });
+      obs.observe(nicheCanvas);
+    }
   }
 
   if (document.readyState === 'loading') {

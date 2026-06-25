@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── tsParticles parallax on scroll ──
-  const particlesEl = document.getElementById('tsparticles');
+  const particlesEl = document.getElementById('hero-particles');
   if (particlesEl) {
     window.addEventListener('scroll', () => {
       const y = window.scrollY;

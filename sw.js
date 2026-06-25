@@ -1,6 +1,5 @@
 const CACHE = 'uniqore-v1';
 
-// Activate immediately, don't wait for tabs to close
 self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', event => {
@@ -11,9 +10,16 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Network-first: always try fresh from server, cache as fallback (offline)
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+
+  // Skip: video files, external CDNs, non-same-origin
+  if (
+    url.pathname.match(/\.(mp4|webm|ogv)$/) ||
+    url.origin !== location.origin
+  ) return;
 
   event.respondWith(
     fetch(event.request)

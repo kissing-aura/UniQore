@@ -30,8 +30,6 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 
-  <!-- tsParticles -->
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js" defer></script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,7 +84,7 @@
         <source src="assets/hero-bg.mp4" type="video/mp4">
       </video>
       <div class="hero__video-overlay"></div>
-      <div id="tsparticles" aria-hidden="true"></div>
+      <canvas id="hero-particles" aria-hidden="true"></canvas>
       <div class="container hero__inner">
 
         <div class="hero__split">
@@ -1257,43 +1255,6 @@
   <script>document.addEventListener('DOMContentLoaded',function(){document.body.classList.add('loaded');});</script>
 
   <!-- tsParticles init -->
-  <script>
-    window.addEventListener('load', function () {
-      if (typeof tsParticles === 'undefined') return;
-      // Skip on mobile/touch — particles are too expensive
-      if ('ontouchstart' in window || window.innerWidth < 900) return;
-      tsParticles.load('tsparticles', {
-        fullScreen: { enable: false },
-        background: { color: { value: 'transparent' } },
-        fpsLimit: 24,
-        detectRetina: false,
-        pauseOnOutsideViewport: true,
-        particles: {
-          number: { value: 28, density: { enable: false } },
-          color: { value: '#ffffff' },
-          shape: { type: 'circle' },
-          opacity: { value: { min: 0.06, max: 0.35 } },
-          size: { value: { min: 0.4, max: 2.0 }, random: true },
-          links: { enable: false },
-          move: {
-            enable: true,
-            speed: 0.25,
-            direction: 'none',
-            random: true,
-            outModes: { default: 'out' }
-          }
-        },
-        interactivity: {
-          events: {
-            onHover: { enable: false },
-            onClick: { enable: false },
-            resize: true
-          }
-        }
-      });
-    });
-  </script>
-
   <!-- JS -->
   <script src="js/animations.js" defer></script>
   <script src="js/particles.js" defer></script>
