@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uniqore CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="crm.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar__logo">
+    <span class="sidebar__logo-mark">U</span>
+    <span class="sidebar__logo-text">Uniqore CRM</span>
+  </div>
+  <nav class="sidebar__nav">
+    <a href="#" class="sidebar__link active" data-view="dashboard">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+      Дашборд
+    </a>
+    <a href="#" class="sidebar__link" data-view="pipeline">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Pipeline
+    </a>
+    <a href="#" class="sidebar__link" data-view="leads">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" stroke="currentColor" stroke-width="1.5"/><path d="M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.5"/><path d="M21 21v-2a4 4 0 00-3-3.85" stroke="currentColor" stroke-width="1.5"/></svg>
+      Лиды
+    </a>
+  </nav>
+  <div class="sidebar__bottom">
+    <button class="sidebar__export" id="exportBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="1.5"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="1.5"/></svg>
+      Экспорт
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Header -->
+  <header class="topbar">
+    <div class="topbar__title" id="viewTitle">Дашборд</div>
+    <button class="btn-add" id="addLeadBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+      Новый лид
+    </button>
+  </header>
+
+  <!-- DASHBOARD VIEW -->
+  <div class="view" id="view-dashboard">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card__val" id="stat-total">0</div>
+        <div class="stat-card__label">Всего лидов</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__val accent" id="stat-new">0</div>
+        <div class="stat-card__label">Новых</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__val" id="stat-active">0</div>
+        <div class="stat-card__label">В работе</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__val green" id="stat-won">0</div>
+        <div class="stat-card__label">Закрыто</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__val" id="stat-conv">0%</div>
+        <div class="stat-card__label">Конверсия</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card__head">
+          <span>Последние лиды</span>
+          <a href="#" data-view="leads" class="dash-card__more">Все →</a>
+        </div>
+        <div id="recentLeads" class="recent-list"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card__head">Воронка</div>
+        <div id="funnelChart" class="funnel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIPELINE VIEW -->
+  <div class="view hidden" id="view-pipeline">
+    <div class="pipeline" id="pipelineBoard"></div>
+  </div>
+
+  <!-- LEADS VIEW -->
+  <div class="view hidden" id="view-leads">
+    <div class="leads-toolbar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Поиск по имени, контакту...">
+      <select class="filter-select" id="filterStage">
+        <option value="">Все этапы</option>
+        <option value="new">Новый</option>
+        <option value="contact">Связались</option>
+        <option value="demo">Демо</option>
+        <option value="proposal">КП отправлено</option>
+        <option value="won">Оплата</option>
+        <option value="lost">Архив</option>
+      </select>
+      <select class="filter-select" id="filterService">
+        <option value="">Все услуги</option>
+        <option value="crm">CRM</option>
+        <option value="bot">Бот</option>
+        <option value="analytics">Аналитика</option>
+        <option value="full">Полный пакет</option>
+        <option value="other">Другое</option>
+      </select>
+    </div>
+    <table class="leads-table">
+      <thead>
+        <tr>
+          <th>Имя</th>
+          <th>Контакт</th>
+          <th>Услуга</th>
+          <th>Этап</th>
+          <th>Источник</th>
+          <th>Дата</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="leadsTableBody"></tbody>
+    </table>
+    <div class="leads-empty hidden" id="leadsEmpty">Лидов нет. Добавь первый.</div>
+  </div>
+
+</main>
+
+<!-- MODAL: Add/Edit Lead -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal__head">
+      <span id="modalTitle">Новый лид</span>
+      <button class="modal__close" id="modalClose">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+    <form class="modal__form" id="leadForm">
+      <input type="hidden" id="leadId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Имя *</label>
+          <input type="text" id="fName" placeholder="Иван Иванов" required>
+        </div>
+        <div class="form-group">
+          <label>Контакт *</label>
+          <input type="text" id="fContact" placeholder="@telegram или +7..." required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Услуга</label>
+          <select id="fService">
+            <option value="crm">CRM</option>
+            <option value="bot">Бот</option>
+            <option value="analytics">Аналитика</option>
+            <option value="full">Полный пакет</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Источник</label>
+          <select id="fSource">
+            <option value="site">Сайт</option>
+            <option value="tg">Telegram</option>
+            <option value="ref">Рекомендация</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Этап</label>
+          <select id="fStage">
+            <option value="new">Новый</option>
+            <option value="contact">Связались</option>
+            <option value="demo">Демо</option>
+            <option value="proposal">КП отправлено</option>
+            <option value="won">Оплата ✓</option>
+            <option value="lost">Архив</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Бюджет (₽)</label>
+          <input type="number" id="fBudget" placeholder="50000">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Заметки</label>
+        <textarea id="fNotes" rows="3" placeholder="Детали, комментарии..."></textarea>
+      </div>
+      <div class="modal__actions">
+        <button type="button" class="btn-cancel" id="modalCancel">Отмена</button>
+        <button type="submit" class="btn-save">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: Lead Detail -->
+<div class="modal-overlay hidden" id="detailOverlay">
+  <div class="modal modal--wide">
+    <div class="modal__head">
+      <span id="detailName"></span>
+      <div class="modal__head-actions">
+        <button class="btn-icon" id="editFromDetail">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="1.5"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <button class="btn-icon btn-icon--danger" id="deleteFromDetail">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="1.5"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+        <button class="modal__close" id="detailClose">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-info" id="detailInfo"></div>
+      <div class="detail-stage-bar" id="detailStageBar"></div>
+      <div class="detail-notes">
+        <div class="detail-notes__label">Заметки</div>
+        <div id="detailNotes" class="detail-notes__text"></div>
+      </div>
+      <div class="detail-activity">
+        <div class="detail-notes__label">История</div>
+        <div id="detailActivity" class="activity-log"></div>
+        <div class="activity-add">
+          <input type="text" id="activityInput" placeholder="Добавить запись...">
+          <button id="activityAddBtn">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="crm.js"></script>
+</body>
+</html>
