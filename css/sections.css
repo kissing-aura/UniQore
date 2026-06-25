@@ -59,7 +59,7 @@
 /* ── Nav logo ── */
 .nav__logo-img {
   display: block;
-  height: 30px;
+  height: 44px;
   width: auto;
   filter: invert(1);
   mix-blend-mode: screen;
@@ -68,7 +68,7 @@
 /* ── Footer logo ── */
 .footer__logo-img {
   display: block;
-  height: 26px;
+  height: 40px;
   width: auto;
   filter: invert(1);
   mix-blend-mode: screen;
