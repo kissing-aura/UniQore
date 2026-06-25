@@ -91,6 +91,10 @@
     }
   }
 
-  // Wait for deferred GSAP to be ready
-  window.addEventListener('load', () => setTimeout(init, 300));
+  // If loaded lazily — window.load already fired, run immediately
+  if (document.readyState === 'complete') {
+    setTimeout(init, 100);
+  } else {
+    window.addEventListener('load', () => setTimeout(init, 100));
+  }
 })();
