@@ -53,10 +53,11 @@
   </script>
 
 
-  <!-- Fonts -->
+  <!-- Fonts: async load to not block first paint -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 </head>
 <body>
 
@@ -99,7 +100,7 @@
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-      <video class="hero__video" autoplay muted playsinline preload="none" id="video-a">
+      <video class="hero__video" muted playsinline preload="none" id="video-a">
         <source src="assets/hero-bg.mp4" type="video/mp4">
       </video>
       <video class="hero__video hero__video--b" muted playsinline preload="none" id="video-b">

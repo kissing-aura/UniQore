@@ -2,17 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Page load fade-in
   document.body.classList.add('loaded');
 
-  // Hero video: only load on desktop (saves bandwidth + GPU on mobile)
-  const heroVideo = document.getElementById('video-a');
-  if (heroVideo) {
-    if (!('ontouchstart' in window) && window.innerWidth >= 900) {
-      heroVideo.load();
-      heroVideo.play().catch(() => {});
+  // Hero video: start after page load, desktop only
+  if ('ontouchstart' in window || window.innerWidth < 900) {
+    document.querySelectorAll('.hero__video').forEach(v => v.style.display = 'none');
+  } else {
+    window.addEventListener('load', () => {
+      const vA = document.getElementById('video-a');
       const vB = document.getElementById('video-b');
+      if (vA) { vA.load(); vA.play().catch(() => {}); }
       if (vB) vB.load();
-    } else {
-      document.querySelectorAll('.hero__video').forEach(v => v.style.display = 'none');
-    }
+    }, { once: true });
   }
 
   // ── Custom cursor tracking ──
