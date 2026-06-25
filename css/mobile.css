@@ -142,8 +142,8 @@
 
   /* Hero */
   .hero { padding-top: 80px; min-height: auto; align-items: flex-start; }
-  .hero__inner { min-height: auto; }
-  .hero__split { grid-template-columns: 1fr; gap: 32px; padding: 44px 0 32px; }
+  .hero__inner { min-height: auto; justify-content: flex-start; }
+  .hero__split { grid-template-columns: 1fr; gap: 32px; padding: 44px 0 32px; flex: none; }
   .hero__right { display: none; }
   .hero__metrics {
     flex-wrap: wrap;
