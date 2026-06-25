@@ -6,7 +6,7 @@
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
     gsap.registerPlugin(ScrollTrigger);
 
-    const isMobile = window.innerWidth < 900;
+    const isMobile = window.innerWidth <= 1024;
 
     // ── 1. Hero scrub parallax ────────────────────────────────────────────────
     const heroLeft  = document.querySelector('.hero__left');
