@@ -10,11 +10,92 @@
   <meta property="og:description" content="CRM, Telegram-боты, аналитика. Под ключ. Без шаблонов. От $700.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
+  <meta property="og:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta property="og:image:width" content="400">
+  <meta property="og:image:height" content="120">
+  <meta property="og:url" content="https://uniqore.pro/">
+  <meta property="og:site_name" content="Uniqore">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Uniqore — автоматизируем ваш бизнес за 4–6 дней">
-  <meta name="twitter:description" content="CRM, Telegram-боты, аналитика. Под ключ. Без шаблонов. От $700.">
+  <meta name="twitter:description" content="CRM, Telegram-боты, аналитика. Под ключ. Без шаблонов. От $900.">
+  <meta name="twitter:image" content="https://uniqore.pro/assets/logo-full.jpg">
   <meta name="theme-color" content="#0A0A0A">
+  <link rel="canonical" href="https://uniqore.pro/">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/logo-icon.jpg">
   <title>Uniqore — автоматизируем ваш бизнес за 4–6 дней</title>
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://uniqore.pro/#org",
+        "name": "Uniqore",
+        "alternateName": "UniQore",
+        "url": "https://uniqore.pro/",
+        "logo": "https://uniqore.pro/assets/logo-full.jpg",
+        "description": "Агентство кастомной автоматизации бизнеса. CRM, Telegram-боты, аналитика под ключ за 4–6 дней.",
+        "foundingDate": "2025",
+        "areaServed": ["BY", "RU", "UA", "PL"],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "sales",
+          "url": "https://t.me/uniqore",
+          "availableLanguage": "Russian"
+        },
+        "sameAs": ["https://t.me/uniqore"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://uniqore.pro/#website",
+        "url": "https://uniqore.pro/",
+        "name": "Uniqore",
+        "publisher": { "@id": "https://uniqore.pro/#org" },
+        "inLanguage": "ru-RU"
+      },
+      {
+        "@type": "Service",
+        "@id": "https://uniqore.pro/#service",
+        "name": "Автоматизация бизнеса под ключ",
+        "provider": { "@id": "https://uniqore.pro/#org" },
+        "description": "CRM-система, Telegram-бот, складской учёт и аналитика. Кастомная разработка за 4–6 дней.",
+        "offers": {
+          "@type": "Offer",
+          "price": "900",
+          "priceCurrency": "USD",
+          "description": "Разовая разработка полной системы автоматизации",
+          "availability": "https://schema.org/InStock"
+        },
+        "serviceType": "Business Automation",
+        "areaServed": ["BY", "RU", "UA"]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Сколько стоит автоматизация?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Базовая система — от $900 единоразово. Поддержка — $150 в месяц. Цена фиксируется в ТЗ до начала работы." }
+          },
+          {
+            "@type": "Question",
+            "name": "Сколько времени занимает разработка?",
+            "acceptedAnswer": { "@type": "Answer", "text": "4–6 рабочих дней с момента подписания ТЗ. Каждый день — апдейт о прогрессе." }
+          },
+          {
+            "@type": "Question",
+            "name": "Чем Uniqore лучше Bitrix24 или amoCRM?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Мы строим систему под ваши процессы с нуля: только нужные функции, нативная Telegram-интеграция, никаких ежемесячных лицензий за 80% функций которые вы не используете." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 
   <!-- CSS -->
   <link rel="stylesheet" href="css/reset.css">
@@ -76,6 +157,7 @@
         <li><a href="#services">Услуги</a></li>
         <li><a href="#process">Процесс</a></li>
         <li><a href="#pricing">Цены</a></li>
+        <li><a href="crm/">CRM</a></li>
       </ul>
       <a href="#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
       <button class="nav__burger" id="burger" aria-label="Меню">
@@ -1122,6 +1204,30 @@
               <div class="faq-item__a" id="faq-a-8" hidden><p>Работаем с любым малым и средним бизнесом в СНГ и Европе. Посуточная аренда, автосервисы, импортёры, медклиники, интернет-магазины, Telegram-бизнесы. Если у вас бизнес — у нас есть решение.</p></div>
             </div>
 
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-9">
+                <span>Какие данные нужны для старта?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-9" hidden><p>Только 60 минут на созвон-аудит. Мы сами разберёмся в процессах и составим ТЗ. VPS-сервер ($5–15/мес) настраиваем самостоятельно — его можете взять у нас или у себя. Никаких технических знаний с вашей стороны не нужно.</p></div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-10">
+                <span>Можно ли потом расширить систему?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-10" hidden><p>Да, система строится с учётом масштабирования. Добавить новый модуль (например, аналитику или Telegram-бота) стоит от $200–300 и занимает 1–3 дня. Клиенты на поддержке ($150/мес) получают мелкие доработки бесплатно.</p></div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-11">
+                <span>Как принимается оплата?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-11" hidden><p>50% предоплата после подписания ТЗ, 50% после сдачи системы. Принимаем банковский перевод (SWIFT/SEPA), криптовалюту (USDT, BTC), ЮMoney, по договору с юрлицом. Работаем с физическими и юридическими лицами СНГ и Европы.</p></div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -1215,6 +1321,10 @@
                 Работаем в Telegram и WhatsApp
               </div>
             </div>
+            <a href="https://t.me/uniqore" target="_blank" rel="noopener noreferrer" class="btn btn--ghost contact__tg-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.8 2.2L1 9.7c-1.4.5-1.3 1.3-.3 1.6l5.2 1.6 1.9 5.8c.3.7.5 1 1.2.9.5 0 .8-.2 1.2-.5l2.5-2.4 5.2 3.8c1 .5 1.6.3 1.9-.9L23 3.4c.4-1.4-.5-2-1.2-1.2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              Написать в Telegram
+            </a>
           </div>
           <form class="contact__form" id="contact-form" novalidate data-reveal data-reveal-delay="1">
             <div class="form-group">
@@ -1262,9 +1372,11 @@
         <a href="#guarantees">Гарантии</a>
         <a href="#faq">FAQ</a>
         <a href="#contact">Контакт</a>
+        <a href="crm/" style="color:var(--color-accent)">CRM →</a>
       </div>
       <div class="footer__contact">
         <a href="https://t.me/uniqore" target="_blank" rel="noopener noreferrer">Telegram →</a>
+        <a href="mailto:hello@uniqore.pro" style="margin-top:8px;display:block">hello@uniqore.pro</a>
       </div>
     </div>
     <div class="container footer__bottom">
@@ -1286,7 +1398,8 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' })
+        const swUrl = new URL('sw.js', location.href).href;
+        navigator.serviceWorker.register(swUrl, { updateViaCache: 'none' })
           .then(r => r.update())
           .catch(() => {});
       });

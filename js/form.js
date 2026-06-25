@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
-  // Live region for screen reader announcements
   const liveRegion = document.createElement('div');
   liveRegion.setAttribute('aria-live', 'polite');
   liveRegion.setAttribute('aria-atomic', 'true');
@@ -31,36 +30,79 @@ document.addEventListener('DOMContentLoaded', () => {
     if (errEl) errEl.textContent = '';
   }
 
+  function getTgSettings() {
+    try { return JSON.parse(localStorage.getItem('uq_settings') || '{}'); } catch { return {}; }
+  }
+
+  async function sendToTelegram(data) {
+    const { tgToken, tgChat } = getTgSettings();
+    if (!tgToken || !tgChat) return false;
+    const text = [
+      '🆕 <b>Новая заявка с сайта!</b>', '',
+      `👤 <b>Имя:</b> ${data.name}`,
+      `💼 <b>Бизнес:</b> ${data.business}`,
+      `📞 <b>Контакт:</b> ${data.contact}`,
+      data.task ? `📝 <b>Задача:</b> ${data.task}` : '',
+      '', `🕐 ${new Date().toLocaleString('ru-RU')}`,
+    ].filter(Boolean).join('\n');
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: tgChat, text, parse_mode: 'HTML' }),
+      });
+      return (await res.json()).ok === true;
+    } catch { return false; }
+  }
+
+  function saveLeadToCRM(data) {
+    try {
+      const leads = JSON.parse(localStorage.getItem('uq_leads') || '[]');
+      const uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      leads.unshift({
+        id: uid,
+        name: data.name,
+        contact: data.contact,
+        company: data.business,
+        service: 'other',
+        source: 'site',
+        stage: 'new',
+        priority: 'warm',
+        notes: data.task || '',
+        nextAction: 'Связаться и уточнить детали',
+        createdAt: new Date().toISOString(),
+        activity: [{ text: 'Лид создан с сайта', date: new Date().toISOString() }],
+      });
+      localStorage.setItem('uq_leads', JSON.stringify(leads));
+    } catch {}
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const btn = form.querySelector('button[type="submit"]');
     const originalText = btn.textContent;
-
-    // Validate required fields
     const required = form.querySelectorAll('[required]');
     let valid = true;
     required.forEach(field => {
-      if (!field.value.trim()) {
-        setFieldError(field, 'Заполните это поле');
-        valid = false;
-      } else {
-        clearFieldError(field);
-      }
+      if (!field.value.trim()) { setFieldError(field, 'Заполните это поле'); valid = false; }
+      else clearFieldError(field);
     });
+    if (!valid) { liveRegion.textContent = 'Пожалуйста, заполните все обязательные поля.'; return; }
 
-    if (!valid) {
-      liveRegion.textContent = 'Пожалуйста, заполните все обязательные поля.';
-      return;
-    }
-
-    // Submit state
     btn.textContent = 'Отправляем...';
     btn.disabled = true;
     liveRegion.textContent = '';
 
-    // Simulated submit — replace with real endpoint
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const formData = {
+      name: form.querySelector('#name')?.value?.trim() || '',
+      business: form.querySelector('#business')?.value?.trim() || '',
+      contact: form.querySelector('#contact-input')?.value?.trim() || '',
+      task: form.querySelector('#task')?.value?.trim() || '',
+    };
+
+    saveLeadToCRM(formData);
+    const sent = await sendToTelegram(formData);
+    await new Promise(resolve => setTimeout(resolve, sent ? 300 : 1200));
 
     btn.textContent = '✓ Заявка отправлена';
     btn.classList.add('btn--success');
@@ -76,10 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000);
   });
 
-  // Clear errors on input
   form.querySelectorAll('[required]').forEach(field => {
-    field.addEventListener('input', () => {
-      if (field.value.trim()) clearFieldError(field);
-    });
+    field.addEventListener('input', () => { if (field.value.trim()) clearFieldError(field); });
   });
 });
