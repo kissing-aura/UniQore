@@ -47,8 +47,8 @@
 
           // Start buffer: cards visible before horizontal begins
           // End buffer: last card visible before page scrolls down
-          const startBuffer = 150;
-          const endBuffer = 200;
+          const startBuffer = 200;
+          const endBuffer = 250;
           const totalScroll = startBuffer + scrollDist + endBuffer;
 
           gsap.timeline({
@@ -56,7 +56,7 @@
               trigger: casesTrack,
               start: 'top top',
               pin: true,
-              scrub: 1,
+              scrub: 1.5,
               end: () => `+=${totalScroll}`,
               invalidateOnRefresh: true,
               onEnter: revealOnPin,
@@ -64,7 +64,7 @@
             },
           })
           .fromTo(casesGrid, { x: 0 }, { x: 0, duration: startBuffer, ease: 'none' })
-          .fromTo(casesGrid, { x: 0 }, { x: -scrollDist, duration: scrollDist, ease: 'none' })
+          .fromTo(casesGrid, { x: 0 }, { x: -scrollDist, duration: scrollDist, ease: 'power2.inOut' })
           .fromTo(casesGrid, { x: -scrollDist }, { x: -scrollDist, duration: endBuffer, ease: 'none' });
         }
       }
