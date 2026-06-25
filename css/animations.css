@@ -1,9 +1,7 @@
 /* ── Page load fade-in ── */
 body {
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  opacity: 1;
 }
-body.loaded { opacity: 1; }
 
 /* ── Scroll reveal ── */
 [data-reveal] {

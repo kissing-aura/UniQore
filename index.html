@@ -26,15 +26,37 @@
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/mobile.css">
 
-  <!-- GSAP + ScrollTrigger -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <!-- GSAP: load after first scroll to not block initial render -->
+  <script>
+    (function() {
+      var loaded = false;
+      function loadGSAP() {
+        if (loaded) return;
+        loaded = true;
+        var s1 = document.createElement('script');
+        s1.src = 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js';
+        s1.onload = function() {
+          var s2 = document.createElement('script');
+          s2.src = 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js';
+          s2.onload = function() {
+            var s3 = document.createElement('script');
+            s3.src = 'js/gsap-effects.js';
+            document.head.appendChild(s3);
+          };
+          document.head.appendChild(s2);
+        };
+        document.head.appendChild(s1);
+      }
+      window.addEventListener('scroll', loadGSAP, { passive: true, once: true });
+      setTimeout(loadGSAP, 2500);
+    })();
+  </script>
 
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -77,7 +99,7 @@
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-      <video class="hero__video" autoplay muted playsinline preload="metadata" id="video-a">
+      <video class="hero__video" autoplay muted playsinline preload="none" id="video-a">
         <source src="assets/hero-bg.mp4" type="video/mp4">
       </video>
       <video class="hero__video hero__video--b" muted playsinline preload="none" id="video-b">
@@ -90,7 +112,7 @@
         <div class="hero__split">
 
           <!-- Левая колонка: заголовок + CTA -->
-          <div class="hero__left" data-reveal>
+          <div class="hero__left">
             <div class="hero__eyebrow">
               <span class="dot dot--green"></span>
               Принимаем проекты · без шаблонов
@@ -108,7 +130,7 @@
           </div>
 
           <!-- Правая колонка: видео в premium frame -->
-          <div class="hero__right" data-reveal data-reveal-delay="2">
+          <div class="hero__right">
             <div class="hero__frame">
               <div class="hero__frame-bar">
                 <div class="mockup-dots"><span></span><span></span><span></span></div>
@@ -197,7 +219,7 @@
         </div>
 
         <!-- Статистика — тонкая строка внизу -->
-        <div class="hero__metrics" data-reveal>
+        <div class="hero__metrics">
           <div class="hero__metric">
             <span class="hero__metric-num">4–6</span>
             <span class="hero__metric-label">дней до запуска</span>
@@ -1261,7 +1283,6 @@
   <script src="js/form.js" defer></script>
   <script src="js/main.js" defer></script>
   <script src="js/premium.js" defer></script>
-  <script src="js/gsap-effects.js" defer></script>
 
   <script>
     if ('serviceWorker' in navigator) {
