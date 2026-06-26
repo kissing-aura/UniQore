@@ -42,7 +42,7 @@ function showView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.add('hidden'));
   document.getElementById('view-'+v).classList.remove('hidden');
   document.querySelectorAll('.nav__item').forEach(el=>el.classList.toggle('active',el.dataset.view===v));
-  document.getElementById('pageTitle').textContent=TITLES[v];
+  const _pt=document.getElementById('pageTitle');if(_pt)_pt.textContent=TITLES[v];
   const renders={dashboard:renderDashboard,kanban:renderKanban,leads:renderLeads,tasks:renderTasks,clients:renderClients,analytics:renderAnalytics,finance:renderFinance,settings:renderSettings};
   renders[v]?.();
   updateBadges();
