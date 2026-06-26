@@ -223,8 +223,7 @@ function renderKanban(){
 function kanbanCard(l){
   const days=daysSince(l.createdAt);
   const tags=(l.tags||'').split(',').map(t=>t.trim()).filter(Boolean);
-  return`<div class="k-card" data-id="${l.id}" draggable="true">
-    <div class="k-card__pr">${PR[l.priority]||'🟡'}</div>
+  return`<div class="k-card" data-id="${l.id}" data-priority="${l.priority||'warm'}" draggable="true">
     ${days>3?`<div class="k-card__days">${days}д</div>`:''}
     <div class="k-card__name">${esc(l.name)}</div>
     <div class="k-card__service">${SRV[l.service]||''}</div>
@@ -469,8 +468,7 @@ document.getElementById('saveAppearance').addEventListener('click',()=>{
   s.company=document.getElementById('companyName').value.trim();
   DB.saveSettings(s);
   document.documentElement.style.setProperty('--acc',s.accent);
-  document.querySelector('.sidebar__name').textContent=s.company||'Uniqore';
-  document.querySelector('.sidebar__logo').textContent=(s.company||'U')[0].toUpperCase();
+  const bn=document.getElementById('brandName');if(bn)bn.textContent=s.company||'Uniqore';
 });
 
 document.getElementById('exportJson').addEventListener('click',()=>{
@@ -557,7 +555,7 @@ function openDetail(id){
   document.getElementById('dName').textContent=lead.name;
   document.getElementById('dSub').textContent=[lead.company,SRV[lead.service],SRC[lead.source]].filter(Boolean).join(' · ');
   const stIdx=STAGES.findIndex(s=>s.id===lead.stage);
-  document.getElementById('stageTrack').innerHTML=STAGES.map((s,i)=>`<div class="stage-step ${i<stIdx?'done':i===stIdx?'active':''}" title="${s.label}" data-stage="${s.id}"></div>`).join('');
+  document.getElementById('stageTrack').innerHTML=STAGES.map((s,i)=>`<div class="stage-step ${i<stIdx?'done':i===stIdx?'active':''}" data-stage="${s.id}">${s.label}</div>`).join('');
   document.getElementById('stageTrack').querySelectorAll('.stage-step').forEach(el=>el.addEventListener('click',()=>{updateStage(id,el.dataset.stage);openDetail(id);}));
   document.getElementById('dGrid').innerHTML=[['Контакт',esc(lead.contact)],['Приоритет',PR[lead.priority]+' '+PRL[lead.priority]],['Бюджет',lead.budget?fmtMoney(lead.budget):'—'],['Источник',SRC[lead.source]||'—'],['Добавлен',fmtDate(lead.createdAt)],['Обновлён',fmtDate(lead.updatedAt)]].map(([l,v])=>`<div class="detail-field"><div class="block-label">${l}</div><div class="block-val">${v}</div></div>`).join('');
   const tagsArr=(lead.tags||'').split(',').map(t=>t.trim()).filter(Boolean);
@@ -615,7 +613,44 @@ function closeOverlay(id){document.getElementById(id).classList.add('hidden');}
 document.getElementById('detailClose').addEventListener('click',()=>closeOverlay('detailOverlay'));
 ['invClose','invCancel'].forEach(id=>document.getElementById(id)?.addEventListener('click',()=>closeOverlay('invOverlay')));
 ['formOverlay','detailOverlay','invOverlay'].forEach(id=>document.getElementById(id)?.addEventListener('click',e=>{if(e.target.id===id)closeOverlay(id);}));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOverlay('formOverlay');closeOverlay('detailOverlay');closeOverlay('invOverlay');}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeOverlay('formOverlay');closeOverlay('detailOverlay');closeOverlay('invOverlay');closePalette();}
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();togglePalette();}
+});
+
+// ── Command Palette ───────────────────────────────────────────────────
+function togglePalette(){
+  const pal=document.getElementById('cmdPalette');
+  const mask=document.getElementById('paletteMask');
+  if(!pal)return;
+  const hidden=pal.classList.contains('hidden');
+  if(hidden){pal.classList.remove('hidden');mask.classList.remove('hidden');const inp=document.getElementById('paletteInput');if(inp){inp.value='';inp.focus();}document.getElementById('paletteResults').innerHTML='';}
+  else{pal.classList.add('hidden');mask.classList.add('hidden');}
+}
+function closePalette(){
+  document.getElementById('cmdPalette')?.classList.add('hidden');
+  document.getElementById('paletteMask')?.classList.add('hidden');
+}
+
+document.getElementById('cmdK')?.addEventListener('click',togglePalette);
+document.getElementById('paletteMask')?.addEventListener('click',closePalette);
+
+document.getElementById('paletteInput')?.addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase().trim();
+  const res=document.getElementById('paletteResults');
+  if(!q){res.innerHTML='';return;}
+  const leads=DB.leads().filter(l=>
+    l.name.toLowerCase().includes(q)||
+    (l.contact||'').toLowerCase().includes(q)||
+    (l.company||'').toLowerCase().includes(q)
+  ).slice(0,8);
+  const tasks=DB.tasks().filter(t=>!t.done&&t.title.toLowerCase().includes(q)).slice(0,4);
+  let html='';
+  if(leads.length)html+=leads.map(l=>`<div class="palette-item" data-id="${l.id}"><div class="palette-item__name">${esc(l.name)}</div><div class="palette-item__meta">${esc(l.company||'')}${l.contact?' · '+esc(l.contact):''}${l.budget?' · '+fmtMoney(l.budget):''}</div></div>`).join('');
+  if(tasks.length)html+=tasks.map(t=>`<div class="palette-item" style="opacity:.7"><div class="palette-item__name" style="font-size:12px">✓ ${esc(t.title)}</div><div class="palette-item__meta">Задача${t.deadline?' · '+fmtDate(t.deadline):''}</div></div>`).join('');
+  res.innerHTML=html||'<div class="palette-empty">Ничего не найдено</div>';
+  res.querySelectorAll('.palette-item[data-id]').forEach(el=>el.addEventListener('click',()=>{closePalette();openDetail(el.dataset.id);}));
+});
 
 // ── Navigation ────────────────────────────────────────────────────────────
 document.querySelectorAll('.nav__item').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();showView(el.dataset.view);}));
@@ -642,7 +677,7 @@ window.addEventListener('resize',()=>{
 (()=>{
   const s=DB.settings();
   if(s.accent)document.documentElement.style.setProperty('--acc',s.accent);
-  if(s.company){document.querySelector('.sidebar__name').textContent=s.company;document.querySelector('.sidebar__logo').textContent=s.company[0].toUpperCase();}
+  if(s.company){const bn=document.getElementById('brandName');if(bn)bn.textContent=s.company;}
 })();
 
 // ── Init ──────────────────────────────────────────────────────────────────
