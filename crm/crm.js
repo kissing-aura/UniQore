@@ -663,7 +663,7 @@ document.getElementById('invFilter')?.addEventListener('change',renderFinance);
 ['tableSearch','filterStage','filterPriority','filterService'].forEach(id=>document.getElementById(id)?.addEventListener('input',renderLeads));
 ['filterStage','filterPriority','filterService'].forEach(id=>document.getElementById(id)?.addEventListener('change',renderLeads));
 
-document.getElementById('globalSearch').addEventListener('input',e=>{
+document.getElementById('globalSearch')?.addEventListener('input',e=>{
   const q=e.target.value.trim();if(!q)return;
   document.getElementById('tableSearch').value=q;showView('leads');
 });
@@ -678,6 +678,36 @@ window.addEventListener('resize',()=>{
   const s=DB.settings();
   if(s.accent)document.documentElement.style.setProperty('--acc',s.accent);
   if(s.company){const bn=document.getElementById('brandName');if(bn)bn.textContent=s.company;}
+})();
+
+// ── Seed demo data (runs only once if CRM is empty) ──────────────────────
+(()=>{
+  if(DB.leads().length>0)return;
+  const d=(offset=0)=>{const t=new Date();t.setDate(t.getDate()+offset);return t.toISOString();};
+  const ds=(offset=0)=>new Date(Date.now()+offset*86400000).toISOString().slice(0,10);
+  const leads=[
+    {id:'l1',name:'Михаил Сидоров',contact:'@msidorov',company:'Ресторан «Время есть»',service:'full',source:'tg',stage:'demo',priority:'hot',budget:95000,nextAction:'Провести демо системы',nextActionDate:ds(0),tags:'ресторан,автоматизация',notes:'Хотят CRM для брони столов + Telegram-бот для гостей. Готовы стартовать в июле.',createdAt:d(-12),updatedAt:d(-3),activity:[{text:'Первый контакт в Telegram',date:d(-12)},{text:'Выслали презентацию',date:d(-8)},{text:'Этап → Демо',date:d(-3)}]},
+    {id:'l2',name:'Кирилл Зайцев',contact:'+375 29 112-44-88',company:'FORM Studio',service:'full',source:'ref',stage:'proposal',priority:'hot',budget:110000,nextAction:'Дождаться решения по КП',nextActionDate:ds(2),tags:'fashion,b2b',notes:'Брендовый магазин. Хотят полную автоматизацию: учёт товара, CRM клиентов, аналитику продаж. Пришёл от Дмитрия.',createdAt:d(-20),updatedAt:d(-1),activity:[{text:'Рекомендация от Дмитрия Краснова',date:d(-20)},{text:'Встреча в Zoom, 1.5 часа',date:d(-14)},{text:'КП отправлено на 110к₽',date:d(-1)}]},
+    {id:'l3',name:'Дмитрий Краснов',contact:'@dkrasnov_auto',company:'АвтоПрофи СТО',service:'crm',source:'site',stage:'won',priority:'warm',budget:82000,nextAction:'Поддержка 1 месяц',nextActionDate:ds(28),tags:'автосервис,клиент',notes:'Внедрили CRM для записи клиентов и учёта ремонтов. Доволен результатом, платит за поддержку.',createdAt:d(-45),updatedAt:d(-10),activity:[{text:'Заявка с сайта',date:d(-45)},{text:'Демо CRM',date:d(-38)},{text:'Подписали договор',date:d(-32)},{text:'Запуск системы',date:d(-14)},{text:'Этап → Оплата ✓',date:d(-10)}]},
+    {id:'l4',name:'Анастасия Белова',contact:'@dr_belova',company:'Стоматология Альфа',service:'crm',source:'tg',stage:'contact',priority:'warm',budget:75000,nextAction:'Отправить техническое задание',nextActionDate:ds(3),tags:'медицина,crm',notes:'Нужна CRM для управления записями пациентов и врачей. Клиника на 6 кресел.',createdAt:d(-7),updatedAt:d(-2),activity:[{text:'Написала в Telegram',date:d(-7)},{text:'Звонок 20 мин, обсудили задачу',date:d(-4)},{text:'Этап → Связались',date:d(-2)}]},
+    {id:'l5',name:'Оксана Мельник',contact:'+48 505 234 789',company:'КофейняLocal Brew',service:'bot',source:'ref',stage:'demo',priority:'warm',budget:55000,nextAction:'Показать бота в действии',nextActionDate:ds(1),tags:'horeca,бот',notes:'Хочет Telegram-бот для приёма заказов и лояльности. Польша, платят в злотых или USD.',createdAt:d(-10),updatedAt:d(-4),activity:[{text:'Пришла по рекомендации',date:d(-10)},{text:'Этап → Демо',date:d(-4)}]},
+    {id:'l6',name:'Игорь Петренко',contact:'@ipetrenko_log',company:'ТрансЛогик',service:'analytics',source:'cold',stage:'new',priority:'cold',budget:60000,nextAction:'Отправить первое КП',nextActionDate:ds(5),tags:'логистика,аналитика',notes:'Холодный охват через LinkedIn. Нужна дашборд-аналитика маршрутов и водителей.',createdAt:d(-3),updatedAt:d(-3),activity:[{text:'Холодный охват, ответил позитивно',date:d(-3)}]},
+    {id:'l7',name:'Елена Жук',contact:'@elena_beautybar',company:'Салон Beauty Bar',service:'bot',source:'tg',stage:'lost',priority:'cold',budget:35000,nextAction:'',nextActionDate:'',tags:'красота,отказ',notes:'Не прошли по бюджету. Предложили конкурент дешевле. В архиве.',createdAt:d(-30),updatedAt:d(-18),activity:[{text:'Переговоры',date:d(-28)},{text:'Отказ по бюджету',date:d(-18)},{text:'Этап → Архив',date:d(-18)}]},
+    {id:'l8',name:'Роман Соколов',contact:'+375 44 987-65-43',company:'Юридическое бюро «Лекс»',service:'analytics',source:'site',stage:'new',priority:'warm',budget:68000,nextAction:'Позвонить и уточнить задачу',nextActionDate:ds(0),tags:'юристы,b2b',notes:'Хотят аналитику загруженности юристов и воронку клиентов. Пришли с сайта.',createdAt:d(-1),updatedAt:d(-1),activity:[{text:'Заявка с сайта',date:d(-1)}]},
+  ];
+  const tasks=[
+    {id:'t1',title:'Позвонить Михаилу — подтвердить демо сегодня',leadId:'l1',leadName:'Михаил Сидоров',deadline:ds(0),priority:'high',done:false,createdAt:d(-2)},
+    {id:'t2',title:'Отправить ТЗ Анастасии (стоматология)',leadId:'l4',leadName:'Анастасия Белова',deadline:ds(3),priority:'medium',done:false,createdAt:d(-2)},
+    {id:'t3',title:'Подготовить демо бота для Оксаны',leadId:'l5',leadName:'Оксана Мельник',deadline:ds(1),priority:'high',done:false,createdAt:d(-4)},
+    {id:'t4',title:'Выставить счёт за поддержку — АвтоПрофи',leadId:'l3',leadName:'Дмитрий Краснов',deadline:ds(-2),priority:'medium',done:false,createdAt:d(-5)},
+    {id:'t5',title:'Написать холодный охват — 10 логистических компаний',leadId:'',leadName:'',deadline:ds(7),priority:'low',done:false,createdAt:d(-1)},
+  ];
+  const invoices=[
+    {id:'i1',client:'Дмитрий Краснов — АвтоПрофи СТО',amount:82000,service:'CRM система (разово)',status:'paid',issueDate:ds(-32),dueDate:ds(-25),note:'Внедрение CRM для автосервиса. Оплачено в срок.',createdAt:d(-32)},
+    {id:'i2',client:'Кирилл Зайцев — FORM Studio',amount:110000,service:'Полный пакет автоматизации',status:'sent',issueDate:ds(-1),dueDate:ds(13),note:'КП одобрен устно. Ожидаем подпись.',createdAt:d(-1)},
+  ];
+  const settings={company:'Uniqore',accent:'#F5C518',tgToken:'',tgChat:''};
+  DB.saveLeads(leads);DB.saveTasks(tasks);DB.saveInvoices(invoices);DB.saveSettings(settings);
 })();
 
 // ── Init ──────────────────────────────────────────────────────────────────
