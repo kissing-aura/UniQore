@@ -216,16 +216,21 @@
           <div class="hero__right">
             <div class="hero__mockup-toast" aria-hidden="true">
               <span class="mockup-live-dot"></span>
-              <span>Новая заявка · 2 мин назад</span>
+              <span class="mockup-toast__text">Новая заявка · Михаил С.</span>
+            </div>
+            <div class="hero__mockup-toast hero__mockup-toast--2" aria-hidden="true">
+              <span class="mockup-live-dot mockup-live-dot--green"></span>
+              <span>Лид → Оплата · +$900</span>
             </div>
             <div class="hero__frame">
               <div class="hero__frame-bar">
                 <div class="mockup-dots"><span></span><span></span><span></span></div>
-                <span class="hero__frame-url">crm.yourbusiness.com</span>
+                <span class="hero__frame-url">crm.uniqore.pro</span>
                 <div class="mockup-dots" style="opacity:0"><span></span><span></span><span></span></div>
               </div>
               <div class="ui-mockup">
-                <div class="ui-mockup__sidebar">
+                <!-- Command bar — Bloomberg Terminal style, matches CRM v4 -->
+                <div class="ui-mockup__cmdbar">
                   <div class="ui-mockup__logo-mark"></div>
                   <div class="ui-mockup__nav">
                     <div class="ui-mockup__nav-item ui-mockup__nav-item--active"></div>
@@ -233,40 +238,31 @@
                     <div class="ui-mockup__nav-item"></div>
                     <div class="ui-mockup__nav-item"></div>
                     <div class="ui-mockup__nav-item"></div>
+                    <div class="ui-mockup__nav-item"></div>
                   </div>
+                  <div class="ui-mockup__cmdbar-cta"></div>
                 </div>
                 <div class="ui-mockup__body">
-                  <div class="ui-mockup__topbar">
-                    <div class="ui-mockup__breadcrumb">
-                      <span class="ui-breadcrumb-dim">Uniqore CRM</span>
-                      <span class="ui-breadcrumb-sep">/</span>
-                      <span>Аналитика</span>
-                    </div>
-                    <div class="ui-mockup__actions">
-                      <div class="ui-mockup__btn-sm">Экспорт</div>
-                      <div class="ui-mockup__btn-sm ui-mockup__btn-accent">+ Задача</div>
-                    </div>
-                  </div>
                   <div class="ui-mockup__kpis">
                     <div class="ui-mockup__kpi">
-                      <div class="ui-mockup__kpi-num">$38 400</div>
+                      <div class="ui-mockup__kpi-num" id="mk1">$38 400</div>
                       <div class="ui-mockup__kpi-label">выручка / мес</div>
                       <div class="ui-mockup__kpi-delta">+18%</div>
                     </div>
                     <div class="ui-mockup__kpi">
-                      <div class="ui-mockup__kpi-num">184</div>
+                      <div class="ui-mockup__kpi-num" id="mk2">184</div>
                       <div class="ui-mockup__kpi-label">заявок</div>
                       <div class="ui-mockup__kpi-delta">+12%</div>
                     </div>
                     <div class="ui-mockup__kpi">
-                      <div class="ui-mockup__kpi-num">67%</div>
+                      <div class="ui-mockup__kpi-num" id="mk3">67%</div>
                       <div class="ui-mockup__kpi-label">конверсия</div>
                       <div class="ui-mockup__kpi-delta">+4%</div>
                     </div>
                   </div>
                   <div class="ui-mockup__chart">
-                    <div class="ui-mockup__chart-label">Доход · последние 8 недель</div>
-                    <div class="ui-mockup__bars">
+                    <div class="ui-mockup__chart-label">Выручка · 8 недель</div>
+                    <div class="ui-mockup__bars" id="mockupBars">
                       <div class="ui-mockup__bar" style="--h:38%"></div>
                       <div class="ui-mockup__bar" style="--h:52%"></div>
                       <div class="ui-mockup__bar" style="--h:44%"></div>
@@ -274,27 +270,30 @@
                       <div class="ui-mockup__bar" style="--h:59%"></div>
                       <div class="ui-mockup__bar ui-mockup__bar--hi" style="--h:86%"></div>
                       <div class="ui-mockup__bar" style="--h:72%"></div>
-                      <div class="ui-mockup__bar" style="--h:78%"></div>
+                      <div class="ui-mockup__bar ui-mockup__bar--hi" style="--h:91%"></div>
                     </div>
                   </div>
                   <div class="ui-mockup__table">
                     <div class="ui-mockup__row">
-                      <span class="ui-dot ui-dot--green"></span>
-                      <div class="ui-mockup__row-name">ООО Торгсервис</div>
-                      <div class="ui-mockup__row-val">$4 200</div>
-                      <div class="ui-badge ui-badge--done">Выполнено</div>
-                    </div>
-                    <div class="ui-mockup__row">
                       <span class="ui-dot ui-dot--yellow"></span>
-                      <div class="ui-mockup__row-name">Сеть ресторанов «Мамин»</div>
-                      <div class="ui-mockup__row-val">$2 800</div>
-                      <div class="ui-badge ui-badge--wip">В работе</div>
+                      <div class="ui-mockup__row-priority"></div>
+                      <div class="ui-mockup__row-name">Михаил С. · Ресторан</div>
+                      <div class="ui-mockup__row-val">$950</div>
+                      <div class="ui-badge ui-badge--wip">Демо</div>
                     </div>
                     <div class="ui-mockup__row">
-                      <span class="ui-dot ui-dot--dim"></span>
-                      <div class="ui-mockup__row-name">АО «Техстрой»</div>
-                      <div class="ui-mockup__row-val">$7 400</div>
-                      <div class="ui-badge ui-badge--wip">В работе</div>
+                      <span class="ui-dot ui-dot--green"></span>
+                      <div class="ui-mockup__row-priority ui-mockup__row-priority--hot"></div>
+                      <div class="ui-mockup__row-name">Кирилл З. · FORM Studio</div>
+                      <div class="ui-mockup__row-val">$1 100</div>
+                      <div class="ui-badge ui-badge--wip">КП</div>
+                    </div>
+                    <div class="ui-mockup__row ui-mockup__row--won">
+                      <span class="ui-dot ui-dot--green"></span>
+                      <div class="ui-mockup__row-priority"></div>
+                      <div class="ui-mockup__row-name">Дмитрий К. · АвтоПрофи</div>
+                      <div class="ui-mockup__row-val">$820</div>
+                      <div class="ui-badge ui-badge--done">Оплата ✓</div>
                     </div>
                   </div>
                 </div>

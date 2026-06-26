@@ -1505,66 +1505,88 @@
   color: var(--color-accent);
 }
 
-/* ── Hero UI Mockup Dashboard ── */
+/* ── Hero UI Mockup Dashboard — Bloomberg Terminal style (matches CRM v4) ── */
 .ui-mockup {
   display: flex;
+  flex-direction: column;
   min-height: 420px;
   font-family: var(--font-mono);
 }
-.ui-mockup__sidebar {
-  width: 52px;
-  background: rgba(255,255,255,0.025);
-  border-right: 1px solid rgba(255,255,255,0.06);
-  padding: 18px 14px;
+
+/* Horizontal command bar — replaces old sidebar */
+.ui-mockup__cmdbar {
+  height: 32px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0;
+  gap: 8px;
+  padding: 0 12px;
   flex-shrink: 0;
 }
 .ui-mockup__logo-mark {
-  width: 24px; height: 24px;
-  border-radius: 6px;
-  background: rgba(245,197,24,0.2);
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  background: rgba(245,197,24,0.15);
   border: 1px solid rgba(245,197,24,0.35);
-  margin-bottom: 20px;
+  flex-shrink: 0;
 }
-.ui-mockup__nav { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.ui-mockup__nav {
+  display: flex;
+  gap: 5px;
+  flex: 1;
+}
 .ui-mockup__nav-item {
-  height: 24px;
-  border-radius: 6px;
+  height: 10px;
+  width: 36px;
+  border-radius: 3px;
   background: rgba(255,255,255,0.05);
 }
 .ui-mockup__nav-item--active {
-  background: rgba(245,197,24,0.18);
-  border: 1px solid rgba(245,197,24,0.25);
+  background: rgba(245,197,24,0.2);
+  border: 1px solid rgba(245,197,24,0.3);
+  position: relative;
 }
+.ui-mockup__nav-item--active::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 1.5px;
+  background: rgba(245,197,24,0.7);
+  border-radius: 1px;
+}
+.ui-mockup__cmdbar-cta {
+  width: 44px; height: 14px;
+  border-radius: 4px;
+  background: rgba(245,197,24,0.3);
+  border: 1px solid rgba(245,197,24,0.4);
+  flex-shrink: 0;
+}
+
 .ui-mockup__body {
   flex: 1;
-  padding: 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
-.ui-mockup__topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+
+/* Row priority bar */
+.ui-mockup__row-priority {
+  width: 3px; height: 100%;
+  border-radius: 2px;
+  background: rgba(245,197,24,0.4);
+  align-self: stretch;
+  margin: -7px 0;
 }
-.ui-mockup__breadcrumb {
-  font-size: 10px;
-  color: rgba(255,255,255,0.35);
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-.ui-breadcrumb-dim { opacity: 0.5; }
-.ui-breadcrumb-sep { opacity: 0.25; }
-.ui-mockup__breadcrumb span:last-child { color: rgba(255,255,255,0.6); }
-.ui-mockup__actions { display: flex; gap: 6px; }
+.ui-mockup__row-priority--hot { background: rgba(255,76,76,0.6); }
+.ui-mockup__row--won { background: rgba(34,197,94,0.04) !important; border-color: rgba(34,197,94,0.1) !important; }
+
+/* Legacy classes kept for fallback */
 .ui-mockup__btn-sm {
   font-size: 9px;
   padding: 4px 8px;
@@ -2187,13 +2209,13 @@
   background: rgba(245,197,24,0.03);
 }
 
-/* ── Hero live toast notification ── */
+/* ── Hero live toast notifications ── */
 .hero__mockup-toast {
   position: absolute;
   bottom: 72px;
   right: -16px;
-  background: rgba(10,10,10,0.97);
-  border: 1px solid rgba(74,222,128,0.28);
+  background: rgba(8,8,8,0.98);
+  border: 1px solid rgba(245,197,24,0.25);
   border-radius: 8px;
   padding: 8px 14px;
   display: flex;
@@ -2202,17 +2224,32 @@
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.02em;
-  color: rgba(255,255,255,0.68);
+  color: rgba(255,255,255,0.72);
   z-index: 20;
   pointer-events: none;
   white-space: nowrap;
   animation:
-    toast-slide-in 0.55s cubic-bezier(0.22,1,0.36,1) 2s both,
-    toast-border-pulse 3.5s ease-in-out 2.8s infinite;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.6), 0 0 16px rgba(74,222,128,0.07);
+    toast-slide-in 0.55s cubic-bezier(0.22,1,0.36,1) 1.5s both,
+    toast-border-pulse 3.5s ease-in-out 2.2s infinite;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.7), 0 0 20px rgba(245,197,24,0.06);
+}
+.hero__mockup-toast--2 {
+  bottom: 128px;
+  right: -8px;
+  border-color: rgba(74,222,128,0.3);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.7), 0 0 16px rgba(74,222,128,0.05);
+  animation:
+    toast-slide-in 0.55s cubic-bezier(0.22,1,0.36,1) 3s both,
+    toast-border-pulse2 4s ease-in-out 3.8s infinite;
+}
+.mockup-live-dot--green { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.8); }
+@keyframes toast-border-pulse2 {
+  0%,100% { border-color: rgba(74,222,128,0.3); }
+  50%      { border-color: rgba(74,222,128,0.12); }
 }
 @media (max-width: 1024px) {
   .hero__mockup-toast { display: none; }
+  .hero__mockup-toast--2 { display: none; }
 }
 
 /* ── Niches AI background image ── */

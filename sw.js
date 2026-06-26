@@ -1,4 +1,4 @@
-const CACHE = 'uniqore-v4';
+const CACHE = 'uniqore-v5';
 const STATIC = [
   './',
   './index.html',
@@ -15,6 +15,7 @@ const STATIC = [
   './js/animations.js',
   './js/form.js',
   './js/premium.js',
+  './js/effects3d.js',
   './assets/logo-full.jpg',
   './assets/logo-icon.jpg',
   './assets/keas1.jpg',

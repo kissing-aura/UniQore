@@ -249,6 +249,46 @@ document.addEventListener('DOMContentLoaded', () => {
     vB.addEventListener('timeupdate', tick);
   })();
 
+  // ── Hero mockup: live bar animation ──────────────────────────────────
+  const barData = [
+    [38,52,44,68,59,86,72,91],
+    [44,58,50,72,65,88,80,95],
+    [41,55,47,70,62,89,76,93],
+    [36,50,42,65,57,84,70,88],
+  ];
+  let barSet = 0;
+  const barsEl = document.getElementById('mockupBars');
+  if (barsEl) {
+    setInterval(() => {
+      barSet = (barSet + 1) % barData.length;
+      const bars = barsEl.querySelectorAll('.ui-mockup__bar');
+      barData[barSet].forEach((h, i) => {
+        if (bars[i]) bars[i].style.setProperty('--h', h + '%');
+      });
+    }, 3200);
+  }
+
+  // ── Hero toast: cycle notifications ──────────────────────────────────
+  const toastMsgs = [
+    'Новая заявка · Михаил С.',
+    'Заявка с сайта · +1 лид',
+    'Follow-up · Кирилл З.',
+    'Новый клиент · Оксана М.',
+  ];
+  let toastIdx = 0;
+  const toastTextEl = document.querySelector('.mockup-toast__text');
+  if (toastTextEl) {
+    setInterval(() => {
+      toastIdx = (toastIdx + 1) % toastMsgs.length;
+      toastTextEl.style.opacity = '0';
+      setTimeout(() => {
+        toastTextEl.textContent = toastMsgs[toastIdx];
+        toastTextEl.style.opacity = '1';
+      }, 220);
+    }, 4000);
+    toastTextEl.style.transition = 'opacity 0.22s ease';
+  }
+
   // Active nav link on scroll
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav__links a');
