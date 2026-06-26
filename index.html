@@ -1346,6 +1346,10 @@
             <button type="submit" class="btn btn--accent btn--lg btn--full">
               Отправить заявку
             </button>
+            <div class="form__crm-badge" id="formCrmBadge">
+              <span class="form__crm-dot"></span>
+              <span id="formCrmBadgeText">Заявки сохраняются в CRM и приходят в Telegram</span>
+            </div>
             <p class="form__privacy">
               Отправляя форму, вы соглашаетесь с обработкой персональных данных.
             </p>
@@ -1394,6 +1398,19 @@
   <script src="js/form.js" defer></script>
   <script src="js/main.js" defer></script>
   <script src="js/premium.js" defer></script>
+  <script>
+    (function(){
+      var loaded3d = false;
+      function load3d(){
+        if(loaded3d)return; loaded3d=true;
+        var s=document.createElement('script');
+        s.src='js/effects3d.js';
+        document.body.appendChild(s);
+      }
+      window.addEventListener('scroll', load3d, {passive:true, once:true});
+      setTimeout(load3d, 2000);
+    })();
+  </script>
 
   <script>
     if ('serviceWorker' in navigator) {

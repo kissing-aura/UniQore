@@ -37,19 +37,29 @@ document.addEventListener('DOMContentLoaded', () => {
   async function sendToTelegram(data) {
     const { tgToken, tgChat } = getTgSettings();
     if (!tgToken || !tgChat) return false;
+    const time = new Date().toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
     const text = [
-      '🆕 <b>Новая заявка с сайта!</b>', '',
-      `👤 <b>Имя:</b> ${data.name}`,
-      `💼 <b>Бизнес:</b> ${data.business}`,
-      `📞 <b>Контакт:</b> ${data.contact}`,
-      data.task ? `📝 <b>Задача:</b> ${data.task}` : '',
-      '', `🕐 ${new Date().toLocaleString('ru-RU')}`,
-    ].filter(Boolean).join('\n');
+      '🔥 <b>Новая заявка — Uniqore</b>',
+      '─────────────────────',
+      `👤 <b>${data.name}</b>`,
+      `🏢 ${data.business || 'не указан'}`,
+      `📱 ${data.contact}`,
+      data.task ? `\n📋 <i>${data.task}</i>` : '',
+      '',
+      '─────────────────────',
+      `🕐 ${time}`,
+      `🔗 Лид добавлен в CRM автоматически`,
+    ].filter(s => s !== null && s !== undefined && s !== false).join('\n');
     try {
       const res = await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: tgChat, text, parse_mode: 'HTML' }),
+        body: JSON.stringify({
+          chat_id: tgChat,
+          text,
+          parse_mode: 'HTML',
+          disable_web_page_preview: true,
+        }),
       });
       return (await res.json()).ok === true;
     } catch { return false; }

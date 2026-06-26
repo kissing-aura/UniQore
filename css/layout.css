@@ -168,8 +168,9 @@ section { padding: var(--section-padding); }
     0 0 0 1px rgba(255,255,255,0.05),
     0 40px 100px rgba(0,0,0,0.75),
     0 0 160px rgba(245,197,24,0.14);
-  transform: perspective(1400px) rotateY(-4deg) rotateX(2deg);
+  transform: perspective(1100px) rotateX(4deg) rotateY(-10deg) translateZ(0px);
   will-change: transform;
+  transform-style: preserve-3d;
 }
 
 .hero__frame-bar {
