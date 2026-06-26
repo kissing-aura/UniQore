@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
+  // Escape HTML for Telegram HTML-mode messages
+  function tgEsc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // Rate limit: 1 submission per 30 seconds
+  let lastSubmit = 0;
+
   const liveRegion = document.createElement('div');
   liveRegion.setAttribute('aria-live', 'polite');
   liveRegion.setAttribute('aria-atomic', 'true');
@@ -41,10 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const text = [
       '🔥 <b>Новая заявка — Uniqore</b>',
       '─────────────────────',
-      `👤 <b>${data.name}</b>`,
-      `🏢 ${data.business || 'не указан'}`,
-      `📱 ${data.contact}`,
-      data.task ? `\n📋 <i>${data.task}</i>` : '',
+      `👤 <b>${tgEsc(data.name)}</b>`,
+      `🏢 ${tgEsc(data.business || 'не указан')}`,
+      `📱 ${tgEsc(data.contact)}`,
+      data.task ? `\n📋 <i>${tgEsc(data.task)}</i>` : '',
       '',
       '─────────────────────',
       `🕐 ${time}`,
@@ -91,6 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
     const originalText = btn.textContent;
+
+    // Rate limit check
+    const now = Date.now();
+    if (now - lastSubmit < 30000) {
+      liveRegion.textContent = 'Подождите немного перед повторной отправкой.';
+      return;
+    }
+
     const required = form.querySelectorAll('[required]');
     let valid = true;
     required.forEach(field => {
@@ -110,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       task: form.querySelector('#task')?.value?.trim() || '',
     };
 
+    lastSubmit = Date.now();
     saveLeadToCRM(formData);
     const sent = await sendToTelegram(formData);
     await new Promise(resolve => setTimeout(resolve, sent ? 300 : 1200));

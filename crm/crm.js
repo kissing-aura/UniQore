@@ -544,7 +544,8 @@ document.getElementById('leadForm').addEventListener('submit',e=>{
 
 async function sendTelegramNotification(lead){
   const s=DB.settings();if(!s.tgToken||!s.tgChat)return;
-  const text=`🆕 Новый лид!\n\n👤 ${lead.name}\n📞 ${lead.contact}${lead.company?'\n🏢 '+lead.company:''}\n🎯 ${SRV[lead.service]||lead.service}\n💰 ${lead.budget?fmtMoney(lead.budget):'Не указан'}\n📍 Источник: ${SRC[lead.source]||lead.source}${lead.notes?'\n📝 '+lead.notes.slice(0,200):''}`;
+  const e=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const text=`🆕 Новый лид!\n\n👤 ${e(lead.name)}\n📞 ${e(lead.contact)}${lead.company?'\n🏢 '+e(lead.company):''}\n🎯 ${e(SRV[lead.service]||lead.service)}\n💰 ${lead.budget?fmtMoney(lead.budget):'Не указан'}\n📍 Источник: ${e(SRC[lead.source]||lead.source)}${lead.notes?'\n📝 '+e(lead.notes.slice(0,200)):''}`;
   try{await fetch(`https://api.telegram.org/bot${s.tgToken}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:s.tgChat,text,parse_mode:'HTML'})});}catch{}
 }
 
