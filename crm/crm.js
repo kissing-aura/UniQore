@@ -446,6 +446,8 @@ function renderSettings(){
   document.getElementById('sTgChat').value=s.tgChat||'';
   document.getElementById('accentColor').value=s.accent||'#f5c518';
   document.getElementById('companyName').value=s.company||'Uniqore';
+  const ak=document.getElementById('sApiKey');if(ak)ak.value=s.apiKey||'';
+  const ab=document.getElementById('sApiBase');if(ab)ab.value=s.apiBase||'';
 }
 
 document.getElementById('saveTg').addEventListener('click',()=>{
@@ -460,6 +462,46 @@ document.getElementById('testTg').addEventListener('click',async()=>{
     const d=await r.json();
     if(d.ok)alert('Уведомление отправлено!');else alert('Ошибка: '+d.description);
   }catch(e){alert('Ошибка: '+e.message);}
+});
+
+// ── Site lead sync ──────────────────────────────────────────────────────
+function apiUrl(){const s=DB.settings();return (s.apiBase||'')+'/api/leads?key='+encodeURIComponent(s.apiKey||'');}
+async function syncFromServer(){
+  const s=DB.settings();
+  if(!s.apiKey)return; // not configured yet
+  try{
+    const r=await fetch(apiUrl(),{cache:'no-store'});
+    if(!r.ok)return;
+    const d=await r.json();
+    if(!d.ok||!Array.isArray(d.leads))return;
+    const local=DB.leads();
+    const ids=new Set(local.map(l=>l.id));
+    const toAdd=d.leads.filter(l=>l&&l.id&&!ids.has(l.id));
+    if(toAdd.length){
+      DB.saveLeads(toAdd.concat(local)); // server leads newest-first, prepend
+      refresh();
+    }
+  }catch{}
+}
+const _saveApi=document.getElementById('saveApi');
+if(_saveApi)_saveApi.addEventListener('click',()=>{
+  const s=DB.settings();
+  s.apiKey=document.getElementById('sApiKey').value.trim();
+  s.apiBase=document.getElementById('sApiBase').value.trim().replace(/\/$/,'');
+  DB.saveSettings(s);alert('Сохранено! Лиды с сайта будут подтягиваться автоматически.');
+  syncFromServer();
+});
+const _testApi=document.getElementById('testApi');
+if(_testApi)_testApi.addEventListener('click',async()=>{
+  const s=DB.settings();
+  if(!s.apiKey){alert('Сначала укажи API-ключ');return;}
+  try{
+    const r=await fetch(apiUrl(),{cache:'no-store'});
+    if(r.status===401){alert('Неверный API-ключ');return;}
+    const d=await r.json();
+    if(d.ok)alert('Связь есть. Лидов с сайта в базе: '+(d.leads?d.leads.length:0));
+    else alert('Ошибка ответа сервера');
+  }catch(e){alert('Не удалось подключиться: '+e.message);}
 });
 
 document.getElementById('saveAppearance').addEventListener('click',()=>{
@@ -713,3 +755,6 @@ window.addEventListener('resize',()=>{
 
 // ── Init ──────────────────────────────────────────────────────────────────
 showView('dashboard');
+// Pull leads submitted on the public site, then poll every 15s.
+syncFromServer();
+setInterval(syncFromServer, 15000);

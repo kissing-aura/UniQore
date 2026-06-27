@@ -256,6 +256,23 @@
       </div>
 
       <div class="bcard">
+        <div class="bcard__head"><span class="bcard__label">Синхронизация с сайтом</span></div>
+        <div class="setting-row">
+          <label>API-ключ</label>
+          <input class="t-input" id="sApiKey" placeholder="ключ доступа к лидам с сайта">
+        </div>
+        <div class="setting-row">
+          <label>Адрес API <span style="opacity:.5">(пусто = этот же домен)</span></label>
+          <input class="t-input" id="sApiBase" placeholder="https://uniqore.pro">
+        </div>
+        <div class="setting-row" style="flex-direction:row;gap:8px">
+          <button class="btn-gold" id="saveApi">Сохранить</button>
+          <button class="btn-ghost" id="testApi">Проверить</button>
+        </div>
+        <div class="setting-hint">Заявки с сайта подтягиваются автоматически каждые 15 секунд. Ключ выдаёт администратор сервера.</div>
+      </div>
+
+      <div class="bcard">
         <div class="bcard__head"><span class="bcard__label">Данные</span></div>
         <div class="setting-row">
           <label>JSON backup</label>

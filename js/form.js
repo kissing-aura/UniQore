@@ -71,26 +71,23 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch { return false; }
   }
 
-  function saveLeadToCRM(data) {
+  // Send the lead to the server API → stored in the shared CRM database
+  // (visible from any device) and forwarded to Telegram server-side.
+  async function postLeadToAPI(data) {
     try {
-      const leads = JSON.parse(localStorage.getItem('uq_leads') || '[]');
-      const uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-      leads.unshift({
-        id: uid,
-        name: data.name,
-        contact: data.contact,
-        company: data.business,
-        service: 'other',
-        source: 'site',
-        stage: 'new',
-        priority: 'warm',
-        notes: data.task || '',
-        nextAction: 'Связаться и уточнить детали',
-        createdAt: new Date().toISOString(),
-        activity: [{ text: 'Лид создан с сайта', date: new Date().toISOString() }],
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name,
+          business: data.business,
+          contact: data.contact,
+          task: data.task,
+          website: data.website || '', // honeypot
+        }),
       });
-      localStorage.setItem('uq_leads', JSON.stringify(leads));
-    } catch {}
+      return res.ok;
+    } catch { return false; }
   }
 
   form.addEventListener('submit', async (e) => {
@@ -125,9 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     lastSubmit = Date.now();
-    saveLeadToCRM(formData);
-    const sent = await sendToTelegram(formData);
-    await new Promise(resolve => setTimeout(resolve, sent ? 300 : 1200));
+    // Primary: store in shared CRM database (server also notifies Telegram).
+    const savedToApi = await postLeadToAPI(formData);
+    // Fallback: if the API is unreachable, try client-side Telegram (owner config).
+    if (!savedToApi) await sendToTelegram(formData);
+    await new Promise(resolve => setTimeout(resolve, savedToApi ? 300 : 1000));
 
     btn.textContent = '✓ Заявка отправлена';
     btn.classList.add('btn--success');
