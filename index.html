@@ -1404,6 +1404,16 @@
 
   <script>
     if ('serviceWorker' in navigator) {
+      // Auto-reload once when a NEW Service Worker replaces an existing one,
+      // so returning visitors never get stuck on a stale cached version.
+      // (Skipped on first-ever visit — controller is null then.)
+      const hadController = !!navigator.serviceWorker.controller;
+      let swReloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController || swReloaded) return;
+        swReloaded = true;
+        location.reload();
+      });
       window.addEventListener('load', () => {
         const swUrl = new URL('sw.js', location.href).href;
         navigator.serviceWorker.register(swUrl, { updateViaCache: 'none' })
