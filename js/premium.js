@@ -113,8 +113,8 @@
       el.addEventListener('mouseleave', () => (m.on = false));
     });
 
-    // Card 3D tilts
-    document.querySelectorAll('.service-card, .case-card, .guarantee-card').forEach(el => {
+    // Card 3D tilts — single source for every card type (no effects3d overlap)
+    document.querySelectorAll('.service-card, .case-card, .guarantee-card, .trust-card, .testimonial-card, .team-card, .pricing__card').forEach(el => {
       const c = { el, cRX: 0, cRY: 0, tRX: 0, tRY: 0, on: false };
       tilts.push(c);
       el.style.willChange = 'transform';

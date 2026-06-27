@@ -213,19 +213,10 @@
   }
 
   // ── Init all ─────────────────────────────────────────────────────────
-  initHeroDepth();
+  // Only the floating orbs live here now. Hero-frame tilt, magnetic buttons
+  // and ALL card tilts are owned solely by premium.js (single rAF + lerp).
+  // Running them here too made two systems fight over the same transforms —
+  // that was the "shake". One owner = smooth.
   initFloatingOrbs();
-  initMagneticButtons();
-  // initHeroTextDepth removed — unthrottled mousemove caused jank and fought
-  // the CSS hero entrance animation.
-  // KPI count-up is handled in animations.js (single source) — avoid double-count race.
-
-  // Card tilt — different intensities per card type
-  initCardTilt('.service-card',   { maxTilt: 9,  scale: 1.02, glowColor: 'rgba(245,197,24,0.1)' });
-  initCardTilt('.pricing__card',  { maxTilt: 6,  scale: 1.015, glowColor: 'rgba(245,197,24,0.15)' });
-  initCardTilt('.trust-card',     { maxTilt: 12, scale: 1.03, glowColor: 'rgba(255,255,255,0.06)' });
-  initCardTilt('.testimonial-card, .guarantee-card, .team-card', {
-    maxTilt: 8, scale: 1.02, glowColor: 'rgba(245,197,24,0.06)',
-  });
 
 })();

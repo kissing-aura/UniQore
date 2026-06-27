@@ -27,48 +27,10 @@
       });
     }
 
-    // ── 2. Cases horizontal pinned scroll (desktop only) ─────────────────────
-    if (!isMobile) {
-      const casesTrack = document.querySelector('.cases__track');
-      const casesGrid  = document.querySelector('.cases__grid');
-
-      if (casesTrack && casesGrid) {
-        ScrollTrigger.refresh();
-        const scrollDist = casesGrid.scrollWidth - window.innerWidth;
-
-        if (scrollDist > 0) {
-          // Force-reveal case cards when track pins — IO doesn't update fast
-          // enough for position:fixed elements, causing opacity:0 black screen
-          const revealOnPin = () => {
-            casesTrack.querySelectorAll('[data-reveal]:not(.revealed)').forEach(el => {
-              el.classList.add('revealed');
-            });
-          };
-
-          // Small buffers so the gallery doesn't feel "stuck" before/after.
-          const startBuffer = 60;
-          const endBuffer = 90;
-          const totalScroll = startBuffer + scrollDist + endBuffer;
-
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: casesTrack,
-              start: 'top top',
-              pin: true,
-              scrub: 1,
-              end: () => `+=${totalScroll}`,
-              invalidateOnRefresh: true,
-              onEnter: revealOnPin,
-              onEnterBack: revealOnPin,
-            },
-          })
-          // Linear 1:1 mapping to scroll — tight & smooth, no floaty easing lag.
-          .fromTo(casesGrid, { x: 0 }, { x: 0, duration: startBuffer, ease: 'none' })
-          .fromTo(casesGrid, { x: 0 }, { x: -scrollDist, duration: scrollDist, ease: 'none' })
-          .fromTo(casesGrid, { x: -scrollDist }, { x: -scrollDist, duration: endBuffer, ease: 'none' });
-        }
-      }
-    }
+    // ── 2. Cases — now a vertical grid with CSS scroll-reveal (no pinned
+    //       horizontal scroll). Removed because users scrolled right by
+    //       instinct, it never moved, and the pin/scrub caused jank. Vertical
+    //       grid = intuitive (scroll down) + buttery (no GSAP pin). ───────────
 
     // ── 3. Atmosphere image — motion handled by CSS Ken Burns (no GSAP
     //       transform here, it would fight the CSS animation). ────────────────

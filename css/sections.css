@@ -698,9 +698,10 @@
 .case-card {
   background: var(--color-surface);
   padding: 44px 40px;
-  transition: background var(--transition-base), box-shadow var(--transition-slow);
+  transition: background var(--transition-base), box-shadow var(--transition-spring);
   cursor: default;
   position: relative;
+  z-index: 1;
   overflow: hidden;
   border-radius: 12px;
 }
@@ -710,11 +711,21 @@
   top: 0; left: 0; right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+  z-index: 2;
 }
 .case-card:hover {
   background: var(--color-surface-2);
-  box-shadow: 0 0 80px rgba(245, 197, 24, 0.04);
+  z-index: 3;
+  box-shadow:
+    0 22px 55px -18px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(245,197,24,0.16),
+    0 0 44px rgba(245,197,24,0.07);
 }
+/* Screenshot zooms gently on hover */
+.case-card__top--screen img {
+  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.case-card:hover .case-card__top--screen img { transform: scale(1.05); }
 
 /* ── Case card: top visual block (screenshot or number) ── */
 .case-card--has-top {

@@ -1,4 +1,4 @@
-const CACHE = 'uniqore-v12';
+const CACHE = 'uniqore-v13';
 const STATIC = [
   './',
   './index.html',

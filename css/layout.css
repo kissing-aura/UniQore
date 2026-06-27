@@ -448,29 +448,22 @@ section { padding: var(--section-padding); }
 /* ── Cases grid ── */
 .cases__header { padding-bottom: 0; }
 
+/* Vertical grid — intuitive (scroll down), no pinned horizontal scroll */
 .cases__track {
-  overflow: hidden;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  padding: 40px 0;
-  cursor: grab;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 40px;
 }
-.cases__track:active { cursor: grabbing; }
-
 .cases__grid {
-  display: flex;
-  gap: 2px;
-  width: max-content;
-  flex-shrink: 0;
-  background: var(--color-border);
-  will-change: transform;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 }
-
 .case-card {
-  width: min(440px, 80vw);
-  flex-shrink: 0;
+  width: auto;
 }
+/* Odd 5th card becomes a full-width finale */
+.case-card:last-child { grid-column: 1 / -1; }
 
 /* ── Process ── */
 .process__steps {
