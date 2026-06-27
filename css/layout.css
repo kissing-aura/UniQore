@@ -47,12 +47,27 @@ section { padding: var(--section-padding); }
   margin-left: auto;
 }
 .nav__links a {
+  position: relative;
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-secondary);
   transition: color var(--transition-fast);
 }
+.nav__links a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -6px;
+  width: 100%;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.85;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--transition-spring);
+}
 .nav__links a:hover { color: var(--color-text-primary); }
+.nav__links a:hover::after,
+.nav__links a.active::after { transform: scaleX(1); }
 .nav__links a.active { color: var(--color-accent); }
 .nav__cta { margin-left: 16px; text-transform: none; letter-spacing: 0.01em; }
 .nav__burger { display: none; }

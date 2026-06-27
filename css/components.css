@@ -83,6 +83,24 @@ textarea.field--error {
   margin-top: 4px;
 }
 
+/* ── Text selection — gold brand signal ── */
+::selection      { background: rgba(245, 197, 24, 0.85); color: #000; text-shadow: none; }
+::-moz-selection { background: rgba(245, 197, 24, 0.85); color: #000; text-shadow: none; }
+
+/* ── Custom scrollbar — thin, dark, gold on hover ── */
+@media (pointer: fine) {
+  html { scrollbar-width: thin; scrollbar-color: #2a2a2a var(--color-bg); }
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-track { background: var(--color-bg); }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 8px;
+    border: 3px solid var(--color-bg);
+    transition: background var(--transition-base);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-dim); }
+}
+
 /* ── Screen reader only ── */
 .sr-only {
   position: absolute;

@@ -2265,3 +2265,31 @@
   pointer-events: none;
   filter: saturate(0.6);
 }
+
+/* ── Card elevation — hairline-grid cards pop forward on hover ──
+   No translate (would break the seamless 1px-gap grid). Instead the
+   hovered card raises its z-index and lights up with a soft shadow +
+   faint gold ring, bleeding over neighbours = premium "comes forward". */
+.trust-card,
+.service-card,
+.guarantee-card,
+.team-card,
+.testimonial-card {
+  position: relative;
+  z-index: 1;
+  transition:
+    background var(--transition-base),
+    box-shadow var(--transition-spring),
+    border-color var(--transition-base);
+}
+.trust-card:hover,
+.service-card:hover,
+.guarantee-card:hover,
+.team-card:hover,
+.testimonial-card:hover {
+  z-index: 2;
+  box-shadow:
+    0 18px 44px -14px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(245, 197, 24, 0.14),
+    0 0 36px rgba(245, 197, 24, 0.06);
+}
