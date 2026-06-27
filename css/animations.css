@@ -212,9 +212,9 @@ a:focus-visible {
   transform: scaleX(1);
 }
 
-/* ── CRM bar animation ── */
+/* ── CRM bar animation (smooth, premium breathing) ── */
 .ui-mockup__bar {
-  transition: height 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: height 1.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ── Trust cards stagger entrance ── */

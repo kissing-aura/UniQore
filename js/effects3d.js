@@ -239,7 +239,7 @@
   initFloatingOrbs();
   initHeroTextDepth();
   initMagneticButtons();
-  initCounterReveal();
+  // KPI count-up is handled in animations.js (single source) — avoid double-count race.
 
   // Card tilt — different intensities per card type
   initCardTilt('.service-card',   { maxTilt: 9,  scale: 1.02, glowColor: 'rgba(245,197,24,0.1)' });

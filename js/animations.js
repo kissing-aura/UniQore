@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         barObs.disconnect();
       });
-    }, { threshold: 0.6 });
+    }, { threshold: 0.2 });
     const frame = document.querySelector('.hero__frame');
     if (frame) barObs.observe(frame);
   }
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         kpiObs.disconnect();
       });
-    }, { threshold: 0.8 });
+    }, { threshold: 0.2 });
     const kpiGrid = kpiNums[0].closest('.ui-mockup__kpis');
     if (kpiGrid) kpiObs.observe(kpiGrid);
   }

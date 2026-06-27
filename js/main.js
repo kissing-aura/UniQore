@@ -249,23 +249,58 @@ document.addEventListener('DOMContentLoaded', () => {
     vB.addEventListener('timeupdate', tick);
   })();
 
-  // ── Hero mockup: live bar animation ──────────────────────────────────
-  const barData = [
-    [38,52,44,68,59,86,72,91],
-    [44,58,50,72,65,88,80,95],
-    [41,55,47,70,62,89,76,93],
-    [36,50,42,65,57,84,70,88],
-  ];
-  let barSet = 0;
+  // ── Hero mockup: live dashboard — revenue rising, bars breathing ──────
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const barsEl = document.getElementById('mockupBars');
-  if (barsEl) {
-    setInterval(() => {
-      barSet = (barSet + 1) % barData.length;
-      const bars = barsEl.querySelectorAll('.ui-mockup__bar');
-      barData[barSet].forEach((h, i) => {
-        if (bars[i]) bars[i].style.setProperty('--h', h + '%');
+  const revEl  = document.getElementById('mk1'); // выручка
+  const reqEl  = document.getElementById('mk2'); // заявок
+  const convEl = document.getElementById('mk3'); // конверсия
+
+  // Bars gently breathe and slowly trend upward (the "growth" story),
+  // then loop. Starts after the intro grow-in so the two don't fight.
+  if (!prefersReduced && barsEl) {
+    const bars = Array.from(barsEl.querySelectorAll('.ui-mockup__bar'));
+    const base = [38, 52, 44, 68, 59, 86, 72, 91];
+    let trend = 0;
+    function liveWave() {
+      if (document.hidden) return;
+      trend = (trend + 1.5) % 14; // slow climb, then resets
+      bars.forEach((bar, i) => {
+        const wobble = Math.random() * 7 - 3;
+        let h = base[i] + trend * (0.4 + i * 0.05) + wobble;
+        h = Math.max(22, Math.min(97, h));
+        bar.style.setProperty('--h', h.toFixed(0) + '%');
       });
-    }, 3200);
+    }
+    setTimeout(() => { liveWave(); setInterval(liveWave, 3000); }, 4200);
+  }
+
+  // Revenue counts upward over time; requests / conversion tick subtly.
+  if (!prefersReduced && revEl) {
+    let rev = 38400, req = 184, conv = 67;
+    function animateNumber(el, to, prefix, suffix) {
+      const from = parseInt((el.textContent || '0').replace(/[^\d]/g, ''), 10) || to;
+      const t0 = performance.now(), dur = 850;
+      (function step(now) {
+        const p = Math.min(1, (now - t0) / dur);
+        const e = 1 - Math.pow(1 - p, 3);
+        el.textContent = prefix + Math.round(from + (to - from) * e).toLocaleString('ru-RU') + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      })(performance.now());
+    }
+    function rise() {
+      if (document.hidden) return;
+      rev += Math.floor(Math.random() * 380) + 70;
+      if (rev > 43200) rev = 38400 + Math.floor(Math.random() * 300); // loop the story
+      animateNumber(revEl, rev, '$', '');
+      if (reqEl && Math.random() > 0.45) reqEl.textContent = (++req).toString();
+      if (convEl) {
+        if (Math.random() > 0.6) conv = Math.min(74, conv + 1);
+        else if (Math.random() > 0.82) conv = Math.max(61, conv - 1);
+        convEl.textContent = conv + '%';
+      }
+    }
+    setTimeout(() => setInterval(rise, 5000), 6500);
   }
 
   // ── Hero toast: cycle notifications ──────────────────────────────────
