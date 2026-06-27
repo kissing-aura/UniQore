@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       heroMetricsObs.unobserve(entry.target);
     });
-  }, { threshold: 0.7 });
+  }, { threshold: 0.3 });
   const heroMetrics = document.querySelector('.hero__metrics');
   if (heroMetrics) heroMetricsObs.observe(heroMetrics);
 

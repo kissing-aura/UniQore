@@ -3,6 +3,20 @@ body {
   opacity: 1;
 }
 
+/* ── Hero first-screen entrance — staggered rise on load ──
+   Pure CSS (plays immediately, no JS/scroll wait → LCP-safe).
+   fill-mode 'both' shows the from-state during the delay = no flicker. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__left .hero__eyebrow { animation: hero-rise 0.7s cubic-bezier(0.22,1,0.36,1) 0.10s both; }
+  .hero__title               { animation: hero-rise 0.75s cubic-bezier(0.22,1,0.36,1) 0.20s both; }
+  .hero__subtitle            { animation: hero-rise 0.7s cubic-bezier(0.22,1,0.36,1) 0.40s both; }
+  .hero__left .hero__actions { animation: hero-rise 0.7s cubic-bezier(0.22,1,0.36,1) 0.54s both; }
+  .hero__metrics             { animation: hero-rise 0.8s cubic-bezier(0.22,1,0.36,1) 0.68s both; }
+}
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(20px); }
+}
+
 /* ── Scroll reveal ── */
 [data-reveal] {
   opacity: 0;
