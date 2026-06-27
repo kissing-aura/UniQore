@@ -147,6 +147,8 @@ section { padding: var(--section-padding); }
 /* Right: video in premium frame */
 .hero__right {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 .hero__right::before {
   content: '';
