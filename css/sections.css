@@ -56,24 +56,31 @@
 /* ── Nav CTA sentence case ── */
 .nav__cta.btn { text-transform: none; letter-spacing: 0.01em; }
 
-/* ── Nav logo ── */
-.nav__logo-img {
-  display: block;
-  height: 44px;
-  width: auto;
-  filter: invert(1);
-  mix-blend-mode: screen;
+/* ── Logo (crisp vector wordmark) ── */
+.nav__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
 }
-
-/* ── Footer logo ── */
-.footer__logo-img {
-  display: block;
-  height: 40px;
-  width: auto;
-  filter: invert(1);
-  mix-blend-mode: screen;
-  margin-bottom: 12px;
+.nav__logo-mark {
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 9px rgba(245,197,24,0.45));
+  transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
 }
+.nav__logo:hover .nav__logo-mark {
+  transform: rotate(-14deg) scale(1.06);
+}
+.nav__logo-text {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+}
+.footer__logo { margin-bottom: 14px; }
 
 /* ── Bento video cell ── */
 .bento-cell--mockup {
