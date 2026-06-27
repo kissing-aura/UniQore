@@ -1489,7 +1489,7 @@
 .footer__brand img { margin-bottom: 12px; }
 .footer__brand p {
   font-size: 13px;
-  color: var(--color-text-muted);
+  color: rgba(255,255,255,0.62);
   line-height: 1.6;
 }
 .footer__links { display: flex; flex-direction: column; gap: 10px; }
