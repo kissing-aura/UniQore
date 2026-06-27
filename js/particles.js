@@ -86,10 +86,22 @@
       this.raf = requestAnimationFrame((t) => this._animate(t));
     }
 
+    pause()  { if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; } }
+    resume() { if (!this.raf) { this._lastTs = 0; this._animate(); } }
+
     destroy() {
       cancelAnimationFrame(this.raf);
       window.removeEventListener('resize', this._onResize);
     }
+  }
+
+  // Pause a canvas's animation loop while it's scrolled out of view (saves
+  // CPU during the rest of the page → smoother scrolling everywhere).
+  function pauseWhenOffscreen(canvas, net) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => e.isIntersecting ? net.resume() : net.pause());
+    }, { threshold: 0 });
+    io.observe(canvas);
   }
 
   // Boot
@@ -99,7 +111,7 @@
     // Hero particles
     const heroCanvas = document.getElementById('hero-particles');
     if (heroCanvas && !isMobile) {
-      new ParticleNet(heroCanvas);
+      pauseWhenOffscreen(heroCanvas, new ParticleNet(heroCanvas));
     }
 
     // Niches section particles
@@ -112,7 +124,7 @@
       const obs = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
-            new ParticleNet(nicheCanvas);
+            pauseWhenOffscreen(nicheCanvas, new ParticleNet(nicheCanvas));
             obs.disconnect();
           }
         });

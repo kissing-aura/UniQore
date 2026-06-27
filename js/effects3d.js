@@ -55,55 +55,33 @@
       glowColor   = 'rgba(245,197,24,0.12)',
     } = opts;
 
+    // Transform-only tilt — GPU-composited, no per-frame box-shadow or
+    // gradient repaints (those caused the jank). rAF-throttled.
     document.querySelectorAll(selector).forEach(card => {
-      card.style.transition = 'transform 0.12s ease, box-shadow 0.12s ease';
       card.style.transformOrigin = 'center center';
-      card.style.position = 'relative';
-      card.style.overflow = 'hidden';
-
-      // Glare overlay
-      const glare = document.createElement('div');
-      glare.setAttribute('aria-hidden', 'true');
-      glare.style.cssText = [
-        'position:absolute', 'inset:0', 'border-radius:inherit',
-        'pointer-events:none', 'opacity:0', 'z-index:10',
-        'transition:opacity 0.3s ease',
-        'mix-blend-mode:overlay',
-      ].join(';');
-      card.appendChild(glare);
-
-      let leaveTimer = null;
+      card.style.willChange = 'transform';
+      let raf = null;
 
       card.addEventListener('mouseenter', () => {
-        clearTimeout(leaveTimer);
-        card.style.transition = 'transform 0.1s ease, box-shadow 0.15s ease';
+        card.style.transition = 'transform 0.12s ease';
       });
 
       card.addEventListener('mousemove', e => {
-        const r = card.getBoundingClientRect();
-        const nx = (e.clientX - r.left)  / r.width  - 0.5; // −0.5…0.5
-        const ny = (e.clientY - r.top)   / r.height - 0.5;
-        const rX = (-ny * maxTilt).toFixed(2);
-        const rY = ( nx * maxTilt).toFixed(2);
-
-        card.style.transform = `perspective(${perspective}px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(${scale},${scale},${scale})`;
-        card.style.boxShadow = `
-          ${-nx * 18}px ${-ny * 18}px 40px rgba(0,0,0,0.25),
-          0 0 0 1px ${glowColor}
-        `;
-
-        glare.style.opacity = glareOpacity.toString();
-        glare.style.background = `radial-gradient(ellipse at ${(nx+0.5)*100}% ${(ny+0.5)*100}%, rgba(255,255,255,0.22) 0%, transparent 65%)`;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const r = card.getBoundingClientRect();
+          const nx = (e.clientX - r.left) / r.width  - 0.5;
+          const ny = (e.clientY - r.top)  / r.height - 0.5;
+          const rX = (-ny * maxTilt).toFixed(2);
+          const rY = ( nx * maxTilt).toFixed(2);
+          card.style.transform = `perspective(${perspective}px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(${scale},${scale},${scale})`;
+        });
       }, { passive: true });
 
       card.addEventListener('mouseleave', () => {
-        glare.style.opacity = '0';
-        card.style.transition = 'transform 0.55s cubic-bezier(0.23,1,0.32,1), box-shadow 0.55s ease';
+        cancelAnimationFrame(raf);
+        card.style.transition = 'transform 0.5s cubic-bezier(0.23,1,0.32,1)';
         card.style.transform  = '';
-        card.style.boxShadow  = '';
-        leaveTimer = setTimeout(() => {
-          card.style.transition = 'transform 0.12s ease, box-shadow 0.12s ease';
-        }, 600);
       });
     });
   }
@@ -237,8 +215,9 @@
   // ── Init all ─────────────────────────────────────────────────────────
   initHeroDepth();
   initFloatingOrbs();
-  initHeroTextDepth();
   initMagneticButtons();
+  // initHeroTextDepth removed — unthrottled mousemove caused jank and fought
+  // the CSS hero entrance animation.
   // KPI count-up is handled in animations.js (single source) — avoid double-count race.
 
   // Card tilt — different intensities per card type

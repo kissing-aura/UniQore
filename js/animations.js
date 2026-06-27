@@ -180,28 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { passive: true });
 
-  // ── 8. Card spotlight (antimetal pattern) ──
-  document.querySelectorAll('.service-card, .case-card, .guarantee-card, .trust-card, .mockup-showcase, .team-card').forEach(card => {
-    const spot = document.createElement('div');
-    spot.className = 'card-spotlight';
-    card.appendChild(spot);
-
-    let spotTicking = false;
-    card.addEventListener('mousemove', (e) => {
-      if (spotTicking) return;
-      spotTicking = true;
-      requestAnimationFrame(() => {
-        const r = card.getBoundingClientRect();
-        const x = e.clientX - r.left;
-        const y = e.clientY - r.top;
-        spot.style.transform = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`;
-        spot.style.opacity = '1';
-        spotTicking = false;
-      });
-    }, { passive: true });
-
-    card.addEventListener('mouseleave', () => { spot.style.opacity = '0'; });
-  });
+  // ── 8. Card spotlight removed — was a 3rd cursor-tracking repaint layered
+  // on top of the 3D tilt + CSS hover elevation (caused jank). Cards now use
+  // transform-only tilt + the CSS lift/glow on hover, which is smooth.
 
   // ── 9. Niche rows stagger on scroll ──
   const nicheObs = new IntersectionObserver((entries) => {

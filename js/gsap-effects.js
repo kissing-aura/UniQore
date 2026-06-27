@@ -56,29 +56,25 @@
               trigger: casesTrack,
               start: 'top top',
               pin: true,
-              scrub: 1.5,
+              pinType: 'transform',
+              anticipatePin: 1,
+              scrub: 1,
               end: () => `+=${totalScroll}`,
               invalidateOnRefresh: true,
               onEnter: revealOnPin,
               onEnterBack: revealOnPin,
             },
           })
+          // Linear 1:1 mapping to scroll — tight & smooth, no floaty easing lag.
           .fromTo(casesGrid, { x: 0 }, { x: 0, duration: startBuffer, ease: 'none' })
-          .fromTo(casesGrid, { x: 0 }, { x: -scrollDist, duration: scrollDist, ease: 'power2.inOut' })
+          .fromTo(casesGrid, { x: 0 }, { x: -scrollDist, duration: scrollDist, ease: 'none' })
           .fromTo(casesGrid, { x: -scrollDist }, { x: -scrollDist, duration: endBuffer, ease: 'none' });
         }
       }
     }
 
-    // ── 3. Atmosphere image parallax ─────────────────────────────────────────
-    const atmPhoto = document.querySelector('.atm-img__photo');
-    if (atmPhoto) {
-      gsap.to(atmPhoto, {
-        yPercent: 10,
-        ease: 'none',
-        scrollTrigger: { trigger: '.atm-img', start: 'top bottom', end: 'bottom top', scrub: true },
-      });
-    }
+    // ── 3. Atmosphere image — motion handled by CSS Ken Burns (no GSAP
+    //       transform here, it would fight the CSS animation). ────────────────
 
     // ── 4. Niches bg image parallax ──────────────────────────────────────────
     const nichesBg = document.querySelector('.niches__bg-img');
@@ -88,6 +84,26 @@
         ease: 'none',
         scrollTrigger: { trigger: '.niches', start: 'top bottom', end: 'bottom top', scrub: true },
       });
+    }
+
+    // ── 5. Niches headline travels DOWN with the list (to "Telegram-бизнес") ──
+    if (!isMobile) {
+      const nHead = document.querySelector('.niches__headline');
+      const nList = document.querySelector('.niches__list');
+      if (nHead && nList) {
+        const drift = () => Math.max(0, nList.offsetHeight - nHead.offsetHeight - 24);
+        gsap.fromTo(nHead, { y: 0 }, {
+          y: drift,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.niches__inner',
+            start: 'top 65%',
+            end: 'bottom 85%',
+            scrub: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
     }
   }
 

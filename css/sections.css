@@ -546,8 +546,8 @@
   align-items: start;
 }
 .niches__headline {
-  position: sticky;
-  top: 120px;
+  position: relative;
+  will-change: transform;
 }
 .niches__big-text {
   font-family: var(--font-display);
@@ -2109,13 +2109,20 @@
   height: 100%;
   object-fit: cover;
   object-position: center 40%;
-  opacity: 0.55;
-  transform: scale(1.04);
-  transition: transform 12s ease;
+  opacity: 0.62;
+  transform: scale(1.1);
   display: block;
+  filter: saturate(1.05) contrast(1.04);
 }
-.atm-img:hover .atm-img__photo {
-  transform: scale(1.0);
+/* Continuous cinematic Ken Burns — slow zoom + drift = alive, premium */
+@media (prefers-reduced-motion: no-preference) {
+  .atm-img__photo {
+    animation: atm-kenburns 28s ease-in-out infinite alternate;
+  }
+}
+@keyframes atm-kenburns {
+  from { transform: scale(1.08) translate3d(0, 0, 0); }
+  to   { transform: scale(1.18) translate3d(-2.5%, -2.2%, 0); }
 }
 .atm-img::before,
 .atm-img::after {
