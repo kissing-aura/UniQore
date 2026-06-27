@@ -45,10 +45,9 @@
             });
           };
 
-          // Start buffer: cards visible before horizontal begins
-          // End buffer: last card visible before page scrolls down
-          const startBuffer = 200;
-          const endBuffer = 250;
+          // Small buffers so the gallery doesn't feel "stuck" before/after.
+          const startBuffer = 60;
+          const endBuffer = 90;
           const totalScroll = startBuffer + scrollDist + endBuffer;
 
           gsap.timeline({
@@ -56,8 +55,6 @@
               trigger: casesTrack,
               start: 'top top',
               pin: true,
-              pinType: 'transform',
-              anticipatePin: 1,
               scrub: 1,
               end: () => `+=${totalScroll}`,
               invalidateOnRefresh: true,
