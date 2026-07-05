@@ -2,16 +2,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Page load fade-in
   document.body.classList.add('loaded');
 
-  // Hero video: start after page load, desktop only
+  // Hero video: только десктоп. Зовём .play() по готовности (БЕЗ .load() — тот
+  // сбрасывал видео на паузу). autoplay+loop в HTML, .play() — подстраховка.
   if ('ontouchstart' in window || window.innerWidth < 900) {
-    document.querySelectorAll('.hero__video').forEach(v => v.style.display = 'none');
+    document.querySelectorAll('.hero__video').forEach(v => { v.style.display = 'none'; v.pause(); v.removeAttribute('autoplay'); });
   } else {
-    window.addEventListener('load', () => {
-      const vA = document.getElementById('video-a');
-      const vB = document.getElementById('video-b');
-      if (vA) { vA.load(); vA.play().catch(() => {}); }
-      if (vB) vB.load();
-    }, { once: true });
+    const vA = document.getElementById('video-a');
+    if (vA) {
+      const tryPlay = () => vA.play().catch(() => {});
+      if (vA.readyState >= 2) tryPlay();
+      vA.addEventListener('loadeddata', tryPlay);
+      vA.addEventListener('canplay', tryPlay);
+    }
   }
 
   // ── Custom cursor tracking ──
@@ -206,13 +208,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Pricing: «что входит» — раскрытие
+  (function initUnpack() {
+    const toggle = document.getElementById('unpackToggle');
+    const panel = document.getElementById('unpackPanel');
+    if (!toggle || !panel) return;
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!open));
+      panel.hidden = open;
+    });
+  })();
+
   // Seamless video crossfade loop
   (function initVideoLoop() {
     const FADE = 1.3;
     const TRIGGER = FADE + 0.35;
     const vA = document.getElementById('video-a');
     const vB = document.getElementById('video-b');
-    if (!vA || !vB) return;
+    if (!vA || !vB || 'ontouchstart' in window || window.innerWidth < 900) return;
 
     let active = vA, standby = vB, busy = false;
     // Init z-index so standby can appear over active regardless of DOM order
@@ -272,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bar.style.setProperty('--h', h.toFixed(0) + '%');
       });
     }
-    setTimeout(() => { liveWave(); setInterval(liveWave, 3000); }, 4200);
+    setTimeout(() => { liveWave(); setInterval(liveWave, 3000); }, 900);
   }
 
   // Revenue counts upward over time; requests / conversion tick subtly.
@@ -300,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
         convEl.textContent = conv + '%';
       }
     }
-    setTimeout(() => setInterval(rise, 5000), 6500);
+    setTimeout(() => { rise(); setInterval(rise, 4000); }, 1600);
   }
 
   // ── Hero toast: cycle notifications ──────────────────────────────────
@@ -313,11 +327,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let toastIdx = 0;
   const toastTextEl = document.querySelector('.mockup-toast__text');
   if (toastTextEl) {
+    // niche-switcher.js может подменить набор через window.__nicheToasts
+    const getMsgs = () => (window.__nicheToasts && window.__nicheToasts.length) ? window.__nicheToasts : toastMsgs;
     setInterval(() => {
-      toastIdx = (toastIdx + 1) % toastMsgs.length;
+      const msgs = getMsgs();
+      toastIdx = (toastIdx + 1) % msgs.length;
       toastTextEl.style.opacity = '0';
       setTimeout(() => {
-        toastTextEl.textContent = toastMsgs[toastIdx];
+        toastTextEl.textContent = msgs[toastIdx];
         toastTextEl.style.opacity = '1';
       }, 220);
     }, 4000);

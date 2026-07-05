@@ -1,3 +1,144 @@
+/* ── Niche switcher (hero mockup) ── */
+.niche-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.niche-switch__hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-right: 2px;
+}
+.niche-chip {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 7px 15px;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+.niche-chip:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+}
+.niche-chip.is-active {
+  color: #0A0A0A;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* строка-результат под мокапом — конкретная выгода под нишу */
+.niche-result {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 22px;
+  transition: opacity 0.2s ease;
+}
+.niche-result__mark {
+  color: var(--color-accent);
+  font-weight: 700;
+  font-size: 15px;
+  align-self: center;
+}
+.niche-result__main {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(16px, 1.5vw, 20px);
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+.niche-result__sub {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+/* ── «Зеркало бизнеса» — калькулятор потерь ── */
+.mirror {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 480px;
+}
+.mirror__q {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+.mirror__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.mirror__opts button {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+.mirror__opts button:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+}
+.mirror__opts button.is-active {
+  color: #0A0A0A;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  font-weight: 600;
+}
+.mirror__result {
+  margin-top: 8px;
+  padding: 20px 22px;
+  border: 1px solid rgba(245, 197, 24, 0.22);
+  border-radius: var(--radius-lg);
+  background: rgba(245, 197, 24, 0.04);
+  animation: mirrorIn 0.4s var(--transition-spring) both;
+}
+@keyframes mirrorIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.mirror__loss {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(22px, 2.6vw, 30px);
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+.mirror__num {
+  font-family: var(--font-mono);
+  color: var(--color-accent);
+}
+.mirror__sub {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.mirror__cta {
+  margin-top: 16px;
+}
+
 /* ── Buttons ── */
 .btn {
   display: inline-flex;
@@ -113,3 +254,12 @@ textarea.field--error {
   white-space: nowrap;
   border: 0;
 }
+
+/* skip-to-content для клавиатуры (a11y) */
+.skip-link{position:absolute;left:-9999px;top:0;z-index:100000;background:var(--color-accent,#F5C518);color:#000;padding:10px 16px;border-radius:0 0 8px 0;font-weight:600;text-decoration:none}
+.skip-link:focus{left:0}
+
+/* hero risk-reversal под CTA — настоящая гарантия у точки решения */
+.hero__assurance{display:flex;align-items:flex-start;gap:9px;margin-top:22px;max-width:470px;font-family:var(--font-body);font-size:13px;line-height:1.5;color:var(--color-text-secondary)}
+.hero__assurance svg{color:var(--color-accent);flex-shrink:0;margin-top:1px}
+.hero__assurance strong{color:var(--color-text-primary);font-weight:600}

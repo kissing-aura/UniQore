@@ -22,9 +22,11 @@
   <meta name="twitter:image" content="https://uniqore.pro/assets/logo-full.jpg">
   <meta name="theme-color" content="#0A0A0A">
   <link rel="canonical" href="https://uniqore.pro/">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="assets/logo-icon.jpg">
   <title>Uniqore — автоматизируем ваш бизнес за 4–6 дней</title>
 
   <!-- Schema.org structured data -->
@@ -45,10 +47,9 @@
         "contactPoint": {
           "@type": "ContactPoint",
           "contactType": "sales",
-          "url": "https://t.me/uniqore",
           "availableLanguage": "Russian"
         },
-        "sameAs": ["https://t.me/uniqore"]
+        "sameAs": []
       },
       {
         "@type": "WebSite",
@@ -99,14 +100,14 @@
   </script>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/typography.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/sections.css">
-  <link rel="stylesheet" href="css/animations.css">
-  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/reset.css?v=20260630i">
+  <link rel="stylesheet" href="css/variables.css?v=20260630i">
+  <link rel="stylesheet" href="css/typography.css?v=20260630i">
+  <link rel="stylesheet" href="css/layout.css?v=20260630i">
+  <link rel="stylesheet" href="css/components.css?v=20260630i">
+  <link rel="stylesheet" href="css/sections.css?v=20260630i">
+  <link rel="stylesheet" href="css/animations.css?v=20260630i">
+  <link rel="stylesheet" href="css/mobile.css?v=20260630i">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -134,14 +135,14 @@
     })();
   </script>
 
-
   <!-- Fonts: async load to not block first paint -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 </head>
 <body>
+  <a class="skip-link" href="#main">К содержимому</a>
 
   <!-- CUSTOM CURSOR -->
   <div class="cursor" id="cursor" aria-hidden="true"></div>
@@ -183,15 +184,15 @@
     </ul>
   </div>
 
-  <main>
+  <main id="main">
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-      <video class="hero__video" muted playsinline preload="none" id="video-a" aria-hidden="true">
-        <source src="assets/hero-bg.mp4" type="video/mp4">
+      <video class="hero__video" muted loop autoplay playsinline preload="auto" id="video-a" poster="assets/hero-poster.jpg" aria-hidden="true">
+        <source src="assets/hero-bg-min.mp4" type="video/mp4">
       </video>
-      <video class="hero__video hero__video--b" muted playsinline preload="none" id="video-b" aria-hidden="true">
-        <source src="assets/hero-bg.mp4" type="video/mp4">
+      <video class="hero__video hero__video--b" muted loop playsinline preload="auto" id="video-b" aria-hidden="true">
+        <source src="assets/hero-bg-min.mp4" type="video/mp4">
       </video>
       <div class="hero__video-overlay"></div>
       <canvas id="hero-particles" aria-hidden="true"></canvas>
@@ -214,6 +215,10 @@
             <div class="hero__actions">
               <a href="#contact" class="btn btn--accent btn--lg">Обсудить проект</a>
               <a href="#cases" class="btn btn--ghost btn--lg">Смотреть кейсы →</a>
+            </div>
+            <div class="hero__assurance" data-reveal data-reveal-delay="3">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Фиксированная цена в договоре. Сдаём в срок или вернём <strong>20% за каждую неделю</strong> просрочки.</span>
             </div>
           </div>
 
@@ -636,7 +641,7 @@
           <article class="case-card case-card--has-top" data-reveal>
             <div class="case-card__top case-card__top--screen">
               <div class="case-card__chrome"><span></span><span></span><span></span></div>
-              <img src="assets/keis3.jpg" alt="Магазин Telegram Stars" loading="eager">
+              <img src="assets/keis3.jpg" alt="Магазин Telegram Stars" loading="lazy">
             </div>
             <div class="case-card__body">
               <div class="case-card__meta">
@@ -658,7 +663,7 @@
           <article class="case-card case-card--has-top" data-reveal>
             <div class="case-card__top case-card__top--screen">
               <div class="case-card__chrome"><span></span><span></span><span></span></div>
-              <img src="assets/keis4.jpg" alt="Автосервис трекинг" loading="eager">
+              <img src="assets/keis4.jpg" alt="Автосервис трекинг" loading="lazy">
             </div>
             <div class="case-card__body">
               <div class="case-card__meta">
@@ -680,7 +685,7 @@
           <article class="case-card case-card--has-top" data-reveal>
             <div class="case-card__top case-card__top--screen">
               <div class="case-card__chrome"><span></span><span></span><span></span></div>
-              <img src="assets/keis5.jpg" alt="Стоматологическая CRM" loading="eager">
+              <img src="assets/keis5.jpg" alt="Стоматологическая CRM" loading="lazy">
             </div>
             <div class="case-card__body">
               <div class="case-card__meta">
@@ -838,55 +843,6 @@
               </div>
             </div>
             <div class="mockup-showcase__caption">Утром видите цифры — вечером принимаете решения</div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- TESTIMONIALS SECTION -->
-    <section class="testimonials" id="testimonials">
-      <div class="container">
-        <h2 class="section-title">Говорят<br><em>наши клиенты</em></h2>
-        <div class="testimonials__grid">
-
-          <div class="testimonial-card" data-reveal>
-            <div class="testimonial-card__quote" aria-hidden="true">"</div>
-            <div class="testimonial-card__stars" aria-label="5 звёзд">★★★★★</div>
-            <p class="testimonial-card__text">Запустили CRM за 4 дня. Раньше вели всё в Excel — теряли сделки, забывали перезвонить. Сейчас система сама напоминает менеджеру. Продажи выросли на 28% уже в первый месяц.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">ДК</div>
-              <div class="testimonial-card__info">
-                <div class="testimonial-card__name">Дмитрий К.</div>
-                <div class="testimonial-card__role">Автосервис · Москва · 12 сотрудников</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="testimonial-card" data-reveal data-reveal-delay="1">
-            <div class="testimonial-card__quote" aria-hidden="true">"</div>
-            <div class="testimonial-card__stars" aria-label="5 звёзд">★★★★★</div>
-            <p class="testimonial-card__text">4 квартиры вести без системы — ад. Звонки, блокноты, путаница с датами. Теперь бот сам принимает брони, отправляет данные гостю и напоминает об уборке. Я просто смотрю в телефон.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">АС</div>
-              <div class="testimonial-card__info">
-                <div class="testimonial-card__name">Анна С.</div>
-                <div class="testimonial-card__role">Посуточная аренда · Минск · 4 объекта</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="testimonial-card" data-reveal data-reveal-delay="2">
-            <div class="testimonial-card__quote" aria-hidden="true">"</div>
-            <div class="testimonial-card__stars" aria-label="5 звёзд">★★★★★</div>
-            <p class="testimonial-card__text">Делаем импорт мебели из Польши. Менеджеры не знали где фура и что в ней. Теперь CRM с GPS-трекингом — клиент видит статус заказа в Telegram. Возвратов стало меньше на 40%.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">МР</div>
-              <div class="testimonial-card__info">
-                <div class="testimonial-card__name">Максим Р.</div>
-                <div class="testimonial-card__role">Мебельный импорт · Варшава · 8 сотрудников</div>
-              </div>
-            </div>
           </div>
 
         </div>
@@ -1068,6 +1024,104 @@
           </div>
         </div>
 
+        <!-- Что входит в стоимость — раскрывающийся блок -->
+        <div class="pricing__unpack" data-reveal>
+          <button class="unpack__toggle" id="unpackToggle" aria-expanded="false" aria-controls="unpackPanel">
+            <span class="unpack__toggle-main">
+              <span class="unpack__toggle-label">Что входит в стоимость</span>
+              <span class="unpack__toggle-sub">36 функций под ключ — не просто «CRM-система»</span>
+            </span>
+            <span class="unpack__toggle-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+
+          <div class="unpack__panel" id="unpackPanel" hidden>
+            <div class="unpack__grid">
+
+              <div class="unpack__cat">
+                <div class="unpack__cat-head"><span class="unpack__cat-n">01</span> CRM-ядро под вашу нишу</div>
+                <ul>
+                  <li>Воронки под каждое направление бизнеса</li>
+                  <li>Карточки клиентов, сделок, объектов</li>
+                  <li>Задачи, календарь, напоминания</li>
+                  <li>Роли и права доступа для сотрудников</li>
+                  <li>Приватность: каждый видит только своё</li>
+                  <li>Мгновенный поиск по всей базе</li>
+                </ul>
+              </div>
+
+              <div class="unpack__cat">
+                <div class="unpack__cat-head"><span class="unpack__cat-n">02</span> Telegram-боты и мессенджеры</div>
+                <ul>
+                  <li>Личный Telegram-бот компании</li>
+                  <li>Уведомления сотрудникам прямо в личку</li>
+                  <li>Мгновенный пинг о каждой новой заявке</li>
+                  <li>Приём обращений клиентов в бота</li>
+                  <li>Обратная связь команды → руководителю</li>
+                </ul>
+              </div>
+
+              <div class="unpack__cat">
+                <div class="unpack__cat-head"><span class="unpack__cat-n">03</span> Приём лидов и интеграции</div>
+                <ul>
+                  <li>Сайт и лендинг → заявка сразу в CRM</li>
+                  <li>Авито, Циан, соцсети → лиды в одну базу</li>
+                  <li>Формы, вебхуки, Zapier</li>
+                  <li>Авто-назначение лида на ответственного</li>
+                  <li>Дедупликация контактов — без дублей</li>
+                </ul>
+              </div>
+
+              <div class="unpack__cat">
+                <div class="unpack__cat-head"><span class="unpack__cat-n">04</span> Аналитика и финансы</div>
+                <ul>
+                  <li>Дашборды по всем направлениям</li>
+                  <li>Финмодель: выручка, комиссии, расходы, чистыми</li>
+                  <li>План-факт по целям компании</li>
+                  <li>Активность сотрудников — кто сколько делает</li>
+                  <li>Отчёты за любой период</li>
+                </ul>
+              </div>
+
+              <div class="unpack__cat unpack__cat--new">
+                <div class="unpack__cat-head"><span class="unpack__cat-n">05</span> <span class="unpack__cat-badge">NEW</span> AI uni-агент — CRM с мозгом</div>
+                <ul>
+                  <li>«Советы дня»: что горит в базе прямо сейчас</li>
+                  <li>Чат «спроси про базу» человеческим языком</li>
+                  <li>Считает деньги кодом — без выдумок</li>
+                  <li>Подсказывает по рекламе и лидам</li>
+                  <li>Работает 24/7 и знает весь ваш бизнес</li>
+                </ul>
+              </div>
+
+              <div class="unpack__cat">
+                <div class="unpack__cat-head"><span class="unpack__cat-n">06</span> Автоматизация процессов</div>
+                <ul>
+                  <li>Автосчёт комиссий по типу сделки</li>
+                  <li>Горящие платежи и дедлайны на виду</li>
+                  <li>Автоматические напоминания</li>
+                  <li>Договоры и документы по шаблону</li>
+                  <li>Все процессы настраивает владелец — без нас</li>
+                </ul>
+              </div>
+
+              <div class="unpack__cat">
+                <div class="unpack__cat-head"><span class="unpack__cat-n">07</span> Запуск и инфраструктура</div>
+                <ul>
+                  <li>Хостинг на наших серверах</li>
+                  <li>Домен, SSL, ежедневные бэкапы</li>
+                  <li>Защита данных и безопасность</li>
+                  <li>Обучение команды работе в системе</li>
+                  <li>Документация + поддержка по подписке</li>
+                </ul>
+              </div>
+
+            </div>
+            <p class="unpack__foot">Точный набор функций фиксируем в ТЗ под ваш бизнес до старта. Что-то из списка не нужно — уберём, чего-то не хватает — добавим.</p>
+          </div>
+        </div>
+
         <!-- Рыночное сравнение -->
         <div class="pricing__market" data-reveal>
           <div class="market-compare">
@@ -1171,6 +1225,22 @@
             </div>
 
             <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-7">
+                <span>А вдруг результат меня не устроит?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-7" hidden><p>До оплаты мы бесплатно разбираем ваш бизнес и фиксируем точный объём и результат в ТЗ — вы заранее знаете, что получите, за сколько и в какой срок. Цена и сроки закреплены в договоре: не сдадим вовремя — вернём 20% за каждую неделю просрочки. Вы платите за конкретный прописанный результат, а не за «попробуем».</p></div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-13">
+                <span>Кто имеет доступ к моим данным?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-13" hidden><p>Только вы и ваша команда — вход в систему по паролю. Мы не передаём ваши данные третьим лицам, по запросу подписываем NDA. База клиентов остаётся полностью вашей.</p></div>
+            </div>
+
+            <div class="faq-item">
               <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-4">
                 <span>Что если потом нужны изменения?</span>
                 <span class="faq-item__icon" aria-hidden="true">+</span>
@@ -1200,14 +1270,6 @@
                 <span class="faq-item__icon" aria-hidden="true">+</span>
               </button>
               <div class="faq-item__a" id="faq-a-8" hidden><p>Работаем с любым малым и средним бизнесом в СНГ и Европе. Посуточная аренда, автосервисы, импортёры, медклиники, интернет-магазины, Telegram-бизнесы. Если у вас бизнес — у нас есть решение.</p></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-9">
-                <span>Какие данные нужны для старта?</span>
-                <span class="faq-item__icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-item__a" id="faq-a-9" hidden><p>Только 60 минут на созвон-аудит. Дальше всё берём на себя — ТЗ, разработку, серверы, запуск. Никаких технических знаний и настроек с вашей стороны не нужно.</p></div>
             </div>
 
             <div class="faq-item">
@@ -1319,10 +1381,6 @@
                 Работаем в Telegram и WhatsApp
               </div>
             </div>
-            <a href="https://t.me/uniqore" target="_blank" rel="noopener noreferrer" class="btn btn--ghost contact__tg-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.8 2.2L1 9.7c-1.4.5-1.3 1.3-.3 1.6l5.2 1.6 1.9 5.8c.3.7.5 1 1.2.9.5 0 .8-.2 1.2-.5l2.5-2.4 5.2 3.8c1 .5 1.6.3 1.9-.9L23 3.4c.4-1.4-.5-2-1.2-1.2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-              Написать в Telegram
-            </a>
           </div>
           <form class="contact__form" id="contact-form" novalidate data-reveal data-reveal-delay="1">
             <div class="form-group">
@@ -1393,43 +1451,35 @@
 
   <!-- tsParticles init -->
   <!-- JS -->
-  <script src="js/animations.js" defer></script>
-  <script src="js/particles.js" defer></script>
-  <script src="js/form.js" defer></script>
-  <script src="js/main.js" defer></script>
-  <script src="js/premium.js" defer></script>
-  <script>
-    (function(){
-      var loaded3d = false;
-      function load3d(){
-        if(loaded3d)return; loaded3d=true;
-        var s=document.createElement('script');
-        s.src='js/effects3d.js';
-        document.body.appendChild(s);
-      }
-      window.addEventListener('scroll', load3d, {passive:true, once:true});
-      setTimeout(load3d, 2000);
-    })();
-  </script>
+  <script src="js/animations.js?v=20260630i" defer></script>
+  <script src="js/particles.js?v=20260630i" defer></script>
+  <script src="js/form.js?v=20260630i" defer></script>
+  <script src="js/main.js?v=20260630i" defer></script>
+  <script src="js/niche-switcher.js?v=20260630i" defer></script>
+  <script src="js/premium.js?v=20260630i" defer></script>
+  <!-- effects3d.js отключён: дублировал premium.js (тилт/магнит/счётчики) и вызывал конфликт transform. premium.js — единственный источник. -->
 
   <script>
+    /* Принудительный сброс залипшего кэша у ВСЕХ посетителей: убиваем любой
+       service worker и чистим кэши. Один раз перезагружаемся, если SW был —
+       чтобы подтянуть свежие CSS/JS. SW больше НЕ регистрируем (сайт всегда свежий). */
     if ('serviceWorker' in navigator) {
-      // Auto-reload once when a NEW Service Worker replaces an existing one,
-      // so returning visitors never get stuck on a stale cached version.
-      // (Skipped on first-ever visit — controller is null then.)
-      const hadController = !!navigator.serviceWorker.controller;
-      let swReloaded = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!hadController || swReloaded) return;
-        swReloaded = true;
-        location.reload();
-      });
-      window.addEventListener('load', () => {
-        const swUrl = new URL('sw.js', location.href).href;
-        navigator.serviceWorker.register(swUrl, { updateViaCache: 'none' })
-          .then(r => r.update())
-          .catch(() => {});
-      });
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        var had = regs.length > 0 || !!navigator.serviceWorker.controller;
+        Promise.all(regs.map(function (r) { return r.unregister(); })).then(function () {
+          var done = function () {
+            if (had && !sessionStorage.getItem('__swFlushed')) {
+              sessionStorage.setItem('__swFlushed', '1');
+              location.reload();
+            }
+          };
+          if (window.caches) {
+            caches.keys().then(function (ks) {
+              return Promise.all(ks.map(function (k) { return caches.delete(k); }));
+            }).then(done, done);
+          } else { done(); }
+        });
+      }).catch(function () {});
     }
   </script>
 </body>

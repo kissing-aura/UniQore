@@ -84,20 +84,8 @@
       heroEl.addEventListener('mouseleave', () => { mouse.nx = 0; mouse.ny = 0; });
     }
 
-    // Frame tilt on hover
-    if (frameState.wrap) {
-      frameState.wrap.addEventListener('mousemove', e => {
-        const r = frameState.wrap.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width  - 0.5;
-        const y = (e.clientY - r.top)  / r.height - 0.5;
-        frameState.tRY = x * 18 - 2;
-        frameState.tRX = -y * 11;
-      });
-      frameState.wrap.addEventListener('mouseleave', () => {
-        frameState.tRY = -3;
-        frameState.tRX = 0;
-      });
-    }
+    // Hero-фрейм: фиксированный лёгкий наклон, БЕЗ слежения за мышью
+    // (убрано «меняется ракурс / сайт скачет» — фрейм больше не ездит за курсором)
 
     // Magnetic CTAs
     document.querySelectorAll('.btn--accent, .btn--ghost').forEach(el => {

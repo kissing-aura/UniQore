@@ -14,7 +14,7 @@
   --color-white:          #FFFFFF;
 
   /* Typography */
-  --font-display: 'Instrument Serif', serif;
+  --font-display: 'Manrope', 'Inter', sans-serif;
   --font-body:    'Inter', sans-serif;
   --font-mono:    'JetBrains Mono', monospace;
 

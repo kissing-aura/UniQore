@@ -1023,6 +1023,120 @@
   line-height: 1.6;
 }
 
+/* ── Pricing: что входит (раскрывающийся) ── */
+.pricing__unpack { margin-bottom: 48px; }
+.unpack__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.unpack__toggle:hover { border-color: var(--color-border-hover); background: var(--color-surface-2); }
+.unpack__toggle-main { display: flex; flex-direction: column; gap: 5px; }
+.unpack__toggle-label {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.unpack__toggle-sub { font-size: 13px; color: var(--color-text-secondary); }
+.unpack__toggle-icon {
+  flex: 0 0 auto;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-accent);
+  transition: transform 0.3s ease, border-color 0.25s ease;
+}
+.unpack__toggle:hover .unpack__toggle-icon { border-color: var(--color-accent); }
+.unpack__toggle[aria-expanded="true"] .unpack__toggle-icon { transform: rotate(180deg); }
+
+.unpack__panel {
+  border: 1px solid var(--color-border);
+  border-top: none;
+  padding: 8px 32px 32px;
+  background: var(--color-surface);
+}
+.unpack__panel[hidden] { display: none; }
+.unpack__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+}
+.unpack__cat {
+  background: var(--color-surface);
+  padding: 26px 24px;
+}
+.unpack__cat-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+.unpack__cat-n {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-accent);
+  opacity: 0.7;
+}
+.unpack__cat ul { display: flex; flex-direction: column; gap: 9px; }
+.unpack__cat li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+.unpack__cat li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px;
+  width: 11px; height: 6px;
+  border-left: 1.5px solid var(--color-accent);
+  border-bottom: 1.5px solid var(--color-accent);
+  transform: rotate(-45deg);
+  opacity: 0.85;
+}
+/* Карточка новинки — uni-агент */
+.unpack__cat--new {
+  background: linear-gradient(180deg, rgba(245,197,24,0.06), rgba(245,197,24,0.015));
+  box-shadow: inset 0 0 0 1px rgba(245,197,24,0.35);
+}
+.unpack__cat--new .unpack__cat-head { color: var(--color-accent); }
+.unpack__cat--new li { color: var(--color-text-primary); }
+.unpack__cat-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-bg);
+  background: var(--color-accent);
+  padding: 3px 7px;
+  border-radius: var(--radius-sm);
+}
+.unpack__foot {
+  margin-top: 24px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  max-width: 620px;
+}
+
 /* ── Pricing market compare ── */
 .pricing__market { margin-bottom: 48px; }
 .market-compare {
