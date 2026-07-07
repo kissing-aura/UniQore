@@ -69,6 +69,7 @@
   .ba-table::after { display: none; }
   .ba-row__after { background: rgba(245,197,24,0.06); }
   .ba-row__before::before, .ba-row__after::before { width: 20px; height: 20px; }
+  .contact__bgvideo { display: none; } /* на мобилке видео-фон не грузим */
 
   /* Mockups */
   .mockups__grid { grid-template-columns: 1fr; gap: 32px; }
