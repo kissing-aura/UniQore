@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05070d">
+<title>DENTALIS · ИИ-диагностика снимка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#05070d; --bg2:#0a0f1c; --line:rgba(120,180,255,.12);
+    --cyan:#3fd8ff; --cyan2:#6ae9ff; --mint:#31e0b0; --red:#ff4d5e; --amber:#ffb020;
+    --txt:#e9f2ff; --txt2:#8ea6c8; --txt3:#5b719a;
+    --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif;
+  }
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--txt); font-family:var(--sans);
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(63,216,255,.10), transparent 55%),
+      radial-gradient(90% 90% at 50% 120%, rgba(49,224,176,.07), transparent 60%),
+      var(--bg);
+  }
+  /* moving scan grid */
+  body::before{
+    content:''; position:fixed; inset:-2px; z-index:0; pointer-events:none; opacity:.45;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:46px 46px; mask:radial-gradient(120% 90% at 50% 40%,#000 30%,transparent 80%);
+    animation:gridDrift 18s linear infinite;
+  }
+  @keyframes gridDrift{to{background-position:0 46px,46px 0}}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(120% 100% at 50% 50%,transparent 55%,rgba(0,0,0,.55));}
+
+  .stage{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;padding:22px clamp(16px,3vw,40px)}
+
+  /* ── top HUD ── */
+  .hud{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brandmk{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em;font-size:18px}
+  .brandmk i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--cyan),var(--mint));color:#04121a;font-style:normal;font-weight:800;box-shadow:0 0 26px rgba(63,216,255,.5)}
+  .brandmk span{color:var(--cyan)}
+  .hud__chip{font-family:var(--mono);font-size:11.5px;color:var(--txt2);border:1px solid var(--line);
+    padding:6px 11px;border-radius:8px;background:rgba(120,180,255,.03);display:flex;gap:8px;align-items:center}
+  .hud__chip b{color:var(--txt);font-weight:600}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  .hud__spacer{flex:1}
+
+  /* ── main grid ── */
+  .work{flex:1;display:grid;grid-template-columns:1fr 372px;gap:18px;margin-top:18px;min-height:0}
+  @media(max-width:960px){.work{grid-template-columns:1fr;grid-template-rows:1fr auto}}
+
+  /* ── scan theatre ── */
+  .theatre{position:relative;border:1px solid var(--line);border-radius:20px;overflow:hidden;
+    background:radial-gradient(90% 90% at 50% 35%,rgba(15,26,48,.6),rgba(6,9,17,.9));
+    box-shadow:inset 0 0 90px rgba(63,216,255,.06)}
+  .theatre__label{position:absolute;top:14px;left:16px;z-index:5;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--txt2);text-transform:uppercase}
+  .theatre__id{position:absolute;top:14px;right:16px;z-index:5;font-family:var(--mono);font-size:11px;color:var(--cyan);opacity:.8}
+  /* corner brackets */
+  .corner{position:absolute;width:26px;height:26px;border:2px solid var(--cyan);opacity:.5;z-index:5}
+  .corner.tl{top:12px;left:12px;border-right:0;border-bottom:0;border-radius:6px 0 0 0}
+  .corner.tr{top:12px;right:12px;border-left:0;border-bottom:0;border-radius:0 6px 0 0}
+  .corner.bl{bottom:12px;left:12px;border-right:0;border-top:0;border-radius:0 0 0 6px}
+  .corner.br{bottom:12px;right:12px;border-left:0;border-top:0;border-radius:0 0 6px 0}
+
+  .viewport{position:absolute;inset:0;display:grid;place-items:center;perspective:1400px}
+  .arch-wrap{position:relative;width:88%;max-width:820px;transform-style:preserve-3d;transition:transform .25s ease-out}
+  #arch{width:100%;height:auto;display:block;overflow:visible}
+  #fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+  .tooth path{transition:fill .35s,filter .35s}
+  .tooth.lit path{filter:drop-shadow(0 0 6px rgba(63,216,255,.9))}
+  .tooth.flag-high path{fill:url(#gRed)!important;filter:drop-shadow(0 0 12px var(--red))}
+  .tooth.flag-med path{fill:url(#gAmber)!important;filter:drop-shadow(0 0 12px var(--amber))}
+  .tooth.flag-ok path{fill:url(#gMint)!important;filter:drop-shadow(0 0 10px var(--mint))}
+
+  /* scan beam */
+  .beam{position:absolute;top:0;bottom:0;width:120px;left:-140px;z-index:4;pointer-events:none;opacity:0}
+  .beam::before{content:'';position:absolute;top:6%;bottom:6%;left:58px;width:3px;border-radius:3px;
+    background:linear-gradient(var(--cyan2),#fff,var(--cyan2));box-shadow:0 0 24px 6px var(--cyan),0 0 60px 14px rgba(63,216,255,.6)}
+  .beam::after{content:'';position:absolute;inset:0;
+    background:linear-gradient(90deg,transparent,rgba(63,216,255,.16) 46%,rgba(63,216,255,.30) 50%,transparent);
+    filter:blur(2px)}
+  .beam.on{opacity:1}
+
+  /* detection reticles */
+  .reticles{position:absolute;inset:0;z-index:6;pointer-events:none}
+  .ret{position:absolute;transform:translate(-50%,-50%);opacity:0}
+  .ret.show{animation:retIn .5s cubic-bezier(.2,1.4,.3,1) forwards}
+  @keyframes retIn{from{opacity:0;transform:translate(-50%,-50%) scale(1.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+  .ret__ring{width:64px;height:64px;border-radius:50%;border:1.5px solid currentColor;position:relative;
+    box-shadow:0 0 20px currentColor,inset 0 0 14px currentColor}
+  .ret__ring::before,.ret__ring::after{content:'';position:absolute;background:currentColor}
+  .ret__ring::before{top:50%;left:-9px;right:-9px;height:1.5px;transform:translateY(-50%)}
+  .ret__ring::after{left:50%;top:-9px;bottom:-9px;width:1.5px;transform:translateX(-50%)}
+  .ret__spin{position:absolute;inset:-7px;border-radius:50%;border:1.5px dashed currentColor;opacity:.5;animation:spin 6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ret__tag{position:absolute;left:74px;top:50%;transform:translateY(-50%);white-space:nowrap;
+    font-family:var(--mono);font-size:11px;line-height:1.5;padding:7px 11px;border-radius:9px;
+    background:rgba(6,10,20,.85);border:1px solid currentColor;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+  .ret__tag b{display:block;font-size:12.5px;letter-spacing:.01em}
+  .ret__conf{color:#fff;font-weight:700}
+  .ret__tag::before{content:'';position:absolute;left:-16px;top:50%;width:16px;height:1.5px;background:currentColor;transform:translateY(-50%)}
+  .ret.left .ret__tag{left:auto;right:74px}
+  .ret.left .ret__tag::before{left:auto;right:-16px}
+
+  /* ── side panel ── */
+  .panel{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(13,20,38,.7),rgba(7,11,20,.85));
+    backdrop-filter:blur(14px);display:flex;flex-direction:column;overflow:hidden}
+  .panel__head{padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+  .panel__head h1{font-size:16px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+  .panel__head h1 svg{width:17px;height:17px;color:var(--cyan)}
+  .panel__head small{display:block;color:var(--txt2);font-size:12px;margin-top:4px;font-family:var(--mono)}
+  .findings{flex:1;overflow:auto;padding:8px 14px}
+  .find{display:flex;gap:12px;padding:13px 10px;border-radius:12px;opacity:0;transform:translateX(14px);
+    border:1px solid transparent}
+  .find.in{animation:findIn .45s ease forwards}
+  @keyframes findIn{to{opacity:1;transform:none}}
+  .find:hover{background:rgba(120,180,255,.04)}
+  .find__ic{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;font-size:15px;
+    background:rgba(120,180,255,.06);border:1px solid currentColor}
+  .find__b{flex:1;min-width:0}
+  .find__t{display:flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px}
+  .find__pill{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:20px;border:1px solid currentColor}
+  .find__note{color:var(--txt2);font-size:12px;line-height:1.5;margin-top:3px}
+  .find__meta{display:flex;align-items:center;gap:8px;margin-top:7px}
+  .find__bar{flex:1;height:4px;border-radius:3px;background:rgba(120,180,255,.1);overflow:hidden}
+  .find__bar i{display:block;height:100%;width:0;border-radius:3px;background:currentColor;transition:width 1s cubic-bezier(.2,1,.3,1)}
+  .find__conf{font-family:var(--mono);font-size:11px;color:var(--txt);font-weight:600;width:38px;text-align:right}
+
+  .verdict{border-top:1px solid var(--line);padding:16px 20px;display:flex;align-items:center;gap:16px;
+    opacity:0;transition:opacity .5s}
+  .verdict.in{opacity:1}
+  .ring{position:relative;width:76px;height:76px;flex-shrink:0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring__c{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+  .ring__c b{font-size:20px;font-weight:800;font-family:var(--mono)}
+  .ring__c small{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.08em}
+  .verdict__b b{font-size:14px}
+  .verdict__b p{color:var(--txt2);font-size:12px;line-height:1.5;margin-top:3px}
+
+  /* run button */
+  .runbar{padding:14px 20px 18px}
+  .btn{width:100%;border:0;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:14px;color:#04121a;
+    padding:14px;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:9px;
+    background:linear-gradient(135deg,var(--cyan),var(--mint));box-shadow:0 10px 34px rgba(63,216,255,.35);
+    transition:transform .15s,box-shadow .3s,filter .3s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 46px rgba(63,216,255,.5)}
+  .btn:disabled{filter:grayscale(.5) brightness(.7);cursor:default;transform:none;box-shadow:none}
+  .btn svg{width:18px;height:18px}
+  .btn--ghost{background:transparent;color:var(--cyan);border:1px solid var(--cyan);box-shadow:none;margin-top:10px}
+  .btn--ghost:hover{background:rgba(63,216,255,.08);box-shadow:0 0 24px rgba(63,216,255,.2)}
+
+  .scanline{position:absolute;left:0;right:0;height:2px;z-index:3;pointer-events:none;opacity:0;
+    background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 20px var(--cyan)}
+  .status{position:absolute;bottom:16px;left:16px;z-index:5;font-family:var(--mono);font-size:11px;color:var(--cyan);
+    letter-spacing:.1em;text-transform:uppercase;opacity:0;transition:opacity .3s}
+  .status.on{opacity:1}
+  .status b{display:inline-block;width:9px;text-align:left}
+  .foot-note{position:absolute;bottom:14px;right:16px;z-index:5;font-family:var(--mono);font-size:10.5px;color:var(--txt3);opacity:.7}
+</style>
+</head>
+<body>
+<div class="stage">
+  <!-- HUD -->
+  <div class="hud">
+    <div class="brandmk"><i>◭</i>DENT<span>ALIS</span></div>
+    <div class="hud__chip"><span class="dot"></span>ИИ-модуль активен</div>
+    <div class="hud__chip">Пациент · <b>Карта №2481</b></div>
+    <div class="hud__chip">Снимок · <b>OPG-панорама</b></div>
+    <div class="hud__spacer"></div>
+    <div class="hud__chip" style="color:var(--cyan)">neural-dent v3.2</div>
+  </div>
+
+  <div class="work">
+    <!-- SCAN THEATRE -->
+    <div class="theatre" id="theatre">
+      <div class="theatre__label">Ортопантомограмма · нейросетевой анализ</div>
+      <div class="theatre__id" id="tid">IMG-2481-07</div>
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="viewport">
+        <div class="arch-wrap" id="archWrap">
+          <svg id="arch" viewBox="0 0 900 460" aria-label="Панорамный снимок зубов">
+            <defs>
+              <radialGradient id="gTooth" cx="50%" cy="35%" r="75%">
+                <stop offset="0" stop-color="#dfeaff"/><stop offset=".6" stop-color="#a9c2e6"/><stop offset="1" stop-color="#5f7ba6"/>
+              </radialGradient>
+              <radialGradient id="gRed" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#ffd0d5"/><stop offset=".55" stop-color="#ff6b78"/><stop offset="1" stop-color="#c31f30"/></radialGradient>
+              <radialGradient id="gAmber" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#ffe6bd"/><stop offset=".55" stop-color="#ffb84d"/><stop offset="1" stop-color="#c67d0a"/></radialGradient>
+              <radialGradient id="gMint" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#cafff0"/><stop offset=".55" stop-color="#4fe6bc"/><stop offset="1" stop-color="#1f9d7e"/></radialGradient>
+              <filter id="soft"><feGaussianBlur stdDeviation="0.5"/></filter>
+            </defs>
+            <g id="jaw"></g>
+          </svg>
+          <canvas id="fx" width="900" height="460"></canvas>
+        </div>
+        <div class="beam" id="beam"></div>
+        <div class="scanline" id="scanline"></div>
+        <div class="reticles" id="reticles"></div>
+      </div>
+      <div class="status" id="status">СКАНИРОВАНИЕ<b id="dots"></b></div>
+      <div class="foot-note">frontend-демо · Uniqore</div>
+    </div>
+
+    <!-- PANEL -->
+    <div class="panel">
+      <div class="panel__head">
+        <h1><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 1 6s-1 9 2 9 2-4 2-6 1-2 2-2 0 4 2 6 2-6 2-9 1-4 1-6a5 5 0 0 0-5-5"/></svg>ИИ-анализ снимка</h1>
+        <small id="subhead">Готов к запуску · 32 зуба в кадре</small>
+      </div>
+      <div class="findings" id="findings">
+        <div style="padding:40px 16px;text-align:center;color:var(--txt2);font-size:13px;line-height:1.6" id="idlehint">
+          Нажми «Запустить ИИ-анализ» — нейросеть просканирует снимок, найдёт патологии и соберёт план лечения за секунды.
+        </div>
+      </div>
+      <div class="verdict" id="verdict">
+        <div class="ring">
+          <svg viewBox="0 0 76 76" width="76" height="76">
+            <circle cx="38" cy="38" r="32" fill="none" stroke="rgba(120,180,255,.12)" stroke-width="6"/>
+            <circle id="ringFill" cx="38" cy="38" r="32" fill="none" stroke="url(#gcRing)" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201"/>
+            <defs><linearGradient id="gcRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fd8ff"/><stop offset="1" stop-color="#31e0b0"/></linearGradient></defs>
+          </svg>
+          <div class="ring__c"><b id="ringPct">0</b><small>точность</small></div>
+        </div>
+        <div class="verdict__b">
+          <b id="verdictTitle">Анализ завершён</b>
+          <p id="verdictText">Найдено 3 патологии · 1 зуб в норме. План лечения сформирован.</p>
+        </div>
+      </div>
+      <div class="runbar">
+        <button class="btn" id="run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 3l14 9-14 9V3z"/></svg><span id="runLabel">Запустить ИИ-анализ</span></button>
+        <button class="btn btn--ghost" id="replay" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0 1 15-3.4L23 10M1 14l4.5 4.4A9 9 0 0 0 20.5 15"/></svg>Сканировать заново</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const NS='http://www.w3.org/2000/svg';
+  const jaw=document.getElementById('jaw'), reticles=document.getElementById('reticles');
+  const beam=document.getElementById('beam'), scanline=document.getElementById('scanline');
+  const fx=document.getElementById('fx'), ctx=fx.getContext('2d');
+  const archWrap=document.getElementById('archWrap'), theatre=document.getElementById('theatre');
+  // rAF when visible (smooth), timer fallback when tab hidden (keeps the scan alive on tab-switch)
+  const schedule=cb=>document.hidden?setTimeout(()=>cb(performance.now()),16):requestAnimationFrame(cb);
+
+  /* ── findings (predetermined, but looks like real detection) ── */
+  const FIND=[
+    {i:5,  type:'Кариес',        sev:'high',col:'#ff4d5e',conf:96,ic:'✕',pill:'Срочно',   note:'Дистальная поверхность 2.6 · средняя глубина, ближе к пульпе'},
+    {i:11, type:'Трещина эмали', sev:'med', col:'#ffb020',conf:88,ic:'⚠',pill:'Наблюдение',note:'Вертикальная микротрещина 3.5 · динамический контроль'},
+    {i:24, type:'Износ пломбы',  sev:'med', col:'#ffb020',conf:83,ic:'⚑',pill:'Замена',   note:'Нарушено краевое прилегание 4.6 · рекомендована замена'},
+    {i:19, type:'Норма',         sev:'ok',  col:'#31e0b0',conf:99,ic:'✓',pill:'Здоров',   note:'Патологий не выявлено · костная ткань в норме'},
+  ];
+  const N=32, teeth=[];
+
+  /* ── build a dental arch (upper + lower) along two curves ── */
+  function toothPath(){ // crown-up tooth, centered at origin
+    return 'M-15,-16 C-15,-26 15,-26 15,-16 C17,-6 12,2 10,8 C9,16 6,22 4,22 C2,22 2,14 0,14 C-2,14 -2,22 -4,22 C-6,22 -9,16 -10,8 C-12,2 -17,-6 -15,-16 Z';
+  }
+  function build(){
+    jaw.innerHTML=''; teeth.length=0;
+    const cx=450, N2=N/2;
+    // two arches: upper (dome, teeth point up) and lower (bowl, teeth point down)
+    for(let row=0; row<2; row++){
+      const upper = row===0;
+      const cy = upper?250:210;          // fan center Y
+      const R  = upper?170:170;          // radius
+      const spread=118;                  // deg total
+      const dir = upper?-1:1;
+      for(let k=0;k<N2;k++){
+        const t = N2>1 ? k/(N2-1) : .5;
+        const a = (-spread/2 + spread*t) * Math.PI/180;
+        const x = cx + R*Math.sin(a);
+        const y = cy - dir*R*Math.cos(a);
+        const rot = (a*180/Math.PI) + (upper?0:180);
+        const idx = upper? k : (N-1-k);
+        const g=document.createElementNS(NS,'g');
+        g.setAttribute('class','tooth'); g.setAttribute('transform',`translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(${upper?1:1})`);
+        const p=document.createElementNS(NS,'path');
+        p.setAttribute('d',toothPath()); p.setAttribute('fill','url(#gTooth)'); p.setAttribute('filter','url(#soft)');
+        g.appendChild(p); jaw.appendChild(g);
+        teeth[idx]={g,x,y};
+      }
+    }
+  }
+  build();
+
+  /* map svg coords → theatre px for reticles/particles */
+  function toPx(sx,sy){
+    const svg=document.getElementById('arch'), vb=svg.viewBox.baseVal, r=svg.getBoundingClientRect(), tr=theatre.getBoundingClientRect();
+    return { x:(r.left-tr.left)+ sx/vb.width*r.width, y:(r.top-tr.top)+ sy/vb.height*r.height, scale:r.width/vb.width };
+  }
+
+  /* ── particle burst ── */
+  let parts=[], raf=null;
+  function resizeFx(){ const r=fx.getBoundingClientRect(); fx.width=r.width; fx.height=r.height; }
+  addEventListener('resize',()=>{resizeFx();placeReticles();});
+  function burst(sx,sy,col){
+    const r=document.getElementById('arch').getBoundingClientRect(), vb=document.getElementById('arch').viewBox.baseVal;
+    const px=sx/vb.width*fx.width, py=sy/vb.height*fx.height;
+    for(let i=0;i<26;i++){ const an=Math.random()*6.28, sp=1+Math.random()*3.4;
+      parts.push({x:px,y:py,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,life:1,col}); }
+    if(!raf) loop();
+  }
+  function loop(){
+    ctx.clearRect(0,0,fx.width,fx.height);
+    parts=parts.filter(p=>p.life>0);
+    parts.forEach(p=>{ p.x+=p.vx;p.y+=p.vy;p.vy+=.03;p.life-=.022;
+      ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.col;
+      ctx.beginPath();ctx.arc(p.x,p.y,2.1*p.life+.4,0,6.28);ctx.fill();
+      ctx.globalAlpha=Math.max(0,p.life)*.4;ctx.beginPath();ctx.arc(p.x,p.y,6*p.life,0,6.28);ctx.fill(); });
+    ctx.globalAlpha=1;
+    raf = parts.length? requestAnimationFrame(loop): null;
+  }
+  resizeFx();
+
+  /* ── reticles ── */
+  let retEls=[];
+  function placeReticles(){ retEls.forEach(o=>{ const p=toPx(o.f.i!=null?teeth[o.f.i].x:0, teeth[o.f.i].y); o.el.style.left=p.x+'px'; o.el.style.top=p.y+'px'; }); }
+  function addReticle(f){
+    const p=toPx(teeth[f.i].x,teeth[f.i].y);
+    const el=document.createElement('div'); el.className='ret'+(teeth[f.i].x>460?' left':'');
+    el.style.color=f.col; el.style.left=p.x+'px'; el.style.top=p.y+'px';
+    el.innerHTML=`<div class="ret__ring"><div class="ret__spin"></div></div>
+      <div class="ret__tag"><b>${f.type}</b><span>уверенность <span class="ret__conf" data-c>0</span>%</span></div>`;
+    reticles.appendChild(el); setTimeout(()=>el.classList.add('show'),20);
+    retEls.push({el,f});
+    // count-up conf
+    const cEl=el.querySelector('[data-c]'); let c=0; const iv=setInterval(()=>{ c+=Math.ceil((f.conf-c)/6); if(c>=f.conf){c=f.conf;clearInterval(iv);} cEl.textContent=c; },40);
+  }
+
+  /* ── panel finding row ── */
+  function addFinding(f){
+    const box=document.getElementById('findings');
+    const row=document.createElement('div'); row.className='find'; row.style.color=f.col;
+    row.innerHTML=`<div class="find__ic">${f.ic}</div><div class="find__b">
+      <div class="find__t">${f.type}<span class="find__pill">${f.pill}</span></div>
+      <div class="find__note">${f.note}</div>
+      <div class="find__meta"><div class="find__bar"><i style="width:0"></i></div><span class="find__conf">${f.conf}%</span></div>
+    </div>`;
+    box.appendChild(row); setTimeout(()=>{row.classList.add('in'); row.querySelector('.find__bar i').style.width=f.conf+'%';},20);
+    box.scrollTop=box.scrollHeight;
+  }
+
+  /* ── orchestrate ── */
+  const btn=document.getElementById('run'), replay=document.getElementById('replay');
+  const status=document.getElementById('status'), dots=document.getElementById('dots');
+  let dotsIv=null, running=false;
+
+  function reset(){
+    reticles.innerHTML=''; retEls=[]; parts=[]; ctx.clearRect(0,0,fx.width,fx.height);
+    document.getElementById('findings').innerHTML='';
+    teeth.forEach(t=>t.g.className.baseVal='tooth');
+    document.getElementById('verdict').classList.remove('in');
+    document.getElementById('ringFill').style.strokeDashoffset=201;
+    document.getElementById('ringPct').textContent='0';
+  }
+
+  function run(){
+    if(running) return; running=true;
+    reset();
+    btn.disabled=true; replay.style.display='none';
+    document.getElementById('idlehint')&&(document.getElementById('idlehint').style.display='none');
+    document.getElementById('subhead').textContent='Нейросеть сканирует снимок…';
+    document.getElementById('runLabel').textContent='Анализ…';
+    status.classList.add('on'); let d=0; dotsIv=setInterval(()=>{d=(d+1)%4;dots.textContent='.'.repeat(d);},300);
+
+    // beam sweep
+    const DUR=3400, W=archWrap.getBoundingClientRect().width;
+    beam.classList.add('on'); scanline.style.opacity='.9';
+    const start=performance.now(); let triggered=new Set();
+    const archLeft = archWrap.getBoundingClientRect().left - theatre.getBoundingClientRect().left;
+
+    function frame(now){
+      const p=Math.min(1,(now-start)/DUR);
+      const ease=p; // linear sweep
+      const bx = -140 + ease*(theatre.getBoundingClientRect().width+180);
+      beam.style.left=bx+'px';
+      scanline.style.top=(ease*theatre.getBoundingClientRect().height)+'px';
+      // light up teeth as beam passes
+      teeth.forEach((t,idx)=>{ const px=toPx(t.x,t.y).x; if(px<bx+60 && px>bx-60){ if(!t.g.className.baseVal.includes('flag')) t.g.classList.add('lit'); } });
+      // trigger findings when beam passes them
+      FIND.forEach(f=>{ const px=toPx(teeth[f.i].x,teeth[f.i].y).x;
+        if(!triggered.has(f.i) && bx>=px){ triggered.add(f.i);
+          teeth[f.i].g.classList.remove('lit'); teeth[f.i].g.classList.add('flag-'+f.sev);
+          burst(teeth[f.i].x,teeth[f.i].y,f.col); addReticle(f); addFinding(f);
+        }});
+      if(p<1) schedule(frame); else finish();
+    }
+    schedule(frame);
+  }
+
+  function finish(){
+    beam.classList.remove('on'); scanline.style.opacity='0';
+    clearInterval(dotsIv); status.classList.remove('on');
+    teeth.forEach(t=>t.g.classList.remove('lit'));
+    // verdict
+    const v=document.getElementById('verdict'); v.classList.add('in');
+    const pct=94; let c=0; const ring=document.getElementById('ringFill'), pctEl=document.getElementById('ringPct');
+    const iv=setInterval(()=>{ c+=2; if(c>=pct){c=pct;clearInterval(iv);} pctEl.textContent=c; ring.style.strokeDashoffset=201-(201*c/100); },26);
+    const bad=FIND.filter(f=>f.sev!=='ok').length, ok=FIND.length-bad;
+    document.getElementById('subhead').textContent='Анализ завершён · '+FIND.length+' находки';
+    document.getElementById('verdictText').textContent='Найдено '+bad+' патологии · '+ok+' зуб в норме. План лечения сформирован.';
+    document.getElementById('runLabel').textContent='Готово';
+    replay.style.display='flex'; running=false;
+  }
+
+  btn.addEventListener('click',run);
+  replay.addEventListener('click',()=>{ document.getElementById('subhead').textContent='Готов к запуску · 32 зуба в кадре'; document.getElementById('runLabel').textContent='Запустить ИИ-анализ'; btn.disabled=false; reset(); running=false; });
+
+  /* ── mouse parallax (subtle 3D) ── */
+  theatre.addEventListener('pointermove',e=>{ const r=theatre.getBoundingClientRect();
+    const dx=(e.clientX-r.left)/r.width-.5, dy=(e.clientY-r.top)/r.height-.5;
+    archWrap.style.transform=`rotateY(${dx*10}deg) rotateX(${-dy*8}deg) translateZ(10px)`; });
+  theatre.addEventListener('pointerleave',()=>{ archWrap.style.transform='none'; });
+
+  setTimeout(placeReticles,60);
+})();
+</script>
+</body>
+</html>
