@@ -100,14 +100,14 @@
   </script>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/reset.css?v=20260707c">
-  <link rel="stylesheet" href="css/variables.css?v=20260707c">
-  <link rel="stylesheet" href="css/typography.css?v=20260707c">
-  <link rel="stylesheet" href="css/layout.css?v=20260707c">
-  <link rel="stylesheet" href="css/components.css?v=20260707c">
-  <link rel="stylesheet" href="css/sections.css?v=20260707c">
-  <link rel="stylesheet" href="css/animations.css?v=20260707c">
-  <link rel="stylesheet" href="css/mobile.css?v=20260707c">
+  <link rel="stylesheet" href="css/reset.css?v=20260707e">
+  <link rel="stylesheet" href="css/variables.css?v=20260707e">
+  <link rel="stylesheet" href="css/typography.css?v=20260707e">
+  <link rel="stylesheet" href="css/layout.css?v=20260707e">
+  <link rel="stylesheet" href="css/components.css?v=20260707e">
+  <link rel="stylesheet" href="css/sections.css?v=20260707e">
+  <link rel="stylesheet" href="css/animations.css?v=20260707e">
+  <link rel="stylesheet" href="css/mobile.css?v=20260707e">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -188,9 +188,11 @@
 
     <!-- HERO SECTION -->
     <section class="hero" id="hero">
-      <!-- Фон hero — крафтовый, без видео: глубокий чёрный + aurora-glow (.hero__glow)
-           + тонкая сетка (.hero::before) + частицы + зерно. Убрано мутное bokeh-видео,
-           которое дешевило hero и грузило лишние 404КБ. -->
+      <!-- Фон hero: премиум абстракт-видео (золотой поток, Higgsfield) приглушённо
+           + aurora-glow + сетка + частицы + зерно. Не мутное bokeh — элегантный дарк. -->
+      <video class="hero__bgvideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+        <source src="assets/hero-abstract.mp4?v=20260707e" type="video/mp4">
+      </video>
       <div class="hero__aurora" aria-hidden="true"></div>
       <canvas id="hero-particles" aria-hidden="true"></canvas>
       <div class="container hero__inner">
@@ -1448,12 +1450,12 @@
 
   <!-- tsParticles init -->
   <!-- JS -->
-  <script src="js/animations.js?v=20260707c" defer></script>
-  <script src="js/particles.js?v=20260707c" defer></script>
-  <script src="js/form.js?v=20260707c" defer></script>
-  <script src="js/main.js?v=20260707c" defer></script>
-  <script src="js/niche-switcher.js?v=20260707c" defer></script>
-  <script src="js/premium.js?v=20260707c" defer></script>
+  <script src="js/animations.js?v=20260707e" defer></script>
+  <script src="js/particles.js?v=20260707e" defer></script>
+  <script src="js/form.js?v=20260707e" defer></script>
+  <script src="js/main.js?v=20260707e" defer></script>
+  <script src="js/niche-switcher.js?v=20260707e" defer></script>
+  <script src="js/premium.js?v=20260707e" defer></script>
   <!-- effects3d.js отключён: дублировал premium.js (тилт/магнит/счётчики) и вызывал конфликт transform. premium.js — единственный источник. -->
 
   <script>

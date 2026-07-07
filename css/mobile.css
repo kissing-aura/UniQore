@@ -127,6 +127,7 @@
 
   /* Hero */
   .hero { padding-top: 80px; min-height: auto; align-items: flex-start; }
+  .hero__bgvideo { display: none; } /* на мобилке видео не грузим (3МБ + автоплей) — фон держат aurora/сетка */
   .hero__inner { min-height: auto; justify-content: flex-start; }
   .hero__split { grid-template-columns: 1fr; gap: 32px; padding: 44px 0 32px; flex: none; }
   .hero__right { display: none; }
