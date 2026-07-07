@@ -65,6 +65,7 @@
   <link rel="stylesheet" href="../css/components.css?v=20260707e">
   <link rel="stylesheet" href="../css/sections.css?v=20260707e">
   <link rel="stylesheet" href="../css/mobile.css?v=20260707e">
+  <link rel="stylesheet" href="../css/nav-pages.css?v=20260707n">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -97,10 +98,25 @@
         <span class="nav__logo-text">uniqore</span>
       </a>
       <ul class="nav__links">
-        <li><a href="/#cases">Кейсы</a></li>
-        <li><a href="/#services">Услуги</a></li>
-        <li><a href="/#pricing">Цены</a></li>
+        <li><a href="/vozmozhnosti/">Возможности</a></li>
+        <li class="nav__item--drop">
+          <button type="button" class="nav__drop-toggle" aria-expanded="false">Решения
+            <svg width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav__dropdown" role="menu">
+            <a href="/crm-pod-klyuch/" role="menuitem"><span class="nav__dd-name">CRM под ключ</span><span class="nav__dd-desc">Своя система с нуля</span></a>
+            <a href="/crm-dlya-arendy/" role="menuitem"><span class="nav__dd-name">Посуточная аренда</span><span class="nav__dd-desc">Календарь · залоги · авточаты</span></a>
+            <a href="/crm-dlya-avtoservisa/" role="menuitem"><span class="nav__dd-name">Автосервис</span><span class="nav__dd-desc">Трекинг ремонта · история авто</span></a>
+            <a href="/crm-dlya-sklada/" role="menuitem"><span class="nav__dd-name">Склад и импорт</span><span class="nav__dd-desc">Остатки 24/7 · OCR · GPS</span></a>
+            <a href="/crm-dlya-stomatologii/" role="menuitem"><span class="nav__dd-name">Медицина / стоматология</span><span class="nav__dd-desc">История пациента · ДМС</span></a>
+            <a href="/crm-dlya-internet-magazina/" role="menuitem"><span class="nav__dd-name">Интернет-магазин</span><span class="nav__dd-desc">Заказы · статусы · аналитика</span></a>
+            <a href="/crm-dlya-telegram-biznesa/" role="menuitem"><span class="nav__dd-name">Telegram-бизнес</span><span class="nav__dd-desc">Магазин · рассылки · лояльность</span></a>
+          </div>
+        </li>
+        <li><a href="/keysy/">Кейсы</a></li>
+        <li><a href="/tseny/">Цены</a></li>
         <li><a href="/blog/">Блог</a></li>
+        <li><a href="/o-nas/">О нас</a></li>
       </ul>
       <a href="/#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
     </div>
@@ -240,5 +256,6 @@
       });
     });
   </script>
+  <script src="../js/nav-dropdown.js?v=20260707n" defer></script>
 </body>
 </html>
