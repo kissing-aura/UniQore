@@ -364,75 +364,91 @@
   pointer-events: none;
 }
 .before-after .container { position: relative; z-index: 1; }
+/* Премиум-сравнение вместо плоской таблицы: карточка с глубиной + золотая
+   светящаяся «сторона Uniqore» (визуальная история «хаос → система»). */
 .ba-table {
-  border: 1px solid var(--color-border);
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 28px;
   overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.022), rgba(255,255,255,0.006));
+  box-shadow: 0 44px 110px -50px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.05);
 }
+/* Золотая светящаяся панель под колонкой «С Uniqore» */
+.ba-table::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; right: 0;
+  left: calc(220px + (100% - 220px) / 2);
+  background: linear-gradient(180deg, rgba(245,197,24,0.10), rgba(245,197,24,0.028));
+  box-shadow: inset 0 0 90px rgba(245,197,24,0.06);
+  border-left: 1px solid rgba(245,197,24,0.24);
+  pointer-events: none; z-index: 0;
+}
+.ba-header, .ba-row { position: relative; z-index: 1; }
 .ba-header {
   display: grid;
-  grid-template-columns: 200px 1fr 1fr;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  grid-template-columns: 220px 1fr 1fr;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-.ba-header__empty { padding: 16px 24px; }
+.ba-header__empty { padding: 26px 34px; }
 .ba-header__col {
-  display: flex; align-items: center; gap: 8px;
-  padding: 16px 24px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 26px 34px;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  border-left: 1px solid var(--color-border);
 }
-.ba-header__col--before { color: rgba(255,255,255,0.28); }
-.ba-header__col--after  { color: var(--color-accent); }
+.ba-header__col--before { color: rgba(255,255,255,0.32); }
+.ba-header__col--after  { color: var(--color-accent); font-weight: 500; }
 .ba-row {
   display: grid;
-  grid-template-columns: 200px 1fr 1fr;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  grid-template-columns: 220px 1fr 1fr;
+  border-bottom: 1px solid rgba(255,255,255,0.045);
   transition: background var(--transition-base);
 }
 .ba-row:last-child { border-bottom: none; }
-.ba-row:hover { background: rgba(255,255,255,0.015); }
 .ba-row__label {
-  padding: 18px 24px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  border-right: 1px solid rgba(255,255,255,0.04);
+  padding: 30px 34px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-white);
   font-family: var(--font-display);
   display: flex; align-items: center;
 }
 .ba-row__before {
-  padding: 18px 24px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.28);
-  line-height: 1.5;
-  border-right: 1px solid rgba(255,255,255,0.04);
-  display: flex; align-items: center;
-  position: relative;
+  padding: 30px 34px;
+  font-size: 14.5px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.55;
+  display: flex; align-items: center; gap: 13px;
 }
 .ba-row__before::before {
-  content: '✗';
-  color: rgba(255,80,80,0.35);
-  margin-right: 10px;
-  font-size: 11px;
-  flex-shrink: 0;
+  content: '✕';
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(255,90,90,0.1);
+  color: rgba(255,125,125,0.75);
+  font-size: 11px; flex-shrink: 0;
 }
 .ba-row__after {
-  padding: 18px 24px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.5;
-  display: flex; align-items: center;
+  padding: 30px 34px;
+  font-size: 14.5px;
+  color: rgba(255,255,255,0.92);
+  line-height: 1.55;
+  font-weight: 500;
+  display: flex; align-items: center; gap: 13px;
 }
 .ba-row__after::before {
   content: '✓';
-  color: rgba(74,222,128,0.6);
-  margin-right: 10px;
-  font-size: 11px;
-  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(245,197,24,0.16);
+  color: var(--color-accent);
+  font-size: 11px; flex-shrink: 0;
+  box-shadow: 0 0 14px rgba(245,197,24,0.3);
 }
+.ba-row:hover { background: rgba(255,255,255,0.014); }
 
 /* ── Section ambient glow treatments ── */
 .services {
