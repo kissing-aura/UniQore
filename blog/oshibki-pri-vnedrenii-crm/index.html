@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="description" content="Разбор частых ошибок при переходе на CRM: от внедрения без цели до игнорирования обучения команды. Как их избежать.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="5 типичных ошибок при внедрении CRM | Uniqore">
+  <meta property="og:description" content="Разбор частых ошибок при переходе на CRM: от внедрения без цели до игнорирования обучения команды. Как их избежать.">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta property="og:image:width" content="400">
+  <meta property="og:image:height" content="120">
+  <meta property="og:url" content="https://uniqore.pro/blog/oshibki-pri-vnedrenii-crm/">
+  <meta property="og:site_name" content="Uniqore">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="5 типичных ошибок при внедрении CRM | Uniqore">
+  <meta name="twitter:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="canonical" href="https://uniqore.pro/blog/oshibki-pri-vnedrenii-crm/">
+  <link rel="icon" href="../../favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+  <title>5 типичных ошибок при внедрении CRM | Uniqore</title>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "BreadcrumbList", "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Uniqore", "item": "https://uniqore.pro/" },
+        { "@type": "ListItem", "position": 2, "name": "Блог", "item": "https://uniqore.pro/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "5 типичных ошибок при внедрении CRM", "item": "https://uniqore.pro/blog/oshibki-pri-vnedrenii-crm/" }
+      ]},
+      {
+        "@type": "Article",
+        "headline": "5 типичных ошибок при внедрении CRM",
+        "description": "Разбор частых ошибок при переходе на CRM: от внедрения без цели до игнорирования обучения команды. Как их избежать.",
+        "datePublished": "2026-07-07",
+        "author": { "@type": "Organization", "name": "Uniqore" },
+        "publisher": { "@id": "https://uniqore.pro/#org" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Можно ли внедрить CRM без остановки текущей работы?", "acceptedAnswer": { "@type": "Answer", "text": "Да, обычно переход идёт параллельно — старые процессы работают, пока новая система не протестирована на реальных данных." } },
+          { "@type": "Question", "name": "Сколько времени нужно команде на адаптацию к новой CRM?", "acceptedAnswer": { "@type": "Answer", "text": "Обычно 1-2 недели активного использования, если интерфейс не перегружен лишними функциями." } },
+          { "@type": "Question", "name": "Что делать, если команда сопротивляется переходу на CRM?", "acceptedAnswer": { "@type": "Answer", "text": "Показать конкретную пользу для их же рутины — меньше ручных отчётов, меньше потерянных задач — а не только пользу для руководителя." } }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="../../css/reset.css?v=20260707e">
+  <link rel="stylesheet" href="../../css/variables.css?v=20260707e">
+  <link rel="stylesheet" href="../../css/typography.css?v=20260707e">
+  <link rel="stylesheet" href="../../css/layout.css?v=20260707e">
+  <link rel="stylesheet" href="../../css/components.css?v=20260707e">
+  <link rel="stylesheet" href="../../css/sections.css?v=20260707e">
+  <link rel="stylesheet" href="../../css/mobile.css?v=20260707e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    .page-hero { padding: 160px 0 60px; text-align: center; }
+    .page-hero__eyebrow { color: var(--color-accent); font-family: var(--font-mono); font-size: 13px; letter-spacing: .04em; margin-bottom: 20px; }
+    .page-hero h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 4.5vw, 48px); line-height: 1.15; margin-bottom: 16px; max-width: 820px; margin-left:auto; margin-right:auto; }
+    .page-hero__meta { color: var(--color-text-muted); font-family: var(--font-mono); font-size: 12px; }
+    .article-body { max-width: 720px; margin: 0 auto 48px; }
+    .article-body h2 { font-family: var(--font-display); font-weight: 700; font-size: 26px; margin: 40px 0 16px; }
+    .article-body p { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; margin-bottom: 16px; }
+    .article-body ul { color: var(--color-text-secondary); line-height: 1.9; padding-left: 20px; margin-bottom: 16px; }
+    .article-body strong { color: var(--color-text-primary); }
+    .article-cta { max-width: 720px; margin: 40px auto 0; padding: 28px; border: 1px solid rgba(245,197,24,0.18); border-radius: 16px; background: linear-gradient(180deg, rgba(245,197,24,.05), rgba(245,197,24,.01)); text-align:center; }
+    .article-cta p { color: var(--color-text-secondary); margin-bottom: 16px; }
+    .blog-related { max-width: 720px; margin: 48px auto 64px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .blog-related__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); letter-spacing: .05em; margin-bottom: 16px; }
+    .blog-related__item { display: block; color: var(--color-text-secondary); font-size: 15px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .blog-related__item:hover { color: var(--color-accent); }
+    .breadcrumb { padding: 100px 0 0; font-size: 13px; color: var(--color-text-muted); }
+    .breadcrumb a { color: var(--color-text-muted); }
+    .breadcrumb a:hover { color: var(--color-accent); }
+  </style>
+</head>
+<body class="loaded">
+  <nav class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo" aria-label="Uniqore">
+        <svg class="nav__logo-mark" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
+          <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+        <span class="nav__logo-text">uniqore</span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="/#cases">Кейсы</a></li>
+        <li><a href="/#services">Услуги</a></li>
+        <li><a href="/#pricing">Цены</a></li>
+        <li><a href="/blog/">Блог</a></li>
+      </ul>
+      <a href="/#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div class="container breadcrumb"><a href="/">Uniqore</a> / <a href="/blog/">Блог</a> / 5 типичных ошибок при внедрении CRM</div>
+
+    <section class="page-hero">
+      <div class="container">
+        <div class="page-hero__eyebrow">ГИД</div>
+        <h1>5 типичных ошибок при внедрении CRM</h1>
+        <div class="page-hero__meta">2026-07-07 · Uniqore</div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="article-body">
+
+        <p>CRM сама по себе не решает проблемы бизнеса — она инструмент, который можно внедрить неправильно и получить дорогую систему, которой никто не пользуется. Вот пять ошибок, которые встречаются чаще всего.</p>
+
+        <h2>1. Внедрение без чёткой цели</h2>
+        <p>«Нам нужна CRM, потому что у всех есть» — плохая причина. Хорошая — «мы теряем заявки из-за трёх разных каналов» или «отчёты занимают полдня каждую неделю». Без конкретной цели непонятно, как оценить результат.</p>
+
+        <h2>2. Перенос старого хаоса в новую систему</h2>
+        <p>Если процессы в компании и так не выстроены, CRM их не исправит — она просто зафиксирует хаос в цифровом виде. Прежде чем внедрять, стоит понять, какой процесс система должна поддерживать.</p>
+
+        <h2>3. Игнорирование обучения команды</h2>
+        <p>Система, которую сотрудники не понимают, используется формально — данные вносятся неполно или с опозданием, и аналитика на основе этих данных становится бесполезной.</p>
+
+        <h2>4. Слишком много функций сразу</h2>
+        <p>Попытка внедрить сразу все возможные модули (воронки, аналитику, интеграции, автоматизации) с первого дня перегружает команду. Разумнее начать с базового процесса и расширять по мере привыкания.</p>
+
+        <h2>5. Нет ответственного за систему внутри компании</h2>
+        <p>Если никто не следит за качеством заполнения данных и не донастраивает процессы под изменения в бизнесе, система быстро устаревает и перестаёт отражать реальность.</p>
+
+        <h2>Итог</h2>
+        <p>Большинство неудачных внедрений CRM — это не проблема самой системы, а отсутствие ясной цели, обучения и владельца процесса внутри компании. Технология вторична по отношению к этим трём вещам.</p>
+
+        <div class="article-cta">
+          <p>Хотите такую систему для своего бизнеса?</p>
+          <a href="/crm-pod-klyuch/" class="btn btn--accent btn--lg">Обсудить CRM под ключ →</a>
+        </div>
+      </div>
+      <div class="blog-related">
+        <div class="blog-related__label">ЧИТАТЬ ТАКЖЕ</div>
+          <a class="blog-related__item" href="/blog/kak-vybrat-crm/">Как выбрать CRM для малого бизнеса в 2026</a>
+          <a class="blog-related__item" href="/blog/crm-vs-excel/">CRM или Excel: когда пора переходить</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <a href="/" class="nav__logo footer__logo" aria-label="Uniqore">
+          <svg class="nav__logo-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
+            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+          <span class="nav__logo-text">uniqore</span>
+        </a>
+        <p>Индивидуальные системы<br>автоматизации для бизнеса</p>
+      </div>
+      <div class="footer__links">
+        <a href="/#services">Услуги</a>
+        <a href="/#cases">Кейсы</a>
+        <a href="/#pricing">Цены</a>
+        <a href="/blog/">Блог</a>
+        <a href="/#contact">Контакт</a>
+      </div>
+    </div>
+    <div class="container footer__bottom"><span>© 2026 Uniqore. Все права защищены.</span></div>
+  </footer>
+</body>
+</html>
