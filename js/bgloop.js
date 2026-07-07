@@ -16,9 +16,10 @@
     function start() {
       var dur = a.duration;
       if (!dur || !isFinite(dur) || dur < 0.5) { setTimeout(start, 200); return; }
-      try { b.currentTime = dur / 2; } catch (e) {}
       var pa = a.play(); if (pa && pa.catch) pa.catch(function () {});
-      var pb = b.play(); if (pb && pb.catch) pb.catch(function () {});
+      // Нижний стартует со сдвигом в полклипа БЕЗ seek (надёжнее currentTime):
+      // просто запускаем его на dur/2 позже — так его склейка никогда не совпадёт с верхней.
+      setTimeout(function () { var pb = b.play(); if (pb && pb.catch) pb.catch(function () {}); }, (dur / 2) * 1000);
       var FADE = Math.min(0.9, dur * 0.16); // длительность растворения у склейки
 
       (function tick() {
