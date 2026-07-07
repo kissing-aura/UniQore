@@ -73,17 +73,26 @@ section { padding: var(--section-padding); }
 .nav__burger { display: none; }
 
 /* ── Hero background — премиум абстракт-видео (золотой поток) + крафтовая aurora ── */
+/* Обёртка бесшовного цикла — базовая (приглушённая) непрозрачность на паре видео */
 .hero__bgvideo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  overflow: hidden;
+}
+/* Два экземпляра видео внутри обёртки для бесшовной склейки */
+.bgloop__el {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.5;
   transform: translateZ(0);
 }
+.bgloop__el[data-role="b"] { z-index: 0; }
+.bgloop__el[data-role="a"] { z-index: 1; }
 .hero__aurora {
   position: absolute;
   inset: -12% -6% 0;

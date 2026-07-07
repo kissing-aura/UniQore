@@ -1273,12 +1273,10 @@
 /* Кино-видео-фон под финальным CTA — разбивает плоский чёрный, не мешает форме */
 .contact__bgvideo {
   position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
   z-index: 0;
   pointer-events: none;
   opacity: 0.3;
-  transform: translateZ(0);
+  overflow: hidden;
 }
 .contact::before {
   content: '';
