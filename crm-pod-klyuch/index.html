@@ -66,6 +66,7 @@
   <link rel="stylesheet" href="../css/sections.css?v=20260707e">
   <link rel="stylesheet" href="../css/mobile.css?v=20260707e">
   <link rel="stylesheet" href="../css/nav-pages.css?v=20260707n">
+  <link rel="stylesheet" href="../css/enhance.css?v=20260708a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -83,7 +84,7 @@
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
     @media (max-width: 768px) {
-      .nav__cta { display: inline-flex !important; }
+      .nav__cta { display: none; }
     }
   </style>
 </head>
@@ -119,8 +120,31 @@
         <li><a href="/o-nas/">О нас</a></li>
       </ul>
       <a href="/#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
+      <button class="nav__burger" id="burger" aria-label="Меню">
+        <span></span><span></span>
+      </button>
     </div>
   </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="/vozmozhnosti/">Возможности</a></li>
+      <li class="mobile-menu__label">Решения</li>
+      <li><a href="/crm-pod-klyuch/">— CRM под ключ</a></li>
+      <li><a href="/crm-dlya-arendy/">— Посуточная аренда</a></li>
+      <li><a href="/crm-dlya-avtoservisa/">— Автосервис</a></li>
+      <li><a href="/crm-dlya-sklada/">— Склад и импорт</a></li>
+      <li><a href="/crm-dlya-stomatologii/">— Медицина</a></li>
+      <li><a href="/crm-dlya-internet-magazina/">— Интернет-магазин</a></li>
+      <li><a href="/crm-dlya-telegram-biznesa/">— Telegram-бизнес</a></li>
+      <li><a href="/keysy/">Кейсы</a></li>
+      <li><a href="/tseny/">Цены</a></li>
+      <li><a href="/blog/">Блог</a></li>
+      <li><a href="/o-nas/">О нас</a></li>
+      <li><a href="/#contact" class="btn btn--accent">Обсудить проект</a></li>
+    </ul>
+  </div>
 
   <main id="main">
     <div class="container breadcrumb"><a href="/">Uniqore</a> / CRM под ключ</div>
@@ -256,6 +280,10 @@
       });
     });
   </script>
-  <script src="../js/nav-dropdown.js?v=20260707n" defer></script>
+  <script>
+    (function(){var b=document.getElementById('burger'),m=document.getElementById('mobile-menu');if(b&&m){b.addEventListener('click',function(){m.classList.toggle('open');b.classList.toggle('open');});m.querySelectorAll('a').forEach(function(l){l.addEventListener('click',function(){m.classList.remove('open');b.classList.remove('open');});});}})();
+  </script>
+  <script src="../js/nav-dropdown.js?v=20260708a" defer></script>
+  <script src="../js/enhance.js?v=20260708a" defer></script>
 </body>
 </html>
