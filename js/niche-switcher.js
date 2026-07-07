@@ -113,7 +113,7 @@
       '<button type="button" data-v="5000">₽5 000</button>' +
       '<button type="button" data-v="12000">₽10 000+</button>' +
     '</div>' +
-    '<div class="mirror__result" hidden>' +
+    '<div class="mirror__result">' +
       '<div class="mirror__loss">Ты теряешь ~<span class="mirror__num">0</span> ₽/мес</div>' +
       '<div class="mirror__sub">на потерянных заявках и неответах. Мы это ловим — клиент не уходит.</div>' +
       '<a href="#contact" class="btn btn--accent btn--lg mirror__cta">Забрать свою систему →</a>' +
@@ -136,7 +136,7 @@
   function recalc() {
     if (calcState.clients && calcState.check) {
       var loss = calcState.clients * calcState.check * 0.18; // ~18% теряется без системы
-      if (resultBox.hidden) { resultBox.hidden = false; }
+      resultBox.classList.add('is-open'); // плавное раскрытие вместо resultBox.hidden = false
       animateLoss(loss);
     }
   }

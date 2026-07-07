@@ -2361,7 +2361,17 @@
   align-items: center;
   gap: 10px;
   padding: 14px 4px 0;
-  flex-wrap: wrap;
+  /* nowrap: пилюли всегда в одну строку. При wrap длинное уведомление
+     переносило вторую пилюлю вниз → высота hero скакала на 44px и вся
+     страница сама «пускалась вниз» каждые ~4с. Одна строка = стабильно. */
+  flex-wrap: nowrap;
+  overflow: hidden;
+  min-height: 48px;
+}
+.hero__mockup-toast { min-width: 0; }
+.hero__mockup-toast .mockup-toast__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .hero__mockup-toast {
   background: rgba(8,8,8,0.98);

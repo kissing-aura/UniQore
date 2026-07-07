@@ -107,12 +107,29 @@
   font-weight: 600;
 }
 .mirror__result {
-  margin-top: 8px;
-  padding: 20px 22px;
-  border: 1px solid rgba(245, 197, 24, 0.22);
+  /* Свёрнут по умолчанию — плавно раскрывается, а не прыгает на 218px,
+     когда в калькуляторе выбраны клиенты + чек. */
+  max-height: 0;
+  margin-top: 0;
+  padding: 0 22px;
+  border: 1px solid transparent;
   border-radius: var(--radius-lg);
   background: rgba(245, 197, 24, 0.04);
-  animation: mirrorIn 0.4s var(--transition-spring) both;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.4s ease,
+    margin-top 0.4s ease,
+    opacity 0.4s ease,
+    border-color 0.4s ease;
+}
+.mirror__result.is-open {
+  max-height: 400px;
+  margin-top: 8px;
+  padding: 20px 22px;
+  border-color: rgba(245, 197, 24, 0.22);
+  opacity: 1;
 }
 @keyframes mirrorIn {
   from { opacity: 0; transform: translateY(10px); }
