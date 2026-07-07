@@ -443,8 +443,8 @@ section { padding: var(--section-padding); }
 .services__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--color-border);
+  gap: 20px;
+  background: transparent;
 }
 .service-card--wide { grid-column: span 2; }
 

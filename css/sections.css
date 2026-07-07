@@ -635,10 +635,12 @@
 
 /* ── Service cards ── */
 .service-card {
-  background: var(--color-surface);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
   padding: 44px 40px;
   position: relative;
-  transition: background var(--transition-base), box-shadow var(--transition-slow);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 22px;
+  transition: background var(--transition-base), box-shadow var(--transition-slow), border-color var(--transition-slow);
   overflow: hidden;
   cursor: default;
 }
