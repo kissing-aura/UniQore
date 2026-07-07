@@ -36,7 +36,7 @@
   .niches__headline { position: static; }
   /* Team */
   .team__inner { grid-template-columns: 1fr; gap: 48px; }
-  .testimonials__grid { grid-template-columns: 1fr; gap: 2px; }
+  .testimonials__grid { grid-template-columns: 1fr; gap: 16px; }
   .testimonial-card:first-child { grid-row: span 1; border-right: none; border-bottom: 2px solid rgba(255,255,255,0.05); }
   .guarantees__grid { grid-template-columns: repeat(2, 1fr); }
   .faq__inner { grid-template-columns: 1fr; gap: 32px; }
@@ -169,7 +169,7 @@
   .team-card { padding: 28px 24px; }
   .niche-row__tags { display: none; }
   .niche-row__name { font-size: 22px; }
-  .testimonials__grid { grid-template-columns: 1fr; gap: 1px; }
+  .testimonials__grid { grid-template-columns: 1fr; gap: 16px; }
   .guarantees__grid { grid-template-columns: 1fr; }
   .guarantee-card { padding: 28px 24px; }
   .faq__inner { grid-template-columns: 1fr; gap: 24px; }
