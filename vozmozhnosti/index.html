@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="description" content="Возможности Uniqore: CRM под ключ, чат-боты в Telegram и WhatsApp, автоматизация процессов, аналитика, интеграции и складской учёт — одна система под ваш бизнес за 4–6 дней.">
+  <meta name="keywords" content="возможности CRM, автоматизация бизнеса, чат-боты, интеграции CRM, аналитика продаж, складской учёт">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Возможности — что автоматизирует Uniqore | CRM, боты, аналитика">
+  <meta property="og:description" content="CRM, чат-боты, автоматизация процессов, аналитика и интеграции — одна система под процессы вашего бизнеса.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta property="og:image:width" content="400">
+  <meta property="og:image:height" content="120">
+  <meta property="og:url" content="https://uniqore.pro/vozmozhnosti/">
+  <meta property="og:site_name" content="Uniqore">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Возможности Uniqore — CRM, боты, автоматизация, аналитика">
+  <meta name="twitter:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="canonical" href="https://uniqore.pro/vozmozhnosti/">
+  <link rel="icon" href="../favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <title>Возможности — CRM, боты, автоматизация, аналитика | Uniqore</title>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Uniqore", "item": "https://uniqore.pro/" },
+      { "@type": "ListItem", "position": 2, "name": "Возможности", "item": "https://uniqore.pro/vozmozhnosti/" }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="../css/reset.css?v=20260707n">
+  <link rel="stylesheet" href="../css/variables.css?v=20260707n">
+  <link rel="stylesheet" href="../css/typography.css?v=20260707n">
+  <link rel="stylesheet" href="../css/layout.css?v=20260707n">
+  <link rel="stylesheet" href="../css/components.css?v=20260707n">
+  <link rel="stylesheet" href="../css/sections.css?v=20260707n">
+  <link rel="stylesheet" href="../css/mobile.css?v=20260707n">
+  <link rel="stylesheet" href="../css/nav-pages.css?v=20260707n">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Hero: текст слева + продуктовый мокап справа ── */
+    .page-hero { position: relative; padding: 176px 0 96px; overflow: hidden; }
+    .page-hero__aurora { position: absolute; inset: -12% -6% 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(48% 56% at 84% 2%, rgba(245,197,24,0.14), transparent 60%),
+                  radial-gradient(40% 44% at 2% 92%, rgba(245,197,24,0.05), transparent 60%); }
+    .page-hero .container { position: relative; z-index: 1; }
+    .page-hero__grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 52px; align-items: center; }
+    .page-hero h1 { font-family: 'Unbounded', var(--font-display); font-weight: 700; font-size: clamp(30px, 3.7vw, 50px); line-height: 1.08; letter-spacing: -0.02em; }
+    .page-hero h1 em { font-style: normal; color: var(--color-accent); }
+    .page-hero__sub { margin-top: 26px; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.7; color: var(--color-text-secondary); max-width: 46ch; }
+    .page-hero__actions { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 14px; }
+    .page-hero__mock { perspective: 1600px; }
+    .page-hero__mock .mockup-showcase__window {
+      transform: rotateY(-13deg) rotateX(4deg); transform-style: preserve-3d;
+      box-shadow: -46px 54px 110px -34px rgba(0,0,0,0.75), 0 0 60px rgba(245,197,24,0.05);
+      transition: transform .6s cubic-bezier(.16,1,.3,1);
+    }
+    .page-hero__mock:hover .mockup-showcase__window { transform: rotateY(-8deg) rotateX(3deg); }
+
+    /* ── Секции-фичи: один большой мокап + текст, поочерёдно ── */
+    .feature { padding: 66px 0; }
+    .feature__row { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .feature__row--reverse .feature__visual { order: 2; }
+    .feature__title { font-family: 'Unbounded', var(--font-display); font-weight: 700; font-size: clamp(26px, 3.1vw, 42px); line-height: 1.08; letter-spacing: -0.02em; margin: 14px 0 18px; }
+    .feature__title em { font-style: normal; color: var(--color-accent); }
+    .feature__desc { font-size: 16px; line-height: 1.7; color: var(--color-text-secondary); max-width: 44ch; }
+    .feature__bullets { list-style: none; margin: 26px 0 0; display: grid; gap: 13px; }
+    .feature__bullets li { display: flex; align-items: center; gap: 12px; font-size: 15px; color: rgba(255,255,255,0.82); }
+    .feature__bullets li::before { content: '✓'; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(245,197,24,0.14); color: var(--color-accent); font-size: 11px; flex-shrink: 0; box-shadow: 0 0 14px rgba(245,197,24,0.25); }
+    .feature__visual .mockup-showcase { margin: 0; }
+    .feature__visual .mockup-showcase__label { margin-bottom: 14px; }
+
+    /* ── Итоговый CTA ── */
+    .cta-band { padding: 118px 0; text-align: center; position: relative; overflow: hidden; }
+    .cta-band__aurora { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(52% 62% at 50% 122%, rgba(245,197,24,0.11), transparent 62%); }
+    .cta-band__inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+    .cta-band h2 { font-family: 'Unbounded', var(--font-display); font-weight: 700; font-size: clamp(30px, 4.4vw, 54px); line-height: 1.06; letter-spacing: -0.02em; }
+    .cta-band h2 em { font-style: normal; color: var(--color-accent); }
+    .cta-band p { margin-top: 20px; color: var(--color-text-secondary); font-size: 17px; }
+    .cta-band__actions { margin-top: 34px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+      .page-hero { padding: 128px 0 60px; }
+      .page-hero__grid, .feature__row { grid-template-columns: 1fr; gap: 40px; }
+      .page-hero__mock .mockup-showcase__window { transform: none; box-shadow: 0 30px 70px -30px rgba(0,0,0,.7); }
+      .feature__row--reverse .feature__visual { order: 0; }
+      .cta-band { padding: 78px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo" aria-label="Uniqore">
+        <svg class="nav__logo-mark" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
+          <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+        <span class="nav__logo-text">uniqore</span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="/vozmozhnosti/" class="is-current">Возможности</a></li>
+        <li class="nav__item--drop">
+          <button type="button" class="nav__drop-toggle" aria-expanded="false">Решения
+            <svg width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav__dropdown" role="menu">
+            <a href="/crm-pod-klyuch/" role="menuitem"><span class="nav__dd-name">CRM под ключ</span><span class="nav__dd-desc">Своя система с нуля</span></a>
+            <a href="/crm-dlya-arendy/" role="menuitem"><span class="nav__dd-name">Посуточная аренда</span><span class="nav__dd-desc">Календарь · залоги · авточаты</span></a>
+            <a href="/crm-dlya-avtoservisa/" role="menuitem"><span class="nav__dd-name">Автосервис</span><span class="nav__dd-desc">Трекинг ремонта · история авто</span></a>
+            <a href="/crm-dlya-sklada/" role="menuitem"><span class="nav__dd-name">Склад и импорт</span><span class="nav__dd-desc">Остатки 24/7 · OCR · GPS</span></a>
+            <a href="/crm-dlya-stomatologii/" role="menuitem"><span class="nav__dd-name">Медицина / стоматология</span><span class="nav__dd-desc">История пациента · ДМС</span></a>
+            <a href="/crm-dlya-internet-magazina/" role="menuitem"><span class="nav__dd-name">Интернет-магазин</span><span class="nav__dd-desc">Заказы · статусы · аналитика</span></a>
+            <a href="/crm-dlya-telegram-biznesa/" role="menuitem"><span class="nav__dd-name">Telegram-бизнес</span><span class="nav__dd-desc">Магазин · рассылки · лояльность</span></a>
+          </div>
+        </li>
+        <li><a href="/keysy/">Кейсы</a></li>
+        <li><a href="/tseny/">Цены</a></li>
+        <li><a href="/blog/">Блог</a></li>
+        <li><a href="/o-nas/">О нас</a></li>
+      </ul>
+      <a href="/#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
+      <button class="nav__burger" id="burger" aria-label="Меню">
+        <span></span><span></span>
+      </button>
+    </div>
+    <div class="progress-bar" id="progress-bar"></div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="/vozmozhnosti/">Возможности</a></li>
+      <li class="mobile-menu__label">Решения</li>
+      <li><a href="/crm-pod-klyuch/">— CRM под ключ</a></li>
+      <li><a href="/crm-dlya-arendy/">— Посуточная аренда</a></li>
+      <li><a href="/crm-dlya-avtoservisa/">— Автосервис</a></li>
+      <li><a href="/crm-dlya-sklada/">— Склад и импорт</a></li>
+      <li><a href="/crm-dlya-stomatologii/">— Медицина</a></li>
+      <li><a href="/crm-dlya-internet-magazina/">— Интернет-магазин</a></li>
+      <li><a href="/crm-dlya-telegram-biznesa/">— Telegram-бизнес</a></li>
+      <li><a href="/keysy/">Кейсы</a></li>
+      <li><a href="/tseny/">Цены</a></li>
+      <li><a href="/blog/">Блог</a></li>
+      <li><a href="/o-nas/">О нас</a></li>
+      <li><a href="/#contact" class="btn btn--accent">Обсудить проект</a></li>
+    </ul>
+  </div>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section class="page-hero">
+      <div class="page-hero__aurora" aria-hidden="true"></div>
+      <div class="container">
+        <div class="page-hero__grid">
+          <div class="page-hero__text">
+            <div class="section-label">Возможности</div>
+            <h1 class="fx-scatter">Одна система вместо <em>десяти сервисов</em></h1>
+            <p class="page-hero__sub">CRM, чат-боты, автоматизация, аналитика и интеграции — под процессы именно вашего бизнеса. Без Bitrix, без ежемесячных лицензий, без шаблонов. Собираем с нуля за 4–6 дней.</p>
+            <div class="page-hero__actions">
+              <a href="/#contact" class="btn btn--accent btn--lg">Обсудить проект</a>
+              <a href="/keysy/" class="btn btn--ghost btn--lg">Смотреть кейсы →</a>
+            </div>
+          </div>
+          <div class="page-hero__mock" data-reveal>
+            <div class="mockup-showcase__window">
+              <div class="mockup-showcase__bar">
+                <div class="mockup-dots"><span></span><span></span><span></span></div>
+                <span class="mockup-showcase__url">crm.yourbusiness.com</span>
+              </div>
+              <div class="mockup-showcase__body">
+                <div class="ms-sidebar">
+                  <div class="ms-sidebar__logo"></div>
+                  <div class="ms-sidebar__nav">
+                    <div class="ms-nav-item ms-nav-item--active"><span class="ms-nav-dot"></span>Клиенты</div>
+                    <div class="ms-nav-item">Сделки</div>
+                    <div class="ms-nav-item">Задачи</div>
+                    <div class="ms-nav-item">Аналитика</div>
+                  </div>
+                </div>
+                <div class="ms-content">
+                  <div class="ms-header">
+                    <div class="ms-title">Клиенты <span class="ms-count">248</span></div>
+                    <div class="ms-actions">
+                      <div class="ms-btn">Экспорт</div>
+                      <div class="ms-btn ms-btn--accent">+ Добавить</div>
+                    </div>
+                  </div>
+                  <div class="ms-stats">
+                    <div class="ms-stat"><div class="ms-stat__val">$38 400</div><div class="ms-stat__label">выручка</div><div class="ms-stat__delta">+18%</div></div>
+                    <div class="ms-stat"><div class="ms-stat__val">184</div><div class="ms-stat__label">заявок</div><div class="ms-stat__delta">+12%</div></div>
+                    <div class="ms-stat"><div class="ms-stat__val">67%</div><div class="ms-stat__label">конверсия</div><div class="ms-stat__delta">+4%</div></div>
+                  </div>
+                  <div class="ms-list">
+                    <div class="ms-row"><span class="ms-dot ms-dot--green"></span><div class="ms-row__name">ООО Торгсервис</div><div class="ms-row__stage">Оплата</div><div class="ms-badge ms-badge--done">Закрыт</div></div>
+                    <div class="ms-row"><span class="ms-dot ms-dot--yellow"></span><div class="ms-row__name">Ресторан «Мамин»</div><div class="ms-row__stage">Переговоры</div><div class="ms-badge ms-badge--wip">В работе</div></div>
+                    <div class="ms-row"><span class="ms-dot ms-dot--blue"></span><div class="ms-row__name">АО «Техстрой»</div><div class="ms-row__stage">Презентация</div><div class="ms-badge ms-badge--new">Новый</div></div>
+                    <div class="ms-row"><span class="ms-dot ms-dot--green"></span><div class="ms-row__name">ИП Смирнова А.</div><div class="ms-row__stage">Подписание</div><div class="ms-badge ms-badge--done">Закрыт</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURE 1 — CRM -->
+    <section class="feature">
+      <div class="container">
+        <div class="feature__row feature__row--reverse">
+          <div class="feature__visual" data-reveal>
+            <div class="mockup-showcase">
+              <div class="mockup-showcase__label">CRM-система</div>
+              <div class="mockup-showcase__window">
+                <div class="mockup-showcase__bar">
+                  <div class="mockup-dots"><span></span><span></span><span></span></div>
+                  <span class="mockup-showcase__url">crm.yourbusiness.com</span>
+                </div>
+                <div class="mockup-showcase__body">
+                  <div class="ms-sidebar">
+                    <div class="ms-sidebar__logo"></div>
+                    <div class="ms-sidebar__nav">
+                      <div class="ms-nav-item ms-nav-item--active"><span class="ms-nav-dot"></span>Клиенты</div>
+                      <div class="ms-nav-item">Сделки</div>
+                      <div class="ms-nav-item">Задачи</div>
+                      <div class="ms-nav-item">Аналитика</div>
+                    </div>
+                  </div>
+                  <div class="ms-content">
+                    <div class="ms-header">
+                      <div class="ms-title">Сделки <span class="ms-count">42</span></div>
+                      <div class="ms-actions"><div class="ms-btn">Фильтр</div><div class="ms-btn ms-btn--accent">+ Сделка</div></div>
+                    </div>
+                    <div class="ms-stats">
+                      <div class="ms-stat"><div class="ms-stat__val">$54 200</div><div class="ms-stat__label">в воронке</div><div class="ms-stat__delta">+22%</div></div>
+                      <div class="ms-stat"><div class="ms-stat__val">12</div><div class="ms-stat__label">на оплате</div><div class="ms-stat__delta">+5</div></div>
+                      <div class="ms-stat"><div class="ms-stat__val">3.2 дн</div><div class="ms-stat__label">ср. цикл</div><div class="ms-stat__delta">−18%</div></div>
+                    </div>
+                    <div class="ms-list">
+                      <div class="ms-row"><span class="ms-dot ms-dot--green"></span><div class="ms-row__name">ООО Торгсервис</div><div class="ms-row__stage">Оплата</div><div class="ms-badge ms-badge--done">Закрыт</div></div>
+                      <div class="ms-row"><span class="ms-dot ms-dot--yellow"></span><div class="ms-row__name">Ресторан «Мамин»</div><div class="ms-row__stage">Переговоры</div><div class="ms-badge ms-badge--wip">В работе</div></div>
+                      <div class="ms-row"><span class="ms-dot ms-dot--blue"></span><div class="ms-row__name">АО «Техстрой»</div><div class="ms-row__stage">Презентация</div><div class="ms-badge ms-badge--new">Новый</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feature__text" data-reveal>
+            <div class="section-label">CRM-система</div>
+            <h2 class="feature__title">Клиенты и сделки — <em>в одном месте</em></h2>
+            <p class="feature__desc">Вся история каждого клиента под рукой. Сделка ведёт себя сама: напомнит, уведомит, сдвинет этап. Вы видите кто купил, кто пропал и почему — без Excel и блокнотов.</p>
+            <ul class="feature__bullets">
+              <li>Карточка клиента и полная история касаний</li>
+              <li>Воронка и авто-этапы сделок</li>
+              <li>Задачи и напоминания менеджерам</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURE 2 — Чат-бот -->
+    <section class="feature">
+      <div class="container">
+        <div class="feature__row">
+          <div class="feature__visual" data-reveal>
+            <div class="mockup-showcase">
+              <div class="mockup-showcase__label">Чат-бот</div>
+              <div class="mockup-showcase__window mockup-showcase__window--mobile">
+                <div class="mockup-showcase__bar mockup-showcase__bar--mobile">
+                  <div class="tg-header">
+                    <div class="tg-avatar"></div>
+                    <div><div class="tg-name">Uniqore CRM Bot</div><div class="tg-status">онлайн</div></div>
+                  </div>
+                </div>
+                <div class="tg-chat">
+                  <div class="tg-msg tg-msg--in">
+                    <div class="tg-bubble tg-bubble--in">Хочу забронировать квартиру на 15-17 июня</div>
+                    <div class="tg-time">14:23</div>
+                  </div>
+                  <div class="tg-msg tg-msg--out">
+                    <div class="tg-bubble tg-bubble--out">✅ Квартира на проспекте Победителей свободна.<br><br><strong>15–17 июня · 2 ночи</strong><br>Стоимость: 180 BYN<br><br>Подтвердить бронь?</div>
+                    <div class="tg-time tg-time--out">14:23</div>
+                  </div>
+                  <div class="tg-btns">
+                    <div class="tg-btn tg-btn--yes">✓ Подтвердить</div>
+                    <div class="tg-btn">Другие даты</div>
+                  </div>
+                  <div class="tg-msg tg-msg--in">
+                    <div class="tg-bubble tg-bubble--in">Подтверждаю!</div>
+                    <div class="tg-time">14:24</div>
+                  </div>
+                  <div class="tg-msg tg-msg--out">
+                    <div class="tg-bubble tg-bubble--out">🎉 Бронь подтверждена!<br>Код входа: <strong>4712</strong><br>Адрес отправлен в геопозиции ↓</div>
+                    <div class="tg-time tg-time--out">14:24</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feature__text" data-reveal>
+            <div class="section-label">Чат-боты</div>
+            <h2 class="feature__title">Бот принимает заявки <em>24/7</em></h2>
+            <p class="feature__desc">Отвечает клиентам за секунды, бронирует, принимает оплату и напоминает — в Telegram и WhatsApp. Пока вы спите, бот закрывает заявки и заводит их прямо в CRM.</p>
+            <ul class="feature__bullets">
+              <li>Ответы и бронь без участия менеджера</li>
+              <li>Оплата и подтверждение в чате</li>
+              <li>Заявки сразу падают в CRM</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURE 3 — Аналитика -->
+    <section class="feature">
+      <div class="container">
+        <div class="feature__row feature__row--reverse">
+          <div class="feature__visual" data-reveal>
+            <div class="mockup-showcase">
+              <div class="mockup-showcase__label">Аналитика</div>
+              <div class="mockup-showcase__window">
+                <div class="mockup-showcase__bar">
+                  <div class="mockup-dots"><span></span><span></span><span></span></div>
+                  <span class="mockup-showcase__url">analytics.yourbusiness.com</span>
+                </div>
+                <div class="ms-analytics">
+                  <div class="ms-analytics__header">
+                    <div class="ms-analytics__title">Отчёт · Июнь 2026</div>
+                    <div class="ms-badge ms-badge--live"><span class="ms-live-dot"></span>Live</div>
+                  </div>
+                  <div class="ms-kpis">
+                    <div class="ms-kpi ms-kpi--accent"><div class="ms-kpi__val">$32 400</div><div class="ms-kpi__label">Выручка</div><div class="ms-kpi__trend">↑ 14%</div></div>
+                    <div class="ms-kpi"><div class="ms-kpi__val">187</div><div class="ms-kpi__label">Заявок</div><div class="ms-kpi__trend">↑ 18%</div></div>
+                    <div class="ms-kpi"><div class="ms-kpi__val">54%</div><div class="ms-kpi__label">Конверсия</div><div class="ms-kpi__trend">↑ 6%</div></div>
+                  </div>
+                  <div class="ms-chart">
+                    <div class="ms-chart__label">Доход по неделям</div>
+                    <div class="ms-bars">
+                      <div class="ms-bar" style="--bh:28%"><div class="ms-bar__val">$8K</div></div>
+                      <div class="ms-bar" style="--bh:40%"><div class="ms-bar__val">$11K</div></div>
+                      <div class="ms-bar" style="--bh:34%"><div class="ms-bar__val">$9K</div></div>
+                      <div class="ms-bar ms-bar--hi" style="--bh:82%"><div class="ms-bar__val">$32K</div></div>
+                    </div>
+                  </div>
+                  <div class="ms-top">
+                    <div class="ms-top__label">Топ менеджеров</div>
+                    <div class="ms-top__row"><span class="ms-top__rank">1</span><span class="ms-top__name">Иванова А.</span><div class="ms-top__bar" style="--pw:88%"></div><span class="ms-top__num">$12K</span></div>
+                    <div class="ms-top__row"><span class="ms-top__rank">2</span><span class="ms-top__name">Петров Д.</span><div class="ms-top__bar" style="--pw:65%"></div><span class="ms-top__num">$9K</span></div>
+                    <div class="ms-top__row"><span class="ms-top__rank">3</span><span class="ms-top__name">Смирнов В.</span><div class="ms-top__bar" style="--pw:45%"></div><span class="ms-top__num">$6K</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feature__text" data-reveal>
+            <div class="section-label">Аналитика</div>
+            <h2 class="feature__title">Цифры бизнеса <em>в реальном времени</em></h2>
+            <p class="feature__desc">Выручка, заявки, конверсия и KPI каждого сотрудника — на одном экране. Авто-отчёт приходит в мессенджер каждое утро. Утром видите цифры — вечером принимаете решения.</p>
+            <ul class="feature__bullets">
+              <li>Дашборд выручки и воронки</li>
+              <li>Рейтинг и KPI сотрудников</li>
+              <li>Авто-отчёт в мессенджер каждое утро</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BAND -->
+    <section class="cta-band">
+      <div class="cta-band__aurora" aria-hidden="true"></div>
+      <div class="cta-band__inner">
+        <h2 class="fx-scatter">Соберём <em>вашу систему</em> за 4–6 дней</h2>
+        <p>Начнём с бесплатного аудита — разберём где теряется время и деньги, и предложим конкретное решение под ваш бизнес.</p>
+        <div class="cta-band__actions">
+          <a href="/#contact" class="btn btn--accent btn--lg">Обсудить проект</a>
+          <a href="/tseny/" class="btn btn--ghost btn--lg">Цены →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <a href="/" class="nav__logo footer__logo" aria-label="Uniqore">
+          <svg class="nav__logo-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
+            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+          <span class="nav__logo-text">uniqore</span>
+        </a>
+        <p>Индивидуальные системы<br>автоматизации для бизнеса</p>
+      </div>
+      <div class="footer__links">
+        <a href="/vozmozhnosti/">Возможности</a>
+        <a href="/keysy/">Кейсы</a>
+        <a href="/tseny/">Цены</a>
+        <a href="/crm-pod-klyuch/">CRM под ключ</a>
+        <a href="/blog/">Блог</a>
+        <a href="/o-nas/">О нас</a>
+        <a href="/#contact">Контакт</a>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <span>© 2026 Uniqore. Все права защищены.</span>
+    </div>
+  </footer>
+
+  <script src="../js/main.js?v=20260707n" defer></script>
+  <script src="../js/premium.js?v=20260707n" defer></script>
+  <script src="../js/animations.js?v=20260707n" defer></script>
+  <script src="../js/nav-dropdown.js?v=20260707n" defer></script>
+  <script src="../js/text-fx.js?v=20260707n" defer></script>
+</body>
+</html>

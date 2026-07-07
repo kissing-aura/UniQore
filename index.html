@@ -114,14 +114,15 @@
   </script>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/reset.css?v=20260707m">
-  <link rel="stylesheet" href="css/variables.css?v=20260707m">
-  <link rel="stylesheet" href="css/typography.css?v=20260707m">
-  <link rel="stylesheet" href="css/layout.css?v=20260707m">
-  <link rel="stylesheet" href="css/components.css?v=20260707m">
-  <link rel="stylesheet" href="css/sections.css?v=20260707m">
-  <link rel="stylesheet" href="css/animations.css?v=20260707m">
-  <link rel="stylesheet" href="css/mobile.css?v=20260707m">
+  <link rel="stylesheet" href="css/reset.css?v=20260707n">
+  <link rel="stylesheet" href="css/variables.css?v=20260707n">
+  <link rel="stylesheet" href="css/typography.css?v=20260707n">
+  <link rel="stylesheet" href="css/layout.css?v=20260707n">
+  <link rel="stylesheet" href="css/components.css?v=20260707n">
+  <link rel="stylesheet" href="css/sections.css?v=20260707n">
+  <link rel="stylesheet" href="css/animations.css?v=20260707n">
+  <link rel="stylesheet" href="css/mobile.css?v=20260707n">
+  <link rel="stylesheet" href="css/nav-pages.css?v=20260707n">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -173,11 +174,25 @@
         <span class="nav__logo-text">uniqore</span>
       </a>
       <ul class="nav__links">
-        <li><a href="#cases">Кейсы</a></li>
-        <li><a href="#services">Услуги</a></li>
-        <li><a href="#process">Процесс</a></li>
-        <li><a href="#pricing">Цены</a></li>
+        <li><a href="/vozmozhnosti/">Возможности</a></li>
+        <li class="nav__item--drop">
+          <button type="button" class="nav__drop-toggle" aria-expanded="false">Решения
+            <svg width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav__dropdown" role="menu">
+            <a href="/crm-pod-klyuch/" role="menuitem"><span class="nav__dd-name">CRM под ключ</span><span class="nav__dd-desc">Своя система с нуля</span></a>
+            <a href="/crm-dlya-arendy/" role="menuitem"><span class="nav__dd-name">Посуточная аренда</span><span class="nav__dd-desc">Календарь · залоги · авточаты</span></a>
+            <a href="/crm-dlya-avtoservisa/" role="menuitem"><span class="nav__dd-name">Автосервис</span><span class="nav__dd-desc">Трекинг ремонта · история авто</span></a>
+            <a href="/crm-dlya-sklada/" role="menuitem"><span class="nav__dd-name">Склад и импорт</span><span class="nav__dd-desc">Остатки 24/7 · OCR · GPS</span></a>
+            <a href="/crm-dlya-stomatologii/" role="menuitem"><span class="nav__dd-name">Медицина / стоматология</span><span class="nav__dd-desc">История пациента · ДМС</span></a>
+            <a href="/crm-dlya-internet-magazina/" role="menuitem"><span class="nav__dd-name">Интернет-магазин</span><span class="nav__dd-desc">Заказы · статусы · аналитика</span></a>
+            <a href="/crm-dlya-telegram-biznesa/" role="menuitem"><span class="nav__dd-name">Telegram-бизнес</span><span class="nav__dd-desc">Магазин · рассылки · лояльность</span></a>
+          </div>
+        </li>
+        <li><a href="/keysy/">Кейсы</a></li>
+        <li><a href="/tseny/">Цены</a></li>
         <li><a href="/blog/">Блог</a></li>
+        <li><a href="/o-nas/">О нас</a></li>
       </ul>
       <a href="#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
       <button class="nav__burger" id="burger" aria-label="Меню">
@@ -190,11 +205,19 @@
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobile-menu">
     <ul>
-      <li><a href="#cases">Кейсы</a></li>
-      <li><a href="#services">Услуги</a></li>
-      <li><a href="#process">Процесс</a></li>
-      <li><a href="#pricing">Цены</a></li>
+      <li><a href="/vozmozhnosti/">Возможности</a></li>
+      <li class="mobile-menu__label">Решения</li>
+      <li><a href="/crm-pod-klyuch/">— CRM под ключ</a></li>
+      <li><a href="/crm-dlya-arendy/">— Посуточная аренда</a></li>
+      <li><a href="/crm-dlya-avtoservisa/">— Автосервис</a></li>
+      <li><a href="/crm-dlya-sklada/">— Склад и импорт</a></li>
+      <li><a href="/crm-dlya-stomatologii/">— Медицина</a></li>
+      <li><a href="/crm-dlya-internet-magazina/">— Интернет-магазин</a></li>
+      <li><a href="/crm-dlya-telegram-biznesa/">— Telegram-бизнес</a></li>
+      <li><a href="/keysy/">Кейсы</a></li>
+      <li><a href="/tseny/">Цены</a></li>
       <li><a href="/blog/">Блог</a></li>
+      <li><a href="/o-nas/">О нас</a></li>
       <li><a href="#contact" class="btn btn--accent">Обсудить проект</a></li>
     </ul>
   </div>
@@ -206,8 +229,8 @@
       <!-- Фон hero: премиум абстракт-видео (золотой поток, Higgsfield) приглушённо
            + aurora-glow + сетка + частицы + зерно. Не мутное bokeh — элегантный дарк. -->
       <div class="hero__bgvideo bgloop" aria-hidden="true">
-        <video class="bgloop__el" data-role="a" autoplay muted loop playsinline preload="auto"><source src="assets/hero-abstract.mp4?v=20260707m" type="video/mp4"></video>
-        <video class="bgloop__el" data-role="b" autoplay muted loop playsinline preload="auto"><source src="assets/hero-abstract.mp4?v=20260707m" type="video/mp4"></video>
+        <video class="bgloop__el" data-role="a" autoplay muted loop playsinline preload="auto"><source src="assets/hero-abstract.mp4?v=20260707n" type="video/mp4"></video>
+        <video class="bgloop__el" data-role="b" autoplay muted loop playsinline preload="auto"><source src="assets/hero-abstract.mp4?v=20260707n" type="video/mp4"></video>
       </div>
       <div class="hero__aurora" aria-hidden="true"></div>
       <canvas id="hero-particles" aria-hidden="true"></canvas>
@@ -1367,8 +1390,8 @@
     <!-- CONTACT SECTION -->
     <section class="contact" id="contact">
       <div class="contact__bgvideo bgloop" aria-hidden="true">
-        <video class="bgloop__el" data-role="a" autoplay muted loop playsinline preload="auto"><source src="assets/accent-flow.mp4?v=20260707m" type="video/mp4"></video>
-        <video class="bgloop__el" data-role="b" autoplay muted loop playsinline preload="auto"><source src="assets/accent-flow.mp4?v=20260707m" type="video/mp4"></video>
+        <video class="bgloop__el" data-role="a" autoplay muted loop playsinline preload="auto"><source src="assets/accent-flow.mp4?v=20260707n" type="video/mp4"></video>
+        <video class="bgloop__el" data-role="b" autoplay muted loop playsinline preload="auto"><source src="assets/accent-flow.mp4?v=20260707n" type="video/mp4"></video>
       </div>
       <div class="container">
         <div class="section-label">Связаться</div>
@@ -1470,13 +1493,14 @@
 
   <!-- tsParticles init -->
   <!-- JS -->
-  <script src="js/animations.js?v=20260707m" defer></script>
-  <script src="js/particles.js?v=20260707m" defer></script>
-  <script src="js/form.js?v=20260707m" defer></script>
-  <script src="js/main.js?v=20260707m" defer></script>
-  <script src="js/niche-switcher.js?v=20260707m" defer></script>
-  <script src="js/premium.js?v=20260707m" defer></script>
-  <script src="js/bgloop.js?v=20260707m" defer></script>
+  <script src="js/animations.js?v=20260707n" defer></script>
+  <script src="js/particles.js?v=20260707n" defer></script>
+  <script src="js/form.js?v=20260707n" defer></script>
+  <script src="js/main.js?v=20260707n" defer></script>
+  <script src="js/niche-switcher.js?v=20260707n" defer></script>
+  <script src="js/premium.js?v=20260707n" defer></script>
+  <script src="js/bgloop.js?v=20260707n" defer></script>
+  <script src="js/nav-dropdown.js?v=20260707n" defer></script>
   <!-- effects3d.js отключён: дублировал premium.js (тилт/магнит/счётчики) и вызывал конфликт transform. premium.js — единственный источник. -->
 
   <script>
