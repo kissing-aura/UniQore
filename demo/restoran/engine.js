@@ -1049,15 +1049,47 @@ function viewHub() {
   };
   const COLORS = ['var(--acc)', '#e79a2b', '#5d8a4a', '#5b8cff', '#c8709a', '#7a8b3a', '#3f9c8a', '#d16a4a'];
   const tiles = R.nav.filter(n => n.key !== 'hub');
+
+  /* ── ИИ-аналитик: инсайты из заказов ── */
+  const dishTally = {}, DRINK = /кола|лимонад|напиток|вода|сок|морс|чай|кофе/i;
+  orders.forEach(o => (o.items || '').split(', ').forEach(part => { const m = part.match(/^(.*?)\s*×(\d+)$/); if (m && !DRINK.test(m[1])) dishTally[m[1]] = (dishTally[m[1]] || 0) + (+m[2]); }));
+  const dishSorted = Object.entries(dishTally).sort((a, b) => b[1] - a[1]);
+  const top = dishSorted[0] || ['—', 0], low = dishSorted[dishSorted.length - 1] || ['—', 0];
+  const courierT = {};
+  orders.forEach(o => { if (o.courier) courierT[o.courier] = (courierT[o.courier] || 0) + 1; });
+  const cour = Object.entries(courierT).sort((a, b) => b[1] - a[1])[0] || ['—', 0];
+  const profit = orders.reduce((s, o) => s + ((+o.amount || 0) - (+o.cost || 0)), 0);
+  const avg = orders.length ? Math.round(orders.reduce((s, o) => s + (+o.amount || 0), 0) / orders.length) : 0;
+  const insights = [
+    ['good', 'Хит дня', esc(top[0]) + ' — ' + top[1] + ' порц., топ спроса'],
+    ['bad', 'Проседает', esc(low[0]) + ' — ' + low[1] + ' за день, кандидат на пересмотр меню'],
+    ['acc', 'Экономика', 'Средний чек ' + fmtMoney(avg) + ' · прибыль ' + fmtMoney(profit)],
+    ['blue', 'Курьеры', 'Лидер — ' + esc(cour[0]) + ' (' + cour[1] + ' доставок)'],
+    ['spark', 'Рекомендация', 'Поднять цену на «' + esc(top[0]) + '» на 5% — спрос вытянет, +' + fmtMoney(Math.round(top[1] * avg * 0.05)) + '/день'],
+  ];
+  const liveNew = orders.filter(o => o.stage === 'new' || o.stage === 'cooking').slice(0, 3);
+
   document.getElementById('viewBody').innerHTML = `
     <div class="hub">
       <div class="hub-hi"><h1>${hi}</h1><p>${date} · ${esc(R.brand && R.brand.name || '')}</p></div>
-      <div class="hub-grid">
-        ${tiles.map((n, i) => `<button class="hub-tile${i === 0 ? ' hub-tile--hero' : ''}" data-hub-nav="${n.key}" style="--tc:${COLORS[i % COLORS.length]}">
-          <span class="hub-tile__ic">${icon(n.icon || 'layers')}</span>
-          <span class="hub-tile__b"><span class="hub-tile__lbl">${esc(n.label)}</span><span class="hub-tile__m">${esc(metric(n))}</span></span>
-          <span class="hub-tile__arw">→</span>
-        </button>`).join('')}
+      <div class="hub-body">
+        <div class="hub-grid">
+          ${tiles.map((n, i) => `<button class="hub-tile${i === 0 ? ' hub-tile--hero' : ''}" data-hub-nav="${n.key}" style="--tc:${COLORS[i % COLORS.length]}">
+            <span class="hub-tile__ic">${icon(n.icon || 'layers')}</span>
+            <span class="hub-tile__b"><span class="hub-tile__lbl">${esc(n.label)}</span><span class="hub-tile__m">${esc(metric(n))}</span></span>
+            ${i === 0 && liveNew.length ? `<span class="hub-tile__live">${liveNew.map(o => `<span class="hub-chip">#${esc(o.id)} · ${esc((o.items || '').split(',')[0])}</span>`).join('')}</span>` : ''}
+            <span class="hub-tile__arw">→</span>
+          </button>`).join('')}
+        </div>
+        <aside class="hub-side">
+          <div class="hub-ai">
+            <div class="hub-ai__h"><span class="hub-ai__dot"></span>ИИ-аналитик<span class="hub-ai__badge">live</span></div>
+            <div class="hub-ai__body">
+              ${insights.map((it, i) => `<div class="hub-ins hub-ins--${it[0]}" style="animation-delay:${i * 90}ms"><b>${esc(it[1])}</b><span>${it[2]}</span></div>`).join('')}
+            </div>
+            <button class="hub-ai__cta" data-hub-nav="dash">${icon('bolt')}Открыть кухню</button>
+          </div>
+        </aside>
       </div>
     </div>`;
 }
