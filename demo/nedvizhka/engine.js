@@ -322,7 +322,7 @@ function showView(key) {
   const n = navItem(key), main = document.getElementById('main');
   document.title = (n ? n.label + ' · ' : '') + (R.brand?.name || 'CRM');
   main.innerHTML = `<div class="page-head"><div class="page-title">${esc(n.label)}</div><button class="btn hidden" id="pageAdd"></button></div><div id="viewBody"></div>`;
-  const R_ = { dashboard: viewDashboard, records: viewRecords, kanban: viewKanban, payments: viewPayments, tasks: viewTasks, team: viewTeam, analytics: viewAnalytics, finance: viewFinance, goals: viewGoals, docs: viewDocs, calendar: viewCalendar, reference: viewReference, activity: viewActivity, notifications: viewNotifications, automation: viewAutomation, roles: viewRoles, knowledge: viewKnowledge, integrations: viewIntegrations, files: viewFiles, portal: viewPortal, settings: viewSettings, catalog: viewCatalog };
+  const R_ = { dashboard: viewDashboard, records: viewRecords, kanban: viewKanban, payments: viewPayments, tasks: viewTasks, team: viewTeam, analytics: viewAnalytics, finance: viewFinance, goals: viewGoals, docs: viewDocs, calendar: viewCalendar, reference: viewReference, activity: viewActivity, notifications: viewNotifications, automation: viewAutomation, roles: viewRoles, knowledge: viewKnowledge, integrations: viewIntegrations, files: viewFiles, portal: viewPortal, settings: viewSettings, catalog: viewCatalog, overview: viewOverview, valuation: viewValuation };
   try {
     (R_[n.type] || viewRecords)(n);
   } catch (err) {
@@ -568,6 +568,122 @@ function viewCatalog(n) {
     document.getElementById('rcGrid').hidden = mode !== 'grid';
     document.getElementById('rcMap').hidden = mode !== 'map';
   });
+}
+
+/* ── Дашборд (обзор бизнеса: комиссия, воронка лидов, ИИ-инсайты, топ-агенты) ── */
+function viewOverview() {
+  const objects = DB.recs('object'), leads = DB.recs('lead'), deals = DB.recs('deal'), agents = DB.recs('agent');
+  const fin = DB.fin();
+  const now = new Date();
+  const inMonth = (iso, offset) => { const d = new Date(iso), t = new Date(now.getFullYear(), now.getMonth() - offset, 1); return d.getFullYear() === t.getFullYear() && d.getMonth() === t.getMonth(); };
+  const sum = (arr) => arr.reduce((a, t) => a + (Number(t.amount) || 0), 0);
+  const mtdIncome = sum(fin.filter(t => t.type === 'income' && inMonth(t.date, 0)));
+  const mtdExpense = sum(fin.filter(t => t.type === 'expense' && inMonth(t.date, 0)));
+  const prevIncome = sum(fin.filter(t => t.type === 'income' && inMonth(t.date, 1))) || 1;
+  const trend = Math.round((mtdIncome - prevIncome) / prevIncome * 100);
+  const active = objects.filter(o => o.stage === 'active').length;
+  const openObjects = objects.filter(o => o.stage !== 'closed');
+  const avgDays = openObjects.length ? Math.round(openObjects.reduce((a, o) => a + daysSince(o.createdAt), 0) / openObjects.length) : 0;
+  const pipelineValue = deals.filter(d => !['won', 'lost'].includes(d.stage)).reduce((a, d) => a + (Number(d.amount) || 0), 0);
+
+  const LEAD_STAGES = [['new', 'Новый'], ['contacted', 'Связались'], ['qualified', 'Квалифицирован'], ['viewing', 'Показ'], ['won', 'Сделка']];
+  const FUN_COLOR = ['#7d9c8a', '#5f8a72', '#b8863f', '#a8703a', '#2f6349'];
+  const counts = LEAD_STAGES.map(([k]) => leads.filter(l => l.stage === k).length);
+  const maxC = Math.max(1, ...counts);
+  const funnelRows = LEAD_STAGES.map(([, label], i) => {
+    const c = counts[i], pct = i === 0 ? '' : Math.round(c / Math.max(1, counts[0]) * 100) + '%';
+    return `<div class="fun-row"><div class="fun-row__label">${esc(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(5, c / maxC * 100)}%;background:${FUN_COLOR[i]}"></div></div><div class="fun-row__val num">${c}<span>${pct}</span></div></div>`;
+  }).join('');
+
+  const topAgents = agents.slice().sort((a, b) => b.deals - a.deals).slice(0, 5);
+  const leaderboard = topAgents.map(a => `<div class="list-item"><div class="list-item__name">${ava(a.name, true)}${esc(a.name)}</div><div class="list-item__right"><span class="num cell-acc">${a.deals} сд.</span><span class="list-item__meta">★ ${a.rating}</span></div></div>`).join('') || '<div class="empty-hint">Нет агентов</div>';
+
+  const byComplex = new Map(); objects.forEach(o => byComplex.set(o.complex, (byComplex.get(o.complex) || 0) + 1));
+  const topComplex = [...byComplex.entries()].sort((a, b) => b[1] - a[1])[0];
+  const staleLeads = leads.filter(l => ['contacted', 'qualified', 'viewing'].includes(l.stage) && daysSince(l.createdAt) > 5).length;
+  const closedThisMonth = deals.filter(d => d.stage === 'won').length;
+  const insights = [
+    topAgents[0] ? { level: 'good', icon: 'target', text: `Лучший агент — ${esc(topAgents[0].name)}: ${topAgents[0].deals} закрытых сделок, рейтинг ★${topAgents[0].rating}.` } : null,
+    { level: trend >= 0 ? 'good' : 'warn', icon: 'chart', text: `Комиссия месяца ${fmtMoney(mtdIncome)} — ${trend >= 0 ? '+' : ''}${trend}% к прошлому месяцу.` },
+    staleLeads ? { level: 'warn', icon: 'bolt', text: `${staleLeads} лид${staleLeads === 1 ? '' : 'а'} без движения больше 5 дней — стоит дожать, иначе уйдут к конкурентам.` } : null,
+    topComplex ? { level: 'info', icon: 'building', text: `ЖК «${esc(topComplex[0])}» — самый крупный кластер каталога, ${topComplex[1]} объектов.` } : null,
+    { level: 'good', icon: 'deal', text: `Закрыто сделок за месяц: ${closedThisMonth}. Средний срок объекта в продаже — ${avgDays} дней.` },
+  ].filter(Boolean);
+  const insightsHtml = insights.map(i => `<div class="ai-ins ai-ins--${i.level}"><span class="ai-ins__ic">${icon(i.icon)}</span><span>${i.text}</span></div>`).join('');
+
+  document.getElementById('viewBody').innerHTML = `
+    <div class="kpi-row">
+      <div class="kpi kpi--acc"><div class="kpi__label">Комиссия · месяц</div><div class="kpi__val num kpi__val--acc" data-cu="${mtdIncome}" data-money="1">${fmtMoney(mtdIncome)}</div><div class="kpi__sub">${trend >= 0 ? '↑' : '↓'} ${Math.abs(trend)}% к прошлому</div></div>
+      <div class="kpi"><div class="kpi__label">Прибыль · месяц</div><div class="kpi__val num kpi__val--good" data-cu="${mtdIncome - mtdExpense}" data-money="1">${fmtMoney(mtdIncome - mtdExpense)}</div></div>
+      <div class="kpi"><div class="kpi__label">Активных объектов</div><div class="kpi__val num" data-cu="${active}">${active}</div><div class="kpi__sub">из ${objects.length} в каталоге</div></div>
+      <div class="kpi"><div class="kpi__label">В пайплайне сделок</div><div class="kpi__val num" data-cu="${pipelineValue}" data-money="1">${fmtMoney(pipelineValue)}</div><div class="kpi__sub">${avgDays} дн. средний срок</div></div>
+    </div>
+    <div class="dash-grid" style="margin-top:var(--gap)">
+      <div class="bcard"><div class="bcard__head"><span class="bcard__label">Воронка лидов</span></div>${funnelRows}</div>
+      <div class="bcard"><div class="bcard__head"><span class="bcard__label">ИИ-аналитик · что вижу</span></div>${insightsHtml}</div>
+      <div class="bcard"><div class="bcard__head"><span class="bcard__label">Топ агентов</span></div>${leaderboard}</div>
+    </div>`;
+}
+
+/* ── ИИ-оценка (AVM: мгновенная оценка объекта по параметрам + сравнимые) ── */
+const VAL_RENOV_MULT = { raw: 0.85, pre: 0.93, fine: 1.0, design: 1.12 };
+function estimateObject({ complex, rooms, area, floor, floorsTotal, renovation, dealType }) {
+  const objects = DB.recs('object');
+  let pool = objects.filter(o => o.complex === complex && o.dealType === dealType);
+  if (pool.length < 2) pool = objects.filter(o => o.dealType === dealType);
+  const avgPerM2 = pool.reduce((a, o) => a + o.price / o.area, 0) / pool.length;
+  const floorMult = floor <= 2 ? 0.97 : (floorsTotal && floor === floorsTotal) ? 1.03 : 1.0;
+  const base = avgPerM2 * area * (VAL_RENOV_MULT[renovation] || 1) * floorMult;
+  const round = v => Math.round(v / 1000) * 1000;
+  const comps = objects.filter(o => o.complex === complex).slice(0, 3);
+  return { estimate: round(base), low: round(base * 0.94), high: round(base * 1.06), sample: pool.length, comps, avgPerM2: Math.round(avgPerM2) };
+}
+function viewValuation(n) {
+  const ent = entById(n.entity);
+  const complexes = [...new Set(DB.recs('object').map(o => o.complex))];
+  const roomOpts = ent.fields.find(f => f.key === 'rooms').options;
+  const renovOpts = ent.fields.find(f => f.key === 'renovation').options;
+  document.getElementById('viewBody').innerHTML = `
+    <div class="val-wrap">
+      <div class="val-form bcard">
+        <div class="bcard__head"><span class="bcard__label">Параметры объекта</span></div>
+        <div class="f-grid2">
+          <div class="f-col"><label class="f-label">ЖК</label><select class="t-select t-select--full" id="vf_complex">${complexes.map(c => `<option value="${escAttr(c)}">${esc(c)}</option>`).join('')}</select></div>
+          <div class="f-col"><label class="f-label">Тип сделки</label><select class="t-select t-select--full" id="vf_deal"><option value="sale">Продажа</option><option value="rent">Аренда</option></select></div>
+          <div class="f-col"><label class="f-label">Комнат</label><select class="t-select t-select--full" id="vf_rooms">${Object.entries(roomOpts).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}</select></div>
+          <div class="f-col"><label class="f-label">Ремонт</label><select class="t-select t-select--full" id="vf_renov">${Object.entries(renovOpts).map(([k, v]) => `<option value="${k}" ${k === 'fine' ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></div>
+          <div class="f-col"><label class="f-label">Площадь, м²</label><input class="t-input t-input--full" type="number" id="vf_area" value="58"></div>
+          <div class="f-col"><label class="f-label">Этаж / этажей всего</label><div style="display:flex;gap:8px"><input class="t-input" type="number" id="vf_floor" value="12" style="width:50%"><input class="t-input" type="number" id="vf_floors" value="24" style="width:50%"></div></div>
+        </div>
+        <button class="btn" id="vf_go" style="margin-top:14px;width:100%">${icon('spark')} Оценить объект</button>
+      </div>
+      <div class="val-result bcard" id="valResult"><div class="empty-hint">Заполни параметры слева и нажми «Оценить объект» — модель посчитает цену по базе из ${DB.recs('object').length} объектов.</div></div>
+    </div>`;
+
+  document.getElementById('vf_go').onclick = () => {
+    const params = {
+      complex: document.getElementById('vf_complex').value,
+      dealType: document.getElementById('vf_deal').value,
+      rooms: document.getElementById('vf_rooms').value,
+      renovation: document.getElementById('vf_renov').value,
+      area: Number(document.getElementById('vf_area').value) || 1,
+      floor: Number(document.getElementById('vf_floor').value) || 1,
+      floorsTotal: Number(document.getElementById('vf_floors').value) || 1,
+    };
+    const r = estimateObject(params);
+    const unit = params.dealType === 'rent' ? ' /мес' : '';
+    const compsHtml = r.comps.map(c => `<div class="list-item"><div class="list-item__name">${esc(c.name)}</div><div class="list-item__right"><span class="num cell-acc">${fmtMoney(c.price)}${c.dealType === 'rent' ? '/мес' : ''}</span></div></div>`).join('') || '<div class="empty-hint">Нет сравнимых объектов в этом ЖК</div>';
+    document.getElementById('valResult').innerHTML = `
+      <div class="bcard__head"><span class="bcard__label">Оценка ИИ</span><span class="val-badge">${icon('spark')} обучено на ${r.sample} объектах</span></div>
+      <div class="val-price">${fmtMoney(r.estimate)}${unit}</div>
+      <div class="val-range">Диапазон: ${moneyShort(r.low)}–${moneyShort(r.high)} ${CUR}${unit} <span class="val-conf">доверительный интервал ±6%</span></div>
+      <div class="val-verdict" id="valVerdict"></div>
+      <div class="bcard__head" style="margin-top:16px"><span class="bcard__label">Сравнимые объекты в ЖК «${esc(params.complex)}»</span></div>
+      ${compsHtml}`;
+    const verdictText = `Средняя цена по ЖК «${params.complex}» — ${Math.round(r.avgPerM2).toLocaleString(LOC)} ₽/м². С учётом ремонта «${renovOpts[params.renovation]}» и ${params.floor} этажа из ${params.floorsTotal} — итоговая оценка ${fmtMoney(r.estimate)}${unit}. Рекомендованный диапазон для листинга: ${moneyShort(r.low)}–${moneyShort(r.high)} ₽.`;
+    const el = document.getElementById('valVerdict'); let i = 0;
+    (function type() { if (i <= verdictText.length) { el.textContent = verdictText.slice(0, i); i += 3; setTimeout(type, 12); } })();
+  };
 }
 
 // inline-редактирование ячейки
@@ -1460,7 +1576,7 @@ function checkQuota() {
 
 /* ── валидатор рецепта ── */
 function validateRecipe() {
-  const MODULE_TYPES = ['dashboard', 'records', 'kanban', 'payments', 'tasks', 'team', 'analytics', 'finance', 'goals', 'docs', 'calendar', 'reference', 'activity', 'notifications', 'automation', 'roles', 'knowledge', 'integrations', 'files', 'portal', 'settings', 'catalog'];
+  const MODULE_TYPES = ['dashboard', 'records', 'kanban', 'payments', 'tasks', 'team', 'analytics', 'finance', 'goals', 'docs', 'calendar', 'reference', 'activity', 'notifications', 'automation', 'roles', 'knowledge', 'integrations', 'files', 'portal', 'settings', 'catalog', 'overview', 'valuation'];
   const FIELD_TYPES = ['text', 'number', 'money', 'date', 'select', 'textarea', 'computed', 'gallery'];
   const errs = [];
   try {

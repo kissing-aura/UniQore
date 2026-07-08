@@ -1,5 +1,8 @@
 /* ═══ КАТАЛОГ — витрина-маркетплейс (фото-карточки, не таблица) ═══ */
 
+/* topbar занимает правый верх (поиск/аккаунт) — бейдж уводим вниз, чтобы не наезжал */
+.uq-badge { top: auto !important; bottom: 16px !important; }
+
 .rc-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
 .rc-bar .t-input--search { flex: 1 1 220px; min-width: 180px; }
 .rc-bar .t-select { min-width: 150px; }
@@ -54,3 +57,28 @@
 .rc-pin::after { content: ''; position: absolute; left: 0; bottom: -5px; width: 0; height: 0; border-style: solid; border-width: 5px 5px 0 0; border-color: var(--text) transparent transparent transparent; }
 .rc-pin:hover { background: var(--acc); color: var(--acc-contrast); transform: translate(-50%, -100%) scale(1.08); z-index: 2; }
 .rc-pin:hover::after { border-color: var(--acc) transparent transparent transparent; }
+
+/* ═══ ДАШБОРД — воронка лидов + ИИ-инсайты ═══ */
+.fun-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+.fun-row__label { width: 120px; flex-shrink: 0; font-size: 12.5px; color: var(--text2); }
+.fun-row__val { width: 64px; flex-shrink: 0; text-align: right; }
+.fun-row__val span { display: block; font-size: 10.5px; color: var(--text3); font-family: var(--font-ui); }
+
+.ai-ins { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.5; color: var(--text2); }
+.ai-ins:last-child { border-bottom: none; }
+.ai-ins__ic { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; margin-top: 1px; }
+.ai-ins__ic svg { width: 14px; height: 14px; }
+.ai-ins--good .ai-ins__ic { background: rgba(47,99,73,0.14); color: var(--good); }
+.ai-ins--warn .ai-ins__ic { background: rgba(184,134,63,0.16); color: var(--warn); }
+.ai-ins--info .ai-ins__ic { background: var(--surface3); color: var(--text2); }
+
+/* ═══ ИИ-ОЦЕНКА ═══ */
+.val-wrap { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+@media (max-width: 780px) { .val-wrap { grid-template-columns: 1fr; } }
+.val-result { min-height: 320px; }
+.val-badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-ui); font-size: 11px; font-weight: 600; color: var(--acc); background: var(--acc-dim); padding: 4px 10px; border-radius: 999px; }
+.val-badge svg { width: 12px; height: 12px; }
+.val-price { font-family: var(--font-head); font-size: 40px; font-weight: 600; color: var(--text); margin-top: 14px; letter-spacing: -.01em; }
+.val-range { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.val-conf { color: var(--text3); }
+.val-verdict { margin-top: 16px; padding: 14px 16px; background: var(--surface2); border-radius: var(--radius); font-size: 13px; line-height: 1.6; color: var(--text2); min-height: 66px; }

@@ -4,6 +4,7 @@
    Сущности: Объекты, Лиды, Сделки, Агенты. */
 (() => {
   const dt = o => new Date(Date.now() + o * 86400000).toISOString();
+  const monthAgo = m => { const d = new Date(); d.setMonth(d.getMonth() - m); d.setDate(10 + (m % 3) * 6); return d.toISOString(); };
 
   const COMPLEXES = ['Северный Парк', 'Английский Квартал', 'Ривер Хаус', 'Сколково Парк', 'Флотилия', 'Хамовники Grand', 'Ботанический Сад'];
   const METRO = { 'Северный Парк': 'Водный стадион', 'Английский Квартал': 'Фрунзенская', 'Ривер Хаус': 'Кутузовская', 'Сколково Парк': 'Раменки', 'Флотилия': 'Мнёвники', 'Хамовники Grand': 'Спортивная', 'Ботанический Сад': 'Ботанический сад' };
@@ -83,8 +84,21 @@
     ['Ксения Белова', '+7 909 880-21-04', 'Аренда · семейная', 17, 4.8],
   ].map((d, i) => ({ id: 'ag' + (i + 1), name: d[0], phone: d[1], specialty: d[2], deals: d[3], rating: d[4], notes: '', createdAt: dt(-(60 - i * 8)) }));
 
+  // ── Финансы: комиссия за 8 месяцев (продажа ~3% от цены, аренда — первый месяц) ──
+  const commissionByMonth = [1850000, 2050000, 2300000, 2600000, 2750000, 2950000, 3100000, 3263000];
+  const finance = [];
+  commissionByMonth.forEach((total, i) => {
+    const m = 7 - i, complex = COMPLEXES[i % COMPLEXES.length];
+    finance.push({ id: 'fi' + i + 'a', type: 'income', title: 'Комиссия за продажу — ЖК «' + complex + '»', category: 'Комиссия · продажа', amount: Math.round(total * 0.72), date: monthAgo(m) });
+    finance.push({ id: 'fi' + i + 'b', type: 'income', title: 'Комиссия за аренду', category: 'Комиссия · аренда', amount: Math.round(total * 0.28), date: monthAgo(m) });
+    finance.push({ id: 'fe' + i + 'a', type: 'expense', title: 'Выплаты агентам', category: 'Выплаты агентам', amount: Math.round(total * 0.5), date: monthAgo(m) });
+    finance.push({ id: 'fe' + i + 'b', type: 'expense', title: 'Реклама (Циан, Авито, Instagram)', category: 'Реклама и лиды', amount: Math.round(total * 0.09), date: monthAgo(m) });
+    finance.push({ id: 'fe' + i + 'c', type: 'expense', title: 'Налоги (УСН 6%)', category: 'Налоги', amount: Math.round(total * 0.06), date: monthAgo(m) });
+    finance.push({ id: 'fe' + i + 'd', type: 'expense', title: 'Офис и CRM-инструменты', category: 'Офис и инструменты', amount: 45000 + i * 1500, date: monthAgo(m) });
+  });
+
   window.RECIPE = {
-    key: 'realty-catalog', theme: 'terra-editorial', navLayout: 'sidebar',
+    key: 'realty-catalog', theme: 'estate-verde', navLayout: 'topbar',
     brand: { name: 'Квартал', logo: 'КВ' }, locale: 'ru-RU', currency: '₽', prefix: 'kvartalR9_',
     auth: { enabled: false, user: 'admin', passHash: '', plain: '' },
 
@@ -153,12 +167,16 @@
     ],
 
     nav: [
+      { key: 'overview', label: 'Дашборд', type: 'overview', group: 'Витрина', icon: 'home' },
       { key: 'catalog', label: 'Каталог', type: 'catalog', entity: 'object', group: 'Витрина', icon: 'building' },
+      { key: 'valuation', label: 'ИИ-оценка', type: 'valuation', entity: 'object', group: 'Витрина', icon: 'spark' },
       { key: 'leads', label: 'Лиды', type: 'records', entity: 'lead', group: 'CRM', icon: 'spark', views: [{ key: 'all', label: 'Все', filter: {} }, { key: 'new', label: 'Новые', filter: { stage: 'new' } }, { key: 'work', label: 'В работе', filter: { stageIn: ['contacted', 'qualified', 'viewing'] } }] },
       { key: 'deals', label: 'Сделки', type: 'kanban', entity: 'deal', group: 'CRM', icon: 'deal' },
+      { key: 'fin', label: 'Финансы', type: 'finance', group: 'CRM', icon: 'chart' },
       { key: 'agents', label: 'Агенты', type: 'records', entity: 'agent', group: 'CRM', icon: 'users' },
     ],
 
     metrics: [],
+    seed: { finance },
   };
 })();
