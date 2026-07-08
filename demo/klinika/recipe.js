@@ -104,7 +104,7 @@
   }
 
   window.RECIPE = {
-    key: 'clinic', theme: 'clean-light', navLayout: 'sidebar',
+    key: 'clinic', theme: 'neural-dark', navLayout: 'sidebar',
     brand: { name: 'ДЕНТАЛИС · Стоматология', logo: 'Д' },
     locale: 'ru-RU', currency: '₽', prefix: 'clinC7_',
     auth: { enabled: false, user: 'admin', passHash: '', plain: '' },

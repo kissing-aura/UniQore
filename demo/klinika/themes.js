@@ -21,6 +21,25 @@
    ═══════════════════════════════════════════════════════════════════════ */
 window.THEMES = {
 
+  /* 0 ── NEURAL DARK ───────────────────────────────────────────────────
+     Тёмный «диагностический» неон: угольно-синий космос, циан + мята,
+     стекло, свечение. Характер: AI/медтех, будущее, «мы это можем». */
+  'neural-dark': {
+    name: 'Neural Dark', mode: 'dark', nav: 'sidebar', card: 'soft',
+    fonts: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap',
+    vars: {
+      '--bg': '#05070d', '--surface': '#0a1120', '--surface2': '#0e1728', '--surface3': '#152036',
+      '--border': 'rgba(120,180,255,0.12)', '--border2': 'rgba(120,180,255,0.24)',
+      '--text': '#e9f2ff', '--text2': 'rgba(233,242,255,0.64)', '--text3': 'rgba(233,242,255,0.42)',
+      '--acc': '#3fd8ff', '--acc-2': '#31e0b0', '--acc-contrast': '#04121a', '--acc-dim': 'rgba(63,216,255,0.13)',
+      '--ring': 'rgba(63,216,255,0.42)',
+      '--good': '#31e0b0', '--warn': '#ffb020', '--bad': '#ff4d5e', '--grid': 'rgba(120,180,255,0.07)',
+      '--radius': '13px', '--radius-sm': '9px', '--radius-lg': '20px', '--gap': '16px',
+      '--font-ui': "'Inter',-apple-system,system-ui,sans-serif", '--font-head': "'Inter',sans-serif", '--font-num': "'JetBrains Mono',ui-monospace,monospace",
+      '--shadow': '0 12px 38px rgba(2,6,18,0.55)', '--shadow-sm': '0 1px 3px rgba(2,6,18,0.5)', '--shadow-lg': '0 30px 74px rgba(2,6,18,0.7)',
+    },
+  },
+
   /* 1 ── BLOOMBERG DARK GOLD ───────────────────────────────────────────
      Премиум финтех-терминал. Тёплое золото на угольно-чёрном, моноцифры,
      острая плотная сетка, topbar. Характер: дорогой, серьёзный, "деньги". */

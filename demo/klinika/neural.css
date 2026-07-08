@@ -1,0 +1,49 @@
+/* Neural Dark — амбиент оболочки CRM под «диагностику» (циан+мята, сетка, свечение).
+   Грузится последним, чтобы перекрыть фон. Работает поверх темы neural-dark (body.mode-dark). */
+
+body.mode-dark {
+  background:
+    radial-gradient(72% 55% at 12% -8%, rgba(63,216,255,0.11), transparent 60%),
+    radial-gradient(60% 50% at 106% -6%, rgba(49,224,176,0.09), transparent 55%),
+    radial-gradient(80% 60% at 50% 116%, rgba(63,216,255,0.05), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+body.mode-dark::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.55;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask: radial-gradient(135% 100% at 50% 0%, #000 36%, transparent 86%);
+  mask: radial-gradient(135% 100% at 50% 0%, #000 36%, transparent 86%);
+}
+/* контент над сеткой */
+#app { position: relative; z-index: 1; }
+
+/* стеклянные поверхности + мягкое свечение акцентов */
+body.mode-dark .sidebar { background: linear-gradient(180deg, rgba(12,20,38,0.72), rgba(7,11,22,0.86)); backdrop-filter: blur(12px); border-right: 1px solid var(--border); }
+body.mode-dark .topbar  { background: linear-gradient(180deg, rgba(12,20,38,0.7), rgba(9,14,26,0.5)); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+
+body.mode-dark .nav__item.active {
+  background: linear-gradient(90deg, var(--acc-dim), transparent);
+  box-shadow: inset 2px 0 0 var(--acc), 0 6px 22px -10px rgba(63,216,255,0.5);
+  color: var(--text);
+}
+body.mode-dark .nav__item.active .nav__ic { color: var(--acc); }
+
+/* акцентные кнопки — неоновое свечение */
+body.mode-dark .btn { box-shadow: 0 8px 26px -10px rgba(63,216,255,0.5); }
+body.mode-dark .btn:hover { box-shadow: 0 12px 34px -8px rgba(63,216,255,0.65); }
+
+/* KPI / карточки дашборда — стекло + тонкая подсветка сверху */
+body.mode-dark .kpi,
+body.mode-dark .bcard,
+body.mode-dark .k-card,
+body.mode-dark .team-card,
+body.mode-dark .an-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.006)), var(--surface);
+  border: 1px solid var(--border);
+}
+body.mode-dark .kpi::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, var(--acc), transparent); opacity: 0.4; }
+body.mode-dark .kpi { position: relative; overflow: hidden; }
