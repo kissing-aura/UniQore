@@ -1,0 +1,278 @@
+/* ═══ Uniqore premium.css — аддитивный дизайн-слой (подключается ПОСЛЕ engine.css) ═══
+   Уровень Linear / Stripe / Notion / Vercel / Raycast. Только переменные темы — без хардкода
+   цветов (исключение: прозрачные чёрно/белые оверлеи для глубины). Работает на всех темах
+   (dark/light). Не ломает существующую разметку — только усиливает классы движка. */
+
+/* ─────────────────────────────────────────────────────────────
+   0. БАЗА — переходы и тонкая настройка
+   ───────────────────────────────────────────────────────────── */
+:root{
+  --uq-ease:cubic-bezier(.22,.7,.2,1);
+  --uq-t:.18s;
+  /* hairline-подсветка сверху поверхностей: светлая в dark, мягкая тень в light */
+  --uq-hair:inset 0 1px 0 rgba(255,255,255,.05);
+}
+body.mode-light{--uq-hair:inset 0 1px 0 rgba(255,255,255,.6)}
+.num,td b,.kpi__val,.att-card__v,.team-kpi__v{font-variant-numeric:tabular-nums}
+
+/* ─────────────────────────────────────────────────────────────
+   1. СИСТЕМА ГЛУБИНЫ / СЛОЁВ
+   многослойные тени + hairline-подсветка для приподнятых поверхностей
+   ───────────────────────────────────────────────────────────── */
+.elev-1{box-shadow:var(--uq-hair),0 1px 2px rgba(0,0,0,.06),0 2px 6px rgba(0,0,0,.06)}
+.elev-2{box-shadow:var(--uq-hair),0 2px 4px rgba(0,0,0,.08),0 8px 24px rgba(0,0,0,.12)}
+/* приподнятые поверхности получают hairline и аккуратную тень */
+.kpi,.bcard,.card,.panel,.team-card,.doc-row,.k-col,.att-card,.portal,.intg-card{
+  box-shadow:var(--uq-hair),0 1px 2px rgba(0,0,0,.05),0 2px 8px rgba(0,0,0,.06)
+}
+/* card-flat не должен наследовать тени */
+body.card-flat .card,body.card-flat .kpi,body.card-flat .bcard{box-shadow:var(--uq-hair)}
+body.card-hard .card,body.card-hard .kpi,body.card-hard .bcard,body.card-hard .k-col{box-shadow:none}
+
+/* ─────────────────────────────────────────────────────────────
+   2. КАРТОЧКИ ПРЕМИУМ — фон, hover-подъём, акцентная граница
+   ───────────────────────────────────────────────────────────── */
+.kpi,.bcard,.card,.team-card,.k-card,.doc-row,.att-card,.kb-card,.intg-card{
+  transition:transform var(--uq-t) var(--uq-ease),
+             border-color var(--uq-t) var(--uq-ease),
+             box-shadow .22s var(--uq-ease)
+}
+.kpi:hover,.bcard:hover,.team-card:hover,.k-card:hover,.doc-row:hover,.kb-card:hover{
+  transform:translateY(-3px);
+  border-color:color-mix(in srgb,var(--acc) 45%,var(--border));
+  box-shadow:var(--uq-hair),0 4px 10px rgba(0,0,0,.10),0 14px 36px rgba(0,0,0,.16)
+}
+.att-card:hover{box-shadow:var(--uq-hair),0 4px 10px rgba(0,0,0,.10),0 12px 30px rgba(0,0,0,.14)}
+/* KPI-акцент — благородный градиент + мягкое свечение */
+.kpi--acc{
+  position:relative;overflow:hidden;
+  border-color:color-mix(in srgb,var(--acc) 55%,var(--border));
+  background:linear-gradient(155deg,var(--acc-dim),transparent 70%),var(--surface)
+}
+.kpi--acc::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(140px 90px at 88% -25%,var(--acc-dim),transparent 70%)
+}
+.kpi--acc .kpi__val{color:var(--acc)}
+
+/* ─────────────────────────────────────────────────────────────
+   3. КНОПКИ — материал, состояния, фокус-кольцо
+   ───────────────────────────────────────────────────────────── */
+.btn{
+  background:linear-gradient(180deg,color-mix(in srgb,#fff 10%,var(--acc)),var(--acc));
+  box-shadow:var(--uq-hair),0 1px 2px rgba(0,0,0,.18);
+  transition:filter .15s,transform .06s,box-shadow .15s
+}
+.btn:hover{filter:brightness(1.06);box-shadow:var(--uq-hair),0 2px 8px rgba(0,0,0,.22)}
+.btn:active{transform:translateY(1px);box-shadow:var(--uq-hair),0 1px 2px rgba(0,0,0,.2)}
+.btn-ghost:active{transform:translateY(1px)}
+.btn-danger{box-shadow:var(--uq-hair),0 1px 2px rgba(0,0,0,.18)}
+/* disabled */
+.btn[disabled],.btn-ghost[disabled],.btn-danger[disabled],.icon-btn[disabled]{
+  opacity:.5;cursor:not-allowed;filter:none;pointer-events:none;box-shadow:none;transform:none
+}
+/* loading spinner */
+@keyframes uq-spin{to{transform:rotate(360deg)}}
+.btn.is-loading,.btn-danger.is-loading{color:transparent!important;pointer-events:none;position:relative}
+.btn.is-loading::before,.btn-danger.is-loading::before{
+  content:"";position:absolute;top:50%;left:50%;width:14px;height:14px;margin:-7px 0 0 -7px;
+  border:2px solid var(--acc-contrast);border-right-color:transparent;border-radius:50%;
+  animation:uq-spin .6s linear infinite
+}
+/* единое кольцо фокуса (только клавиатура) через --ring */
+.btn:focus-visible,.btn-ghost:focus-visible,.btn-danger:focus-visible,
+.icon-btn:focus-visible,.t-input:focus-visible,.t-select:focus-visible,
+.nav__item:focus-visible,.subnav__item:focus-visible,.seg__item:focus-visible,
+.tab:focus-visible,.stage-step:focus-visible{
+  outline:none;box-shadow:0 0 0 3px var(--ring)
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. ИНПУТЫ / СЕЛЕКТЫ — фон, фокус-кольцо --ring, граница --acc
+   ───────────────────────────────────────────────────────────── */
+.t-input,.t-select,.t-textarea{
+  background:var(--surface2);
+  transition:border-color .15s,box-shadow .15s,background .15s
+}
+.t-input:hover,.t-select:hover{border-color:var(--border2)}
+.t-input:focus,.t-select:focus,.t-textarea:focus{
+  border-color:var(--acc);box-shadow:0 0 0 3px var(--ring)
+}
+.t-input::placeholder{color:var(--text3)}
+
+/* ─────────────────────────────────────────────────────────────
+   5. ТАБЛИЦЫ — sticky head, зебра, hover-строка, выравнивание чисел
+   ───────────────────────────────────────────────────────────── */
+.table-wrap thead th{
+  position:sticky;top:0;z-index:2;
+  background:var(--surface);
+  backdrop-filter:saturate(1.4) blur(2px)
+}
+.table-wrap thead th::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--border)
+}
+tbody tr{transition:background .12s}
+tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--text) 2.5%,transparent)}
+tbody tr:hover td{background:var(--acc-dim)}
+td.num,th.num,.an-table td.num{font-variant-numeric:tabular-nums;text-align:right}
+
+/* ─────────────────────────────────────────────────────────────
+   6. БЕЙДЖИ / ЧИПЫ / PILL — мягкие фоны через color-mix (не «обводка»)
+   ───────────────────────────────────────────────────────────── */
+.badge{
+  border-color:transparent;
+  background:color-mix(in srgb,currentColor 14%,transparent);
+  padding:3px 10px
+}
+.tag-chip{background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--text2);border:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;
+  font-size:11px;font-weight:600;line-height:1.5;
+  color:var(--text2);background:var(--surface2);border:1px solid var(--border)}
+body.card-hard .pill{border-radius:0}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.pill--good{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+.pill--warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+.pill--bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.pill--acc{color:var(--acc);background:var(--acc-dim);border-color:color-mix(in srgb,var(--acc) 30%,transparent)}
+
+/* ─────────────────────────────────────────────────────────────
+   7. SUBNAV как SEGMENTED CONTROL (Stripe-like) + .seg/.seg__item
+   ───────────────────────────────────────────────────────────── */
+.subnav{
+  display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;width:auto;
+  background:var(--surface2);border:1px solid var(--border);border-radius:999px
+}
+body.card-hard .subnav{border-radius:0}
+.subnav__item{border:none;background:transparent;border-radius:999px;
+  padding:6px 13px;color:var(--text2);transition:color .15s,background .15s,box-shadow .15s}
+body.card-hard .subnav__item{border-radius:0}
+.subnav__item:hover{color:var(--text);border-color:transparent}
+.subnav__item.active{
+  background:var(--surface);color:var(--text);border-color:transparent;
+  box-shadow:var(--uq-hair),0 1px 2px rgba(0,0,0,.12),0 2px 6px rgba(0,0,0,.10)
+}
+/* generic segmented control */
+.seg{display:inline-flex;padding:3px;gap:2px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:999px}
+body.card-hard .seg{border-radius:0}
+.seg__item{padding:5px 13px;border:none;background:transparent;border-radius:999px;
+  color:var(--text2);font-size:12.5px;font-weight:500;transition:color .15s,background .15s,box-shadow .15s}
+body.card-hard .seg__item{border-radius:0}
+.seg__item:hover{color:var(--text)}
+.seg__item.active{background:var(--surface);color:var(--text);
+  box-shadow:var(--uq-hair),0 1px 2px rgba(0,0,0,.12),0 2px 6px rgba(0,0,0,.10)}
+
+/* ─────────────────────────────────────────────────────────────
+   8. SKELETON-ЗАГРУЗКА — shimmer
+   ───────────────────────────────────────────────────────────── */
+@keyframes uq-shimmer{0%{background-position:-180% 0}100%{background-position:180% 0}}
+.skel{
+  position:relative;border-radius:var(--radius-sm);
+  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 37%,var(--surface2) 63%);
+  background-size:280% 100%;animation:uq-shimmer 1.4s ease-in-out infinite
+}
+.skel-line{height:11px;border-radius:6px;margin:7px 0}
+.skel-line:nth-child(odd){width:82%}
+.skel-card{height:96px;border-radius:var(--radius)}
+.skel-kpi{height:96px;border-radius:var(--radius);padding:18px;
+  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 37%,var(--surface2) 63%);
+  background-size:280% 100%;animation:uq-shimmer 1.4s ease-in-out infinite}
+
+/* ─────────────────────────────────────────────────────────────
+   9. ВКЛАДКИ (.tabs / .tab) — подчёркивание акцентом
+   ───────────────────────────────────────────────────────────── */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{
+  position:relative;padding:9px 14px;background:transparent;border:none;
+  color:var(--text2);font-size:13px;font-weight:500;font-family:var(--font-ui);
+  transition:color .15s
+}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text)}
+.tab::after{
+  content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:2px;border-radius:2px;
+  background:var(--acc);transform:scaleX(0);transform-origin:center;
+  transition:transform .2s var(--uq-ease)
+}
+.tab.active::after{transform:scaleX(1)}
+
+/* ─────────────────────────────────────────────────────────────
+   10. CHART-TIP — премиум-тултип для графиков (абсолютный)
+   ───────────────────────────────────────────────────────────── */
+.chart-tip{
+  position:absolute;z-index:400;pointer-events:none;
+  background:var(--surface3);border:1px solid var(--border2);border-radius:var(--radius-sm);
+  box-shadow:var(--uq-hair),0 6px 22px rgba(0,0,0,.25);
+  padding:7px 10px;font-size:11.5px;line-height:1.5;color:var(--text);
+  font-family:var(--font-num);white-space:nowrap;
+  transition:opacity .12s,transform .12s;transform:translateY(-2px)
+}
+.chart-tip b{color:var(--acc)}
+.chart-tip:not(.hidden){transform:translateY(0)}
+
+/* ─────────────────────────────────────────────────────────────
+   11. ФИРМЕННЫЙ МОТИВ UNIQORE — .rail + сигнатура .page-title
+   ───────────────────────────────────────────────────────────── */
+.rail{position:relative;padding-left:16px}
+.rail::before{
+  content:"";position:absolute;left:0;top:2px;bottom:2px;width:2px;border-radius:2px;
+  background:linear-gradient(180deg,var(--acc),color-mix(in srgb,var(--acc) 10%,transparent))
+}
+/* page-title — крупнее, минусовый трекинг + тонкий акцентный штрих слева */
+.page-title{
+  position:relative;font-size:21px;letter-spacing:-.025em;line-height:1.2;
+  font-family:var(--font-head);padding-left:13px
+}
+.page-title::before{
+  content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:.82em;border-radius:3px;
+  background:linear-gradient(180deg,var(--acc),color-mix(in srgb,var(--acc) 15%,transparent))
+}
+.eyebrow{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text3);margin-bottom:8px}
+
+/* ─────────────────────────────────────────────────────────────
+   12. TOOLTIP (CSS, .tip[data-tip]) + DIVIDER (.hr)
+   ───────────────────────────────────────────────────────────── */
+.tip{position:relative}
+.tip::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:50%;
+  transform:translateX(-50%) translateY(4px);white-space:nowrap;pointer-events:none;
+  background:var(--surface3);color:var(--text);border:1px solid var(--border2);
+  font-size:11px;font-weight:500;padding:5px 9px;border-radius:var(--radius-sm);
+  opacity:0;transition:opacity .14s,transform .14s;z-index:400;
+  box-shadow:0 6px 18px rgba(0,0,0,.28)
+}
+.tip:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+.hr{height:1px;background:var(--border);border:none;margin:16px 0}
+
+/* ─────────────────────────────────────────────────────────────
+   13. ПЛАВНОЕ ПОЯВЛЕНИЕ overlay / panel + empty-state
+   ───────────────────────────────────────────────────────────── */
+@keyframes uq-fade{from{opacity:0}to{opacity:1}}
+@keyframes uq-slide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.overlay{animation:uq-fade .2s ease both}
+.panel{animation:uq-slide .26s var(--uq-ease) both}
+.panel--modal{animation:uq-fade .2s ease both}
+.empty-hint{padding:34px 20px;line-height:1.6;max-width:340px;margin:0 auto}
+.empty-hint b,.empty-hint strong{display:block;color:var(--text2);font-weight:600;font-size:14px;margin-bottom:4px}
+
+/* ─────────────────────────────────────────────────────────────
+   14. ТОНКИЕ ПРЕМИУМ-СКРОЛЛБАРЫ
+   ───────────────────────────────────────────────────────────── */
+*{scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:8px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:var(--text3);background-clip:padding-box;border:2px solid transparent}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ─────────────────────────────────────────────────────────────
+   15. reduced-motion — уважаем системную настройку
+   ───────────────────────────────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  .skel,.skel-kpi,.btn.is-loading::before,.btn-danger.is-loading::before{animation:none!important}
+  .overlay,.panel,.panel--modal{animation:none!important}
+  .kpi,.bcard,.card,.team-card,.k-card,.doc-row,.att-card,.kb-card,.tab::after,
+  .t-input,.t-select{transition:none!important}
+  .kpi:hover,.bcard:hover,.team-card:hover,.k-card:hover,.doc-row:hover,.kb-card:hover{transform:none}
+}

@@ -1,0 +1,303 @@
+/* ==========================================================================
+   Uniqore Engine — Phase 2 CSS Layer
+   --------------------------------------------------------------------------
+   Слой компонентов фазы 2: пилюли важности, реферальные источники, файлы,
+   вложения документов, база знаний.
+
+   Принципы:
+   - Только переменные тем (--bg/--surface/--acc/... ). Ничего не хардкодим.
+   - Прозрачные фоны через color-mix, чтобы читалось и в mode-dark, и в
+     mode-light без отдельных переопределений.
+   - Переходы только transform/opacity/box-shadow/background/color/border-color.
+   - Кнопки берём существующие .btn/.btn-ghost — здесь не переопределяем.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. ПИЛЮЛИ ВАЖНОСТИ / СТАТУСА
+   Inline-бейдж со смысловым цветом. Фон — полупрозрачный замес цвета
+   статуса с фоном темы, поэтому одинаково спокоен в обеих темах.
+   ========================================================================== */
+
+.pillv{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-family:var(--font-ui);
+  font-size:11px;
+  font-weight:600;
+  line-height:1;
+  padding:2px 9px;
+  border-radius:999px;
+  border:1px solid transparent;
+  white-space:nowrap;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+
+/* Высокая важность — тревожная */
+.pillv--high{
+  color:var(--bad);
+  background:color-mix(in srgb, var(--bad) 14%, transparent);
+  border-color:color-mix(in srgb, var(--bad) 30%, transparent);
+}
+
+/* Средняя важность — внимание */
+.pillv--mid{
+  color:var(--warn);
+  background:color-mix(in srgb, var(--warn) 15%, transparent);
+  border-color:color-mix(in srgb, var(--warn) 32%, transparent);
+}
+
+/* Низкая важность — спокойная, нейтральная */
+.pillv--low{
+  color:var(--text3);
+  background:color-mix(in srgb, var(--text3) 12%, transparent);
+  border-color:color-mix(in srgb, var(--border2) 80%, transparent);
+}
+
+
+/* ==========================================================================
+   2. РЕФЕРАЛЬНЫЕ ИСТОЧНИКИ
+   Грид карточек источников: реф-ссылка, счётчики, действия.
+   ========================================================================== */
+
+.src-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:14px;
+}
+
+.src-card{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow-sm);
+  transition:border-color .15s ease,box-shadow .15s ease;
+}
+.src-card:hover{
+  border-color:color-mix(in srgb, var(--acc) 50%, var(--border));
+  box-shadow:var(--shadow);
+}
+
+.src-card__name{
+  font-family:var(--font-ui);
+  font-weight:600;
+  font-size:15px;
+  color:var(--text);
+  line-height:1.3;
+}
+
+.src-card__meta{
+  font-family:var(--font-ui);
+  font-size:12px;
+  color:var(--text3);
+  line-height:1.4;
+}
+
+/* Реф-ссылка: моноширинный текст с обрезкой по ширине */
+.src-link{
+  font-family:var(--font-num);
+  font-size:12px;
+  color:var(--text2);
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:7px 10px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* Блок счётчика */
+.src-stat{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.src-stat__v{
+  font-family:var(--font-num);
+  font-size:26px;
+  font-weight:600;
+  line-height:1;
+  color:var(--acc);
+}
+.src-stat__l{
+  font-family:var(--font-ui);
+  font-size:11px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--text3);
+}
+
+/* Ряд кнопок действий (кнопки — существующие .btn/.btn-ghost) */
+.src-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+
+/* ==========================================================================
+   3. ФАЙЛЫ — категории и карточки
+   ========================================================================== */
+
+.file-toolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.file-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+}
+
+.file-card{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px;
+  cursor:pointer;
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
+}
+.file-card:hover{
+  border-color:var(--acc);
+  box-shadow:var(--shadow-sm);
+}
+
+/* Иконка-квадрат файла */
+.file-card__ic{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  flex-shrink:0;
+  border-radius:var(--radius-sm);
+  background:var(--acc-dim);
+  color:var(--acc);
+}
+.file-card__ic svg{
+  width:22px;
+  height:22px;
+}
+
+.file-card__name{
+  font-family:var(--font-ui);
+  font-weight:600;
+  font-size:13px;
+  color:var(--text);
+  line-height:1.3;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.file-card__meta{
+  font-family:var(--font-ui);
+  font-size:11.5px;
+  color:var(--text3);
+  line-height:1.4;
+}
+
+/* Чип категории файлов */
+.file-cat{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-family:var(--font-ui);
+  font-size:11.5px;
+  color:var(--text2);
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:3px 10px;
+  cursor:pointer;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+.file-cat:hover{
+  color:var(--text);
+  border-color:var(--border2);
+}
+.file-cat.is-active{
+  color:var(--acc);
+  background:var(--acc-dim);
+  border-color:color-mix(in srgb, var(--acc) 45%, var(--border));
+}
+
+
+/* ==========================================================================
+   4. ВЛОЖЕНИЯ ДОКУМЕНТОВ
+   Чип вложения внутри строки документа.
+   ========================================================================== */
+
+.doc-attach{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-family:var(--font-ui);
+  font-size:11.5px;
+  color:var(--acc);
+  background:var(--acc-dim);
+  border-radius:var(--radius-sm);
+  padding:3px 8px;
+  cursor:pointer;
+  transition:background .15s ease,color .15s ease;
+}
+.doc-attach:hover{
+  background:color-mix(in srgb, var(--acc) 24%, transparent);
+}
+.doc-attach svg{
+  width:14px;
+  height:14px;
+  flex-shrink:0;
+}
+
+
+/* ==========================================================================
+   5. БАЗА ЗНАНИЙ — раскрытие / чтение
+   ========================================================================== */
+
+/* Тело статьи в модалке чтения */
+.kb-read__body{
+  font-family:var(--font-ui);
+  font-size:14px;
+  line-height:1.65;
+  color:var(--text2);
+  white-space:pre-wrap;
+  max-width:64ch;
+}
+
+/* Ряд фильтров базы знаний */
+.kb-toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+
+/* ==========================================================================
+   6. ДОСТУПНОСТЬ — снижение анимаций
+   Убираем переходы этого слоя по запросу пользователя.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce){
+  .pillv,
+  .src-card,
+  .file-card,
+  .file-cat,
+  .doc-attach{
+    transition:none!important;
+  }
+}

@@ -75,9 +75,8 @@
 
     /* ── галерея «Живые демо» ── */
     .livedemo { padding: clamp(60px, 8vw, 110px) 0; }
-    .demo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-    @media (max-width: 1000px) { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 680px) { .demo-grid { grid-template-columns: 1fr; } }
+    .demo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    @media (max-width: 780px) { .demo-grid { grid-template-columns: 1fr; } }
     .demo-card { display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008)); text-decoration: none; color: inherit; transition: transform .3s, border-color .3s, box-shadow .3s; }
     .demo-card:hover { transform: translateY(-6px); border-color: var(--dc); box-shadow: 0 30px 70px -30px var(--dc); }
     .demo-card__win { padding: 10px 10px 0; }
@@ -349,6 +348,21 @@
               <h3>Uniqore Command</h3>
               <p>Командный центр бизнеса: финздоровье, отделы, проекты, AI-аналитик. Наша собственная операционная система — на которой мы сами работаем.</p>
               <div class="demo-card__tags"><span>Бизнес-OS</span><span>Тёмный космос</span><span>AI-аналитик</span></div>
+            </div>
+          </a>
+
+          <a class="demo-card" href="/demo/nedvizhka/" target="_blank" rel="noopener" style="--dc:#b8763f">
+            <div class="demo-card__win">
+              <div class="demo-card__bar"><span></span><span></span><span></span><em>demo.uniqore.pro/nedvizhka</em></div>
+              <div class="demo-card__view">
+                <iframe src="/demo/nedvizhka/" loading="lazy" scrolling="no" tabindex="-1" title="Демо агентства недвижимости Квартал"></iframe>
+                <span class="demo-card__open">Открыть демо →</span>
+              </div>
+            </div>
+            <div class="demo-card__foot">
+              <h3>Недвижимость «Квартал»</h3>
+              <p>Каталог квартир — фото, цены, метро, ЖК — как маркетплейс, а не таблица. Переключение сетка/карта, карточка агента, фильтры.</p>
+              <div class="demo-card__tags"><span>Недвижимость</span><span>Тёплый премиум</span><span>Каталог-витрина</span></div>
             </div>
           </a>
           </div>

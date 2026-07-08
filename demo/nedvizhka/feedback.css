@@ -1,0 +1,72 @@
+/* ═══ Uniqore feedback.css — слой обратной связи + drag-and-drop (подключается ПОСЛЕДНИМ) ═══
+   Тосты, состояния перетаскивания, drop-цели. Только переменные тем — без хардкода цветов.
+   Работает на всех 8 темах (dark/light). Уважает prefers-reduced-motion. */
+
+/* ─────────────────────────────────────────────────────────────
+   1. ТОСТЫ — премиум-уведомления внизу справа
+   ───────────────────────────────────────────────────────────── */
+.toast-wrap{
+  position:fixed;right:18px;bottom:18px;z-index:400; /* выше модалок/overlay */
+  display:flex;flex-direction:column;gap:10px;
+  pointer-events:none; /* клики проходят сквозь контейнер */
+}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  min-width:220px;max-width:360px;
+  padding:12px 14px;font-size:13px;line-height:1.4;color:var(--text);
+  background:var(--surface3);border:1px solid var(--border2);
+  border-radius:var(--radius);box-shadow:var(--shadow-lg);
+  pointer-events:auto; /* сам тост кликабелен */
+  animation:uq-toast-in .32s var(--uq-ease,cubic-bezier(.22,.7,.2,1)) both
+}
+/* появление: slide-in справа + fade */
+@keyframes uq-toast-in{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+/* исчезновение: fade + slide вправо (класс ставится из JS перед удалением) */
+@keyframes uq-toast-out{from{opacity:1;transform:none}to{opacity:0;transform:translateX(28px)}}
+.toast--out{animation:uq-toast-out .26s var(--uq-ease,cubic-bezier(.22,.7,.2,1)) both;pointer-events:none}
+
+/* индикатор-точка слева (НЕ боковая полоса-бордер) */
+.toast__dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  background:var(--text3);box-shadow:0 0 0 3px color-mix(in srgb,currentColor 0%,transparent)
+}
+.toast__msg{flex:1;min-width:0}
+
+/* варианты — цвет задаёт точка */
+.toast--ok   .toast__dot{background:var(--good)}
+.toast--bad  .toast__dot{background:var(--bad)}
+.toast--info .toast__dot{background:var(--acc)}
+
+/* ─────────────────────────────────────────────────────────────
+   2. DRAG-AND-DROP — перетаскивание задач в календаре
+   ───────────────────────────────────────────────────────────── */
+/* draggable-элементы получают курсор «схватить» */
+.tg-block,.cal-chip{cursor:grab}
+
+/* перетаскиваемый элемент (ставится из JS на dragstart) */
+.tg-block.is-dragging,.cal-chip.is-dragging,.tg-ad.is-dragging{
+  opacity:.45;cursor:grabbing
+}
+
+/* цель сброса — мягкая подсветка фоном + inset-кольцо акцентом */
+.tg-col.drop-on,.tg-adcol.drop-on,.cal-cell.drop-on{
+  background:color-mix(in srgb,var(--acc) 12%,transparent);
+  box-shadow:inset 0 0 0 2px var(--acc)
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. SKELETON-СТРОКА СПИСКА — шиммер для list-item (premium.css даёт .skel/.skel-line/.skel-card)
+   ───────────────────────────────────────────────────────────── */
+.skel-row{
+  height:38px;border-radius:var(--radius-sm);margin:6px 0;
+  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 37%,var(--surface2) 63%);
+  background-size:280% 100%;animation:uq-shimmer 1.4s ease-in-out infinite
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. reduced-motion — уважаем системную настройку
+   ───────────────────────────────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  .toast,.toast--out{animation:none!important}
+  .skel-row{animation:none!important}
+}
