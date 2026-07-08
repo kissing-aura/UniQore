@@ -19,7 +19,7 @@ const entById = k => ENT[k] || primEnt;
 /* ── storage ── */
 const K = n => (R.prefix || 'uq_') + n;
 const parse = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || d); } catch { return JSON.parse(d); } };
-const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); checkQuota(); return true; } catch (e) { try { toast('Не удалось сохранить — память браузера переполнена (много фото?). Уберите лишнее или сделайте бэкап.', 'bad', 6000); } catch {} return false; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } };
 const DB = {
   recs: ek => parse(K('recs_' + (ek || primEnt.key)), '[]'), saveRecs: (ek, d) => save(K('recs_' + (ek || primEnt.key)), d),
   tasks: () => parse(K('tasks'), '[]'), saveTasks: d => save(K('tasks'), d),
@@ -1570,7 +1570,7 @@ function checkQuota() {
   try {
     let bytes = 0; const p = R.prefix || 'uq_';
     Object.keys(localStorage).forEach(key => { if (key.indexOf(p) === 0) bytes += (localStorage.getItem(key) || '').length; });
-    if (bytes > 4000000) { QUOTA_WARNED = true; try { toast('Память браузера почти заполнена (' + Math.round(bytes / 1048576) + ' МБ). Сделайте бэкап в Настройках и удалите лишние фото.', 'bad', 7000); } catch {} }
+    if (bytes > 4000000) { QUOTA_WARNED = true; } // демо: тост про память браузера не нужен посетителю
   } catch {}
 }
 
