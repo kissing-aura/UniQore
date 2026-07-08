@@ -155,3 +155,23 @@
 .ua-send svg { width: 16px; height: 16px; }
 .ua-send:hover { background: var(--ai-acc-2); }
 @media (max-width: 480px) { .ua-panel { right: 12px; left: 12px; width: auto; bottom: 132px; } .ua-bubble { right: 16px; bottom: 70px; } }
+
+/* ═══ ИИ-оценка — результат как панель с фото, кнопка загрузки, лок премиум ═══ */
+.val-upload { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1.5px dashed var(--border2); border-radius: var(--radius); background: var(--surface2); color: var(--text2); font-family: var(--font-ui); font-size: 13px; cursor: pointer; transition: .15s; }
+.val-upload svg { width: 15px; height: 15px; }
+.val-upload:hover { border-color: var(--ai-acc); color: var(--ai-acc-2); background: var(--ai-dim); }
+
+.val-hero { position: relative; margin: -16px -16px 16px; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden; }
+.val-hero img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.val-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(20,14,8,0.65)); pointer-events: none; }
+.val-hero__price { position: absolute; left: 18px; bottom: 14px; font-family: var(--font-head); font-size: 27px; font-weight: 600; color: #fff; letter-spacing: -.01em; }
+
+.val-lock { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; padding: 24px; background: rgba(36,26,18,0.72); backdrop-filter: blur(8px); }
+.val-lock[hidden] { display: none; }
+.val-lock__box { max-width: 440px; text-align: center; border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 36px 32px; background: var(--surface); box-shadow: var(--shadow-lg); }
+.val-lock__ic { width: 56px; height: 56px; margin: 0 auto 18px; border-radius: 16px; display: grid; place-items: center; color: var(--ai-acc); background: var(--ai-dim); }
+.val-lock__ic svg { width: 26px; height: 26px; }
+.val-lock__box h3 { font-family: var(--font-head); font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+.val-lock__box p { font-size: 13.5px; line-height: 1.6; color: var(--text2); margin-bottom: 22px; }
+.val-lock__act { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.val-lock__act a.btn { text-decoration: none; }

@@ -667,10 +667,25 @@ function viewValuation(n) {
           <div class="f-col"><label class="f-label">Площадь, м²</label><input class="t-input t-input--full" type="number" id="vf_area" value="58"></div>
           <div class="f-col"><label class="f-label">Этаж / этажей всего</label><div style="display:flex;gap:8px"><input class="t-input" type="number" id="vf_floor" value="12" style="width:50%"><input class="t-input" type="number" id="vf_floors" value="24" style="width:50%"></div></div>
         </div>
+        <div class="f-col" style="margin-top:2px"><label class="f-label">Фото объекта</label><button type="button" class="val-upload" id="vf_upload">${icon('folder')}<span>Прикрепить фото объекта</span></button></div>
         <button class="btn" id="vf_go" style="margin-top:14px;width:100%">${icon('spark')} Оценить объект</button>
       </div>
       <div class="val-result bcard" id="valResult"><div class="empty-hint">Заполни параметры слева и нажми «Оценить объект» — модель посчитает цену по базе из ${DB.recs('object').length} объектов.</div></div>
+    </div>
+    <div class="val-lock" id="valLock" hidden>
+      <div class="val-lock__box">
+        <div class="val-lock__ic">${icon('folder')}</div>
+        <h3>Загрузка своих фото — в рабочей версии</h3>
+        <p>Это демо «Квартала». Загрузка и ИИ-разбор фото вашего объекта подключаются в полной версии системы — её мы соберём под ваше агентство под ключ.</p>
+        <div class="val-lock__act"><a href="https://uniqore.pro/#contact" class="btn" target="_blank" rel="noopener">Хочу такую систему</a><button type="button" class="btn-ghost" id="valLockClose">Закрыть</button></div>
+      </div>
     </div>`;
+
+  const lock = document.getElementById('valLock');
+  const openLock = () => { lock.hidden = false; };
+  document.getElementById('vf_upload').onclick = openLock;
+  document.getElementById('valLockClose').onclick = () => { lock.hidden = true; };
+  lock.addEventListener('click', e => { if (e.target === lock) lock.hidden = true; });
 
   document.getElementById('vf_go').onclick = () => {
     const params = {
@@ -684,14 +699,18 @@ function viewValuation(n) {
     };
     const r = estimateObject(params);
     const unit = params.dealType === 'rent' ? ' /мес' : '';
+    const cover = (r.comps[0] && r.comps[0].photos && r.comps[0].photos[0]) || '';
     const compsHtml = r.comps.map(c => `<div class="list-item"><div class="list-item__name">${esc(c.name)}</div><div class="list-item__right"><span class="num cell-acc">${fmtMoney(c.price)}${c.dealType === 'rent' ? '/мес' : ''}</span></div></div>`).join('') || '<div class="empty-hint">Нет сравнимых объектов в этом ЖК</div>';
     document.getElementById('valResult').innerHTML = `
-      <div class="bcard__head"><span class="bcard__label">Оценка ИИ</span><span class="val-badge">${icon('spark')} обучено на ${r.sample} объектах</span></div>
-      <div class="val-price">${fmtMoney(r.estimate)}${unit}</div>
+      ${cover ? `<div class="val-hero"><img src="${escAttr(cover)}" alt=""><div class="val-hero__price">${fmtMoney(r.estimate)}${unit}</div></div>` : ''}
+      <div class="val-body">
+      <div class="bcard__head"><span class="bcard__label">Оценка ИИ</span></div>
+      ${cover ? '' : `<div class="val-price">${fmtMoney(r.estimate)}${unit}</div>`}
       <div class="val-range">Диапазон: ${moneyShort(r.low)}–${moneyShort(r.high)} ${CUR}${unit} <span class="val-conf">доверительный интервал ±6%</span></div>
       <div class="val-verdict" id="valVerdict"></div>
       <div class="bcard__head" style="margin-top:16px"><span class="bcard__label">Сравнимые объекты в ЖК «${esc(params.complex)}»</span></div>
-      ${compsHtml}`;
+      ${compsHtml}
+      </div>`;
     const verdictText = `Средняя цена по ЖК «${params.complex}» — ${Math.round(r.avgPerM2).toLocaleString(LOC)} ₽/м². С учётом ремонта «${renovOpts[params.renovation]}» и ${params.floor} этажа из ${params.floorsTotal} — итоговая оценка ${fmtMoney(r.estimate)}${unit}. Рекомендованный диапазон для листинга: ${moneyShort(r.low)}–${moneyShort(r.high)} ₽.`;
     const el = document.getElementById('valVerdict'); let i = 0;
     (function type() { if (i <= verdictText.length) { el.textContent = verdictText.slice(0, i); i += 3; setTimeout(type, 12); } })();
