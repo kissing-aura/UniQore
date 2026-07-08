@@ -1,4 +1,16 @@
-/* демо-витрина: глушим ошибки переполнения localStorage (персистенс не критичен для демо) */
+/* демо-витрина: каждая загрузка — чистый старт, данные посетителей не копятся */
+(function () {
+  try {
+    var PREFIX = 'restoCRM4w_';
+    var toRemove = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf(PREFIX) === 0) toRemove.push(k);
+    }
+    toRemove.forEach(function (k) { localStorage.removeItem(k); });
+  } catch (e) {}
+})();
+/* глушим ошибки переполнения localStorage (персистенс не критичен для демо) */
 (function () {
   try {
     var orig = Storage.prototype.setItem;

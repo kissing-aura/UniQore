@@ -245,13 +245,13 @@
 
     // ── КЛИЕНТЫ Uniqore (реальные ниши/сборки) ──────────────────────────
     const clients = [
-      {id:'c1', name:'Гринвуд · Недвижимость', niche:'Недвижимость', recipe:'realty-classic', theme:'graphite-pro', status:'live', value:1200, mrr:120, health:'good', manager:'Полина Швец', deploy:'demo1.uniqore.pro', since:daysAgo(21)},
-      {id:'c2', name:'Аренда Норд-Сити', niche:'Аренда / Сити', recipe:'realty-rent', theme:'bloomberg-dark-gold', status:'live', value:1200, mrr:120, health:'good', manager:'Полина Швец', deploy:'demo2.uniqore.pro', since:daysAgo(34)},
+      {id:'c1', name:'Гринвуд · Недвижимость', niche:'Недвижимость', recipe:'realty-classic', theme:'graphite-pro', status:'live', value:1200, mrr:1300, health:'good', manager:'Полина Швец', deploy:'demo1.uniqore.pro', since:daysAgo(21)},
+      {id:'c2', name:'Аренда Норд-Сити', niche:'Аренда / Сити', recipe:'realty-rent', theme:'bloomberg-dark-gold', status:'live', value:1200, mrr:1300, health:'good', manager:'Полина Швец', deploy:'demo2.uniqore.pro', since:daysAgo(34)},
       {id:'c3', name:'Дубрава · Мебель на заказ', niche:'Мебель', recipe:'furniture-custom', theme:'mono-brutalist', status:'live', value:1200, mrr:0, health:'good', manager:'Роман Дегтярёв', deploy:'demo3.uniqore.pro', since:daysAgo(28)},
-      {id:'c4', name:'Медлайн · Клиника', niche:'Клиника', recipe:'clinic', theme:'clean-light', status:'support', value:1200, mrr:90, health:'warn', manager:'Игорь Мельник', deploy:'demo4.uniqore.pro', since:daysAgo(40)},
+      {id:'c4', name:'Медлайн · Клиника', niche:'Клиника', recipe:'clinic', theme:'clean-light', status:'support', value:1200, mrr:900, health:'warn', manager:'Игорь Мельник', deploy:'demo4.uniqore.pro', since:daysAgo(40)},
       {id:'c5', name:'ГрузЛогистик', niche:'Логистика', recipe:'logistics', theme:'graphite-pro', status:'building', value:1200, mrr:0, health:'good', manager:'Стас Гринёв', deploy:'—', since:daysAgo(4)},
       {id:'c6', name:'Магазин кроссовок', niche:'E-commerce', recipe:'ecommerce', theme:'midnight-violet', status:'live', value:1200, mrr:0, health:'good', manager:'Эвелина Марчук', deploy:'demo6.uniqore.pro', since:daysAgo(16)},
-      {id:'c7', name:'Бургер «Классик»', niche:'Ресторан', recipe:'restaurant', theme:'sunset-warm', status:'live', value:1200, mrr:60, health:'good', manager:'Максим Орлов', deploy:'demo7.uniqore.pro', since:daysAgo(11)},
+      {id:'c7', name:'Бургер «Классик»', niche:'Ресторан', recipe:'restaurant', theme:'sunset-warm', status:'live', value:1200, mrr:500, health:'good', manager:'Максим Орлов', deploy:'demo7.uniqore.pro', since:daysAgo(11)},
       {id:'c8', name:'FitStudio', niche:'Фитнес', recipe:'fitness', theme:'arctic-light', status:'building', value:1200, mrr:0, health:'good', manager:'Вадим Лыков', deploy:'—', since:daysAgo(2)},
       {id:'c9', name:'Agency CRM', niche:'Агентство', recipe:'agency', theme:'emerald-corporate', status:'onboarding', value:1200, mrr:0, health:'warn', manager:'Полина Швец', deploy:'—', since:daysAgo(1)},
     ];
@@ -282,12 +282,12 @@
 
     // ── ФИНАНСЫ (месяц) ─────────────────────────────────────────────────
     const finance = {
-      income:[ {cat:'Продажи CRM', amount:9600, note:'8 × $1 200'}, {cat:'Поддержка (MRR)', amount:390, note:'абонплата клиентов'} ],
-      expenses:[ {cat:'Выплаты менеджерам', amount:2300, note:'$100 × сделка'}, {cat:'Зарплаты команды', amount:4200, note:'производство, поддержка, маркетинг'}, {cat:'Сервер / инфра', amount:48, note:'DigitalOcean'}, {cat:'Инструменты / API', amount:220, note:'Claude, домены'}, {cat:'Налоги (УСН 6%)', amount:599, note:'с оборота'}, {cat:'Прочее', amount:60, note:''} ],
-      months:[ {label:'Фев',rev:3600}, {label:'Мар',rev:4800}, {label:'Апр',rev:6000}, {label:'Май',rev:7200}, {label:'Июн',rev:8400}, {label:'Июл',rev:9990} ],
+      income:[ {cat:'Продажи CRM', amount:96000, note:'80 × $1 200'}, {cat:'Поддержка (MRR)', amount:4000, note:'абонплата клиентов'} ],
+      expenses:[ {cat:'Выплаты менеджерам', amount:8000, note:'$100 × сделка'}, {cat:'Зарплаты команды', amount:14000, note:'производство, поддержка, маркетинг'}, {cat:'Сервер / инфра', amount:180, note:'DigitalOcean'}, {cat:'Инструменты / API', amount:600, note:'Claude, домены'}, {cat:'Налоги (УСН 6%)', amount:6000, note:'с оборота'}, {cat:'Прочее', amount:150, note:''} ],
+      months:[ {label:'Фев',rev:41000}, {label:'Мар',rev:54000}, {label:'Апр',rev:63000}, {label:'Май',rev:76000}, {label:'Июн',rev:88000}, {label:'Июл',rev:100000} ],
       subscriptions:[ {name:'Claude / API', amount:120, next:daysAgo(-4)}, {name:'DigitalOcean', amount:48, next:daysAgo(-9)}, {name:'Домены (5)', amount:12, next:daysAgo(-1)}, {name:'Figma', amount:15, next:daysAgo(-18)} ],
-      taxes:{ rate:6, base:9990, amount:599, due:daysAgo(-12) },
-      receivables:[ {client:'МРТ Орлов · Клиника', amount:90, days:14}, {client:'Бургер «Классик»', amount:60, days:5}, {client:'Рома · Аренда Сити', amount:120, days:2} ],
+      taxes:{ rate:6, base:100000, amount:6000, due:daysAgo(-12) },
+      receivables:[ {client:'Медлайн · Клиника', amount:900, days:14}, {client:'Бургер «Классик»', amount:600, days:5}, {client:'Аренда Норд-Сити', amount:1300, days:2} ],
       operations:[
         {id:uid('o'),date:iso(today0()+9*36e5),type:'income',cat:'Оплата CRM',amount:1200,acc:'Тинькофф',note:'Магазин кроссовок'},
         {id:uid('o'),date:iso(today0()+7*36e5),type:'expense',cat:'Выплата',amount:300,acc:'USDT',note:'Максим Орлов'},
