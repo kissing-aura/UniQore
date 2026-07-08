@@ -66,59 +66,15 @@
   var labelEls = Array.prototype.slice.call(mockup.querySelectorAll('.ui-mockup__kpi-label'));
   var rowEls = Array.prototype.slice.call(mockup.querySelectorAll('.ui-mockup__row'));
 
-  // ── Чипсы под мокапом ─────────────────────────────────────────
-  var bar = document.createElement('div');
-  bar.className = 'niche-switch';
-  bar.setAttribute('aria-label', 'Выберите нишу');
-  var hint = document.createElement('span');
-  hint.className = 'niche-switch__hint';
-  hint.textContent = 'Ваша ниша:';
-  bar.appendChild(hint);
-  ORDER.forEach(function (key) {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'niche-chip';
-    b.dataset.niche = key;
-    b.textContent = NICHES[key].chip;
-    bar.appendChild(b);
-  });
-  // Строка-результат под мокапом — конкретная выгода под нишу
-  var resultEl = document.createElement('div');
-  resultEl.className = 'niche-result';
-  resultEl.innerHTML =
-    '<span class="niche-result__mark">✓</span>' +
-    '<span class="niche-result__main"></span>' +
-    '<span class="niche-result__sub"></span>';
-  frameWrap.insertAdjacentElement('afterend', resultEl);
-  resultEl.insertAdjacentElement('afterend', bar);
+  // ── Чипсы, строка-результат, калькулятор — разметка уже в HTML (не создаём в рантайме:
+  // вставка через insertAdjacentElement сдвигала весь низ страницы, это был главный источник CLS). ──
+  var bar = $('.niche-switch');
+  var resultEl = $('.niche-result');
+  var calc = $('.mirror');
+  if (!bar || !resultEl || !calc) return;
   var resMain = resultEl.querySelector('.niche-result__main');
   var resSub = resultEl.querySelector('.niche-result__sub');
   var chips = Array.prototype.slice.call(bar.querySelectorAll('.niche-chip'));
-
-  // ── «Зеркало бизнеса»: 2 тапа → его потери в деньгах ──────────
-  var calc = document.createElement('div');
-  calc.className = 'mirror';
-  calc.innerHTML =
-    '<div class="mirror__q">Сколько у тебя клиентов в месяц?</div>' +
-    '<div class="mirror__opts" data-grp="clients">' +
-      '<button type="button" data-v="100">~100</button>' +
-      '<button type="button" data-v="300">~300</button>' +
-      '<button type="button" data-v="600">~600</button>' +
-      '<button type="button" data-v="1200">1000+</button>' +
-    '</div>' +
-    '<div class="mirror__q">Средний чек?</div>' +
-    '<div class="mirror__opts" data-grp="check">' +
-      '<button type="button" data-v="1000">₽1 000</button>' +
-      '<button type="button" data-v="2500">₽2 500</button>' +
-      '<button type="button" data-v="5000">₽5 000</button>' +
-      '<button type="button" data-v="12000">₽10 000+</button>' +
-    '</div>' +
-    '<div class="mirror__result">' +
-      '<div class="mirror__loss">Ты теряешь ~<span class="mirror__num">0</span> ₽/мес</div>' +
-      '<div class="mirror__sub">на потерянных заявках и неответах. Мы это ловим — клиент не уходит.</div>' +
-      '<a href="#contact" class="btn btn--accent btn--lg mirror__cta">Забрать свою систему →</a>' +
-    '</div>';
-  bar.insertAdjacentElement('afterend', calc);
 
   var calcState = { clients: 0, check: 0 };
   var lossNumEl = calc.querySelector('.mirror__num');
