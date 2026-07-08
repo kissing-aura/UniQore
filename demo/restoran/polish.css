@@ -1,0 +1,231 @@
+/* ═══ Uniqore polish.css — слой визуальной полировки (подключается ПОСЛЕ всех остальных CSS) ═══
+   Назначение: тонкий «финишный лак» уровня Linear/Stripe поверх готового движка.
+   Только переменные тем — без хардкода цветов. Работает на dark и light темах.
+   Чистый CSS, без JS. Классы, которые навешивает движок — задокументированы ниже.
+
+   ───────────────────────────────────────────────────────────────────────────
+   КОНТРАКТ С ДВИЖКОМ (классы, которые движок должен навешивать из JS):
+     .view-enter   — на #main при рендере раздела → запускает fade+translateY
+     .num-roll     — на элемент с числом (KPI, счётчики) → лёгкое появление цифры
+     .uq-lift      — на интерактивную карточку/строку, которой нужен micro-hover
+                     (карточки .kpi/.card/.bcard и т.п. уже подняты в premium.css;
+                      .uq-lift — универсальный хук для произвольных элементов)
+     .is-loading   — уже используется движком на кнопках (см. premium.css)
+   Без этих классов слой ничего не ломает — он строго аддитивный.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Локальные токены полировки. Не конфликтуют с --uq-ease/--uq-t из premium.css,
+   но определяем дефолты на случай, если polish.css подключат отдельно. */
+:root{
+  --pol-ease: var(--uq-ease, cubic-bezier(.22,.7,.2,1));
+  --pol-enter: 220ms;          /* появление контента при смене раздела */
+  --pol-lift: -1px;            /* высота micro-hover подъёма */
+  --pol-shimmer-dur: 1.5s;     /* длительность shimmer */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   1. SKELETON-ЗАГРУЗКА — мягкий shimmer, аккуратный под обе темы
+   Базовые .skel/.skel-line/.skel-card уже есть в premium.css.
+   Здесь — тематическая подстройка контраста shimmer (тёмная/светлая)
+   и недостающие хелперы. Анимируем ТОЛЬКО background-position.
+   ───────────────────────────────────────────────────────────── */
+@keyframes pol-shimmer{
+  from{background-position:200% 0}
+  to{background-position:-200% 0}
+}
+
+/* Тёмная тема — блик чуть ярче (surface3 поверх surface2) */
+body.mode-dark .skel,
+body.mode-dark .skel-line,
+body.mode-dark .skel-card,
+body.mode-dark .skel-kpi{
+  background-image:linear-gradient(
+    100deg,
+    var(--surface2) 30%,
+    color-mix(in srgb, var(--surface3) 70%, var(--text3) 8%) 50%,
+    var(--surface2) 70%
+  );
+  background-size:300% 100%;
+  animation:pol-shimmer var(--pol-shimmer-dur) ease-in-out infinite;
+}
+
+/* Светлая тема — блик мягче, чтобы не «мигало» белым */
+body.mode-light .skel,
+body.mode-light .skel-line,
+body.mode-light .skel-card,
+body.mode-light .skel-kpi{
+  background-image:linear-gradient(
+    100deg,
+    var(--surface2) 30%,
+    color-mix(in srgb, var(--surface) 88%, var(--text3) 4%) 50%,
+    var(--surface2) 70%
+  );
+  background-size:300% 100%;
+  animation:pol-shimmer var(--pol-shimmer-dur) ease-in-out infinite;
+}
+
+/* Доп. хелперы скелетона (если нужны в разметке) */
+.skel-line.skel-line--sm{width:48%}
+.skel-line.skel-line--lg{width:96%}
+.skel-circle{border-radius:50%;aspect-ratio:1/1;width:36px;height:36px}
+/* Группа строк-плейсхолдеров — равномерный ритм */
+.skel-stack{display:flex;flex-direction:column;gap:9px}
+
+/* ─────────────────────────────────────────────────────────────
+   2. MICRO-HOVER для интерактивных карточек/строк
+   Едва заметный подъём + усиление тени. ТОЛЬКО transform/box-shadow.
+   .uq-lift — универсальный хук; навешивается движком на кликабельные блоки.
+   ───────────────────────────────────────────────────────────── */
+.uq-lift{
+  transition:transform .18s var(--pol-ease),
+             box-shadow .18s var(--pol-ease);
+  will-change:transform;
+}
+.uq-lift:hover{
+  transform:translateY(var(--pol-lift));
+  box-shadow:var(--shadow-lg);
+}
+.uq-lift:active{
+  transform:translateY(0);
+  box-shadow:var(--shadow-sm);
+  transition-duration:.08s;
+}
+/* card-flat: подъёма нет, только тень — сохраняем «плоский» характер темы */
+body.card-flat .uq-lift:hover{transform:none}
+
+/* Кликабельные строки таблицы — тот же приём через тень-внутрь,
+   без layout-сдвигов (translateY на <tr> рендерит криво в части браузеров) */
+tr.uq-row{transition:background-color .15s var(--pol-ease), box-shadow .15s var(--pol-ease)}
+tr.uq-row:hover{background:var(--surface2)}
+
+/* ─────────────────────────────────────────────────────────────
+   3. ПЛАВНОЕ ПОЯВЛЕНИЕ КОНТЕНТА ПРИ СМЕНЕ РАЗДЕЛА
+   Движок добавляет .view-enter на #main при каждом рендере.
+   fade + translateY 6px, ease-out, 220ms. Класс одноразовый —
+   анимация играет при добавлении класса (можно снимать после, не обязательно).
+   ───────────────────────────────────────────────────────────── */
+@keyframes pol-view-enter{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.view-enter{
+  animation:pol-view-enter var(--pol-enter) ease-out both;
+}
+/* Лёгкий стаггер для прямых детей #main — секции «проявляются» по очереди */
+#main.view-enter > *{
+  animation:pol-view-enter var(--pol-enter) ease-out both;
+}
+#main.view-enter > *:nth-child(2){animation-delay:30ms}
+#main.view-enter > *:nth-child(3){animation-delay:60ms}
+#main.view-enter > *:nth-child(4){animation-delay:90ms}
+#main.view-enter > *:nth-child(n+5){animation-delay:110ms}
+
+/* ─────────────────────────────────────────────────────────────
+   4. АНИМИРОВАННЫЕ ЧИСЛА — .num-roll
+   Лёгкое появление значения. JS не обязателен: класс даёт «всплытие» цифры
+   при рендере. Если движок дописывает табличные цифры — выравниваем моноширинно.
+   ───────────────────────────────────────────────────────────── */
+@keyframes pol-num-roll{
+  from{opacity:0;transform:translateY(4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.num-roll{
+  display:inline-block;
+  font-family:var(--font-num, inherit);
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  animation:pol-num-roll .32s var(--pol-ease) both;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. ТОНКИЕ РАЗДЕЛИТЕЛИ · FOCUS В ТАБЛИЦАХ · СКРОЛЛБАР
+   ───────────────────────────────────────────────────────────── */
+
+/* Разделитель тоньше дефолтного .hr — для плотных списков/меню.
+   Слегка «тает» к краям, чтобы не выглядел как жёсткая линейка. */
+.hr-soft{
+  height:1px;border:none;margin:14px 0;
+  background:linear-gradient(90deg,
+    transparent,
+    var(--border) 12%,
+    var(--border) 88%,
+    transparent);
+}
+/* Вертикальный разделитель (тулбары, инлайн-группы) */
+.vr{width:1px;align-self:stretch;background:var(--border);margin:0 4px}
+
+/* Улучшенный focus внутри таблиц: подсветка строки + аккуратное кольцо
+   на интерактивных ячейках, без layout-сдвига (используем box-shadow). */
+table tr:focus-within{background:color-mix(in srgb, var(--acc) 6%, transparent)}
+table :is(a,button,[tabindex],input,select):focus-visible{
+  outline:none;
+  border-radius:var(--radius-sm);
+  box-shadow:0 0 0 2px var(--ring, var(--acc));
+}
+/* Заголовки таблицы — едва заметная нижняя граница для опоры взгляда */
+table thead th{box-shadow:inset 0 -1px 0 var(--border)}
+
+/* Кастомный скроллбар (поверх premium.css): тоньше, в цвет --border,
+   на hover → --border2. Webkit + Firefox. */
+*{scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{
+  background:var(--border);
+  border-radius:99px;
+  border:2px solid transparent;
+  background-clip:padding-box;
+  transition:background .15s;
+}
+::-webkit-scrollbar-thumb:hover{
+  background:var(--border2);
+  background-clip:padding-box;
+}
+::-webkit-scrollbar-corner{background:transparent}
+
+/* ─────────────────────────────────────────────────────────────
+   6. УЛУЧШЕННЫЕ СОСТОЯНИЯ КНОПОК
+   Дополняем существующие .btn — только active/disabled, без переопределения вида.
+   ───────────────────────────────────────────────────────────── */
+.btn:active:not(:disabled):not(.is-loading),
+button:active:not(:disabled):not(.is-loading){
+  transform:scale(.98);
+}
+.btn{transition:transform .08s var(--pol-ease), filter .15s var(--pol-ease)}
+
+.btn:disabled,
+.btn[disabled],
+.btn.is-disabled,
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+  filter:saturate(.85);
+  pointer-events:none; /* блокируем hover/active у выключенных */
+}
+
+/* Аккуратный focus-ring для кнопок (клавиатура) */
+.btn:focus-visible,
+button:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--ring, var(--acc));
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7. PREFERS-REDUCED-MOTION — глушим shimmer и все переходы слоя
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  .skel,.skel-line,.skel-card,.skel-kpi,
+  body.mode-dark .skel,body.mode-light .skel{
+    animation:none !important;
+    background-position:0 0 !important;
+  }
+  .view-enter,#main.view-enter > *,.num-roll{
+    animation:none !important;
+  }
+  .uq-lift,tr.uq-row,.btn,button,
+  ::-webkit-scrollbar-thumb{
+    transition:none !important;
+  }
+  .uq-lift:hover,.uq-lift:active{transform:none !important}
+  .btn:active:not(:disabled),button:active:not(:disabled){transform:none !important}
+}

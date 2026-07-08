@@ -1,0 +1,177 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Uniqore signature.css — фирменный визуальный слой (подключается ПОСЛЕ
+   engine.css и premium.css). Цель: убрать «дефолтно-нейросетевой» вид и дать
+   узнаваемый дорогой почерк Uniqore. Меняем подачу, не разметку.
+
+   Правила: только CSS-переменные тем, валидность на всех 8 темах (dark/light),
+   уважение prefers-reduced-motion, минимализм. Никаких эмодзи.
+   Только стили + ::before/::after с inline-SVG data-URI.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root{
+  --uq-sig-ease:cubic-bezier(.22,.7,.2,1);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   1. ФИРМЕННЫЕ ПУСТЫЕ СОСТОЯНИЯ — линейная SVG-иконка-плейсхолдер
+      (стиль Linear / Notion: «пусто, но дорого»). currentColor наследует --text3.
+   ───────────────────────────────────────────────────────────── */
+.empty-hint{
+  display:flex;flex-direction:column;align-items:center;
+  gap:4px;color:var(--text3);text-align:center
+}
+.empty-hint::before{
+  content:"";display:block;width:46px;height:46px;margin-bottom:12px;
+  opacity:.55;color:var(--text3);
+  background:currentColor;
+  -webkit-mask:var(--uq-empty-svg) center/contain no-repeat;
+          mask:var(--uq-empty-svg) center/contain no-repeat
+}
+/* тонкая line-иконка: пустой документ со «слотами» контента */
+:root{
+  --uq-empty-svg:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'><path d='M6 3h8l4 4v14H6z'/><path d='M14 3v4h4'/><line x1='9' y1='12' x2='15' y2='12'/><line x1='9' y1='15.5' x2='13' y2='15.5'/></svg>");
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2. СИГНАТУРНЫЙ ХЕДЕР РАЗДЕЛА — крупный заголовок + градиент-подчёркивание.
+      Узнаваемый приём на каждом экране. Дополняет акцентный штрих из premium.css.
+   ───────────────────────────────────────────────────────────── */
+.page-head{align-items:flex-end;padding-bottom:14px;margin-bottom:18px;position:relative}
+/* тонкая фирменная линия-основание под всем хедером */
+.page-head::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--acc) 40%,transparent),
+    var(--border) 30%,transparent 80%)
+}
+.page-title{
+  font-size:23px;letter-spacing:-.03em;line-height:1.15;font-weight:700
+}
+/* короткий градиентный штрих-«подчёркивание» из --acc → transparent под заголовком */
+.page-title::after{
+  content:"";position:absolute;left:13px;bottom:-7px;
+  width:34px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,var(--acc),color-mix(in srgb,var(--acc) 5%,transparent))
+}
+/* мелкий контекст-подзаголовок (если в разметке есть .page-sub рядом с title) */
+.page-sub{font-size:12.5px;color:var(--text3);margin-top:7px;letter-spacing:-.01em}
+
+/* ─────────────────────────────────────────────────────────────
+   3. ФИРМЕННАЯ ПОДАЧА KPI — деликатное мэш-световое пятно из --acc/--acc-2,
+      тонкий верхний хайлайт, крупные tabular числа с плотным трекингом.
+   ───────────────────────────────────────────────────────────── */
+.kpi__val{
+  font-size:29px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;
+  line-height:1.05
+}
+.kpi__label{font-size:10.5px;letter-spacing:.09em}
+/* акцентный KPI — двухцветный мэш в углу (--acc → --acc-2) поверх дим-фона */
+.kpi--acc{
+  background:
+    radial-gradient(150px 110px at 100% 0%,color-mix(in srgb,var(--acc-2) 22%,transparent),transparent 70%),
+    radial-gradient(180px 130px at 0% 110%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 65%),
+    linear-gradient(155deg,var(--acc-dim),transparent 70%),
+    var(--surface)
+}
+/* тонкий верхний световой хайлайт-кромка */
+.kpi--acc::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--acc) 55%,transparent),transparent)
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. HOVER-«ЖИВОСТЬ» — мягкий подъём + тонкая акцентная граница.
+      premium.css уже даёт lift; здесь добавляем недостающие карточки
+      (att-card, kb-card, intg-card) к единому акцентному hover-почерку.
+   ───────────────────────────────────────────────────────────── */
+.att-card:hover,.kb-card:hover,.intg-card:hover{
+  border-color:color-mix(in srgb,var(--acc) 45%,var(--border))
+}
+.k-card:hover{border-color:color-mix(in srgb,var(--acc) 55%,var(--border))}
+
+/* ─────────────────────────────────────────────────────────────
+   5. ПРЕМИУМ-ТАБЛИЦА — тоньше/дороже линии, hover-строка с акцентной
+      полосой слева (псевдоэлемент), аккуратные заголовки.
+   ───────────────────────────────────────────────────────────── */
+thead th{
+  font-size:10.5px;letter-spacing:.07em;color:var(--text3);
+  padding-top:13px;padding-bottom:11px
+}
+tbody td{border-bottom-color:color-mix(in srgb,var(--border) 70%,transparent)}
+/* акцентная полоса слева у hover-строки — на первой ячейке */
+tbody tr td:first-child{position:relative}
+tbody tr td:first-child::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--acc);transform:scaleY(0);transform-origin:center;
+  transition:transform .16s var(--uq-sig-ease)
+}
+tbody tr:hover td:first-child::before{transform:scaleY(1)}
+
+/* та же фирменная полоса для аналитической таблицы */
+.an-table tr td:first-child{position:relative}
+.an-table tbody tr:hover td{background:var(--acc-dim)}
+
+/* ─────────────────────────────────────────────────────────────
+   6. МИКРОДЕТАЛИ — scrollbar чуть тоньше с акцентом на hover,
+      аккуратные badge/pill, активные subnav/seg, фокус-видимость.
+   ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar-thumb:hover{
+  background:color-mix(in srgb,var(--acc) 50%,var(--border2));background-clip:padding-box
+}
+/* badge / pill — чуть мягче кегль и плотный трекинг */
+.badge,.pill{letter-spacing:.01em}
+/* активный subnav/seg получает едва заметную акцентную обводку — «выбрано» читается дороже */
+.subnav__item.active,.seg__item.active{
+  box-shadow:var(--uq-hair),0 1px 2px rgba(0,0,0,.12),0 2px 6px rgba(0,0,0,.10),
+             inset 0 0 0 1px color-mix(in srgb,var(--acc) 22%,transparent)
+}
+/* активный пункт навигации — тонкий акцентный «штрих» слева в сайдбаре */
+body.nav-sidebar .nav__item.active{position:relative}
+body.nav-sidebar .nav__item.active::before{
+  content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;border-radius:2px;
+  background:var(--acc)
+}
+/* единое тонкое кольцо фокуса для остальных интерактивов */
+.list-item:focus-visible,.k-card:focus-visible,.team-card:focus-visible,
+.doc-row:focus-visible,.kb-card:focus-visible,.thumb:focus-visible{
+  outline:none;box-shadow:0 0 0 3px var(--ring)
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7. СЕТКИ ГРАФИКОВ / ДОНАТОВ — аккуратное обрамление через --grid,
+      карточки графиков с тонким внутренним градиентом фона.
+   ───────────────────────────────────────────────────────────── */
+.bcard,.an-grid>.bcard,.an-grid>.card{
+  background:linear-gradient(180deg,var(--surface),var(--surface2));
+  background-clip:padding-box
+}
+/* контейнер canvas получает деликатную сетку-подложку из --grid */
+.an-canvas{
+  border-radius:var(--radius-sm);
+  background-image:
+    linear-gradient(to right,color-mix(in srgb,var(--grid) 55%,transparent) 1px,transparent 1px),
+    linear-gradient(to bottom,color-mix(in srgb,var(--grid) 55%,transparent) 1px,transparent 1px);
+  background-size:48px 38px
+}
+/* донат-легенда — точки чуть скруглённее и плотнее по типографике */
+.an-leg{letter-spacing:-.01em}
+.an-dot,.leg-dot{box-shadow:0 0 0 1px color-mix(in srgb,var(--text) 8%,transparent)}
+
+/* ─────────────────────────────────────────────────────────────
+   8. ФИРМЕННЫЙ ФОН BODY — очень деликатный мэш из --surface3 в углах,
+      чтобы фон не был «плоским дефолтным». Фиксирован, не скроллится.
+   ───────────────────────────────────────────────────────────── */
+body{
+  background:
+    radial-gradient(900px 600px at 100% -5%,color-mix(in srgb,var(--surface3) 40%,transparent),transparent 60%),
+    radial-gradient(800px 600px at -5% 105%,color-mix(in srgb,var(--surface3) 30%,transparent),transparent 60%),
+    var(--bg);
+  background-attachment:fixed
+}
+
+/* ─────────────────────────────────────────────────────────────
+   9. reduced-motion — выключаем фирменные переходы/штрихи-анимации
+   ───────────────────────────────────────────────────────────── */
+@media(prefers-reduced-motion:reduce){
+  tbody tr td:first-child::before{transition:none!important}
+}
