@@ -294,6 +294,13 @@ function renderShell() {
     <div class="bar-actions"><button class="btn-ghost" id="searchBtn">${icon('search')}<span>Поиск</span><kbd class="kbd">${navigator.platform.indexOf('Mac') > -1 ? '⌘' : 'Ctrl'} K</kbd></button><button class="btn" id="addBtn">+ ${esc(primEnt.one)}</button></div>`;
   host.querySelectorAll('.nav__item').forEach(el => el.addEventListener('click', () => showView(el.dataset.view)));
   document.getElementById('searchBtn').addEventListener('click', togglePalette);
+  if (!window.__hubBound) {
+    window.__hubBound = true;
+    document.addEventListener('click', function (e) {
+      var nav = e.target.closest('[data-hub-nav]'); if (nav) { showView(nav.getAttribute('data-hub-nav')); return; }
+      if (e.target.closest('[data-hub-search]')) togglePalette();
+    });
+  }
 }
 
 function addCfg(n) {
@@ -318,11 +325,12 @@ function applyAddButton(n) {
 
 function showView(key) {
   VIEW = key;
+  document.body.classList.toggle('is-hub', key === 'hub');
   document.querySelectorAll('.nav__item').forEach(el => el.classList.toggle('active', el.dataset.view === key));
   const n = navItem(key), main = document.getElementById('main');
   document.title = (n ? n.label + ' · ' : '') + (R.brand?.name || 'CRM');
-  main.innerHTML = `<div class="page-head"><div class="page-title">${esc(n.label)}</div><button class="btn hidden" id="pageAdd"></button></div><div id="viewBody"></div>`;
-  const R_ = { dashboard: viewDashboard, records: viewRecords, kanban: viewKanban, payments: viewPayments, tasks: viewTasks, team: viewTeam, analytics: viewAnalytics, finance: viewFinance, goals: viewGoals, docs: viewDocs, calendar: viewCalendar, reference: viewReference, activity: viewActivity, notifications: viewNotifications, automation: viewAutomation, roles: viewRoles, knowledge: viewKnowledge, integrations: viewIntegrations, files: viewFiles, portal: viewPortal, settings: viewSettings, kitchen: viewKitchen };
+  main.innerHTML = `<div class="page-head">${key !== 'hub' ? `<button class="hub-back" data-hub-nav="hub" aria-label="В рабочий стол">${icon('home')}<span>Рабочий стол</span></button>` : ''}<div class="page-title">${esc(n.label)}</div><div class="ph-actions"><button class="hub-search" data-hub-search aria-label="Поиск">${icon('search')}<kbd>⌘K</kbd></button><button class="btn hidden" id="pageAdd"></button></div></div><div id="viewBody"></div>`;
+  const R_ = { dashboard: viewDashboard, records: viewRecords, kanban: viewKanban, payments: viewPayments, tasks: viewTasks, team: viewTeam, analytics: viewAnalytics, finance: viewFinance, goals: viewGoals, docs: viewDocs, calendar: viewCalendar, reference: viewReference, activity: viewActivity, notifications: viewNotifications, automation: viewAutomation, roles: viewRoles, knowledge: viewKnowledge, integrations: viewIntegrations, files: viewFiles, portal: viewPortal, settings: viewSettings, kitchen: viewKitchen, hub: viewHub };
   try {
     (R_[n.type] || viewRecords)(n);
   } catch (err) {
@@ -1020,35 +1028,69 @@ function analyticsWidget(w, wi, draws) {
 }
 function viewAnalytics() { const draws = [], widgets = (R.analytics && R.analytics.length) ? R.analytics : defaultAnalytics(); document.getElementById('viewBody').innerHTML = `<div class="an-grid">${widgets.map((w, i) => analyticsWidget(w, i, draws)).join('')}</div>`; bindRowClicks(); setTimeout(() => draws.forEach(fn => fn()), 0); }
 
+/* ── Хаб-лаунчер (рабочий стол: плитки-модули, клик → модуль на весь экран) ── */
+function viewHub() {
+  const now = new Date();
+  const hi = now.getHours() < 12 ? 'Доброе утро' : now.getHours() < 18 ? 'Добрый день' : 'Добрый вечер';
+  let date = now.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+  date = date.charAt(0).toUpperCase() + date.slice(1);
+  const orders = (typeof DB !== 'undefined' && DB.recs) ? DB.recs('order') : [];
+  const cnt = ek => { try { return DB.recs(ek).length; } catch (e) { return 0; } };
+  const many = ek => { try { return ((entById(ek) || {}).many || '').toLowerCase(); } catch (e) { return ''; } };
+  const metric = n => {
+    if (n.type === 'kitchen') return orders.filter(o => o.stage !== 'delivered' && o.stage !== 'cancelled').length + ' в работе';
+    if ((n.type === 'records' || n.type === 'kanban') && n.entity) return cnt(n.entity) + ' · ' + many(n.entity);
+    if (n.type === 'finance') return fmtMoney(orders.filter(o => o.stage === 'delivered').reduce((s, o) => s + (Number(o.amount) || 0), 0)) + ' сегодня';
+    if (n.type === 'team') return (cnt('team') || '') + ' в команде';
+    if (n.type === 'goals') return 'план-факт';
+    if (n.type === 'reference') return 'справочник';
+    if (n.type === 'payments') return 'платежи';
+    return 'открыть →';
+  };
+  const COLORS = ['var(--acc)', '#e79a2b', '#5d8a4a', '#5b8cff', '#c8709a', '#7a8b3a', '#3f9c8a', '#d16a4a'];
+  const tiles = R.nav.filter(n => n.key !== 'hub');
+  document.getElementById('viewBody').innerHTML = `
+    <div class="hub">
+      <div class="hub-hi"><h1>${hi}</h1><p>${date} · ${esc(R.brand && R.brand.name || '')}</p></div>
+      <div class="hub-grid">
+        ${tiles.map((n, i) => `<button class="hub-tile${i === 0 ? ' hub-tile--hero' : ''}" data-hub-nav="${n.key}" style="--tc:${COLORS[i % COLORS.length]}">
+          <span class="hub-tile__ic">${icon(n.icon || 'layers')}</span>
+          <span class="hub-tile__b"><span class="hub-tile__lbl">${esc(n.label)}</span><span class="hub-tile__m">${esc(metric(n))}</span></span>
+          <span class="hub-tile__arw">→</span>
+        </button>`).join('')}
+      </div>
+    </div>`;
+}
+
 /* ── Живая кухня (кастомный дашборд ресторана — тикеты по этапам) ── */
 function viewKitchen() {
   const orders = DB.recs('order').filter(o => o.stage !== 'cancelled');
   const COLS = [
-    { key: 'new',       label: 'Новые',      em: '🔔', col: 'var(--acc)' },
-    { key: 'cooking',   label: 'Готовятся',  em: '🍳', col: 'var(--warn)' },
-    { key: 'courier',   label: 'В пути',     em: '🛵', col: '#5b8cff' },
-    { key: 'delivered', label: 'Доставлены', em: '✅', col: 'var(--good)' },
+    { key: 'new',       label: 'Новые',      col: 'var(--acc)' },
+    { key: 'cooking',   label: 'Готовятся',  col: 'var(--warn)' },
+    { key: 'courier',   label: 'В пути',     col: '#5b8cff' },
+    { key: 'delivered', label: 'Доставлены', col: 'var(--good)' },
   ];
   const active = orders.filter(o => o.stage !== 'delivered').length;
   const rev = orders.filter(o => o.stage === 'delivered').reduce((s, o) => s + (Number(o.amount) || 0), 0);
   const avg = orders.length ? Math.round(orders.reduce((s, o) => s + (Number(o.amount) || 0), 0) / orders.length) : 0;
   const mins = o => { let h = 0, s = String(o.id); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 41; return o.stage === 'delivered' ? (o.deliveryTime || 28) : (3 + h % 24); };
-  const strip = [['🧾', orders.length, 'заказов сегодня'], ['⏱️', active, 'в работе'], ['💳', fmtMoney(avg), 'средний чек'], ['📈', fmtMoney(rev), 'выручка за день']];
+  const strip = [['note', orders.length, 'заказов сегодня'], ['activity', active, 'в работе'], ['wallet', fmtMoney(avg), 'средний чек'], ['chart', fmtMoney(rev), 'выручка за день']];
   document.getElementById('viewBody').innerHTML = `
     <div class="kb">
       <div class="kb-strip">
-        ${strip.map(([em, v, l]) => `<div class="kb-stat"><span class="kb-stat__em">${em}</span><div><b>${v}</b><small>${esc(l)}</small></div></div>`).join('')}
+        ${strip.map(([ic, v, l]) => `<div class="kb-stat"><span class="kb-stat__ic">${icon(ic)}</span><div><b>${v}</b><small>${esc(l)}</small></div></div>`).join('')}
       </div>
       <div class="kb-board">
         ${COLS.map(c => { const list = orders.filter(o => o.stage === c.key);
           return `<div class="kb-col${c.key === 'cooking' ? ' kb-col--live' : ''}" style="--kc:${c.col}">
-            <div class="kb-col__h"><span class="kb-col__em">${c.em}</span>${c.label}<span class="kb-col__n">${list.length}</span></div>
+            <div class="kb-col__h"><span class="kb-col__dot"></span>${c.label}<span class="kb-col__n">${list.length}</span></div>
             <div class="kb-col__body">
               ${list.map(o => `<div class="kb-ticket">
                 <div class="kb-ticket__top"><b>#${esc(o.id)}</b><span class="kb-timer">${mins(o)} мин</span></div>
                 <div class="kb-ticket__client">${esc(o.client || '—')}</div>
                 <div class="kb-ticket__items">${esc(o.items || '')}</div>
-                <div class="kb-ticket__foot"><span class="kb-amt">${fmtMoney(o.amount)}</span>${o.courier ? `<span class="kb-courier">🛵 ${esc(o.courier)}</span>` : ''}</div>
+                <div class="kb-ticket__foot"><span class="kb-amt">${fmtMoney(o.amount)}</span>${o.courier ? `<span class="kb-courier">${icon('user')}${esc(o.courier)}</span>` : ''}</div>
               </div>`).join('') || '<div class="kb-empty">Пусто</div>'}
             </div>
           </div>`;
@@ -1429,7 +1471,7 @@ function checkQuota() {
 
 /* ── валидатор рецепта ── */
 function validateRecipe() {
-  const MODULE_TYPES = ['dashboard', 'records', 'kanban', 'payments', 'tasks', 'team', 'analytics', 'finance', 'goals', 'docs', 'calendar', 'reference', 'activity', 'notifications', 'automation', 'roles', 'knowledge', 'integrations', 'files', 'portal', 'settings', 'kitchen'];
+  const MODULE_TYPES = ['dashboard', 'records', 'kanban', 'payments', 'tasks', 'team', 'analytics', 'finance', 'goals', 'docs', 'calendar', 'reference', 'activity', 'notifications', 'automation', 'roles', 'knowledge', 'integrations', 'files', 'portal', 'settings', 'kitchen', 'hub'];
   const FIELD_TYPES = ['text', 'number', 'money', 'date', 'select', 'textarea', 'computed', 'gallery'];
   const errs = [];
   try {

@@ -223,7 +223,8 @@
     ],
 
     nav: [
-      { key: 'dash',       label: 'Живая кухня',       type: 'kitchen',   entity: 'order',  group: 'Рабочий стол', icon: 'home' },
+      { key: 'hub',        label: 'Рабочий стол',      type: 'hub',       group: 'Рабочий стол', icon: 'home' },
+      { key: 'dash',       label: 'Живая кухня',       type: 'kitchen',   entity: 'order',  group: 'Рабочий стол', icon: 'bolt' },
       { key: 'goals',      label: 'Цели · план-факт',  type: 'goals',                        group: 'Рабочий стол', icon: 'target' },
       { key: 'orders',     label: 'Заказы',            type: 'records',   entity: 'order',  group: 'Операции', icon: 'deal',
         views: [
