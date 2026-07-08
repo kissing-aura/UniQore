@@ -170,3 +170,20 @@
 @media (prefers-reduced-motion: reduce) {
   .page-hero--media .page-hero__media-el { display: none; }
 }
+
+/* ── Process section background media (light photo → graded dark to fit theme) ─ */
+.process--media { position: relative; }
+.process--media .process__media { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: 24px; }
+.process--media .process__media-el { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; filter: brightness(0.38) saturate(0.9) contrast(1.1); }
+.process--media .process__scrim {
+  position: absolute; inset: 0; z-index: 1; border-radius: 24px;
+  background: linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.82) 55%, rgba(10,10,10,0.94) 100%);
+}
+.process--media .container { position: relative; z-index: 2; }
+.process--media .process__steps { padding: 48px 0 24px; }
+@media (prefers-reduced-motion: reduce) {
+  .process--media .process__media-el { display: none; }
+}
+@media (max-width: 768px) {
+  .process--media .process__media, .process--media .process__scrim { border-radius: 0; }
+}

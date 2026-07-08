@@ -118,7 +118,7 @@
   <link rel="stylesheet" href="css/animations.css?v=20260707n">
   <link rel="stylesheet" href="css/mobile.css?v=20260707n">
   <link rel="stylesheet" href="css/nav-pages.css?v=20260707n">
-  <link rel="stylesheet" href="css/enhance.css?v=20260708c">
+  <link rel="stylesheet" href="css/enhance.css?v=20260709a">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -920,7 +920,13 @@
     </section>
 
     <!-- HOW IT WORKS -->
-    <section class="process" id="process">
+    <section class="process process--media" id="process">
+      <div class="process__media" aria-hidden="true">
+        <video class="process__media-el" autoplay muted loop playsinline preload="auto" poster="assets/hero-process.jpg">
+          <source src="assets/hero-process.mp4?v=20260709a" type="video/mp4">
+        </video>
+      </div>
+      <div class="process__scrim" aria-hidden="true"></div>
       <div class="container">
         <h2 class="section-title">От запроса до<br><em>работающей системы</em></h2>
         <div class="process__steps">
