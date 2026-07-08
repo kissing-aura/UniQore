@@ -1,0 +1,334 @@
+/* ═══ Uniqore tables.css — слой продвинутой работы с таблицей ═══
+   Inline-редактирование · массовые действия · сохранённые виды.
+   Подключается ПОСЛЕ остальных CSS. Чистый CSS, без JS.
+   Только переменные тем — без хардкода цветов. Работает на dark и light.
+
+   ───────────────────────────────────────────────────────────────────────────
+   КОНТРАКТ С ДВИЖКОМ (классы, которые движок навешивает из JS):
+     .row-check / .tbl-check  — колонка-чекбокс выбора строк
+     tr.is-selected           — выбранная строка
+     td.editable              — ячейка, редактируемая по двойному клику
+     td.cell-edit / .cell-input — ячейка в режиме правки + поле ввода
+     .cell-open               — кликабельное имя (открыть запись)
+     .bulk-bar (+ __count)    — плавающая панель массовых действий
+     .view-chips / .view-chip (+ is-active / __x) — чипы сохранённых видов
+   Слой аддитивный: без этих классов он ничего не ломает.
+   Кнопки .btn / .btn-ghost / .btn-danger НЕ переопределяются — только размещаются.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root{
+  /* Локальные токены слоя. Наследуем easing из premium.css если он есть. */
+  --tbl-ease: var(--uq-ease, cubic-bezier(.22,.7,.2,1));
+  --tbl-t: 160ms;          /* базовая длительность переходов */
+  --tbl-bar-in: 260ms;     /* появление панели массовых действий */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   1. КОЛОНКА-ЧЕКБОКС
+   Узкая ячейка под чекбокс выбора строки (в thead и tbody).
+   ───────────────────────────────────────────────────────────── */
+.row-check{
+  width:40px;
+  min-width:40px;
+  max-width:40px;
+  text-align:center;
+  /* вертикальное центрирование чекбокса относительно строки */
+  vertical-align:middle;
+  padding-left:0;
+  padding-right:0;
+}
+
+.tbl-check{
+  /* нативный чекбокс, перекрашенный под тему */
+  appearance:auto;
+  -webkit-appearance:auto;
+  width:16px;
+  height:16px;
+  margin:0;
+  vertical-align:middle;
+  accent-color:var(--acc);
+  cursor:pointer;
+  border-radius:var(--radius-sm);
+  transition:transform var(--tbl-t) var(--tbl-ease),
+             box-shadow var(--tbl-t) var(--tbl-ease);
+}
+.tbl-check:hover{ transform:scale(1.08); }
+.tbl-check:active{ transform:scale(.94); }
+.tbl-check:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px var(--ring);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2. ВЫБРАННАЯ СТРОКА
+   Подсветка фоном + тонкая акцентная грань через box-shadow inset
+   (без side-stripe border, не сдвигает layout ячеек).
+   ───────────────────────────────────────────────────────────── */
+tr.is-selected > td{
+  background:var(--acc-dim);
+  /* акцентная грань слева, максимум 2px, не ломает выравнивание */
+  box-shadow:inset 2px 0 0 0 var(--acc);
+  transition:background var(--tbl-t) var(--tbl-ease);
+}
+/* акцентную грань рисуем только на первой ячейке строки */
+tr.is-selected > td:not(:first-child){
+  box-shadow:none;
+}
+/* hover поверх выбранной строки — чуть плотнее, но в той же гамме */
+tr.is-selected:hover > td{
+  background:color-mix(in srgb, var(--acc-dim) 80%, var(--acc) 12%);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. РЕДАКТИРУЕМАЯ ЯЧЕЙКА (двойной клик → правка)
+   Намёк на hover: мягкий фон + пунктирное подчёркивание текста.
+   Выравнивание содержимого не меняем.
+   ───────────────────────────────────────────────────────────── */
+td.editable{
+  cursor:cell;
+  position:relative;
+  transition:background var(--tbl-t) var(--tbl-ease);
+}
+td.editable:hover{
+  background:var(--surface2);
+  /* пунктирный намёк на редактируемость */
+  text-decoration:underline dashed var(--text3);
+  text-underline-offset:3px;
+}
+/* tiny карандаш-намёк в углу ячейки (опционально, ненавязчиво) */
+td.editable::after{
+  content:"✎";
+  position:absolute;
+  top:50%;
+  right:6px;
+  transform:translateY(-50%) scale(.85);
+  font-size:11px;
+  line-height:1;
+  color:var(--text3);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity var(--tbl-t) var(--tbl-ease);
+}
+td.editable:hover::after{ opacity:.7; }
+/* в режиме правки карандаш не нужен */
+td.editable.cell-edit::after{ display:none; }
+
+/* ─────────────────────────────────────────────────────────────
+   4. ЯЧЕЙКА В РЕЖИМЕ ПРАВКИ + ПОЛЕ ВВОДА
+   ───────────────────────────────────────────────────────────── */
+td.cell-edit{
+  /* убираем внутренние отступы, чтобы инпут занял ячейку целиком */
+  padding:0 4px !important;
+  background:var(--surface);
+}
+
+.cell-input{
+  display:block;
+  box-sizing:border-box;
+  width:100%;
+  margin:0;
+  padding:6px 8px;
+  font:inherit;            /* шрифт/размер как у таблицы */
+  color:var(--text);
+  background:var(--surface);
+  border:1px solid var(--acc);
+  border-radius:var(--radius-sm);
+  outline:none;
+  transition:box-shadow var(--tbl-t) var(--tbl-ease),
+             border-color var(--tbl-t) var(--tbl-ease);
+}
+.cell-input:focus{
+  box-shadow:0 0 0 3px var(--ring);
+}
+/* select внутри ячейки — та же гамма + место под стрелку */
+select.cell-input{
+  cursor:pointer;
+  padding-right:24px;
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--text2) 50%),
+                   linear-gradient(135deg,var(--text2) 50%,transparent 50%);
+  background-position:calc(100% - 13px) center, calc(100% - 8px) center;
+  background-size:5px 5px, 5px 5px;
+  background-repeat:no-repeat;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. КЛИКАБЕЛЬНОЕ ИМЯ (первая колонка → открыть запись)
+   ───────────────────────────────────────────────────────────── */
+.cell-open{
+  cursor:pointer;
+  transition:color var(--tbl-t) var(--tbl-ease);
+}
+.cell-open:hover{
+  color:var(--acc);
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. ПАНЕЛЬ МАССОВЫХ ДЕЙСТВИЙ (.bulk-bar)
+   Плавающая sticky-панель снизу контента, по центру.
+   Кнопки берутся из существующих .btn/.btn-ghost — здесь только раскладка.
+   ───────────────────────────────────────────────────────────── */
+.bulk-bar{
+  position:sticky;
+  bottom:16px;
+  z-index:250;            /* в районе модального стека */
+  /* центрирование по горизонтали внутри потока контента */
+  width:max-content;
+  max-width:calc(100% - 32px);
+  margin:16px auto 0;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  padding:10px 14px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+
+  /* появление снизу */
+  animation:tbl-bulk-in var(--tbl-bar-in) var(--tbl-ease) both;
+}
+
+@keyframes tbl-bulk-in{
+  from{ opacity:0; transform:translateY(12px); }
+  to  { opacity:1; transform:translateY(0); }
+}
+
+/* жирный счётчик выбранного */
+.bulk-bar__count{
+  font-family:var(--font-num, var(--font-ui));
+  font-weight:700;
+  color:var(--acc);
+  white-space:nowrap;
+}
+/* лёгкий разделитель между счётчиком и действиями */
+.bulk-bar__count::after{
+  content:"";
+  display:inline-block;
+  width:1px;
+  height:16px;
+  margin-left:10px;
+  vertical-align:-3px;
+  background:var(--border2);
+}
+
+/* select действий внутри панели — стилизуем под тему */
+.bulk-bar select{
+  box-sizing:border-box;
+  padding:7px 28px 7px 10px;
+  font:inherit;
+  font-family:var(--font-ui);
+  color:var(--text);
+  background-color:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  outline:none;
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--text2) 50%),
+                   linear-gradient(135deg,var(--text2) 50%,transparent 50%);
+  background-position:calc(100% - 15px) center, calc(100% - 10px) center;
+  background-size:5px 5px, 5px 5px;
+  background-repeat:no-repeat;
+  transition:border-color var(--tbl-t) var(--tbl-ease),
+             box-shadow var(--tbl-t) var(--tbl-ease);
+}
+.bulk-bar select:hover{ border-color:var(--text3); }
+.bulk-bar select:focus-visible{ box-shadow:0 0 0 3px var(--ring); border-color:var(--acc); }
+
+/* ─────────────────────────────────────────────────────────────
+   7. ЧИПЫ СОХРАНЁННЫХ ВИДОВ (.view-chips / .view-chip)
+   ───────────────────────────────────────────────────────────── */
+.view-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:0 0 14px;
+}
+
+.view-chip{
+  display:inline-flex;
+  align-items:center;
+  padding:5px 12px;
+  font-family:var(--font-ui);
+  font-size:12.5px;
+  line-height:1.2;
+  color:var(--text2);
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:999px;
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+  transition:border-color var(--tbl-t) var(--tbl-ease),
+             color var(--tbl-t) var(--tbl-ease),
+             background var(--tbl-t) var(--tbl-ease),
+             transform var(--tbl-t) var(--tbl-ease);
+}
+.view-chip:hover{
+  border-color:var(--border2);
+  color:var(--text);
+}
+.view-chip:active{ transform:scale(.97); }
+.view-chip:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px var(--ring);
+}
+
+/* активный вид */
+.view-chip.is-active{
+  background:var(--acc-dim);
+  border-color:var(--acc);
+  color:var(--acc);
+}
+
+/* крестик удаления вида внутри чипа */
+.view-chip__x{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-left:6px;
+  width:14px;
+  height:14px;
+  font-size:13px;
+  line-height:1;
+  color:inherit;
+  opacity:.5;
+  border-radius:999px;
+  cursor:pointer;
+  transition:opacity var(--tbl-t) var(--tbl-ease),
+             background var(--tbl-t) var(--tbl-ease);
+}
+.view-chip__x:hover{
+  opacity:1;
+  background:color-mix(in srgb, currentColor 16%, transparent);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   8. REDUCED MOTION — отключаем анимации/переходы слоя
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  .tbl-check,
+  tr.is-selected > td,
+  td.editable,
+  td.editable::after,
+  .cell-input,
+  .cell-open,
+  .bulk-bar,
+  .bulk-bar select,
+  .view-chip,
+  .view-chip__x{
+    transition:none !important;
+    animation:none !important;
+  }
+  .bulk-bar{ opacity:1; transform:none; }
+  .tbl-check:hover,
+  .tbl-check:active,
+  .view-chip:active{ transform:none; }
+}

@@ -1,0 +1,112 @@
+/* ИИ-диагностика — вау-раздел стоматологии. Всё под .aiscan-scope, чтобы не течь в светлую CRM. */
+.aiscan-scope{
+  --sbg:#05070d; --scy:#3fd8ff; --scy2:#6ae9ff; --smint:#31e0b0; --sred:#ff4d5e; --samb:#ffb020;
+  --stx:#e9f2ff; --stx2:#8ea6c8; --stx3:#5b719a; --sline:rgba(120,180,255,.13);
+  --smono:'JetBrains Mono',ui-monospace,monospace;
+  position:relative; border-radius:16px; overflow:hidden; color:var(--stx);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(63,216,255,.12), transparent 55%),
+    radial-gradient(90% 90% at 50% 120%, rgba(49,224,176,.08), transparent 60%),
+    var(--sbg);
+  border:1px solid var(--sline);
+  font-family:inherit;
+}
+.aiscan-scope *{box-sizing:border-box}
+.aiscan-scope::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.4;
+  background-image:linear-gradient(var(--sline) 1px,transparent 1px),linear-gradient(90deg,var(--sline) 1px,transparent 1px);
+  background-size:42px 42px;mask:radial-gradient(120% 90% at 50% 40%,#000 30%,transparent 82%)}
+
+.aiscan-scope .as-head{position:relative;z-index:2;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px 20px;border-bottom:1px solid var(--sline)}
+.aiscan-scope .as-mk{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:16px}
+.aiscan-scope .as-mk i{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-weight:800;color:#04121a;background:linear-gradient(135deg,var(--scy),var(--smint));box-shadow:0 0 22px rgba(63,216,255,.5)}
+.aiscan-scope .as-chip{font-family:var(--smono);font-size:11px;color:var(--stx2);border:1px solid var(--sline);padding:5px 10px;border-radius:8px;background:rgba(120,180,255,.03);display:flex;gap:7px;align-items:center}
+.aiscan-scope .as-chip b{color:var(--stx);font-weight:600}
+.aiscan-scope .as-dot{width:7px;height:7px;border-radius:50%;background:var(--smint);box-shadow:0 0 10px var(--smint);animation:asPulse 1.6s infinite}
+@keyframes asPulse{50%{opacity:.35}}
+.aiscan-scope .as-sp{flex:1}
+
+.aiscan-scope .as-work{position:relative;z-index:2;display:grid;grid-template-columns:1fr 340px;gap:16px;padding:16px}
+@media(max-width:900px){.aiscan-scope .as-work{grid-template-columns:1fr}}
+
+.aiscan-scope .as-theatre{position:relative;border:1px solid var(--sline);border-radius:14px;overflow:hidden;min-height:420px;
+  background:radial-gradient(90% 90% at 50% 35%,rgba(15,26,48,.55),rgba(6,9,17,.9));box-shadow:inset 0 0 80px rgba(63,216,255,.06)}
+.aiscan-scope .as-tlabel{position:absolute;top:12px;left:14px;z-index:5;font-family:var(--smono);font-size:10.5px;letter-spacing:.14em;color:var(--stx2);text-transform:uppercase}
+.aiscan-scope .as-tid{position:absolute;top:12px;right:14px;z-index:5;font-family:var(--smono);font-size:10.5px;color:var(--scy);opacity:.8}
+.aiscan-scope .as-cn{position:absolute;width:24px;height:24px;border:2px solid var(--scy);opacity:.5;z-index:5}
+.aiscan-scope .as-cn.tl{top:11px;left:11px;border-right:0;border-bottom:0;border-radius:6px 0 0 0}
+.aiscan-scope .as-cn.tr{top:11px;right:11px;border-left:0;border-bottom:0;border-radius:0 6px 0 0}
+.aiscan-scope .as-cn.bl{bottom:11px;left:11px;border-right:0;border-top:0;border-radius:0 0 0 6px}
+.aiscan-scope .as-cn.br{bottom:11px;right:11px;border-left:0;border-top:0;border-radius:0 0 6px 0}
+
+.aiscan-scope .as-vp{position:absolute;inset:0;display:grid;place-items:center;perspective:1300px}
+.aiscan-scope .as-arch{position:relative;width:88%;max-width:760px;transform-style:preserve-3d;transition:transform .25s ease-out}
+.aiscan-scope .as-arch svg{width:100%;height:auto;display:block;overflow:visible}
+.aiscan-scope .as-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.aiscan-scope .as-tooth path{transition:fill .35s,filter .35s}
+.aiscan-scope .as-tooth.lit path{filter:drop-shadow(0 0 6px rgba(63,216,255,.9))}
+.aiscan-scope .as-tooth.f-high path{fill:url(#asRed)!important;filter:drop-shadow(0 0 12px var(--sred))}
+.aiscan-scope .as-tooth.f-med path{fill:url(#asAmb)!important;filter:drop-shadow(0 0 12px var(--samb))}
+.aiscan-scope .as-tooth.f-ok path{fill:url(#asMint)!important;filter:drop-shadow(0 0 10px var(--smint))}
+
+.aiscan-scope .as-beam{position:absolute;top:0;bottom:0;width:120px;left:-14%;z-index:4;pointer-events:none;opacity:0}
+.aiscan-scope .as-beam::before{content:'';position:absolute;top:6%;bottom:6%;left:58px;width:3px;border-radius:3px;background:linear-gradient(var(--scy2),#fff,var(--scy2));box-shadow:0 0 24px 6px var(--scy),0 0 60px 14px rgba(63,216,255,.6)}
+.aiscan-scope .as-beam::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(63,216,255,.16) 46%,rgba(63,216,255,.30) 50%,transparent);filter:blur(2px)}
+.aiscan-scope .as-beam.run{opacity:1;animation:asBeam var(--as-dur,3400ms) linear forwards}
+@keyframes asBeam{from{left:-14%}to{left:104%}}
+
+.aiscan-scope .as-ret{position:absolute;inset:0;z-index:6;pointer-events:none}
+.aiscan-scope .as-r{position:absolute;transform:translate(-50%,-50%);opacity:0}
+.aiscan-scope .as-r.show{animation:asRetIn .5s cubic-bezier(.2,1.4,.3,1) forwards}
+@keyframes asRetIn{from{opacity:0;transform:translate(-50%,-50%) scale(1.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.aiscan-scope .as-ring{width:58px;height:58px;border-radius:50%;border:1.5px solid currentColor;position:relative;box-shadow:0 0 20px currentColor,inset 0 0 12px currentColor}
+.aiscan-scope .as-ring::before,.aiscan-scope .as-ring::after{content:'';position:absolute;background:currentColor}
+.aiscan-scope .as-ring::before{top:50%;left:-8px;right:-8px;height:1.5px;transform:translateY(-50%)}
+.aiscan-scope .as-ring::after{left:50%;top:-8px;bottom:-8px;width:1.5px;transform:translateX(-50%)}
+.aiscan-scope .as-spin{position:absolute;inset:-6px;border-radius:50%;border:1.5px dashed currentColor;opacity:.5;animation:asSpin 6s linear infinite}
+@keyframes asSpin{to{transform:rotate(360deg)}}
+.aiscan-scope .as-tag{position:absolute;left:66px;top:50%;transform:translateY(-50%);white-space:nowrap;font-family:var(--smono);font-size:10.5px;line-height:1.5;padding:6px 10px;border-radius:8px;background:rgba(6,10,20,.88);border:1px solid currentColor;box-shadow:0 8px 26px rgba(0,0,0,.5)}
+.aiscan-scope .as-tag b{display:block;font-size:12px}
+.aiscan-scope .as-tag .c{color:#fff;font-weight:700}
+.aiscan-scope .as-tag::before{content:'';position:absolute;left:-14px;top:50%;width:14px;height:1.5px;background:currentColor;transform:translateY(-50%)}
+.aiscan-scope .as-r.left .as-tag{left:auto;right:66px}
+.aiscan-scope .as-r.left .as-tag::before{left:auto;right:-14px}
+
+.aiscan-scope .as-panel{border:1px solid var(--sline);border-radius:14px;background:linear-gradient(180deg,rgba(13,20,38,.66),rgba(7,11,20,.85));display:flex;flex-direction:column;overflow:hidden}
+.aiscan-scope .as-ph{padding:16px 18px 13px;border-bottom:1px solid var(--sline)}
+.aiscan-scope .as-ph h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--stx)}
+.aiscan-scope .as-ph small{display:block;color:var(--stx2);font-size:11.5px;margin-top:3px;font-family:var(--smono)}
+.aiscan-scope .as-find{flex:1;overflow:auto;padding:8px 12px;min-height:150px}
+.aiscan-scope .as-idle{padding:34px 14px;text-align:center;color:var(--stx2);font-size:12.5px;line-height:1.6}
+.aiscan-scope .as-f{display:flex;gap:11px;padding:12px 9px;border-radius:11px;opacity:0;transform:translateX(12px)}
+.aiscan-scope .as-f.in{animation:asFindIn .45s ease forwards}
+@keyframes asFindIn{to{opacity:1;transform:none}}
+.aiscan-scope .as-f__ic{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;font-size:14px;background:rgba(120,180,255,.06);border:1px solid currentColor}
+.aiscan-scope .as-f__b{flex:1;min-width:0}
+.aiscan-scope .as-f__t{display:flex;align-items:center;gap:7px;font-weight:600;font-size:13px;color:var(--stx)}
+.aiscan-scope .as-pill{font-family:var(--smono);font-size:9px;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:20px;border:1px solid currentColor}
+.aiscan-scope .as-f__n{color:var(--stx2);font-size:11.5px;line-height:1.45;margin-top:3px}
+.aiscan-scope .as-f__m{display:flex;align-items:center;gap:8px;margin-top:6px}
+.aiscan-scope .as-bar{flex:1;height:4px;border-radius:3px;background:rgba(120,180,255,.1);overflow:hidden}
+.aiscan-scope .as-bar i{display:block;height:100%;width:0;border-radius:3px;background:currentColor;transition:width 1s cubic-bezier(.2,1,.3,1)}
+.aiscan-scope .as-f__c{font-family:var(--smono);font-size:11px;color:var(--stx);font-weight:600;width:36px;text-align:right}
+
+.aiscan-scope .as-verdict{border-top:1px solid var(--sline);padding:14px 18px;display:flex;align-items:center;gap:14px;opacity:0;transition:opacity .5s}
+.aiscan-scope .as-verdict.in{opacity:1}
+.aiscan-scope .as-vr{position:relative;width:68px;height:68px;flex-shrink:0}
+.aiscan-scope .as-vr svg{transform:rotate(-90deg)}
+.aiscan-scope .as-vr__c{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.aiscan-scope .as-vr__c b{font-size:18px;font-weight:800;font-family:var(--smono)}
+.aiscan-scope .as-vr__c small{font-size:8px;color:var(--stx2);text-transform:uppercase;letter-spacing:.08em}
+.aiscan-scope .as-vt b{font-size:13px;color:var(--stx)}
+.aiscan-scope .as-vt p{color:var(--stx2);font-size:11.5px;line-height:1.45;margin-top:2px}
+
+.aiscan-scope .as-run{padding:13px 18px 16px}
+.aiscan-scope .as-btn{width:100%;border:0;cursor:pointer;font-weight:700;font-size:13.5px;color:#04121a;padding:13px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--scy),var(--smint));box-shadow:0 10px 30px rgba(63,216,255,.35);transition:transform .15s,box-shadow .3s,filter .3s;font-family:inherit}
+.aiscan-scope .as-btn:hover{transform:translateY(-2px);box-shadow:0 16px 42px rgba(63,216,255,.5)}
+.aiscan-scope .as-btn:disabled{filter:grayscale(.5) brightness(.7);cursor:default;transform:none;box-shadow:none}
+.aiscan-scope .as-btn svg{width:17px;height:17px}
+.aiscan-scope .as-btn--g{background:transparent;color:var(--scy);border:1px solid var(--scy);box-shadow:none;margin-top:9px}
+.aiscan-scope .as-btn--g:hover{background:rgba(63,216,255,.08);box-shadow:0 0 22px rgba(63,216,255,.2)}
+.aiscan-scope .as-status{position:absolute;bottom:14px;left:14px;z-index:5;font-family:var(--smono);font-size:10.5px;color:var(--scy);letter-spacing:.1em;text-transform:uppercase;opacity:0;transition:opacity .3s}
+.aiscan-scope .as-status.on{opacity:1}
+.aiscan-scope .as-foot{position:absolute;bottom:12px;right:14px;z-index:5;font-family:var(--smono);font-size:10px;color:var(--stx3);opacity:.7}

@@ -1,0 +1,112 @@
+/* ============================================================
+   Uniqore Engine — Responsive layer
+   Loaded LAST (after engine.css / premium.css / signature.css).
+   Pure CSS, no JS. Breakpoints: 1024 / 900 / 768 / 480.
+   Uses theme variables only — no hardcoded colors.
+   ============================================================ */
+
+/* ── Tablet: tighten generous desktop grids (≤1024px) ───────── */
+@media (max-width:1024px){
+  .dash-grid{grid-template-columns:1fr}
+  .an-grid{grid-template-columns:1fr}
+  .detail-grid{grid-template-columns:1fr}
+  .main{padding:18px;max-width:100%}
+}
+
+/* ── Sidebar → narrow icon-rail (≤900px) ────────────────────── */
+/* Collapse the 230px sidebar into a 58px icon rail. Labels,
+   section headers and brand name hidden; icons centered. */
+@media (max-width:900px){
+  body.nav-sidebar .app{grid-template-columns:58px 1fr}
+  body.nav-sidebar .sidebar{padding:14px 6px;align-items:center}
+  body.nav-sidebar .brand{padding:6px 0 14px;justify-content:center}
+  body.nav-sidebar .brand__name{display:none}
+  body.nav-sidebar .nav-group{display:none}
+  body.nav-sidebar .nav__lbl{display:none}
+  body.nav-sidebar .nav__badge{position:absolute;top:4px;right:4px;margin:0}
+  body.nav-sidebar .nav__item{
+    justify-content:center;padding:0;width:44px;height:44px;
+    position:relative;margin:0 auto;
+  }
+  body.nav-sidebar .nav__ic{width:18px}
+  /* action buttons in the rail: icon-sized, centered */
+  body.nav-sidebar .bar-actions{align-items:center;gap:8px}
+  body.nav-sidebar .bar-actions .btn,
+  body.nav-sidebar .bar-actions .btn-ghost{
+    width:44px;height:44px;padding:0;display:inline-flex;
+    align-items:center;justify-content:center;overflow:hidden;
+  }
+}
+
+/* ── Topbar themes: scrollable horizontal nav (≤900px) ──────── */
+@media (max-width:900px){
+  body.nav-topbar .topbar{gap:12px;padding:0 12px;overflow-x:auto;
+    -webkit-overflow-scrolling:touch}
+  body.nav-topbar .nav{flex-wrap:nowrap}
+  body.nav-topbar .nav__item{white-space:nowrap;flex-shrink:0}
+}
+
+/* ── Stack content grids to single column (≤768px) ──────────── */
+@media (max-width:768px){
+  .kpi-row{grid-template-columns:repeat(2,1fr)} /* 2-up on phones */
+  .att-row{grid-template-columns:1fr}
+  .dash-grid,
+  .an-grid,
+  .settings-grid,
+  .team-grid,
+  .kb-grid,
+  .intg-grid{grid-template-columns:1fr}
+
+  /* smaller frame on mobile */
+  .main{padding:12px}
+  .page-title{font-size:17px}
+
+  /* tables: guaranteed horizontal scroll, no page break */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+  .table-wrap table{min-width:560px}
+  thead th{padding:9px 10px}
+  tbody td{padding:9px 10px}
+
+  /* kanban: swipe-scroll, narrower columns */
+  .kanban{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .k-col{min-width:240px;scroll-snap-align:start}
+
+  /* search input shouldn't force overflow */
+  .t-input--search{min-width:0;width:100%}
+  .bar-actions{flex-wrap:wrap}
+
+  /* topbar hide labels when cramped, keep icons */
+  body.nav-topbar .nav__lbl{display:none}
+}
+
+/* ── Slide-over / modal panels full-width (≤768px) ──────────── */
+@media (max-width:768px){
+  .panel{width:100vw;max-width:100vw}
+  .panel--modal{width:94vw;max-width:94vw;max-height:88vh}
+  .overlay--center{padding:0 3vw}
+}
+
+/* ── Touch targets ≥44px (≤768px) ───────────────────────────── */
+@media (max-width:768px){
+  body.nav-topbar .nav__item{min-height:44px;display:inline-flex;align-items:center}
+  .btn,.btn-ghost,.btn-danger{min-height:44px;display:inline-flex;
+    align-items:center;justify-content:center}
+  .icon-btn{width:40px;height:40px}
+  .subnav__item{min-height:38px;display:inline-flex;align-items:center}
+}
+
+/* ── Small phones (≤480px) ──────────────────────────────────── */
+@media (max-width:480px){
+  .kpi-row{grid-template-columns:1fr}   /* 1-up KPIs */
+  .kpi__val{font-size:22px}
+  .main{padding:10px}
+  .page-title{font-size:16px}
+  .table-wrap table{min-width:480px}
+  .bar-row__label{width:96px}
+  .detail-grid{grid-template-columns:1fr}
+}
+
+/* ── Respect reduced motion for any added smooth scrolling ───── */
+@media (prefers-reduced-motion:reduce){
+  .kanban,.table-wrap,.topbar{scroll-behavior:auto}
+}

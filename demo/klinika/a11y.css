@@ -1,0 +1,292 @@
+/* ============================================================================
+   a11y.css — слой доступности движка Uniqore CRM
+   ----------------------------------------------------------------------------
+   Самодостаточный файл. Использует только переменные тем:
+   --acc, --ring, --bg, --surface, --text, --text2, --border, --radius, --radius-sm.
+   Работает поверх любых тем (body.mode-dark / body.mode-light)
+   и любых раскладок (body.nav-topbar / body.nav-sidebar).
+   Цвета НЕ хардкодятся.
+   ============================================================================ */
+
+/* ----------------------------------------------------------------------------
+   0. Безопасные дефолты переменных
+   На случай если a11y.css подключат раньше тем — кольцо не «потеряется».
+   Реальные темы перекроют эти значения каскадом.
+   ---------------------------------------------------------------------------- */
+:root {
+  --a11y-ring-size: 2px;          /* толщина внешнего акцентного кольца */
+  --a11y-ring-gap: 2px;           /* зазор между элементом и кольцом (цвет фона) */
+  --a11y-touch: 44px;             /* минимальная тач-цель по WCAG 2.5.5 */
+}
+
+/* ----------------------------------------------------------------------------
+   1. Видимый focus-visible для всех интерактивных элементов
+   ----------------------------------------------------------------------------
+   Двухслойное кольцо через box-shadow:
+     слой 1 (--bg)  — зазор, отделяет кольцо от самого элемента;
+     слой 2 (--ring) — собственно видимое контрастное кольцо.
+   --ring в каждой теме задаётся контрастным к --bg, поэтому кольцо
+   одинаково читаемо и в тёмной, и в светлой теме.
+   ---------------------------------------------------------------------------- */
+:where(button, a, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: none; /* убираем дефолтный системный, рисуем свой */
+  box-shadow:
+    0 0 0 var(--a11y-ring-gap) var(--bg),
+    0 0 0 calc(var(--a11y-ring-gap) + var(--a11y-ring-size)) var(--ring, var(--acc));
+  border-radius: var(--radius-sm, 6px);
+  /* кольцо не должно обрезаться соседями */
+  position: relative;
+  z-index: 1;
+}
+
+/* Для элементов внутри плотных контейнеров (таблицы, тулбары),
+   где box-shadow может перекрываться — дублируем через outline как фолбэк
+   у элементов, которым нельзя задавать box-shadow (например, с своим shadow). */
+:where(table)
+  :where(button, a, [role="button"], [tabindex]):focus-visible {
+  outline: var(--a11y-ring-size) solid var(--acc);
+  outline-offset: var(--a11y-ring-gap);
+}
+
+/* Поля ввода: акцентная рамка + мягкое кольцо, чтобы фокус читался
+   даже на залитом фоне формы. */
+:where(input, select, textarea):focus-visible {
+  border-color: var(--acc);
+}
+
+/* ----------------------------------------------------------------------------
+   1.1 Подавление кольца при работе мышью
+   :focus БЕЗ :focus-visible = клик мышью → кольцо не показываем.
+   Это и есть требуемое поведение «не показывать кольцо на мыши».
+   ---------------------------------------------------------------------------- */
+:where(button, a, [role="button"], input, select, textarea, summary, [tabindex]):focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Старые движки/вебвью без :focus-visible: даём фолбэк по :focus,
+   но только там, где :focus-visible не поддерживается. */
+@supports not selector(:focus-visible) {
+  :where(button, a, [role="button"], input, select, textarea, [tabindex]):focus {
+    outline: var(--a11y-ring-size) solid var(--acc);
+    outline-offset: var(--a11y-ring-gap);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   2. .sr-only — визуально скрыто, доступно скринридеру
+   Классический «visually hidden». Текст вырезается из потока, но читается AT.
+   ---------------------------------------------------------------------------- */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* .sr-only-focusable — скрыт, но проявляется при фокусе (например, ссылки) */
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ----------------------------------------------------------------------------
+   3. .skip-link — ссылка «перейти к содержимому»
+   Скрыта до фокуса. По Tab всплывает в левом верхнем углу и ведёт на #main.
+   ---------------------------------------------------------------------------- */
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  /* до фокуса уводим за пределы экрана, но НЕ display:none —
+     иначе элемент выпадет из таб-порядка */
+  transform: translateY(-120%);
+  padding: 10px 16px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 6px);
+  font: 600 14px/1.2 system-ui, sans-serif;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+  transition: transform .15s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(8px);
+  margin-left: 8px;
+  outline: none;
+  box-shadow:
+    0 0 0 var(--a11y-ring-gap) var(--bg),
+    0 0 0 calc(var(--a11y-ring-gap) + var(--a11y-ring-size)) var(--ring, var(--acc)),
+    0 4px 14px rgba(0, 0, 0, .25);
+}
+
+/* Цель скип-линка не должна перехватывать фокус-стиль некрасиво */
+#main:focus {
+  outline: none;
+}
+
+/* ----------------------------------------------------------------------------
+   4. Минимальные тач-цели 44×44 на мобиле
+   Только для иконочных кнопок (без текста). Текстовые и так крупнее.
+   Помечаем такие кнопки классом .icon-btn ИЛИ атрибутом [data-icon-btn].
+   ---------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  :where(.icon-btn, [data-icon-btn], button.icon, .btn-icon, [aria-haspopup][aria-label]:not(:has(:not(svg)))) {
+    min-width: var(--a11y-touch);
+    min-height: var(--a11y-touch);
+    /* центрируем иконку внутри увеличенной зоны */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Любая интерактивная иконка/чекбокс/радио — достаточная зона нажатия */
+  :where(input[type="checkbox"], input[type="radio"]) {
+    min-width: 24px;
+    min-height: 24px;
+  }
+
+  /* Ссылки-иконки в навигации */
+  :where(.nav-topbar, .nav-sidebar) a:where([aria-label]):not(:has(span, p)) {
+    min-width: var(--a11y-touch);
+    min-height: var(--a11y-touch);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   5. prefers-reduced-motion — убираем анимации и переходы
+   Пользователь с вестибулярными нарушениями / снижением движения.
+   ---------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Параллакс/трансформы по скроллу глушим */
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   6. prefers-contrast: more — усиливаем границы
+   Помогает слабовидящим: рамки, разделители и фокус становятся чётче.
+   ---------------------------------------------------------------------------- */
+@media (prefers-contrast: more) {
+  :where(button, a, input, select, textarea, [role="button"], .card, table, th, td) {
+    border-color: var(--text2);
+  }
+
+  :where(input, select, textarea) {
+    border-width: 2px;
+  }
+
+  /* Фокус-кольцо толще для надёжной видимости */
+  :where(button, a, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+    box-shadow:
+      0 0 0 var(--a11y-ring-gap) var(--bg),
+      0 0 0 calc(var(--a11y-ring-gap) + 3px) var(--acc);
+  }
+
+  /* Текст-вторичка часто бледный — подтягиваем к основному */
+  .text2,
+  [class*="muted"] {
+    color: var(--text) !important;
+  }
+}
+
+/* Поддержка устаревшего MS-синтаксиса высокой контрастности */
+@media (-ms-high-contrast: active), (forced-colors: active) {
+  :where(button, a, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   7. aria-busy — состояние загрузки
+   Курсор «ожидание», блокировка кликов по содержимому.
+   ---------------------------------------------------------------------------- */
+[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* Контейнер в состоянии busy — содержимое не кликабельно, слегка приглушено */
+[aria-busy="true"] :where(button, a, input, select, textarea, [role="button"]) {
+  pointer-events: none;
+}
+
+/* Кнопка в busy — курсор прогресса даже при наведении */
+button[aria-busy="true"],
+[role="button"][aria-busy="true"] {
+  cursor: progress;
+  opacity: .7;
+}
+
+/* ----------------------------------------------------------------------------
+   8. Доп. контроль фокуса для тёмных/светлых тем
+   --ring задаётся в темах контрастно к --bg. Здесь — страховочные
+   уточнения на случай редких тем, где --ring не объявлен.
+   ---------------------------------------------------------------------------- */
+
+/* Тёмная тема: если --ring не задан, кольцо строим на акценте —
+   он по контракту яркий на тёмном фоне. */
+body.mode-dark :where(button, a, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+  box-shadow:
+    0 0 0 var(--a11y-ring-gap) var(--bg),
+    0 0 0 calc(var(--a11y-ring-gap) + var(--a11y-ring-size)) var(--ring, var(--acc));
+}
+
+/* Светлая тема: то же, но --bg светлый → зазор остаётся белым/светлым,
+   кольцо --ring тёмное/насыщенное → высокий контраст сохраняется. */
+body.mode-light :where(button, a, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+  box-shadow:
+    0 0 0 var(--a11y-ring-gap) var(--bg),
+    0 0 0 calc(var(--a11y-ring-gap) + var(--a11y-ring-size)) var(--ring, var(--acc));
+}
+
+/* ----------------------------------------------------------------------------
+   9. Прочие безопасные улучшения
+   ---------------------------------------------------------------------------- */
+
+/* Не убирать подчёркивание у ссылок в контенте при наведении/фокусе —
+   но не трогаем кнопки-ссылки и навигацию. */
+:where(.content, main, #main) a:focus-visible {
+  text-decoration: underline;
+}
+
+/* Убираем «прыжок» при фокусе на скрытых через clip элементах */
+:where([hidden]) {
+  display: none !important;
+}
+
+/* Заголовок-кнопка <summary> — указатель и фокус */
+summary {
+  cursor: pointer;
+}
