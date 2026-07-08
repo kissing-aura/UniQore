@@ -21,24 +21,27 @@
    ═══════════════════════════════════════════════════════════════════════ */
 window.THEMES = {
 
-  /* 0 ── ESTATE VERDE ───────────────────────────────────────────────────
-     Премиум-брокеридж недвижимости. Глубокий изумрудный + тёплая слоновая
-     кость + античная латунь, классический сериф для цен. topbar (не sidebar —
-     каркас должен отличаться от остальных демо, не только цвет). "Старые
-     деньги", а не финтех-терминал и не редакция журнала. */
-  'estate-verde': {
-    name: 'Estate Verde', mode: 'light', nav: 'topbar', card: 'soft',
+  /* 0 ── ESTATE UMBER ───────────────────────────────────────────────────
+     Премиум-брокеридж недвижимости. Тёплый шоколадный акцент + слоновая
+     кость + пепельно-серебряный штрих, классический сериф для цен. topbar
+     (каркас должен отличаться от остальных демо, не только цвет). "Старые
+     деньги" — кожа и серебро, а не финтех-терминал. Отдельный --ai-acc —
+     ИИ-элементы (баннер/бейдж/чат) красятся серебром, не шоколадом, чтобы
+     считывались как отдельная, особая категория на общем фоне бренда. */
+  'estate-umber': {
+    name: 'Estate Umber', mode: 'light', nav: 'topbar', card: 'soft',
     fonts: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap',
     vars: {
-      '--bg': '#f6f2e8', '--surface': '#ffffff', '--surface2': '#ece2c9', '--surface3': '#ded0a8',
-      '--border': 'rgba(27,36,29,0.10)', '--border2': 'rgba(27,36,29,0.20)',
-      '--text': '#182018', '--text2': 'rgba(24,32,24,0.62)', '--text3': 'rgba(24,32,24,0.42)',
-      '--acc': '#2f6349', '--acc-2': '#1f4a35', '--acc-contrast': '#ffffff', '--acc-dim': 'rgba(47,99,73,0.12)',
-      '--ring': 'rgba(47,99,73,0.42)',
-      '--good': '#2f6349', '--warn': '#b8863f', '--bad': '#a8432f', '--grid': 'rgba(24,32,24,0.06)',
+      '--bg': '#f6f1e6', '--surface': '#fffdf9', '--surface2': '#ebe0cd', '--surface3': '#ddccab',
+      '--border': 'rgba(36,26,18,0.10)', '--border2': 'rgba(36,26,18,0.20)',
+      '--text': '#241a12', '--text2': 'rgba(36,26,18,0.62)', '--text3': 'rgba(36,26,18,0.42)',
+      '--acc': '#6b4226', '--acc-2': '#4f3019', '--acc-contrast': '#fffdf9', '--acc-dim': 'rgba(107,66,38,0.12)',
+      '--ring': 'rgba(107,66,38,0.42)',
+      '--good': '#4a7a5c', '--warn': '#b8863f', '--bad': '#a8432f', '--grid': 'rgba(36,26,18,0.06)',
+      '--ai-acc': '#71767d', '--ai-acc-2': '#565a60', '--ai-dim': 'rgba(113,118,125,0.13)', '--ai-glow': 'rgba(148,153,160,0.35)',
       '--radius': '10px', '--radius-sm': '7px', '--radius-lg': '18px', '--gap': '16px',
       '--font-ui': "'Inter',-apple-system,system-ui,sans-serif", '--font-head': "'Cormorant Garamond',Georgia,serif", '--font-num': "'JetBrains Mono',ui-monospace,monospace",
-      '--shadow': '0 10px 30px rgba(60,45,25,0.12)', '--shadow-sm': '0 1px 3px rgba(60,45,25,0.10)', '--shadow-lg': '0 26px 70px rgba(60,45,25,0.18)',
+      '--shadow': '0 10px 30px rgba(45,32,20,0.12)', '--shadow-sm': '0 1px 3px rgba(45,32,20,0.10)', '--shadow-lg': '0 26px 70px rgba(45,32,20,0.18)',
     },
   },
 

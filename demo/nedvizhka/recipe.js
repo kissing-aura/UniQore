@@ -98,7 +98,7 @@
   });
 
   window.RECIPE = {
-    key: 'realty-catalog', theme: 'estate-verde', navLayout: 'topbar',
+    key: 'realty-catalog', theme: 'estate-umber', navLayout: 'topbar',
     brand: { name: 'Квартал', logo: 'КВ' }, locale: 'ru-RU', currency: '₽', prefix: 'kvartalR9_',
     auth: { enabled: false, user: 'admin', passHash: '', plain: '' },
 

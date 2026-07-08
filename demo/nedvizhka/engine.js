@@ -587,7 +587,7 @@ function viewOverview() {
   const pipelineValue = deals.filter(d => !['won', 'lost'].includes(d.stage)).reduce((a, d) => a + (Number(d.amount) || 0), 0);
 
   const LEAD_STAGES = [['new', 'Новый'], ['contacted', 'Связались'], ['qualified', 'Квалифицирован'], ['viewing', 'Показ'], ['won', 'Сделка']];
-  const FUN_COLOR = ['#7d9c8a', '#5f8a72', '#b8863f', '#a8703a', '#2f6349'];
+  const FUN_COLOR = ['#c9ad82', '#b08c5c', '#8f6a3f', '#6b4226', '#4f3019'];
   const counts = LEAD_STAGES.map(([k]) => leads.filter(l => l.stage === k).length);
   const maxC = Math.max(1, ...counts);
   const funnelRows = LEAD_STAGES.map(([, label], i) => {
@@ -611,7 +611,18 @@ function viewOverview() {
   ].filter(Boolean);
   const insightsHtml = insights.map(i => `<div class="ai-ins ai-ins--${i.level}"><span class="ai-ins__ic">${icon(i.icon)}</span><span>${i.text}</span></div>`).join('');
 
+  const citywidePerM2 = Math.round(objects.filter(o => o.dealType === 'sale').reduce((a, o) => a + o.price / o.area, 0) / Math.max(1, objects.filter(o => o.dealType === 'sale').length));
+
   document.getElementById('viewBody').innerHTML = `
+    <div class="ai-banner" id="aiBanner">
+      <div class="ai-banner__ic">${icon('spark')}</div>
+      <div class="ai-banner__body">
+        <div class="ai-banner__kicker">ИИ · автоматическая оценка</div>
+        <div class="ai-banner__title">Узнайте цену объекта за 10 секунд</div>
+        <div class="ai-banner__sub">Модель уже знает ${objects.length} объектов базы — сейчас средняя цена продажи ${citywidePerM2.toLocaleString(LOC)} ₽/м²</div>
+      </div>
+      <button class="ai-banner__cta">Оценить объект ${icon('layers')}</button>
+    </div>
     <div class="kpi-row">
       <div class="kpi kpi--acc"><div class="kpi__label">Комиссия · месяц</div><div class="kpi__val num kpi__val--acc" data-cu="${mtdIncome}" data-money="1">${fmtMoney(mtdIncome)}</div><div class="kpi__sub">${trend >= 0 ? '↑' : '↓'} ${Math.abs(trend)}% к прошлому</div></div>
       <div class="kpi"><div class="kpi__label">Прибыль · месяц</div><div class="kpi__val num kpi__val--good" data-cu="${mtdIncome - mtdExpense}" data-money="1">${fmtMoney(mtdIncome - mtdExpense)}</div></div>
@@ -620,9 +631,10 @@ function viewOverview() {
     </div>
     <div class="dash-grid" style="margin-top:var(--gap)">
       <div class="bcard"><div class="bcard__head"><span class="bcard__label">Воронка лидов</span></div>${funnelRows}</div>
-      <div class="bcard"><div class="bcard__head"><span class="bcard__label">ИИ-аналитик · что вижу</span></div>${insightsHtml}</div>
+      <div class="bcard bcard--ai"><div class="bcard__head"><span class="bcard__label">${icon('spark')} ИИ-аналитик · что вижу</span><span class="ai-live">LIVE</span></div>${insightsHtml}</div>
       <div class="bcard"><div class="bcard__head"><span class="bcard__label">Топ агентов</span></div>${leaderboard}</div>
     </div>`;
+  document.getElementById('aiBanner').onclick = () => showView('valuation');
 }
 
 /* ── ИИ-оценка (AVM: мгновенная оценка объекта по параметрам + сравнимые) ── */
@@ -1618,7 +1630,99 @@ function showRecipeErrors(errs) {
   const x = document.getElementById('recErrX'); if (x) x.onclick = () => bar.remove();
 }
 
+/* ── Уни-агент: плавающий ИИ-помощник, отвечает по реальным данным CRM ── */
+function uaAnswer(qRaw) {
+  const q = qRaw.toLowerCase();
+  const objects = DB.recs('object'), leads = DB.recs('lead'), deals = DB.recs('deal'), agents = DB.recs('agent');
+  const fin = DB.fin();
+  const now = new Date();
+  const sameMonth = (iso, off) => { const d = new Date(iso), t = new Date(now.getFullYear(), now.getMonth() - off, 1); return d.getFullYear() === t.getFullYear() && d.getMonth() === t.getMonth(); };
+  const sum = a => a.reduce((x, t) => x + (Number(t.amount) || 0), 0);
+
+  if (/привет|здрав|добр(ый|ое)/.test(q)) return 'Привет! Я Уни — ИИ-помощник «Квартала». Спроси про цены, лидов, сделки или финансы — отвечу по актуальной базе.';
+
+  if (/что (ты )?умеешь|помощь|команды|help/.test(q)) return 'Умею: оценить объект по параметрам, посчитать воронку лидов, назвать топ-агента, показать комиссию и прибыль месяца, сводку по сделкам. Просто спроси, например: «сколько стоит 2-комнатная в Северном Парке?»';
+
+  const complexNames = [...new Set(objects.map(o => o.complex))];
+  const mentioned = complexNames.find(c => q.includes(c.toLowerCase()));
+  if (/цен|стоит|стоимост|м2|м²|за метр/.test(q)) {
+    const pool = mentioned ? objects.filter(o => o.complex === mentioned && o.dealType === 'sale') : objects.filter(o => o.dealType === 'sale');
+    if (!pool.length) return 'По продаже пока маловато данных для оценки — загляни в «ИИ-оценка», там можно посчитать по параметрам вручную.';
+    const avg = Math.round(pool.reduce((a, o) => a + o.price / o.area, 0) / pool.length);
+    return (mentioned ? `В ЖК «${mentioned}» ` : 'По всей базе ') + `средняя цена продажи — ${avg.toLocaleString(LOC)} ₽/м². Для точной оценки конкретного объекта открой раздел «ИИ-оценка» — там модель учтёт ремонт и этаж.`;
+  }
+
+  if (/лид|воронк|конверси/.test(q)) {
+    const stages = [['new', 'новых'], ['contacted', 'на связи'], ['qualified', 'квалифицированы'], ['viewing', 'на показе'], ['won', 'закрыто сделкой']];
+    const parts = stages.map(([k, l]) => `${leads.filter(x => x.stage === k).length} ${l}`).join(', ');
+    return `Сейчас в воронке ${leads.length} лидов: ${parts}. Полную картину смотри на Дашборде.`;
+  }
+
+  if (/финанс|выручк|комисси|доход|прибыл/.test(q)) {
+    const inc = sum(fin.filter(t => t.type === 'income' && sameMonth(t.date, 0)));
+    const exp = sum(fin.filter(t => t.type === 'expense' && sameMonth(t.date, 0)));
+    return `Комиссия за этот месяц — ${fmtMoney(inc)}, расходы ${fmtMoney(exp)}, прибыль ${fmtMoney(inc - exp)}. Подробный P&L — в разделе «Финансы».`;
+  }
+
+  if (/сделк|пайплайн/.test(q)) {
+    const open = deals.filter(d => !['won', 'lost'].includes(d.stage));
+    const val = open.reduce((a, d) => a + (Number(d.amount) || 0), 0);
+    return `В работе ${open.length} сделок на сумму ${fmtMoney(val)}. Закрыто в этом месяце: ${deals.filter(d => d.stage === 'won').length}.`;
+  }
+
+  if (/агент|кто лучш|топ/.test(q)) {
+    const top = agents.slice().sort((a, b) => b.deals - a.deals)[0];
+    return top ? `Лидер — ${top.name}: ${top.deals} закрытых сделок, рейтинг ★${top.rating}. Специализация: ${top.specialty}.` : 'Пока нет данных по агентам.';
+  }
+
+  if (/сколько объект|каталог/.test(q)) {
+    return `В каталоге ${objects.length} объектов, из них активны ${objects.filter(o => o.stage === 'active').length}. Смотреть можно как сетку или на карте — в разделе «Каталог».`;
+  }
+
+  return 'Не совсем понял вопрос. Спроси про цены объектов, воронку лидов, финансы, сделки или агентов — я отвечу по реальным данным базы.';
+}
+const UA_CHIPS = ['Сколько стоит 2-комнатная?', 'Как дела с лидами?', 'Комиссия за месяц?', 'Кто лучший агент?'];
+function uaAppend(role, text, typewrite) {
+  const thread = document.getElementById('uaThread'); if (!thread) return;
+  const row = document.createElement('div'); row.className = 'ua-msg ua-msg--' + role;
+  row.innerHTML = role === 'bot' ? `<span class="ua-msg__ic">${icon('spark')}</span><span class="ua-msg__text"></span>` : `<span class="ua-msg__text">${esc(text)}</span>`;
+  thread.appendChild(row); thread.scrollTop = thread.scrollHeight;
+  if (role === 'bot' && typewrite) {
+    const el = row.querySelector('.ua-msg__text'); let i = 0;
+    (function type() { if (i <= text.length) { el.textContent = text.slice(0, i); thread.scrollTop = thread.scrollHeight; i += 3; setTimeout(type, 10); } })();
+  } else if (role === 'bot') { row.querySelector('.ua-msg__text').textContent = text; }
+}
+function uaSend(text) {
+  text = (text || '').trim(); if (!text) return;
+  uaAppend('user', text);
+  const input = document.getElementById('uaInput'); if (input) input.value = '';
+  setTimeout(() => uaAppend('bot', uaAnswer(text), true), 350);
+}
+function mountUniAgent() {
+  if (document.getElementById('uaBubble')) return;
+  const wrap = document.createElement('div'); wrap.id = 'uaWrap';
+  wrap.innerHTML = `
+    <button class="ua-bubble" id="uaBubble" aria-label="Уни — ИИ-помощник">${icon('spark')}</button>
+    <div class="ua-panel" id="uaPanel" hidden>
+      <div class="ua-panel__head"><span class="ua-panel__ava">${icon('spark')}</span><div><div class="ua-panel__name">Уни</div><div class="ua-panel__sub">ИИ-помощник «Квартала»</div></div><button class="icon-btn" id="uaClose" aria-label="Закрыть">${icon('x')}</button></div>
+      <div class="ua-thread" id="uaThread"></div>
+      <div class="ua-chips" id="uaChips">${UA_CHIPS.map(c => `<button class="ua-chip">${esc(c)}</button>`).join('')}</div>
+      <div class="ua-input"><input class="t-input t-input--full" id="uaInput" placeholder="Спроси что-нибудь…"><button class="ua-send" id="uaSendBtn" aria-label="Отправить">${icon('check')}</button></div>
+    </div>`;
+  document.body.appendChild(wrap);
+  const panel = document.getElementById('uaPanel');
+  document.getElementById('uaBubble').onclick = () => {
+    const opening = panel.hidden; panel.hidden = !panel.hidden;
+    if (opening && !panel.dataset.greeted) { panel.dataset.greeted = '1'; uaAppend('bot', 'Привет! Я Уни — спрошу базу «Квартала» и отвечу по делу. Выбери вопрос или напиши свой.', true); }
+  };
+  document.getElementById('uaClose').onclick = () => { panel.hidden = true; };
+  document.getElementById('uaSendBtn').onclick = () => uaSend(document.getElementById('uaInput').value);
+  document.getElementById('uaInput').addEventListener('keydown', e => { if (e.key === 'Enter') uaSend(e.target.value); });
+  document.getElementById('uaChips').addEventListener('click', e => { const b = e.target.closest('.ua-chip'); if (b) uaSend(b.textContent); });
+}
+
 /* ── init ── */
 (() => { const sv = localStorage.getItem(K('theme')); if (sv && window.THEMES[sv]) { window.applyTheme(sv); document.body.classList.remove('nav-topbar', 'nav-sidebar'); document.body.classList.add('nav-' + NAVLAYOUT); } })();
 showRecipeErrors(validateRecipe());
 renderShell(); showView(VIEW);
+mountUniAgent();

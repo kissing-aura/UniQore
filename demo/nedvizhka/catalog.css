@@ -82,3 +82,76 @@
 .val-range { font-size: 13px; color: var(--text2); margin-top: 4px; }
 .val-conf { color: var(--text3); }
 .val-verdict { margin-top: 16px; padding: 14px 16px; background: var(--surface2); border-radius: var(--radius); font-size: 13px; line-height: 1.6; color: var(--text2); min-height: 66px; }
+
+/* ═══ ИИ — везде серебро/сталь, не шоколад — своя категория на фоне бренда ═══ */
+
+/* топбар: ИИ-оценка выделена бейджем и лёгким свечением, чтобы точно заметили */
+.nav__item[data-view="valuation"] { position: relative; }
+.nav__item[data-view="valuation"] .nav__ic { color: var(--ai-acc); }
+.nav__item[data-view="valuation"]::after { content: 'AI'; position: absolute; top: 2px; right: -2px; font-family: var(--font-num); font-size: 8.5px; font-weight: 700; letter-spacing: .02em; color: #fff; background: var(--ai-acc); padding: 1px 4px; border-radius: 5px; box-shadow: 0 0 0 2px var(--surface); }
+.nav__item[data-view="valuation"]:hover, .nav__item[data-view="valuation"].active { background: var(--ai-dim); }
+
+/* большой баннер на дашборде — первое, что видно */
+.ai-banner { display: flex; align-items: center; gap: 18px; padding: 20px 24px; margin-bottom: var(--gap); border-radius: var(--radius-lg); cursor: pointer; background: linear-gradient(115deg, var(--ai-acc-2), var(--ai-acc) 60%, #9a9fa5); box-shadow: 0 16px 40px -14px var(--ai-glow), var(--shadow); transition: transform .2s, box-shadow .3s; }
+.ai-banner:hover { transform: translateY(-3px); box-shadow: 0 22px 50px -14px var(--ai-glow), var(--shadow-lg); }
+.ai-banner__ic { flex-shrink: 0; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: rgba(255,255,255,0.16); color: #fff; }
+.ai-banner__ic svg { width: 26px; height: 26px; }
+.ai-banner__body { flex: 1; min-width: 0; }
+.ai-banner__kicker { font-family: var(--font-ui); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,0.75); }
+.ai-banner__title { font-family: var(--font-head); font-size: 24px; font-weight: 600; color: #fff; margin-top: 2px; letter-spacing: -.01em; }
+.ai-banner__sub { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 4px; }
+.ai-banner__cta { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; border: none; background: #fff; color: var(--ai-acc-2); font-family: var(--font-ui); font-weight: 700; font-size: 13.5px; cursor: pointer; white-space: nowrap; }
+.ai-banner__cta svg { width: 15px; height: 15px; }
+@media (max-width: 720px) { .ai-banner { flex-wrap: wrap; } .ai-banner__cta { width: 100%; justify-content: center; } }
+
+/* карточка ИИ-аналитика на дашборде — отдельная, "стеклянная", не как соседние bcard */
+.bcard--ai { border-color: var(--ai-dim); background: linear-gradient(180deg, var(--ai-dim), var(--surface) 40%); }
+.bcard--ai .bcard__label { display: inline-flex; align-items: center; gap: 6px; }
+.bcard--ai .bcard__label svg { width: 14px; height: 14px; color: var(--ai-acc); }
+.ai-live { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-num); font-size: 10px; font-weight: 700; letter-spacing: .05em; color: var(--ai-acc); }
+.ai-live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ai-acc); animation: aiPulse 1.6s ease-in-out infinite; }
+@keyframes aiPulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* ИИ-инсайты (внутри .bcard--ai) — иконки в серебре, не в брендовом коричневом/зелёном */
+.ai-ins--good .ai-ins__ic { background: var(--ai-dim); color: var(--ai-acc-2); }
+.ai-ins--warn .ai-ins__ic { background: rgba(184,134,63,0.16); color: var(--warn); }
+.ai-ins--info .ai-ins__ic { background: var(--ai-dim); color: var(--ai-acc); }
+
+/* сама страница ИИ-оценки: заголовок и кнопка тоже в серебре */
+.val-badge { color: var(--ai-acc-2); background: var(--ai-dim); }
+#vf_go { background: var(--ai-acc); border-color: var(--ai-acc); }
+#vf_go:hover { background: var(--ai-acc-2); }
+
+/* ═══ УНИ-АГЕНТ — плавающий чат-помощник ═══ */
+.ua-bubble { position: fixed; right: 20px; bottom: 78px; z-index: 200; width: 54px; height: 54px; border-radius: 50%; border: none; display: grid; place-items: center; background: var(--ai-acc); color: #fff; cursor: pointer; box-shadow: 0 12px 28px -8px var(--ai-glow), var(--shadow); transition: transform .2s; }
+.ua-bubble svg { width: 24px; height: 24px; }
+.ua-bubble:hover { transform: scale(1.07); background: var(--ai-acc-2); }
+.ua-bubble::after { content: ''; position: absolute; top: 2px; right: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--good); border: 2px solid var(--surface); }
+
+.ua-panel { position: fixed; right: 20px; bottom: 144px; z-index: 200; width: 340px; max-width: calc(100vw - 40px); height: 460px; max-height: calc(100vh - 180px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); display: flex; flex-direction: column; overflow: hidden; }
+.ua-panel__head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--border); background: linear-gradient(115deg, var(--ai-acc-2), var(--ai-acc)); flex-shrink: 0; }
+.ua-panel__ava { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,0.18); display: grid; place-items: center; color: #fff; flex-shrink: 0; }
+.ua-panel__ava svg { width: 17px; height: 17px; }
+.ua-panel__name { font-family: var(--font-head); font-size: 16px; font-weight: 600; color: #fff; line-height: 1.2; }
+.ua-panel__sub { font-size: 11px; color: rgba(255,255,255,0.78); }
+.ua-panel__head .icon-btn { margin-left: auto; color: rgba(255,255,255,0.85); }
+.ua-panel__head .icon-btn:hover { color: #fff; }
+
+.ua-thread { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.ua-msg { display: flex; gap: 8px; max-width: 100%; }
+.ua-msg--bot .ua-msg__ic { flex-shrink: 0; width: 24px; height: 24px; border-radius: 7px; background: var(--ai-dim); color: var(--ai-acc); display: grid; place-items: center; margin-top: 2px; }
+.ua-msg--bot .ua-msg__ic svg { width: 13px; height: 13px; }
+.ua-msg__text { font-size: 13px; line-height: 1.5; padding: 9px 12px; border-radius: 12px; }
+.ua-msg--bot .ua-msg__text { background: var(--surface2); color: var(--text); border-top-left-radius: 4px; }
+.ua-msg--user { justify-content: flex-end; }
+.ua-msg--user .ua-msg__text { background: var(--ai-acc); color: #fff; border-top-right-radius: 4px; }
+
+.ua-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; flex-shrink: 0; }
+.ua-chip { font-family: var(--font-ui); font-size: 11.5px; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); cursor: pointer; transition: .15s; }
+.ua-chip:hover { border-color: var(--ai-acc); color: var(--ai-acc-2); background: var(--ai-dim); }
+
+.ua-input { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.ua-send { flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--ai-acc); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.ua-send svg { width: 16px; height: 16px; }
+.ua-send:hover { background: var(--ai-acc-2); }
+@media (max-width: 480px) { .ua-panel { right: 12px; left: 12px; width: auto; bottom: 132px; } .ua-bubble { right: 16px; bottom: 70px; } }
