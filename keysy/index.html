@@ -72,6 +72,33 @@
     .cta-band p { margin-top: 20px; color: var(--color-text-secondary); font-size: 17px; }
     .cta-band__actions { margin-top: 34px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
     @media (max-width: 640px) { .page-hero { padding: 128px 0 20px; } .proof-strip__item { padding: 16px 22px; } .proof-strip__val { font-size: 22px; } .cta-band { padding: 78px 0; } }
+
+    /* ── галерея «Живые демо» ── */
+    .livedemo { padding: clamp(60px, 8vw, 110px) 0; }
+    .demo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    @media (max-width: 1000px) { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 680px) { .demo-grid { grid-template-columns: 1fr; } }
+    .demo-card { display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008)); text-decoration: none; color: inherit; transition: transform .3s, border-color .3s, box-shadow .3s; }
+    .demo-card:hover { transform: translateY(-6px); border-color: var(--dc); box-shadow: 0 30px 70px -30px var(--dc); }
+    .demo-card__win { padding: 10px 10px 0; }
+    .demo-card__bar { display: flex; align-items: center; gap: 6px; padding: 6px 8px 9px; }
+    .demo-card__bar span { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.16); }
+    .demo-card__bar span:nth-child(1) { background: #ff5f57; } .demo-card__bar span:nth-child(2) { background: #febc2e; } .demo-card__bar span:nth-child(3) { background: #28c840; }
+    .demo-card__bar em { margin-left: 8px; font-style: normal; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .demo-card__view { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 10px; background: #0a0a0a; }
+    .demo-card__view--dark { background: #05070d; }
+    .demo-card__view iframe { position: absolute; top: 0; left: 0; width: 250%; height: 250%; transform: scale(0.4); transform-origin: top left; border: 0; pointer-events: none; }
+    .demo-card__open { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: #fff; background: rgba(5,7,13,0.35); opacity: 0; transition: opacity .25s; }
+    .demo-card:hover .demo-card__open { opacity: 1; }
+    .demo-card__view--soon { display: flex; align-items: center; justify-content: center; }
+    .demo-card__soon { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-muted); border: 1px solid rgba(255,255,255,0.12); padding: 8px 18px; border-radius: 999px; }
+    .demo-card--soon { opacity: 0.72; }
+    .demo-card__foot { padding: 20px 22px 24px; }
+    .demo-card__foot h3 { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
+    .demo-card__foot p { font-size: 14px; line-height: 1.6; color: var(--color-text-secondary); margin-bottom: 14px; }
+    .demo-card__foot p b { color: var(--color-text-primary); font-weight: 600; }
+    .demo-card__tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .demo-card__tags span { font-family: var(--font-mono); font-size: 10.5px; color: var(--dc); border: 1px solid var(--dc); border-radius: 999px; padding: 3px 10px; opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -272,83 +299,53 @@
       </div>
     </section>
 
-    <!-- REVIEWS -->
-    <section class="reviews" id="reviews">
+    <!-- ЖИВЫЕ ДЕМО -->
+    <section class="livedemo" id="demo">
       <div class="container">
-        <div class="section-label">Отзывы</div>
-        <h2 class="section-title section-title--tight">Что говорят <em>клиенты</em></h2>
-        <p class="section-lead">Живые внедрения, живые люди. Работаем напрямую — без агентств-посредников и красивых обещаний.</p>
-        <div class="testimonials__grid">
+        <div class="section-label">Живые демо</div>
+        <h2 class="section-title section-title--tight">Не рендеры — <em>потрогай сам</em></h2>
+        <p class="section-lead">Реальные, полностью кликабельные системы. Открой любую, походи по разделам, запусти ИИ. Это то, что мы соберём под твою нишу — со своим уникальным дизайном.</p>
+        <div class="demo-grid">
 
-          <div class="testimonial-card" data-reveal>
-            <div class="testimonial-card__quote" aria-hidden="true">&bdquo;</div>
-            <p class="testimonial-card__text">Раньше половина дня уходила на переписку с гостями — кто заедет, когда убирать, кому напомнить. Сейчас бот делает это сам. Я реально забыл, когда последний раз пропускал бронь.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">ДК</div>
-              <div>
-                <div class="testimonial-card__name">Дмитрий Кравцов</div>
-                <div class="testimonial-card__role">Посуточная аренда · Минск</div>
+          <a class="demo-card" href="/demo/klinika/" target="_blank" rel="noopener" style="--dc:#3fd8ff">
+            <div class="demo-card__win">
+              <div class="demo-card__bar"><span></span><span></span><span></span><em>demo.uniqore.pro/klinika</em></div>
+              <div class="demo-card__view demo-card__view--dark">
+                <iframe src="/demo/klinika/" loading="lazy" scrolling="no" tabindex="-1" title="Демо стоматологии ДЕНТАЛИС"></iframe>
+                <span class="demo-card__open">Открыть демо →</span>
               </div>
             </div>
-          </div>
+            <div class="demo-card__foot">
+              <h3>Стоматология «ДЕНТАЛИС»</h3>
+              <p>Пациенты, записи, счета и финансы — и <b>ИИ-диагностика снимка</b>: нейросеть находит патологии прямо на рентгене.</p>
+              <div class="demo-card__tags"><span>Медицина</span><span>Тёмный неон</span><span>ИИ-скан</span></div>
+            </div>
+          </a>
 
-          <div class="testimonial-card" data-reveal data-reveal-delay="1">
-            <div class="testimonial-card__quote" aria-hidden="true">&bdquo;</div>
-            <p class="testimonial-card__text">Главная боль была — не знаешь, где фура. Клиенты дёргают, а ты сам не в курсе. Теперь и я, и клиент видим статус в реальном времени. Вопросов «где мой заказ» стало в разы меньше.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">СВ</div>
-              <div>
-                <div class="testimonial-card__name">Сергей Волошин</div>
-                <div class="testimonial-card__role">Импорт мебели · Польша–РБ</div>
+          <a class="demo-card" href="/demo/restoran/" target="_blank" rel="noopener" style="--dc:#d8462a">
+            <div class="demo-card__win">
+              <div class="demo-card__bar"><span></span><span></span><span></span><em>demo.uniqore.pro/restoran</em></div>
+              <div class="demo-card__view">
+                <iframe src="/demo/restoran/" loading="lazy" scrolling="no" tabindex="-1" title="Демо ресторана Вкусно"></iframe>
+                <span class="demo-card__open">Открыть демо →</span>
               </div>
             </div>
-          </div>
-
-          <div class="testimonial-card" data-reveal data-reveal-delay="2">
-            <div class="testimonial-card__quote" aria-hidden="true">&bdquo;</div>
-            <p class="testimonial-card__text">Магазин теперь работает без меня. Оплата пришла — товар ушёл за пару секунд. Первый раз за год уехал в отпуск и не открывал телефон каждые десять минут.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">АЛ</div>
-              <div>
-                <div class="testimonial-card__name">Артём Лисицын</div>
-                <div class="testimonial-card__role">Магазин цифровых товаров</div>
-              </div>
+            <div class="demo-card__foot">
+              <h3>Ресторан «Вкусно»</h3>
+              <p>Рабочий стол-лаунчер, живая кухня по этапам — и <b>ИИ-аналитик</b>: что продаётся, что убрать из меню, где поднять цену.</p>
+              <div class="demo-card__tags"><span>Общепит</span><span>Тёплый лаунчер</span><span>ИИ-аналитик</span></div>
             </div>
-          </div>
+          </a>
 
-          <div class="testimonial-card" data-reveal>
-            <div class="testimonial-card__quote" aria-hidden="true">&bdquo;</div>
-            <p class="testimonial-card__text">Телефон больше не разрывается от «когда готово». Клиент сам видит этап ремонта в Telegram. Механики занимаются машинами, а не отвечают на звонки весь день.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">РТ</div>
-              <div>
-                <div class="testimonial-card__name">Роман Титов</div>
-                <div class="testimonial-card__role">Автосервис · 8 постов · Москва</div>
-              </div>
+          <div class="demo-card demo-card--soon" style="--dc:#7c6cf6">
+            <div class="demo-card__win">
+              <div class="demo-card__bar"><span></span><span></span><span></span><em>demo.uniqore.pro/command</em></div>
+              <div class="demo-card__view demo-card__view--dark demo-card__view--soon"><span class="demo-card__soon">Скоро</span></div>
             </div>
-          </div>
-
-          <div class="testimonial-card" data-reveal data-reveal-delay="1">
-            <div class="testimonial-card__quote" aria-hidden="true">&bdquo;</div>
-            <p class="testimonial-card__text">Бумаги съедали по несколько часов в день: реестры ДМС, карты пациентов — всё вручную. Сейчас это делает система. Врачи занимаются людьми, а не документами.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">ЕМ</div>
-              <div>
-                <div class="testimonial-card__name">Елена Морозова</div>
-                <div class="testimonial-card__role">Стоматологическая клиника</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="testimonial-card" data-reveal data-reveal-delay="2">
-            <div class="testimonial-card__quote" aria-hidden="true">&bdquo;</div>
-            <p class="testimonial-card__text">Думал, разработка — это месяцы и бесконечные созвоны. А тут за неделю собрали то, что реально работает. И после запуска не бросили — правки вносят быстро.</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">ИП</div>
-              <div>
-                <div class="testimonial-card__name">Игорь Пантелеев</div>
-                <div class="testimonial-card__role">Оптовая торговля</div>
-              </div>
+            <div class="demo-card__foot">
+              <h3>Uniqore Command</h3>
+              <p>Командный центр бизнеса: финздоровье, отделы, проекты, AI-аналитик. Наша собственная операционная система.</p>
+              <div class="demo-card__tags"><span>Бизнес-OS</span><span>Тёмный космос</span><span>готовим</span></div>
             </div>
           </div>
 
