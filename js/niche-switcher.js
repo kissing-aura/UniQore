@@ -123,6 +123,8 @@
   var calcState = { clients: 0, check: 0 };
   var lossNumEl = calc.querySelector('.mirror__num');
   var resultBox = calc.querySelector('.mirror__result');
+  var ctaEl = calc.querySelector('.mirror__cta');
+  var ctaDefault = ctaEl ? ctaEl.textContent : '';
 
   function animateLoss(to) {
     var from = parseInt((lossNumEl.textContent || '0').replace(/\D/g, ''), 10) || 0;
@@ -138,6 +140,15 @@
       var loss = calcState.clients * calcState.check * 0.18; // ~18% теряется без системы
       resultBox.classList.add('is-open'); // плавное раскрытие вместо resultBox.hidden = false
       animateLoss(loss);
+      // Персонализация CTA под уже введённые цифры — маленькое обязательство пользователя
+      // (ввёл свои данные) усиливаем конкретным следующим шагом, а не обезличенной кнопкой.
+      if (ctaEl) {
+        var niche = NICHES[currentKey];
+        var lossShort = loss >= 1000 ? Math.round(loss / 1000) + 'К' : Math.round(loss);
+        ctaEl.textContent = niche
+          ? 'Разбор для «' + niche.chip + '» — вернуть ' + lossShort + ' ₽/мес →'
+          : ctaDefault;
+      }
     }
   }
   Array.prototype.slice.call(calc.querySelectorAll('.mirror__opts')).forEach(function (grp) {
@@ -196,6 +207,7 @@
     // активный чип
     chips.forEach(function (c) { c.classList.toggle('is-active', c.dataset.niche === key); });
     currentKey = key;
+    recalc(); // держим персонализацию CTA в синхроне, если калькулятор уже отвечен
   }
 
   // ── Состояние + авто-демо ─────────────────────────────────────
