@@ -110,3 +110,25 @@
 .aiscan-scope .as-status{position:absolute;bottom:14px;left:14px;z-index:5;font-family:var(--smono);font-size:10.5px;color:var(--scy);letter-spacing:.1em;text-transform:uppercase;opacity:0;transition:opacity .3s}
 .aiscan-scope .as-status.on{opacity:1}
 .aiscan-scope .as-foot{position:absolute;bottom:12px;right:14px;z-index:5;font-family:var(--smono);font-size:10px;color:var(--stx3);opacity:.7}
+
+/* ── загруженный снимок пользователя ── */
+.aiscan-scope .as-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; z-index: 1; display: none; padding: 26px; }
+.aiscan-scope.has-photo .as-photo { display: block; }
+.aiscan-scope.has-photo .as-arch { display: none; }
+
+/* ── панель загрузки «снизу» ── */
+.aiscan-scope .as-upload { position: relative; z-index: 2; margin: 0 16px 16px; display: flex; align-items: center; gap: 16px; padding: 15px 20px; border: 1.5px dashed var(--sline); border-radius: 14px; background: rgba(120,180,255,0.03); transition: border-color .2s, background .2s; }
+.aiscan-scope .as-upload.drag { border-color: var(--scy); background: rgba(63,216,255,0.09); }
+.aiscan-scope .as-up__ic { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: grid; place-items: center; color: var(--scy); background: rgba(63,216,255,0.08); border: 1px solid rgba(63,216,255,0.2); }
+.aiscan-scope .as-up__ic svg { width: 22px; height: 22px; }
+.aiscan-scope .as-up__t { flex: 1; min-width: 0; }
+.aiscan-scope .as-up__t b { display: block; font-size: 14px; color: var(--stx); }
+.aiscan-scope .as-up__t span { font-size: 12px; color: var(--stx2); font-family: var(--smono); }
+.aiscan-scope .as-up__actions { display: flex; gap: 10px; flex-shrink: 0; }
+.aiscan-scope .as-up__file { cursor: pointer; margin: 0; }
+.aiscan-scope .as-up__file, .aiscan-scope .as-up__demo { width: auto; padding: 11px 18px; font-size: 13px; }
+@media (max-width: 720px) {
+  .aiscan-scope .as-upload { flex-wrap: wrap; }
+  .aiscan-scope .as-up__actions { width: 100%; }
+  .aiscan-scope .as-up__file, .aiscan-scope .as-up__demo { flex: 1; justify-content: center; }
+}

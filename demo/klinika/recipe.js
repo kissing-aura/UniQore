@@ -188,6 +188,7 @@
     ],
 
     nav: [
+      { key: 'aiscan',      label: 'ИИ-диагностика',   type: 'aiscan',    group: 'Диагностика', icon: 'spark', badge: 'AI' },
       { key: 'dash',        label: 'Дашборд',          type: 'dashboard', entity: 'appointment', group: 'Рабочий стол', icon: 'home' },
       { key: 'goals',       label: 'Цели · план-факт', type: 'goals',     group: 'Рабочий стол', icon: 'target' },
 
@@ -207,7 +208,6 @@
           { key: 'done',      label: 'Завершены',      filter: { stage: 'done' } },
           { key: 'paid',      label: 'Оплачены',       filter: { stage: 'paid' } },
         ]},
-      { key: 'aiscan',      label: 'ИИ-диагностика',   type: 'aiscan',    group: 'Клиника', icon: 'spark', badge: 'AI' },
       { key: 'refServices', label: 'Услуги · прайс',  type: 'reference', refKey: 'services', refFields: [{ key: 'name', label: 'Услуга' }, { key: 'dept', label: 'Отделение' }, { key: 'price', label: 'Цена', type: 'money' }, { key: 'duration', label: 'Длительность, мин' }], group: 'Клиника', icon: 'tag' },
 
       { key: 'invoices',   label: 'Счета',            type: 'records',   entity: 'invoice',     group: 'Деньги', icon: 'file',
