@@ -83,6 +83,8 @@
     @media (max-width: 768px) {
       .nav__cta { display: none; }
     }
+    /* фикс: длинный заголовок FAQ не влезал в 300px-колонку и наезжал на список */
+    .faq__header .section-title { font-size: clamp(26px, 3vw, 44px); overflow-wrap: break-word; }
   </style>
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962"></script>
