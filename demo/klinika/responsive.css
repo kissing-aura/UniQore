@@ -5,6 +5,15 @@
    Uses theme variables only — no hardcoded colors.
    ============================================================ */
 
+/* ── ROOT FIX: .main is a grid item of body.nav-sidebar .app (230px/58px + 1fr).
+   Grid items default to min-width:auto — they refuse to shrink below their
+   CONTENT's natural width. Any wide-ish inner widget (tables, the AI-scan
+   panel, etc.) was forcing the whole 1fr track past the viewport, which
+   cascaded into html/body/app all being wider than the screen. This one rule
+   is what actually lets the column shrink — applies at every width, always
+   safe (0 never removes space that's actually needed, only unwanted growth). */
+.main{min-width:0}
+
 /* ── Tablet: tighten generous desktop grids (≤1024px) ───────── */
 @media (max-width:1024px){
   .dash-grid{grid-template-columns:1fr}
@@ -105,6 +114,20 @@
   .bar-row__label{width:96px}
   .detail-grid{grid-template-columns:1fr}
 }
+
+/* ── AI-scan header: empty flex:1 spacer only makes sense on one
+   desktop row — once .as-head wraps to 2-3 lines it grows to fill
+   its own line and blows out the width. Kill it below 768px. ── */
+@media (max-width:768px){
+  .aiscan-scope .as-sp{display:none}
+}
+
+/* ── AI-scan grid columns: grid items default to min-width:auto,
+   so they refuse to shrink below their content's intrinsic width —
+   classic cause of horizontal overflow on mobile. Root cause found
+   via scrollWidth probing (.as-work stuck at 458px on a 375px screen). ── */
+.aiscan-scope .as-theatre,
+.aiscan-scope .as-panel{min-width:0}
 
 /* ── Respect reduced motion for any added smooth scrolling ───── */
 @media (prefers-reduced-motion:reduce){

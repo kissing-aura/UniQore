@@ -5,6 +5,13 @@
    Uses theme variables only — no hardcoded colors.
    ============================================================ */
 
+/* ── ROOT FIX: .main is a grid item of body.nav-sidebar .app (230px/58px + 1fr).
+   Grid items default to min-width:auto — they refuse to shrink below their
+   CONTENT's natural width. Any wide-ish inner widget was forcing the whole
+   1fr track past the viewport, cascading into html/body/app all being wider
+   than the screen. Always safe — 0 never removes space that's actually needed. */
+.main{min-width:0}
+
 /* ── Tablet: tighten generous desktop grids (≤1024px) ───────── */
 @media (max-width:1024px){
   .dash-grid{grid-template-columns:1fr}
