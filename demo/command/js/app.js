@@ -141,7 +141,11 @@
       <div class="app">
         <aside class="side" id="side"></aside>
         <main class="main" id="main"></main>
-      </div>`;
+      </div>
+      <a class="uq-badge" id="uqBadge" href="https://uniqore.pro" target="_blank" rel="noopener" title="Работает на Uniqore" aria-label="Работает на Uniqore">
+        <img class="uq-badge__sym" src="uq-mark.png" alt="" width="15" height="15">
+        <span class="uq-badge__word">uniqore</span>
+      </a>`;
     renderSide(); route(view);
   }
 

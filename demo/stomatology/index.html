@@ -163,6 +163,11 @@
   .status.on{opacity:1}
   .status b{display:inline-block;width:9px;text-align:left}
   .foot-note{position:absolute;bottom:14px;right:16px;z-index:5;font-family:var(--mono);font-size:10.5px;color:var(--txt3);opacity:.7}
+
+  .uq-badge{position:fixed;bottom:14px;right:16px;z-index:900;display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 7px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 4px 14px rgba(0,0,0,.3);text-decoration:none;transition:border-color .18s,transform .18s,box-shadow .18s}
+  .uq-badge:hover{border-color:rgba(0,0,0,.18);transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.36)}
+  .uq-badge__sym{width:15px;height:auto;display:block;flex-shrink:0}
+  .uq-badge__word{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:-.02em;color:#111}
 </style>
 </head>
 <body>
@@ -239,6 +244,11 @@
     </div>
   </div>
 </div>
+
+<a class="uq-badge" id="uqBadge" href="https://uniqore.pro" target="_blank" rel="noopener" title="Работает на Uniqore" aria-label="Работает на Uniqore">
+  <img class="uq-badge__sym" src="uq-mark.png" alt="" width="15" height="15">
+  <span class="uq-badge__word">uniqore</span>
+</a>
 
 <script>
 (function(){

@@ -956,3 +956,9 @@ svg.ic{width:16px;height:16px;flex:none;vertical-align:-2px}
   .callcard{padding:24px 20px}
   .callcard__biz{font-size:26px}
 }
+
+.uq-badge{position:fixed;top:12px;right:16px;z-index:900;display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 7px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 4px 14px rgba(0,0,0,.24);text-decoration:none;transition:border-color .18s,transform .18s,box-shadow .18s}
+.uq-badge:hover{border-color:rgba(0,0,0,.18);transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.uq-badge__sym{width:15px;height:auto;display:block;flex-shrink:0}
+.uq-badge__word{font-family:var(--font-head);font-weight:600;font-size:13px;letter-spacing:-.02em;color:#111}
+@media(max-width:900px){.uq-badge{top:auto;bottom:12px;right:12px}}
