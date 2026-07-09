@@ -130,6 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btn.textContent = '✓ Заявка отправлена';
     btn.classList.add('btn--success');
+    // TG hint after success (2026-07-10)
+    let tgHint = form.querySelector('.form-tg-hint');
+    if (!tgHint) {
+      tgHint = document.createElement('a');
+      tgHint.className = 'form-tg-hint';
+      tgHint.href = 'https://t.me/UniqoreManager';
+      tgHint.target = '_blank'; tgHint.rel = 'noopener';
+      tgHint.textContent = 'Быстрее — напишите нам в Telegram: @UniqoreManager';
+      btn.insertAdjacentElement('afterend', tgHint);
+    }
     liveRegion.textContent = 'Заявка успешно отправлена. Ответим в течение 2 часов.';
     form.reset();
     required.forEach(field => clearFieldError(field));
