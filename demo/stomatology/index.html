@@ -314,7 +314,7 @@
     parts.forEach(p=>{ p.x+=p.vx;p.y+=p.vy;p.vy+=.03;p.life-=.022;
       ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.col;
       ctx.beginPath();ctx.arc(p.x,p.y,2.1*p.life+.4,0,6.28);ctx.fill();
-      ctx.globalAlpha=Math.max(0,p.life)*.4;ctx.beginPath();ctx.arc(p.x,p.y,6*p.life,0,6.28);ctx.fill(); });
+      ctx.globalAlpha=Math.max(0,p.life)*.4;ctx.beginPath();ctx.arc(p.x,p.y,Math.max(0,6*p.life),0,6.28);ctx.fill(); });
     ctx.globalAlpha=1;
     raf = parts.length? requestAnimationFrame(loop): null;
   }
