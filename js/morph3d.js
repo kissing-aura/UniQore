@@ -139,6 +139,7 @@
       es.forEach(function (e) {
         visible = e.isIntersecting;
         if (visible && !rafId) { last = performance.now(); rafId = requestAnimationFrame(tick); }
+        if (!visible) { renderer.domElement.style.opacity = '0'; if (capEl) capEl.style.opacity = '0'; }
       });
     }, { rootMargin: '120px' });
     io.observe(stage);
@@ -161,13 +162,17 @@
         pgeo.attributes.position.needsUpdate = true;
       }
       labels(P);
-      // подпись стадии — fixed, плавно гаснет у краёв секции
-      if (capEl) capEl.style.opacity = (visible ? Math.min(1, Math.min(targetProg, 1 - targetProg) * 6 + 0.15) : 0).toFixed(2);
+      // видимость fixed-канваса + подписи СТРОГО по зоне морф-секции —
+      // не протекает в hero/соседние секции и не уезжает в конце.
+      var sy = window.scrollY, pad = window.innerHeight * 0.12;
+      var inZone = sy > morphTop - pad && sy < morphTop + scrollLen + pad;
+      renderer.domElement.style.opacity = inZone ? '1' : '0';
+      if (capEl) capEl.style.opacity = (inZone ? Math.min(1, Math.min(targetProg, 1 - targetProg) * 6 + 0.15) : 0).toFixed(2);
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(tick);
     }
     function resize() {
-      // canvas — fixed-фон на весь экран
+      // canvas — fixed на весь экран; видимость строго по зоне скролла (см. tick)
       var w = window.innerWidth, h = window.innerHeight;
       renderer.setSize(w, h, false);
       camera.aspect = w / h; camera.updateProjectionMatrix();
