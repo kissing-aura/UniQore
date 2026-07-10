@@ -396,13 +396,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 }
 
 /* ═══════════ СИГНАТУРА «Хаос → Система» (morph3d) ═══════════ */
-.morph-stage { height: 200vh; position: relative; background: #0A0E1A; }
+.morph-stage { height: 260vh; position: relative; background: transparent; overflow: visible; }
 .morph-pin { height: 100vh; overflow: hidden; position: sticky; top: 0; display: flex; align-items: flex-start; justify-content: center; }
-#morph-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#morph-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: -1; pointer-events: none; }
 .morph-poster { position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
   background: radial-gradient(120% 80% at 50% 40%, rgba(205,255,79,.06), transparent 60%), #0A0E1A; }
 .morph-poster svg { width: min(72vw, 720px); }
-.morph-cap { position: relative; z-index: 3; text-align: center; margin-top: 9vh; pointer-events: none; }
+.morph-cap { position: fixed; top: 12vh; left: 0; right: 0; z-index: 3; text-align: center; margin: 0; pointer-events: none; opacity: 0; transition: opacity .25s ease; }
 .morph-cap__k { font-family: var(--font-mono); font-size: 12px; letter-spacing: .16em; color: var(--color-text-muted); text-transform: uppercase; }
 .morph-cap b { display: block; font-family: var(--font-display); font-size: clamp(30px, 4.4vw, 56px); font-weight: 800; letter-spacing: -.02em; margin-top: 6px; color: var(--color-text-primary); }
 .morph-cap b em { color: var(--color-accent); font-style: normal; }
@@ -461,3 +461,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   .svc-card__flag-modules { border-left: none; border-top: 1px solid rgba(205,255,79,.14); padding: 22px 32px 30px; }
   .svc-card__flag-left { padding: 30px 32px 26px; }
 }
+
+/* — фон секции «Ваша ниша» — убрать дешёвую фото-текстуру (ai-dashboard.jpg),
+     чистый дарк-тех градиент + лёгкий лайм-glow — */
+.niches__bg-img { display: none !important; }
+.niches { background:
+  radial-gradient(ellipse 70% 60% at 72% 38%, rgba(205,255,79,.06), transparent 58%),
+  linear-gradient(180deg, #0A0E1A, #0D1322 52%, #0A0E1A) !important; }

@@ -26,7 +26,7 @@
     if (S) S.textContent = 'всё в одной системе — под контролем 24/7';
   }
   if (reduce || narrow || !hasGL) { showPoster(); return; }
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') { showPoster(); return; }
+  // морф больше не зависит от GSAP — свой sticky-скролл
 
   // three.min.js самохостится; hero3d мог уже загрузить — переиспользуем
   function loadThree(cb) {
@@ -116,15 +116,16 @@
     var pmat = new THREE.PointsMaterial({ color: 0xEFFFC0, size: 8, sizeAttenuation: false, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
     scene.add(new THREE.Points(pgeo, pmat));
 
-    // — скролл-драйв + подписи —
-    var targetProg = 0;
-    // sticky-скролл (CSS position:sticky), БЕЗ GSAP pin — не перехватывает скролл
-    // жёстко (юзер спокойно листает услуги/секцию), морф проигрывается по проходу.
-    ScrollTrigger.create({
-      trigger: '#morph', start: 'top top', end: 'bottom bottom', scrub: 0.5,
-      onUpdate: function (self) { targetProg = self.progress; }
-    });
+    // — скролл-драйв: ЧИСТЫЙ CSS-sticky + ручной прогресс от позиции скролла.
+    //   Без GSAP pin/ScrollTrigger — детерминированно, не перехватывает скролл,
+    //   canvas (sticky top:0) держится ровно пока секция проходит. —
+    var targetProg = 0, morphTop = 0, scrollLen = 1;
+    function recalc() {
+      morphTop = stage.getBoundingClientRect().top + window.scrollY;
+      scrollLen = Math.max(1, stage.offsetHeight - window.innerHeight); // sticky-window
+    }
     var T = document.getElementById('morph-t'), S = document.getElementById('morph-s');
+    var capEl = stage.querySelector('.morph-cap');
     function labels(p) {
       if (!T || !S) return;
       if (p < .28) { T.innerHTML = 'Хаос бизнеса'; S.textContent = 'заявки, реклама, таблички — всё вразнобой, теряется'; }
@@ -146,7 +147,9 @@
       if (!visible || document.hidden) { rafId = 0; return; }
       var dt = (now - last) / 1000; last = now;
       mat.uniforms.uTime.value = now / 1000;
-      mat.uniforms.uProg.value += (targetProg - mat.uniforms.uProg.value) * .1;
+      // прогресс сборки = насколько секция прошла свою sticky-дистанцию
+      targetProg = Math.min(1, Math.max(0, (window.scrollY - morphTop) / scrollLen));
+      mat.uniforms.uProg.value += (targetProg - mat.uniforms.uProg.value) * .18;
       var P = mat.uniforms.uProg.value;
       lmat.opacity = Math.max(0, (P - .55) / .45) * .5;
       pmat.opacity = Math.max(0, (P - .7) / .3) * .9;
@@ -158,16 +161,21 @@
         pgeo.attributes.position.needsUpdate = true;
       }
       labels(P);
+      // подпись стадии — fixed, плавно гаснет у краёв секции
+      if (capEl) capEl.style.opacity = (visible ? Math.min(1, Math.min(targetProg, 1 - targetProg) * 6 + 0.15) : 0).toFixed(2);
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(tick);
     }
     function resize() {
-      var pin = stage.querySelector('.morph-pin');
-      var w = pin.clientWidth, h = pin.clientHeight;
+      // canvas — fixed-фон на весь экран
+      var w = window.innerWidth, h = window.innerHeight;
       renderer.setSize(w, h, false);
       camera.aspect = w / h; camera.updateProjectionMatrix();
+      recalc();
     }
-    addEventListener('resize', resize); resize();
+    addEventListener('resize', resize);
+    addEventListener('scroll', recalc, { passive: true });
+    resize();
     rafId = requestAnimationFrame(tick);
   }
 
