@@ -119,7 +119,7 @@
   <link rel="stylesheet" href="css/mobile.css?v=20260711e">
   <link rel="stylesheet" href="css/nav-pages.css?v=20260711e">
   <link rel="stylesheet" href="css/enhance.css?v=20260711e">
-  <link rel="stylesheet" href="css/redesign.css?v=20260711u">
+  <link rel="stylesheet" href="css/redesign.css?v=20260711v">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -581,124 +581,68 @@
     </section>
 
     <!-- CASES SECTION -->
-    <section class="cases" id="cases">
+        <section class="cases" id="cases">
       <div class="container cases__header">
-        <div class="section-label">Кейсы</div>
-        <h2 class="section-title">Системы которые<br><em>уже работают</em></h2>
+        <div class="section-label">Живые демо</div>
+        <h2 class="section-title">Не картинки —<br><em>потрогайте систему</em></h2>
+        <p class="demo-sub">Это не скриншоты. Откройте и покликайте реальную рабочую систему под нишу — ровно то, что получите вы.</p>
       </div>
-      <div class="cases__track">
-        <div class="cases__grid">
-
-          <article class="case-card case-card--has-top" data-reveal>
-            <div class="case-card__top case-card__top--screen">
-              <div class="case-card__chrome"><span></span><span></span><span></span></div>
-              <img src="assets/keas1.jpg" alt="CRM для посуточной аренды" loading="eager">
+      <div class="container">
+        <div class="demo-grid">
+          <a class="demo-card" href="/demo/dragon/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__top"><span class="demo-card__tag">Бренд одежды</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Dragon Brand</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Заказы из Instagram, Telegram и сайта врассыпную — статусы теряются, размеры путаются.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Все каналы в одной CRM: заказы, склад по размерам, статусы доставки, программа лояльности.</p>
             </div>
-            <div class="case-card__body">
-              <div class="case-card__meta">
-                <span class="case-card__tag">Посуточная аренда</span>
-                <span class="case-card__time">3 дня</span>
-              </div>
-              <h3 class="case-card__title">4 квартиры в Минске</h3>
-              <div class="case-card__story">
-                <div class="case-story__row"><span class="case-story__label">Было</span><span class="case-story__text">Блокнот, мессенджеры, постоянные пропущенные брони</span></div>
-                <div class="case-story__row"><span class="case-story__label">Сделали</span><span class="case-story__text">Telegram-бот + CRM: авторассылка, напоминание об уборке, история гостей</span></div>
-              </div>
-              <div class="case-card__result">
-                <span class="case-card__result-val">+18%</span>
-                <span class="case-card__result-label">повторных клиентов за 2 месяца</span>
-              </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/restoran/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__top"><span class="demo-card__tag">Доставка еды</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Вкусно</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Заказы по телефону и в чатах, курьеры без трекинга, кухня не успевает.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Приём заказов, экран кухни, трекинг курьера и аналитика продаж — в одном окне.</p>
             </div>
-          </article>
-
-          <article class="case-card case-card--has-top" data-reveal>
-            <div class="case-card__top case-card__top--screen">
-              <div class="case-card__chrome"><span></span><span></span><span></span></div>
-              <img src="assets/keis2.jpg" alt="CRM для мебельного импорта" loading="eager">
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/nedvizhka/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__top"><span class="demo-card__tag">Недвижимость</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Квартал</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Объекты и показы в блокнотах и Excel, брони и залоги теряются между менеджерами.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>База объектов, календарь показов, сделки, документы и залоги под контролем 24/7.</p>
             </div>
-            <div class="case-card__body">
-              <div class="case-card__meta">
-                <span class="case-card__tag">Мебельный импорт</span>
-                <span class="case-card__time">5 дней</span>
-              </div>
-              <h3 class="case-card__title">Импорт мебели из Польши</h3>
-              <div class="case-card__story">
-                <div class="case-story__row"><span class="case-story__label">Было</span><span class="case-story__text">Менеджеры не знали где фура и что в ней. Excel + WhatsApp</span></div>
-                <div class="case-story__row"><span class="case-story__label">Сделали</span><span class="case-story__text">CRM с GPS-трекингом фур + OCR-накладные. Клиент видит статус в Telegram</span></div>
-              </div>
-              <div class="case-card__result">
-                <span class="case-card__result-val">−24%</span>
-                <span class="case-card__result-label">время обработки каждого заказа</span>
-              </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/klinika/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__top"><span class="demo-card__tag">Стоматология</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Денталис</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Бумажные карты пациентов, ручные реестры ДМС, 4+ часа в день на документы.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Карта пациента, расписание, автоматические реестры ДМС и вся история лечения.</p>
             </div>
-          </article>
-
-          <article class="case-card case-card--has-top" data-reveal>
-            <div class="case-card__top case-card__top--screen">
-              <div class="case-card__chrome"><span></span><span></span><span></span></div>
-              <img src="assets/keis3.jpg" alt="Магазин Telegram Stars" loading="lazy">
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/command/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__top"><span class="demo-card__tag">Управление бизнесом</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Uniqore Command</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Бизнес живёт в десяти таблицах — не видно ни финансов, ни загрузки команды.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Командный центр: финздоровье, отделы, проекты, задачи и аналитика в одном месте.</p>
             </div>
-            <div class="case-card__body">
-              <div class="case-card__meta">
-                <span class="case-card__tag">Цифровые товары</span>
-                <span class="case-card__time">4 дня</span>
-              </div>
-              <h3 class="case-card__title">Магазин Telegram Stars</h3>
-              <div class="case-card__story">
-                <div class="case-story__row"><span class="case-story__label">Было</span><span class="case-story__text">Ручная выдача товаров, владелец онлайн 24/7, ошибки при оплате</span></div>
-                <div class="case-story__row"><span class="case-story__label">Сделали</span><span class="case-story__text">Полная автоматизация: оплата → мгновенная выдача за 4 секунды</span></div>
-              </div>
-              <div class="case-card__result">
-                <span class="case-card__result-val">+24%</span>
-                <span class="case-card__result-label">прирост выручки без участия владельца</span>
-              </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/stomatology/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__top"><span class="demo-card__tag">AI-диагностика</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Денталис · ИИ-скан</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Врач вручную разбирает рентген-снимки — долго и субъективно.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>AI анализирует снимок, размечает зоны и выдаёт предварительное заключение за секунды.</p>
             </div>
-          </article>
-
-          <article class="case-card case-card--has-top" data-reveal>
-            <div class="case-card__top case-card__top--screen">
-              <div class="case-card__chrome"><span></span><span></span><span></span></div>
-              <img src="assets/keis4.jpg" alt="Автосервис трекинг" loading="lazy">
-            </div>
-            <div class="case-card__body">
-              <div class="case-card__meta">
-                <span class="case-card__tag">Автосервис</span>
-                <span class="case-card__time">6 дней</span>
-              </div>
-              <h3 class="case-card__title">Автосервис в Москве, 8 постов</h3>
-              <div class="case-card__story">
-                <div class="case-story__row"><span class="case-story__label">Было</span><span class="case-story__text">Клиенты звонили по 10 раз «когда будет готово?» — телефон разрывался</span></div>
-                <div class="case-story__row"><span class="case-story__label">Сделали</span><span class="case-story__text">Live-трекинг ремонта в Telegram + AI-диагностика по фото</span></div>
-              </div>
-              <div class="case-card__result">
-                <span class="case-card__result-val">−32%</span>
-                <span class="case-card__result-label">входящих звонков с вопросом «когда?»</span>
-              </div>
-            </div>
-          </article>
-
-          <article class="case-card case-card--has-top" data-reveal>
-            <div class="case-card__top case-card__top--screen">
-              <div class="case-card__chrome"><span></span><span></span><span></span></div>
-              <img src="assets/keis5.jpg" alt="Стоматологическая CRM" loading="lazy">
-            </div>
-            <div class="case-card__body">
-              <div class="case-card__meta">
-                <span class="case-card__tag">Стоматология</span>
-                <span class="case-card__time">6 дней</span>
-              </div>
-              <h3 class="case-card__title">Стоматологическая клиника — медицинская CRM</h3>
-              <div class="case-card__story">
-                <div class="case-story__row"><span class="case-story__label">Было</span><span class="case-story__text">Бумажные карты, ручные реестры ДМС, 4+ часа в день на документы</span></div>
-                <div class="case-story__row"><span class="case-story__label">Сделали</span><span class="case-story__text">AI-анализ рентгена, 3D-карта зубов, автоматические реестры ДМС, интеграция с ЕМИАС</span></div>
-              </div>
-              <div class="case-card__result">
-                <span class="case-card__result-val">+15%</span>
-                <span class="case-card__result-label">LTV пациентов · экономия 2ч/день · AI-точность 78%</span>
-              </div>
-            </div>
-          </article>
-
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
         </div>
       </div>
     </section>
