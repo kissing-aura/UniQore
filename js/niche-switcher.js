@@ -57,6 +57,9 @@
   var ORDER = ['restaurant', 'barber', 'rent', 'clinic'];
 
   function $(s, r) { return (r || document).querySelector(s); }
+  // Разделитель тысяч — узкий неразрывный пробел (U+202F): группы «135 000» стоят
+  // плотно и ровно, как «38 400» в мокапе (детерминированно, без разнобоя locale).
+  function fmtLoss(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, String.fromCharCode(0x202f)); }
 
   var mockup = $('.ui-mockup');
   var frameWrap = $('.hero__frame');
@@ -89,7 +92,7 @@
       var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
       // нормализуем узкий/неразрывный пробел-разделитель в обычный, чтобы группы
       // стояли ровно как «38 400» в мокапе (был визуально разъехавшийся кернинг)
-      lossNumEl.textContent = Math.round(from + (to - from) * e).toLocaleString('ru-RU').replace(/[   ]/g, ' ');
+      lossNumEl.textContent = fmtLoss(from + (to - from) * e);
       if (p < 1) requestAnimationFrame(step);
     })(performance.now());
   }
@@ -103,7 +106,7 @@
       if (ctaEl) {
         var niche = NICHES[currentKey];
         // формат числа в CTA = формату в заголовке результата (было «135К» ≠ «135 000»)
-        var lossFull = Math.round(loss).toLocaleString('ru-RU').replace(/[   ]/g, ' ');
+        var lossFull = fmtLoss(loss);
         ctaEl.textContent = niche
           ? 'Разбор для «' + niche.chip + '» — вернуть ' + lossFull + ' ₽/мес →'
           : ctaDefault;
