@@ -143,6 +143,13 @@
   .ring__c small{font-size:9px;color:var(--txt2);text-transform:uppercase;letter-spacing:.08em}
   .verdict__b b{font-size:14px}
   .verdict__b p{color:var(--txt2);font-size:12px;line-height:1.5;margin-top:3px}
+  .verdict__cta{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:11.5px;font-weight:600;
+    color:var(--cyan);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px;transition:color .2s}
+  .verdict__cta:hover{color:var(--mint)}
+
+  @keyframes toothPulse{0%,100%{filter:drop-shadow(0 0 12px currentColor)}50%{filter:drop-shadow(0 0 28px currentColor)}}
+  .tooth.pulse path{animation:toothPulse .55s ease-in-out 2}
+  .find{cursor:pointer}
 
   /* run button */
   .runbar{padding:14px 20px 18px}
@@ -235,6 +242,7 @@
         <div class="verdict__b">
           <b id="verdictTitle">Анализ завершён</b>
           <p id="verdictText">Найдено 3 патологии · 1 зуб в норме. План лечения сформирован.</p>
+          <a class="verdict__cta" href="https://uniqore.pro/crm-dlya-stomatologii/" target="_blank" rel="noopener">Такую диагностику — в свою клинику →</a>
         </div>
       </div>
       <div class="runbar">
@@ -356,6 +364,10 @@
     </div>`;
     box.appendChild(row); setTimeout(()=>{row.classList.add('in'); row.querySelector('.find__bar i').style.width=f.conf+'%';},20);
     box.scrollTop=box.scrollHeight;
+    row.addEventListener('click',()=>{
+      const g=teeth[f.i].g; g.style.color=f.col; g.classList.add('pulse');
+      setTimeout(()=>g.classList.remove('pulse'),1150);
+    });
   }
 
   /* ── orchestrate ── */
