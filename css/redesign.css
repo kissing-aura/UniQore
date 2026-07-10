@@ -468,3 +468,15 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 .niches { background:
   radial-gradient(ellipse 70% 60% at 72% 38%, rgba(205,255,79,.06), transparent 58%),
   linear-gradient(180deg, #0A0E1A, #0D1322 52%, #0A0E1A) !important; }
+
+/* ── Мобильные фиксы v3 ── */
+@media (max-width: 760px) {
+  /* флагман: бейдж не налезает на цену — в поток сверху */
+  .svc-card__badge { position: static; display: inline-block; margin: 22px 0 -4px 24px; }
+  .svc-card__flag-left { padding-top: 20px; }
+}
+@media (max-width: 640px) {
+  /* калькулятор: длинный CTA переносится, не обрезается */
+  .mirror__cta { white-space: normal !important; height: auto !important; min-height: 0 !important;
+    line-height: 1.35 !important; padding: 14px 18px !important; font-size: 14px !important; }
+}
