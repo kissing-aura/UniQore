@@ -85,6 +85,26 @@
     ['Ксения Белова', '+7 909 880-21-04', 'Аренда · семейная', 17, 4.8],
   ].map((d, i) => ({ id: 'ag' + (i + 1), name: d[0], phone: d[1], specialty: d[2], deals: d[3], rating: d[4], notes: '', createdAt: dt(-(60 - i * 8)) }));
 
+  // ── Документы (привязаны к реальным сделкам выше, статус = стадия сделки) ──
+  const docs = [
+    { id: 'dc1',  title: 'Агентский договор — Артём Волков, продажа 2к «Северный Парк»',        type: 'agency',   amount: 0,       date: ds(-18), status: 'signed' },
+    { id: 'dc2',  title: 'Договор купли-продажи — «Северный Парк» 2к, Артём Волков',             type: 'contract', amount: 34500000, date: ds(-2),  status: 'draft' },
+    { id: 'dc3',  title: 'Договор аренды — «Английский Квартал» 1к, Полина Гаврилова',           type: 'contract', amount: 145000,  date: ds(-6),  status: 'signed' },
+    { id: 'dc4',  title: 'Акт приёма-передачи — «Английский Квартал» 1к',                        type: 'act',      amount: 0,       date: ds(2),   status: 'draft' },
+    { id: 'dc5',  title: 'Агентский договор (эксклюзив) — Семён Ковалёв, пентхаус «Хамовники Grand»', type: 'agency', amount: 0,   date: ds(-25), status: 'signed' },
+    { id: 'dc6',  title: 'Соглашение о задатке — пентхаус «Хамовники Grand»',                    type: 'deposit',  amount: 5000000, date: ds(-4),  status: 'sent', attach: { type: 'note', note: 'Ждём перевод от клиента, встреча в четверг' } },
+    { id: 'dc7',  title: 'Агентский договор — Виктория Ким, студия «Сколково Парк»',             type: 'agency',   amount: 0,       date: ds(-1),  status: 'draft' },
+    { id: 'dc8',  title: 'Договор аренды — «Северный Парк» 3к, Руслан Тагиров',                  type: 'contract', amount: 340000,  date: ds(-3),  status: 'draft' },
+    { id: 'dc9',  title: 'Договор купли-продажи — «Английский Квартал» 2к, Алина Прохорова',     type: 'contract', amount: 37500000, date: ds(-35), status: 'signed' },
+    { id: 'dc10', title: 'Акт приёма-передачи — «Английский Квартал» 2к',                        type: 'act',      amount: 0,       date: ds(-30), status: 'signed' },
+    { id: 'dc11', title: 'Счёт на комиссию — сделка Прохорова, «Английский Квартал» 2к',         type: 'invoice',  amount: 1125000, date: ds(-28), status: 'paid' },
+    { id: 'dc12', title: 'Договор аренды — «Ривер Хаус» студия, Дмитрий Орешкин',                type: 'contract', amount: 98000,   date: ds(-50), status: 'signed' },
+    { id: 'dc13', title: 'Счёт на комиссию — сделка Орешкин, «Ривер Хаус»',                      type: 'invoice',  amount: 98000,   date: ds(-48), status: 'paid' },
+    { id: 'dc14', title: 'Договор купли-продажи — «Английский Квартал» 3к, корп. клиент',        type: 'contract', amount: 68000000, date: ds(-60), status: 'signed' },
+    { id: 'dc15', title: 'Акт приёма-передачи — «Английский Квартал» 3к',                        type: 'act',      amount: 0,       date: ds(-55), status: 'signed' },
+    { id: 'dc16', title: 'Счёт на комиссию — сделка корп. клиент, «Английский Квартал» 3к',      type: 'invoice',  amount: 2040000, date: ds(-52), status: 'paid' },
+  ];
+
   // ── Задачи / показы (те же лиды и сделки, что и выше — не рассинхронизировано) ──
   const tasks = [
     { id: 'nt1', title: 'Показ: Артём Волков — 2-комн «Северный Парк» 64 м²', due: ds(1), start: '15:00', done: false },
@@ -116,6 +136,7 @@
     key: 'realty-catalog', theme: 'estate-umber', navLayout: 'topbar',
     brand: { name: 'Квартал', logo: 'КВ' }, locale: 'ru-RU', currency: '₽', prefix: 'kvartalR9_',
     auth: { enabled: false, user: 'admin', passHash: '', plain: '' },
+    docTypes: { agency: 'Агентский договор', contract: 'Договор', deposit: 'Задаток', act: 'Акт приёма-передачи', invoice: 'Счёт на комиссию' },
 
     entities: [
       {
@@ -191,9 +212,17 @@
       { key: 'agents', label: 'Агенты', type: 'records', entity: 'agent', group: 'CRM', icon: 'users' },
       { key: 'tasks',    label: 'Задачи',            type: 'tasks',    group: 'Работа', icon: 'check' },
       { key: 'calendar', label: 'Календарь показов', type: 'calendar', group: 'Работа', icon: 'calendar' },
+      { key: 'docs',     label: 'Документы',         type: 'docs',     group: 'Работа', icon: 'file',
+        views: [
+          { key: 'all',      label: 'Все',        filter: {} },
+          { key: 'agency',   label: 'Агентские',  filter: { type: 'agency' } },
+          { key: 'contract', label: 'Договоры',   filter: { type: 'contract' } },
+          { key: 'act',      label: 'Акты',       filter: { type: 'act' } },
+          { key: 'invoice',  label: 'Счета',      filter: { type: 'invoice' } },
+        ] },
     ],
 
     metrics: [],
-    seed: { finance, tasks },
+    seed: { finance, tasks, docs },
   };
 })();
