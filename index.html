@@ -119,7 +119,7 @@
   <link rel="stylesheet" href="css/mobile.css?v=20260711e">
   <link rel="stylesheet" href="css/nav-pages.css?v=20260711e">
   <link rel="stylesheet" href="css/enhance.css?v=20260711e">
-  <link rel="stylesheet" href="css/redesign.css?v=20260711v">
+  <link rel="stylesheet" href="css/redesign.css?v=20260711w">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -872,165 +872,29 @@
     <!-- TEAM SECTION -->
 
     <!-- PRICING SECTION -->
-    <section class="pricing" id="pricing">
+        <section class="pricing" id="pricing">
       <div class="container">
-        <h2 class="section-title">Прозрачные цены,<br><em>без сюрпризов</em></h2>
-        <div class="pricing__card" data-reveal>
-          <div class="pricing__left">
-            <h3>Полная система под ключ</h3>
-            <p>CRM + складской учёт + боты на любой платформе + аналитика.<br>
-            Разработка за 4–6 дней. Поддержка и хостинг включены.</p>
-            <ul class="pricing__includes">
-              <li>✓ Анализ бизнеса и ТЗ</li>
-              <li>✓ Кастомная разработка с нуля</li>
-              <li>✓ Развёртывание и хостинг на наших серверах</li>
-              <li>✓ Поддержка и развитие по подписке</li>
-            </ul>
-          </div>
-          <div class="pricing__right">
-            <div class="pricing__price-block">
-              <div class="pricing__price">
-                <span class="pricing__price-val">от $1200</span>
-                <span class="pricing__price-period">за систему · 50% старт / 50% при сдаче</span>
-              </div>
-              <div class="pricing__price">
-                <span class="pricing__price-val">$150</span>
-                <span class="pricing__price-period">в месяц · подписка на пользование и поддержку</span>
-              </div>
-            </div>
-            <a href="#contact" class="btn btn--accent btn--lg btn--full">
-              Обсудить проект
-            </a>
-            <p class="pricing__note">
-              Начинаем с бесплатного аудита.<br>
-              Оплата только после утверждения ТЗ.
-            </p>
-          </div>
+        <div class="section-label" style="text-align:center;margin:0 auto">Цены</div>
+        <h2 class="section-title" style="text-align:center">Прозрачно —<br><em>от $150 до системы</em></h2>
+        <div class="price-teaser">
+          <a class="price-teaser__card" href="/sayty/" data-reveal>
+            <span class="price-teaser__name">Сайты под ключ</span>
+            <span class="price-teaser__val">от $150</span>
+            <span class="price-teaser__go">Подробнее →</span>
+          </a>
+          <a class="price-teaser__card price-teaser__card--flag" href="/sistema/" data-reveal data-reveal-delay="1">
+            <span class="price-teaser__badge">Всё включено</span>
+            <span class="price-teaser__name">Система под ключ</span>
+            <span class="price-teaser__val">$1200<small> + $150/мес</small></span>
+            <span class="price-teaser__go">Подробнее →</span>
+          </a>
+          <a class="price-teaser__card" href="/ai-targetolog/" data-reveal data-reveal-delay="2">
+            <span class="price-teaser__name">AI-таргетолог</span>
+            <span class="price-teaser__val">от $200<small>/мес</small></span>
+            <span class="price-teaser__go">Подробнее →</span>
+          </a>
         </div>
-
-        <!-- Что входит в стоимость — раскрывающийся блок -->
-        <div class="pricing__unpack" data-reveal>
-          <button class="unpack__toggle" id="unpackToggle" aria-expanded="false" aria-controls="unpackPanel">
-            <span class="unpack__toggle-main">
-              <span class="unpack__toggle-label">Что входит в стоимость</span>
-              <span class="unpack__toggle-sub">36 функций под ключ — не просто «CRM-система»</span>
-            </span>
-            <span class="unpack__toggle-icon" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </button>
-
-          <div class="unpack__panel" id="unpackPanel" hidden>
-            <div class="unpack__grid">
-
-              <div class="unpack__cat">
-                <div class="unpack__cat-head"><span class="unpack__cat-n">01</span> CRM-ядро под вашу нишу</div>
-                <ul>
-                  <li>Воронки под каждое направление бизнеса</li>
-                  <li>Карточки клиентов, сделок, объектов</li>
-                  <li>Задачи, календарь, напоминания</li>
-                  <li>Роли и права доступа для сотрудников</li>
-                  <li>Приватность: каждый видит только своё</li>
-                  <li>Мгновенный поиск по всей базе</li>
-                </ul>
-              </div>
-
-              <div class="unpack__cat">
-                <div class="unpack__cat-head"><span class="unpack__cat-n">02</span> Telegram-боты и мессенджеры</div>
-                <ul>
-                  <li>Личный Telegram-бот компании</li>
-                  <li>Уведомления сотрудникам прямо в личку</li>
-                  <li>Мгновенный пинг о каждой новой заявке</li>
-                  <li>Приём обращений клиентов в бота</li>
-                  <li>Обратная связь команды → руководителю</li>
-                </ul>
-              </div>
-
-              <div class="unpack__cat">
-                <div class="unpack__cat-head"><span class="unpack__cat-n">03</span> Приём лидов и интеграции</div>
-                <ul>
-                  <li>Сайт и лендинг → заявка сразу в CRM</li>
-                  <li>Авито, Циан, соцсети → лиды в одну базу</li>
-                  <li>Формы, вебхуки, Zapier</li>
-                  <li>Авто-назначение лида на ответственного</li>
-                  <li>Дедупликация контактов — без дублей</li>
-                </ul>
-              </div>
-
-              <div class="unpack__cat">
-                <div class="unpack__cat-head"><span class="unpack__cat-n">04</span> Аналитика и финансы</div>
-                <ul>
-                  <li>Дашборды по всем направлениям</li>
-                  <li>Финмодель: выручка, комиссии, расходы, чистыми</li>
-                  <li>План-факт по целям компании</li>
-                  <li>Активность сотрудников — кто сколько делает</li>
-                  <li>Отчёты за любой период</li>
-                </ul>
-              </div>
-
-              <div class="unpack__cat unpack__cat--new">
-                <div class="unpack__cat-head"><span class="unpack__cat-n">05</span> <span class="unpack__cat-badge">NEW</span> AI uni-агент — CRM с мозгом</div>
-                <ul>
-                  <li>«Советы дня»: что горит в базе прямо сейчас</li>
-                  <li>Чат «спроси про базу» человеческим языком</li>
-                  <li>Считает деньги кодом — без выдумок</li>
-                  <li>Подсказывает по рекламе и лидам</li>
-                  <li>Работает 24/7 и знает весь ваш бизнес</li>
-                </ul>
-              </div>
-
-              <div class="unpack__cat">
-                <div class="unpack__cat-head"><span class="unpack__cat-n">06</span> Автоматизация процессов</div>
-                <ul>
-                  <li>Автосчёт комиссий по типу сделки</li>
-                  <li>Горящие платежи и дедлайны на виду</li>
-                  <li>Автоматические напоминания</li>
-                  <li>Договоры и документы по шаблону</li>
-                  <li>Все процессы настраивает владелец — без нас</li>
-                </ul>
-              </div>
-
-              <div class="unpack__cat">
-                <div class="unpack__cat-head"><span class="unpack__cat-n">07</span> Запуск и инфраструктура</div>
-                <ul>
-                  <li>Хостинг на наших серверах</li>
-                  <li>Домен, SSL, ежедневные бэкапы</li>
-                  <li>Защита данных и безопасность</li>
-                  <li>Обучение команды работе в системе</li>
-                  <li>Документация + поддержка по подписке</li>
-                </ul>
-              </div>
-
-            </div>
-            <p class="unpack__foot">Точный набор функций фиксируем в ТЗ под ваш бизнес до старта. Что-то из списка не нужно — уберём, чего-то не хватает — добавим.</p>
-          </div>
-        </div>
-
-        <!-- Рыночное сравнение -->
-        <div class="pricing__market" data-reveal>
-          <div class="market-compare">
-            <div class="market-compare__item market-compare__item--dim">
-              <div class="market-compare__label">Фрилансер</div>
-              <div class="market-compare__price">$2,000–$5,000</div>
-              <div class="market-compare__note">2–4 месяца · нет гарантий · нет поддержки</div>
-            </div>
-            <div class="market-compare__arrow">→</div>
-            <div class="market-compare__item market-compare__item--dim">
-              <div class="market-compare__label">Студия</div>
-              <div class="market-compare__price">$8,000–$30,000</div>
-              <div class="market-compare__note">3–6 месяцев · менеджеры · переплата за бренд</div>
-            </div>
-            <div class="market-compare__arrow">→</div>
-            <div class="market-compare__item market-compare__item--highlight">
-              <div class="market-compare__badge">Uniqore</div>
-              <div class="market-compare__price">от $1200</div>
-              <div class="market-compare__note">4–6 дней · фиксированная цена · поддержка включена</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Сравнение с конкурентами -->
-        <p class="pricing__bitrix-note" data-reveal>Bitrix24 и amoCRM — аренда чужой платформы с лишними функциями. У нас — своя система под ваши процессы, без лицензий за каждого сотрудника.</p>
+        <p class="price-teaser__note">Точная цена фиксируется в договоре до старта. Без скрытых платежей и подписок Bitrix.</p>
       </div>
     </section>
 

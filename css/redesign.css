@@ -506,3 +506,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 .problem-block h2 { color: var(--color-text-primary); }
 .problem-lead { font-size: clamp(18px, 2.1vw, 22px) !important; line-height: 1.55 !important; color: var(--color-text-secondary) !important; max-width: 68ch; }
 .problem-lead::first-line { color: var(--color-text-primary); }
+
+/* — тизер цен на главной (вместо большой CRM-прайс-карты) — */
+.price-teaser { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 42px 0 22px; align-items: stretch; }
+.price-teaser__card { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 30px 26px; border-radius: 18px;
+  background: linear-gradient(162deg, rgba(255,255,255,.035), rgba(255,255,255,.006) 60%); border: 1px solid rgba(255,255,255,.07);
+  text-decoration: none; color: var(--color-text-primary); transition: transform .3s cubic-bezier(.22,1,.36,1), border-color .3s, background .3s; }
+.price-teaser__card:hover { transform: translateY(-6px); border-color: rgba(205,255,79,.3); background: var(--color-surface); }
+.price-teaser__card--flag { border-color: rgba(205,255,79,.25); background: linear-gradient(150deg, rgba(205,255,79,.08), rgba(255,255,255,.01) 60%); }
+.price-teaser__badge { position: absolute; top: -10px; left: 26px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: #0A0E1A; background: var(--color-accent); padding: 4px 11px; border-radius: 999px; }
+.price-teaser__name { font-size: 15px; color: var(--color-text-secondary); }
+.price-teaser__val { font-family: var(--font-display); font-size: 34px; font-weight: 800; letter-spacing: -.02em; color: var(--color-text-primary); }
+.price-teaser__val small { font-size: 14px; font-weight: 400; color: var(--color-text-muted); }
+.price-teaser__go { margin-top: auto; padding-top: 10px; color: var(--color-accent); font-weight: 600; font-size: 15px; }
+.price-teaser__note { text-align: center; color: var(--color-text-muted); font-size: 14px; max-width: 60ch; margin: 0 auto; }
+@media (max-width: 820px) { .price-teaser { grid-template-columns: 1fr; } }
