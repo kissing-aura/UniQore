@@ -91,6 +91,31 @@
   payments.push({ id: 'cur1', title: 'Текущие счета к оплате', kind: 'Оплата услуг', amount: 17700, status: 'sent', due: ds(2) });
   payments.push({ id: 'ov1', title: 'Просрочен — Громов П.', kind: 'Оплата услуг', amount: 4100, status: 'overdue', due: ds(-3) });
 
+  // ── Расходники / склад ──
+  const supplies = [
+    { id: 'sp1',  name: 'Импланты Straumann BLX',            category: 'implant',    qty: 2,  unit: 'шт',     minQty: 5,  supplier: 'Straumann RU',      price: 42000, notes: '', stage: 'low' },
+    { id: 'sp2',  name: 'Анестетик Убистезин форте',         category: 'consumable', qty: 85, unit: 'карпула',minQty: 30, supplier: 'Мед-Импорт',        price: 45,    notes: '', stage: 'ok' },
+    { id: 'sp3',  name: 'Композит светоотверждаемый Filtek', category: 'material',   qty: 12, unit: 'шприц',  minQty: 8,  supplier: '3M Dental',         price: 3200,  notes: '', stage: 'ok' },
+    { id: 'sp4',  name: 'Коффердам, латексные платки',       category: 'consumable', qty: 4,  unit: 'уп.',    minQty: 5,  supplier: 'Дентал-Снаб',       price: 890,   notes: '', stage: 'low' },
+    { id: 'sp5',  name: 'Слепочная масса альгинатная',       category: 'material',   qty: 6,  unit: 'уп.',    minQty: 4,  supplier: 'Дентал-Снаб',       price: 1450,  notes: '', stage: 'ok' },
+    { id: 'sp6',  name: 'Перчатки нитриловые',                category: 'consumable', qty: 22, unit: 'уп.',    minQty: 15, supplier: 'МедТорг',           price: 620,   notes: '', stage: 'ok' },
+    { id: 'sp7',  name: 'Стерилизационные пакеты',            category: 'consumable', qty: 0,  unit: 'уп.',    minQty: 20, supplier: 'МедТорг',           price: 780,   notes: 'Заказ просрочен на 2 дня', stage: 'out' },
+    { id: 'sp8',  name: 'Цемент стеклоиономерный',            category: 'material',   qty: 9,  unit: 'шт',     minQty: 5,  supplier: '3M Dental',         price: 2100,  notes: '', stage: 'ok' },
+    { id: 'sp9',  name: 'Файлы эндодонтические (набор)',      category: 'tool',       qty: 3,  unit: 'набор',  minQty: 3,  supplier: 'VDW Германия',      price: 5400,  notes: '', stage: 'ok' },
+    { id: 'sp10', name: 'Отбеливающий гель ZOOM',              category: 'material',   qty: 5,  unit: 'шт',     minQty: 6,  supplier: 'Philips ZOOM',      price: 6800,  notes: '', stage: 'low' },
+    { id: 'sp11', name: 'Брекет-система металлическая',        category: 'material',   qty: 7,  unit: 'набор',  minQty: 3,  supplier: 'Ortho Organizers',  price: 8900,  notes: '', stage: 'ok' },
+    { id: 'sp12', name: 'Маски медицинские трёхслойные',       category: 'consumable', qty: 18, unit: 'уп.',    minQty: 20, supplier: 'МедТорг',           price: 340,   notes: '', stage: 'low' },
+  ];
+
+  // ── Лаборатория (внешние зуботехнические работы) ──
+  const laborders = [
+    { id: 'lb1', name: 'Коронка на имплант — зуб 3.6, цирконий',       patient: 'Дмитрий Федотов',   workType: 'crown',   lab: 'Дентал-Люкс лаборатория', due: ds(5),  price: 38000,  notes: '', stage: 'production' },
+    { id: 'lb2', name: 'Коронка — зуб 2.7, металлокерамика',           patient: 'Сергей Тимофеев',   workType: 'crown',   lab: 'СтомЛаб Москва',          due: ds(1),  price: 24000,  notes: '', stage: 'ready' },
+    { id: 'lb3', name: 'Коронка на имплант — зуб 4.6, цирконий',       patient: 'Игорь Воронов',     workType: 'crown',   lab: 'Дентал-Люкс лаборатория', due: ds(9),  price: 41000,  notes: '', stage: 'ordered' },
+    { id: 'lb4', name: 'Виниры ×6, фронтальная группа, E-max',         patient: 'Татьяна Романова',  workType: 'veneer',  lab: 'Артэс лаборатория',       due: ds(-6), price: 132000, notes: '', stage: 'fitted' },
+    { id: 'lb5', name: 'Съёмный протез частичный',                     patient: 'Виктор Симонов',    workType: 'denture', lab: 'СтомЛаб Москва',          due: ds(7),  price: 56000,  notes: '', stage: 'production' },
+  ];
+
   // ── Финансы (6 мес) ──
   const finance = [];
   for (let m = 5; m >= 0; m--) {
@@ -185,6 +210,50 @@
         ],
         seed: invoices,
       },
+
+      // ── Расходники / склад ──
+      {
+        key: 'supply', one: 'Позиция', many: 'Расходники',
+        fields: [
+          { key: 'name',     label: 'Название',       type: 'text',   required: true, list: true, primary: true },
+          { key: 'category', label: 'Категория',      type: 'select', list: true,
+            options: { material: 'Материалы', consumable: 'Расходники', implant: 'Импланты', tool: 'Инструменты' } },
+          { key: 'qty',      label: 'Остаток',        type: 'number', list: true },
+          { key: 'unit',     label: 'Ед. изм.',       type: 'text',   list: true },
+          { key: 'minQty',   label: 'Мин. остаток',   type: 'number' },
+          { key: 'supplier', label: 'Поставщик',      type: 'text',   list: true },
+          { key: 'price',    label: 'Цена за ед.',    type: 'money' },
+          { key: 'notes',    label: 'Заметки',        type: 'textarea' },
+        ],
+        stages: [
+          { id: 'ok',  label: 'В норме',         color: '#15a05a' },
+          { id: 'low', label: 'Заканчивается',   color: '#c97a09' },
+          { id: 'out', label: 'Нет в наличии',   color: '#d83a3a' },
+        ],
+        seed: supplies,
+      },
+
+      // ── Лаборатория (внешние зуботехнические работы) ──
+      {
+        key: 'laborder', one: 'Заказ', many: 'Заказы',
+        fields: [
+          { key: 'name',     label: 'Работа',       type: 'text',   required: true, list: true, primary: true },
+          { key: 'patient',  label: 'Пациент',      type: 'text',   list: true },
+          { key: 'workType', label: 'Вид работы',   type: 'select', list: true,
+            options: { crown: 'Коронка', bridge: 'Мост', veneer: 'Винир', denture: 'Протез', splint: 'Шина' } },
+          { key: 'lab',      label: 'Лаборатория',  type: 'text',   list: true },
+          { key: 'due',      label: 'Срок',         type: 'date',   list: true },
+          { key: 'price',    label: 'Стоимость',    type: 'money',  list: true },
+          { key: 'notes',    label: 'Заметки',      type: 'textarea' },
+        ],
+        stages: [
+          { id: 'ordered',    label: 'Заказано',     color: '#4338ca' },
+          { id: 'production', label: 'В работе',     color: '#c97a09' },
+          { id: 'ready',       label: 'Готово',       color: '#2d7d9a' },
+          { id: 'fitted',      label: 'Установлено',  color: '#15a05a' },
+        ],
+        seed: laborders,
+      },
     ],
 
     nav: [
@@ -209,6 +278,13 @@
           { key: 'paid',      label: 'Оплачены',       filter: { stage: 'paid' } },
         ]},
       { key: 'refServices', label: 'Услуги · прайс',  type: 'reference', refKey: 'services', refFields: [{ key: 'name', label: 'Услуга' }, { key: 'dept', label: 'Отделение' }, { key: 'price', label: 'Цена', type: 'money' }, { key: 'duration', label: 'Длительность, мин' }], group: 'Клиника', icon: 'tag' },
+      { key: 'supplies',   label: 'Расходники',       type: 'records',   entity: 'supply',      group: 'Клиника', icon: 'folder',
+        views: [
+          { key: 'all', label: 'Все',           filter: {} },
+          { key: 'low', label: 'Заканчивается', filter: { stage: 'low' } },
+          { key: 'out', label: 'Нет в наличии', filter: { stage: 'out' } },
+        ]},
+      { key: 'laborders',  label: 'Лаборатория',      type: 'kanban',    entity: 'laborder',    group: 'Клиника', icon: 'building' },
 
       { key: 'invoices',   label: 'Счета',            type: 'records',   entity: 'invoice',     group: 'Деньги', icon: 'file',
         views: [
