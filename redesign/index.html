@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uniqore — редизайн (концепт hero)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0E1A; --bg-2:#0D1220; --surface:#121826; --surface-2:#161D2E;
+  --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+  --accent:#CDFF4F; --accent-dim:#9BC22F; --accent-glow:rgba(205,255,79,.35);
+  --tx:#F4F7FF; --tx-2:#9AA6BE; --tx-3:#5C6884;
+  --font-d:'Unbounded',sans-serif; --font-b:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--font-b);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1280px;margin:0 auto;padding:0 32px}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;height:72px;display:flex;align-items:center;
+  background:rgba(10,14,26,.6);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;width:100%}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--font-d);font-weight:800;font-size:19px;letter-spacing:-.02em}
+.logo b{width:24px;height:24px;border:2.4px solid var(--accent);border-radius:50%;position:relative;display:inline-block}
+.logo b::after{content:"";position:absolute;width:9px;height:2.4px;background:var(--accent);bottom:-1px;right:-6px;transform:rotate(45deg);border-radius:2px}
+.nav__links{display:flex;gap:34px;font-size:15px;color:var(--tx-2)}
+.nav__links a{transition:color .2s}
+.nav__links a:hover{color:var(--tx)}
+.nav__cta{padding:11px 20px;background:var(--accent);color:#0A0E1A;border-radius:10px;font-weight:600;font-size:14px;transition:transform .2s,box-shadow .2s}
+.nav__cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px var(--accent-glow)}
+@media(max-width:900px){.nav__links{display:none}}
+
+/* HERO */
+.hero{position:relative;min-height:100dvh;display:flex;align-items:center;padding-top:72px;overflow:hidden}
+.hero__grid{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 80% 60% at 30% 40%,#000 20%,transparent 75%);opacity:.5}
+.hero__glow{position:absolute;width:640px;height:640px;right:-140px;top:8%;background:radial-gradient(circle,var(--accent-glow),transparent 62%);filter:blur(40px);opacity:.5;pointer-events:none}
+.hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;width:100%}
+
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--tx-2);border:1px solid var(--line-2);
+  padding:7px 14px;border-radius:100px;margin-bottom:28px;background:rgba(255,255,255,.02)}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+h1{font-family:var(--font-d);font-weight:800;font-size:clamp(40px,4.6vw,66px);line-height:1.04;letter-spacing:-.035em;margin-bottom:24px}
+h1 .ln{display:block;overflow:hidden}
+h1 .ln span{display:block;transform:translateY(110%)}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:clamp(16px,1.3vw,19px);color:var(--tx-2);line-height:1.6;max-width:30ch;margin-bottom:36px}
+.cta-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:34px}
+.btn-primary{padding:15px 26px;background:var(--accent);color:#0A0E1A;border-radius:12px;font-weight:600;font-size:16px;
+  display:inline-flex;align-items:center;gap:9px;transition:transform .15s;will-change:transform}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-ghost{padding:15px 22px;border:1px solid var(--line-2);border-radius:12px;font-weight:500;font-size:16px;color:var(--tx);transition:background .2s,border-color .2s}
+.btn-ghost:hover{background:rgba(255,255,255,.04);border-color:var(--tx-3)}
+.assurance{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--tx-3);max-width:38ch;line-height:1.5}
+.assurance svg{flex:0 0 auto;color:var(--accent)}
+.assurance b{color:var(--tx-2);font-weight:600}
+
+/* 3D DASHBOARD */
+.stage{perspective:1600px;perspective-origin:60% 40%;position:relative;height:520px}
+.deck{position:absolute;inset:0;transform-style:preserve-3d;
+  transform:rotateY(calc(-19deg + var(--mx,0)*7deg)) rotateX(calc(9deg + var(--my,0)*-6deg));
+  transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.panel{position:absolute;border-radius:16px;background:linear-gradient(160deg,rgba(22,29,46,.92),rgba(13,18,32,.92));
+  border:1px solid var(--line-2);box-shadow:0 30px 70px -30px rgba(0,0,0,.8);backdrop-filter:blur(4px);
+  transform-style:preserve-3d;overflow:hidden}
+.panel::before{content:"";position:absolute;inset:0;border-radius:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);pointer-events:none}
+.panel h4{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--tx-3);font-weight:600}
+/* p1: KPI hero card */
+.p1{width:290px;height:158px;left:6%;top:4%;transform:translateZ(80px);padding:20px}
+.p1 .big{font-family:var(--font-d);font-weight:800;font-size:42px;letter-spacing:-.03em;margin-top:8px;line-height:1}
+.p1 .big em{font-style:normal;color:var(--accent)}
+.p1 .trend{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--accent);margin-top:9px}
+.p1 .spark{position:absolute;right:18px;bottom:16px;display:flex;align-items:flex-end;gap:4px;height:40px}
+.p1 .spark i{width:6px;background:linear-gradient(var(--accent),var(--accent-dim));border-radius:2px;opacity:.85}
+/* p2: kanban */
+.p2{width:246px;height:214px;right:2%;top:0;transform:translateZ(40px);padding:18px}
+.p2 .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.p2 .col small{font-size:10px;color:var(--tx-3);text-transform:uppercase;letter-spacing:.1em}
+.p2 .tk{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;height:26px;margin-top:8px;position:relative}
+.p2 .tk::after{content:"";position:absolute;left:8px;top:9px;width:60%;height:6px;background:var(--tx-3);opacity:.4;border-radius:3px}
+.p2 .tk.on::after{background:var(--accent);opacity:.7}
+/* p3: chart */
+.p3{width:330px;height:150px;left:16%;bottom:2%;transform:translateZ(140px);padding:18px 20px}
+.p3 .bars{display:flex;align-items:flex-end;gap:10px;height:74px;margin-top:14px}
+.p3 .bars i{flex:1;height:100%;background:var(--surface-2);border-radius:4px 4px 0 0;position:relative;overflow:hidden}
+.p3 .bars i::after{content:"";position:absolute;bottom:0;left:0;right:0;height:var(--h);background:linear-gradient(var(--accent),var(--accent-dim));border-radius:4px 4px 0 0}
+/* floating badge */
+.p4{width:150px;height:56px;right:12%;bottom:16%;transform:translateZ(200px);display:flex;align-items:center;gap:11px;padding:0 16px}
+.p4 .ok{width:26px;height:26px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.p4 .t{font-size:12px;line-height:1.3}
+.p4 .t b{display:block;color:var(--tx);font-weight:600;font-size:13px}
+.p4 .t span{color:var(--tx-3)}
+.demo-tag{position:absolute;bottom:10px;right:14px;z-index:3;font-size:11px;color:var(--tx-3);letter-spacing:.05em}
+
+@media(max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;gap:20px}
+  .stage{height:380px;margin-top:10px;transform:scale(.86)}
+  .hero__glow{right:-40%;opacity:.35}
+}
+
+/* proof strip (показать переход палитры на след. секцию) */
+.proof{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0;background:var(--bg-2)}
+.proof .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.proof .item{display:flex;flex-direction:column;gap:4px}
+.proof .item b{font-family:var(--font-d);font-weight:800;font-size:30px;letter-spacing:-.03em}
+.proof .item b em{font-style:normal;color:var(--accent)}
+.proof .item span{font-size:13px;color:var(--tx-3)}
+
+/* SECTION SHELL */
+section.blk{padding:110px 0;position:relative}
+.sec-head{max-width:640px;margin-bottom:56px}
+.sec-head .eyebrow{margin-bottom:20px}
+.sec-head h2{font-family:var(--font-d);font-weight:800;font-size:clamp(30px,3.4vw,46px);line-height:1.08;letter-spacing:-.03em}
+.sec-head h2 em{font-style:normal;color:var(--accent)}
+.sec-head p{margin-top:16px;color:var(--tx-2);font-size:17px;line-height:1.6;max-width:52ch}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.9,.2,1),transform .7s cubic-bezier(.2,.9,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* CAPABILITIES — asymmetric bento (не 3 равные карты) */
+.bento{display:grid;grid-template-columns:1.4fr 1fr 1fr;grid-auto-rows:200px;gap:16px}
+.cell{border:1px solid var(--line);border-radius:18px;padding:26px;background:var(--surface);position:relative;overflow:hidden;transition:border-color .25s,transform .25s}
+.cell:hover{border-color:var(--line-2);transform:translateY(-3px)}
+.cell.wide{grid-column:span 2}
+.cell.tall{grid-row:span 2}
+.cell .ico{width:42px;height:42px;border-radius:11px;background:rgba(205,255,79,.1);border:1px solid rgba(205,255,79,.2);display:flex;align-items:center;justify-content:center;color:var(--accent);margin-bottom:auto}
+.cell h3{font-size:19px;font-weight:600;margin-top:20px;letter-spacing:-.01em}
+.cell p{color:var(--tx-2);font-size:14.5px;line-height:1.55;margin-top:8px}
+.cell.feat{background:linear-gradient(150deg,var(--surface-2),var(--surface));display:flex;flex-direction:column}
+.cell.feat .big{font-family:var(--font-d);font-weight:800;font-size:52px;color:var(--accent);letter-spacing:-.03em;line-height:1;margin-top:auto}
+.cell .glow2{position:absolute;width:200px;height:200px;right:-60px;bottom:-60px;background:radial-gradient(circle,var(--accent-glow),transparent 65%);opacity:.4;filter:blur(20px)}
+@media(max-width:900px){.bento{grid-template-columns:1fr;grid-auto-rows:auto}.cell,.cell.wide,.cell.tall{grid-column:auto;grid-row:auto;min-height:170px}}
+
+/* NICHES — horizontal marquee */
+.niche-wrap{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.niche-track{display:flex;gap:14px;width:max-content;animation:scroll 40s linear infinite}
+.niche-wrap:hover .niche-track{animation-play-state:paused}
+@keyframes scroll{to{transform:translateX(-50%)}}
+.chip{display:flex;align-items:center;gap:10px;padding:14px 22px;border:1px solid var(--line);border-radius:100px;background:var(--surface);white-space:nowrap;font-size:15px;color:var(--tx-2)}
+.chip b{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+/* CASES — real demo screenshots */
+.cases{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.case{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface);transition:transform .3s,border-color .3s;text-decoration:none;display:block}
+.case:hover{transform:translateY(-4px);border-color:var(--line-2)}
+.case .shot{height:180px;background:var(--surface-2) center/cover;position:relative;border-bottom:1px solid var(--line)}
+.case .shot .tag{position:absolute;top:12px;left:12px;font-size:11px;padding:5px 10px;background:rgba(10,14,26,.7);backdrop-filter:blur(6px);border-radius:8px;color:var(--accent);border:1px solid var(--line-2)}
+.case .body{padding:20px}
+.case .body h3{font-size:17px;font-weight:600}
+.case .body .metric{font-family:var(--font-d);font-weight:800;font-size:22px;color:var(--accent);margin-top:12px;letter-spacing:-.02em}
+.case .body .metric span{font-size:13px;font-family:var(--font-b);font-weight:400;color:var(--tx-3);display:block;margin-top:2px}
+@media(max-width:900px){.cases{grid-template-columns:1fr}}
+
+/* PROCESS — numbered vertical spine */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:s}
+.step{position:relative;padding-top:28px;border-top:2px solid var(--line)}
+.step::before{counter-increment:s;content:"0" counter(s);position:absolute;top:-2px;left:0;font-family:var(--font-d);font-weight:800;font-size:14px;color:var(--accent);background:var(--bg);padding-right:12px;transform:translateY(-50%)}
+.step h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.step p{color:var(--tx-2);font-size:14px;line-height:1.55}
+@media(max-width:900px){.steps{grid-template-columns:1fr 1fr}}
+
+/* PRICING + CTA */
+.price{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
+.price .card{border:1px solid var(--line-2);border-radius:22px;padding:38px;background:linear-gradient(160deg,var(--surface-2),var(--surface))}
+.price .card.dark{background:var(--surface);border-color:var(--line)}
+.price .amt{font-family:var(--font-d);font-weight:800;font-size:54px;letter-spacing:-.03em;line-height:1}
+.price .amt em{font-style:normal;color:var(--accent)}
+.price .per{color:var(--tx-3);font-size:15px;margin-top:8px}
+.price ul{list-style:none;margin-top:24px;display:grid;gap:12px}
+.price li{display:flex;gap:11px;align-items:flex-start;font-size:15px;color:var(--tx-2)}
+.price li svg{flex:0 0 auto;color:var(--accent);margin-top:2px}
+.price .card .btn-primary{margin-top:28px;width:100%;justify-content:center}
+@media(max-width:900px){.price{grid-template-columns:1fr}}
+
+.cta-final{text-align:center;padding:120px 0}
+.cta-final h2{font-family:var(--font-d);font-weight:800;font-size:clamp(32px,4vw,58px);letter-spacing:-.03em;line-height:1.05}
+.cta-final h2 em{font-style:normal;color:var(--accent)}
+.cta-final p{color:var(--tx-2);font-size:18px;margin:18px auto 34px;max-width:44ch}
+.cta-final .btn-primary{font-size:17px;padding:17px 32px}
+footer{border-top:1px solid var(--line);padding:40px 0;color:var(--tx-3);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="#" class="logo"><b></b>uniqore</a>
+    <div class="nav__links">
+      <a href="#">Возможности</a><a href="#">Решения</a><a href="#">Кейсы</a><a href="#">Цены</a><a href="#">О нас</a>
+    </div>
+    <a href="#" class="nav__cta">Обсудить проект</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero__grid"></div>
+  <div class="hero__glow"></div>
+  <div class="wrap">
+    <div class="hero__left">
+      <div class="eyebrow"><i></i>Принимаем проекты · сборка под ваш бизнес</div>
+      <h1>
+        <span class="ln"><span>CRM под</span></span>
+        <span class="ln"><span>ваш бизнес</span></span>
+        <span class="ln"><span>за <em>6 дней</em></span></span>
+      </h1>
+      <p class="sub">Своя система под ваши процессы. Не Битрикс — без лишних функций и ежемесячных лицензий.</p>
+      <div class="cta-row">
+        <a href="#" class="btn-primary" id="magnet">Обсудить проект
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="#" class="btn-ghost">Смотреть кейсы</a>
+      </div>
+      <div class="assurance">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Фиксированная цена в договоре. Сдаём в срок или вернём <b>20% за каждую неделю</b> просрочки.</span>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="deck" id="deck">
+        <div class="panel p1">
+          <h4>Выручка · месяц</h4>
+          <div class="big"><em>₽1.24</em>М</div>
+          <div class="trend">▲ 18% к прошлому</div>
+          <div class="spark"><i style="height:40%"></i><i style="height:62%"></i><i style="height:48%"></i><i style="height:80%"></i><i style="height:100%"></i></div>
+        </div>
+        <div class="panel p2">
+          <h4>Сделки</h4>
+          <div class="cols">
+            <div class="col"><small>В работе</small><div class="tk on"></div><div class="tk"></div><div class="tk on"></div></div>
+            <div class="col"><small>Закрыто</small><div class="tk"></div><div class="tk on"></div><div class="tk"></div></div>
+          </div>
+        </div>
+        <div class="panel p3">
+          <h4>Заявки по неделям</h4>
+          <div class="bars"><i style="--h:45%"></i><i style="--h:68%"></i><i style="--h:52%"></i><i style="--h:88%"></i><i style="--h:74%"></i><i style="--h:100%"></i><i style="--h:82%"></i></div>
+        </div>
+        <div class="panel p4">
+          <div class="ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="t"><b>Новая заявка</b><span>автосервис · 2 мин назад</span></div>
+        </div>
+      </div>
+      <span class="demo-tag">демо-данные</span>
+    </div>
+  </div>
+</section>
+
+<div class="proof">
+  <div class="wrap">
+    <div class="item"><b>4–6</b><span>дней до запуска</span></div>
+    <div class="item"><b>100<em>%</em></b><span>под ваш бизнес</span></div>
+    <div class="item"><b><em>$</em>1200</b><span>старт без скрытых платежей</span></div>
+    <div class="item"><b>9</b><span>ниш в реальной практике</span></div>
+  </div>
+</div>
+
+<!-- ВОЗМОЖНОСТИ — asymmetric bento -->
+<section class="blk" id="cap">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow"><i></i>Что внутри</div>
+      <h2>Весь бизнес в <em>одном окне</em></h2>
+      <p>Не набор функций «на всякий случай», а ровно то, что нужно вашей нише — собранное под ваши процессы.</p>
+    </div>
+    <div class="bento">
+      <div class="cell tall feat reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 3v18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M7 14l3-4 3 2 4-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Дашборд владельца</h3>
+        <p>Выручка, сделки, заявки — весь бизнес виден каждое утро в одной цифре.</p>
+        <div class="big">1 экран</div>
+        <div class="glow2"></div>
+      </div>
+      <div class="cell wide reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 4v16" stroke="currentColor" stroke-width="1.8"/></svg></div>
+        <h3>Клиенты и сделки</h3>
+        <p>Канбан-воронка, история общения, автонапоминания — ни одна заявка не теряется.</p>
+      </div>
+      <div class="cell reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h3>Чат-боты 24/7</h3>
+        <p>Приём заявок без вашего участия, круглосуточно.</p>
+      </div>
+      <div class="cell reveal">
+        <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h3>Финансы и склад</h3>
+        <p>Остатки, доходы, расходы — в реальном времени.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- НИШИ — marquee -->
+<section class="blk" style="padding:60px 0">
+  <div class="wrap"><div class="sec-head reveal" style="margin-bottom:32px"><h2 style="font-size:clamp(24px,2.6vw,34px)">Ваша ниша <em>уже у нас</em> в практике</h2></div></div>
+  <div class="niche-wrap">
+    <div class="niche-track">
+      <div class="chip"><b></b>Недвижимость</div><div class="chip"><b></b>Автосервис</div><div class="chip"><b></b>Стоматология</div><div class="chip"><b></b>Клиника</div><div class="chip"><b></b>Ресторан</div><div class="chip"><b></b>Интернет-магазин</div><div class="chip"><b></b>Склад и импорт</div><div class="chip"><b></b>Посуточная аренда</div><div class="chip"><b></b>Telegram-бизнес</div>
+      <div class="chip"><b></b>Недвижимость</div><div class="chip"><b></b>Автосервис</div><div class="chip"><b></b>Стоматология</div><div class="chip"><b></b>Клиника</div><div class="chip"><b></b>Ресторан</div><div class="chip"><b></b>Интернет-магазин</div><div class="chip"><b></b>Склад и импорт</div><div class="chip"><b></b>Посуточная аренда</div><div class="chip"><b></b>Telegram-бизнес</div>
+    </div>
+  </div>
+</section>
+
+<!-- КЕЙСЫ — реальные демо -->
+<section class="blk" id="cases">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>Системы, которые <em>уже работают</em></h2>
+      <p>Не мокапы — живые демо, которые можно открыть и потыкать прямо сейчас.</p>
+    </div>
+    <div class="cases">
+      <a href="#" class="case reveal"><div class="shot" style="background:linear-gradient(150deg,#1a2740,#0f1626)"><span class="tag">Клиника</span></div><div class="body"><h3>Медицинская CRM «Денталис»</h3><div class="metric">История пациента · ДМС<span>карта пациента, приёмы, план лечения</span></div></div></a>
+      <a href="#" class="case reveal"><div class="shot" style="background:linear-gradient(150deg,#20222e,#12131a)"><span class="tag">Ресторан</span></div><div class="body"><h3>Ресторан «Вкусно»</h3><div class="metric">Заказы · меню · склад<span>стоп-листы и себестоимость в реальном времени</span></div></div></a>
+      <a href="#" class="case reveal"><div class="shot" style="background:linear-gradient(150deg,#161d2e,#0d1220)"><span class="tag">Командный центр</span></div><div class="body"><h3>Uniqore Command</h3><div class="metric">Финздоровье · отделы<span>операционная система бизнеса целиком</span></div></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- ПРОЦЕСС -->
+<section class="blk">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>От запроса до <em>работающей системы</em></h2></div>
+    <div class="steps">
+      <div class="step reveal"><h3>Аудит бизнеса</h3><p>Разбираем ваши процессы и находим, где теряется время и деньги.</p></div>
+      <div class="step reveal"><h3>Техзадание</h3><p>Фиксируем состав системы и цену в договоре. Без сюрпризов.</p></div>
+      <div class="step reveal"><h3>Разработка</h3><p>Собираем под вашу нишу за 4–6 дней. Ежедневные отчёты.</p></div>
+      <div class="step reveal"><h3>Запуск</h3><p>Обучаем команду, переносим данные, остаёмся на поддержке.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ЦЕНЫ -->
+<section class="blk" id="price">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Прозрачные цены, <em>без сюрпризов</em></h2></div>
+    <div class="price">
+      <div class="card reveal">
+        <div class="amt"><em>$</em>1200</div>
+        <div class="per">разово · полная система под ключ</div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>CRM под вашу нишу за 4–6 дней</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Чат-боты, аналитика, интеграции</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Обучение команды и перенос данных</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Официальный договор и гарантия сроков</li>
+        </ul>
+        <a href="#lead" class="btn-primary">Обсудить проект <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="card dark reveal">
+        <div class="amt">$150<span style="font-size:20px;color:var(--tx-3)">/мес</span></div>
+        <div class="per">подписка · поддержка и развитие</div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Хостинг и бэкапы в облаке</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Доработки и новые функции</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Приоритетная поддержка</li>
+          <li style="color:var(--tx-3)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="color:var(--tx-3)"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Дешевле одного сотрудника на поддержке</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-final" id="lead">
+  <div class="wrap reveal">
+    <h2>Соберём вашу CRM <em>за неделю</em></h2>
+    <p>Расскажите о бизнесе — покажем, как это будет работать у вас, ещё до старта.</p>
+    <a href="https://t.me/UniqoreManager" class="btn-primary">Написать в Telegram <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Uniqore — индивидуальные системы автоматизации</span>
+    <span>t.me/UniqoreManager</span>
+  </div>
+</footer>
+
+<script>
+// reveal on scroll
+const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// параллакс 3D-дашборда от мыши
+const stage=document.getElementById('stage'), deck=document.getElementById('deck');
+if(!window.matchMedia('(pointer:coarse)').matches){
+  window.addEventListener('mousemove',e=>{
+    const mx=(e.clientX/window.innerWidth-.5), my=(e.clientY/window.innerHeight-.5);
+    deck.style.setProperty('--mx',mx.toFixed(3));
+    deck.style.setProperty('--my',my.toFixed(3));
+  },{passive:true});
+}
+// вход заголовка построчно + панелей
+window.addEventListener('load',()=>{
+  document.querySelectorAll('h1 .ln span').forEach((s,i)=>{
+    s.animate([{transform:'translateY(110%)'},{transform:'translateY(0)'}],{duration:800,delay:120+i*110,fill:'forwards',easing:'cubic-bezier(.2,.9,.2,1)'});
+  });
+  document.querySelectorAll('.panel').forEach((p,i)=>{
+    p.animate([{opacity:0,transform:getComputedStyle(p).transform+' translateY(24px)'},{opacity:1}],{duration:700,delay:500+i*130,fill:'forwards',easing:'cubic-bezier(.2,.9,.2,1)'});
+  });
+});
+// магнитная кнопка
+const mag=document.getElementById('magnet');
+mag.addEventListener('mousemove',e=>{const r=mag.getBoundingClientRect();mag.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.25}px,${(e.clientY-r.top-r.height/2)*.35}px)`});
+mag.addEventListener('mouseleave',()=>mag.style.transform='');
+</script>
+</body>
+</html>

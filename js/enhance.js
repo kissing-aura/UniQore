@@ -17,6 +17,25 @@
 
   if (reduce) return;
 
+  /* ── Micro 3D tilt on cards (fine pointer only, subtle by design) ── */
+  var finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (finePointer) {
+    var TILT = 5; // deg — small on purpose, premium not gimmicky
+    var tiltCards = document.querySelectorAll('.svc-card, .pkg, .demo-card, .price-teaser__card');
+    tiltCards.forEach(function (card) {
+      card.style.transformStyle = 'preserve-3d';
+      card.addEventListener('pointermove', function (e) {
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = 'perspective(900px) rotateX(' + (-py * TILT).toFixed(2) + 'deg) rotateY(' + (px * TILT).toFixed(2) + 'deg) translateY(-6px)';
+      });
+      card.addEventListener('pointerleave', function () {
+        card.style.transform = '';
+      });
+    });
+  }
+
   /* ── Subtle scroll parallax on big feature visuals ── */
   var items = Array.prototype.slice.call(document.querySelectorAll('.feature__visual'));
   if (!items.length) return;
