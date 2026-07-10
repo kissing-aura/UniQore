@@ -376,3 +376,21 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 .mockups .section-title em, .mirror-section .section-title em { opacity: 1; }
 /* Уплотнить почти-чёрный низ: мягкий каденс-акцент на стыке FAQ→контакт. */
 .faq { padding-bottom: 72px; }
+
+/* ═══════════ MOTION-когезия (дожим 9.3 → ~9.5) ═══════════ */
+/* Единый вход стат-бара hero: вся строка поднимается как один блок (панель:
+   «hero анимировался в одной точке и застывал ниже»). CSS-анимация гарантированно
+   завершается видимой — без ghost-риска, в отличие от observer-reveal. */
+@keyframes uqRowIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.hero__metrics { animation: uqRowIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.35s both; }
+
+/* Живой отклик до самого низа: элементы «Что входит» в прайсе + строки FAQ. */
+.pricing__includes li { transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), color 0.25s ease; }
+.pricing__includes li:hover { transform: translateX(6px); color: var(--color-text-primary); }
+.faq-item__q { transition: color 0.2s ease, padding-left 0.25s cubic-bezier(0.22,1,0.36,1); }
+.faq-item__q:hover { padding-left: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__metrics { animation: none; }
+  .pricing__includes li:hover, .faq-item__q:hover { transform: none; padding-left: 0; }
+}
