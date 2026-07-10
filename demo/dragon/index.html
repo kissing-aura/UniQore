@@ -845,6 +845,11 @@ const PRODUCTS_DEFAULT=[
   {id:'sh-gry-s', name:'Шорты Dragon',color:'Серые', size:'S',      price:135,cost:62,  minStock:3},
   {id:'sh-gry-m', name:'Шорты Dragon',color:'Серые', size:'M',      price:135,cost:62,  minStock:3},
   {id:'sh-gry-l', name:'Шорты Dragon',color:'Серые', size:'L',      price:135,cost:62,  minStock:3},
+  {id:'hd-blk-m',name:'Худи Dragon',color:'Чёрное',size:'M',price:265,cost:95, minStock:4},
+  {id:'hd-blk-l',name:'Худи Dragon',color:'Чёрное',size:'L',price:265,cost:95, minStock:4},
+  {id:'hd-gry-m',name:'Худи Dragon',color:'Серое', size:'M',price:265,cost:95, minStock:4},
+  {id:'jk-blk-m',name:'Куртка Dragon',color:'Чёрная',size:'M',price:460,cost:175,minStock:3},
+  {id:'jk-blk-l',name:'Куртка Dragon',color:'Чёрная',size:'L',price:460,cost:175,minStock:3},
 ]
 let PRODUCTS=[...PRODUCTS_DEFAULT]
 const STATUSES=['🆕 Новая','📞 Связались','✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен','❌ Отменён']
@@ -869,68 +874,93 @@ function _demoSeed(){
   let seq=0
   const iso=k=>new Date(now-k*DAY-(seq++)*60000).toISOString()
   const P=PRODUCTS_DEFAULT.reduce((m,p)=>{m[p.id]=p;return m},{})
-  const O=(k,st,name,phone,tg,city,pid,src,dlv,fromSite,comment,extra)=>{
+  const O=(k,st,name,phone,tg,city,pid,src,dlv,fromSite,comment,extra,qty)=>{
+    qty=qty||1
     const p=P[pid]
     const shipped=(st==='🚚 Отправлен'||st==='📦 Доставлен')
-    const tl=[{status:'🆕 Новая',time:d(k)+' 10:'+String(12+k).padStart(2,'0'),by:fromSite?'Сайт':'Бот'}]
-    ;(extra||[]).forEach((s,i)=>tl.push({status:s,time:d(k)+' '+(13+i)+':'+String(20+k).padStart(2,'0'),by:'Алексей'}))
-    return{id:'ORD-'+(now-k*DAY)+'-'+Math.random().toString(36).slice(2,7),name,phone,tg:tg||'',city:city||'',
-      product_id:pid,product:p.name,color:p.color,size:p.size,price:p.price,cost:p.cost,
+    const tl=[{status:'🆕 Новая',time:d(k)+' 10:'+String(12+k%40).padStart(2,'0'),by:fromSite?'Сайт':'Бот'}]
+    ;(extra||[]).forEach((s,i)=>tl.push({status:s,time:d(k)+' '+(13+i)+':'+String(20+k%40).padStart(2,'0'),by:'Алексей'}))
+    return{id:'ORD-'+(now-k*DAY)+'-'+(seq++),name,phone,tg:tg||'',city:city||'',
+      product_id:pid,product:p.name+(qty>1?' ×'+qty:''),color:p.color,size:p.size,price:Math.round(p.price*qty),cost:Math.round(p.cost*qty),
       source:src,delivery:dlv||'',status:st,date:d(k),
-      tracking:shipped?('BY'+String(370000000+Math.floor(Math.random()*9000000))):'',
+      tracking:shipped?('BY'+String(370000000+(seq*97)%9000000)):'',
       manager:'Алексей',comment:comment||'',comments:[],timeline:tl,from_site:!!fromSite,created_at:iso(k)}
   }
-  const orders=[
-    O(0,'🆕 Новая','Артём Ковалёв','+375291234567','@artem_k','Минск','cap2-camo','TikTok','СДЭК',true,'',null),
-    O(0,'🆕 Новая','Дарья Сидорова','+375447654321','@dasha_s','Гомель','sh-blk-m','Instagram','Европочта',true,'',null),
-    O(0,'📞 Связались','Максим Петров','+375293334455','@maxp','Брест','cap-blk-red','Instagram','СДЭК',false,'Просил скидку 10%',['📞 Связались']),
-    O(1,'✅ Подтверждён','Никита Волков','+375295556677','@nik_v','Минск','cap2-blk-wht','TikTok','Самовывоз',false,'',['📞 Связались','✅ Подтверждён']),
-    O(1,'💳 Оплачен','Елена Морозова','+375447778899','@lena_m','Витебск','sh-gry-s','Сарафан','Европочта',false,'Оплата картой',['📞 Связались','✅ Подтверждён','💳 Оплачен']),
-    O(2,'🚚 Отправлен','Игорь Козлов','+375291112233','','Могилёв','cap2-wht','TikTok','СДЭК',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен']),
-    O(2,'💳 Оплачен','Ольга Новик','+375293445566','@olya','Минск','cap-red-wht','Instagram','Самовывоз',false,'',['✅ Подтверждён','💳 Оплачен']),
-    O(3,'📦 Доставлен','Сергей Ткач','+375447889900','','Гродно','sh-blk-l','TikTok','Европочта',false,'Постоянный клиент',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(3,'🚚 Отправлен','Вероника Гусь','+375295667788','@nika','Минск','cap2-blk-grn','Instagram','СДЭК',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен']),
-    O(4,'📦 Доставлен','Дмитрий Савчук','+375291009988','','Пинск','cap-blk-wht','Сарафан','Европочта',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(4,'❌ Отменён','Анна Лис','+375447001122','@anna_l','Минск','sh-gry-m','Instagram','',false,'Передумала',['📞 Связались','❌ Отменён']),
-    O(5,'📦 Доставлен','Павел Рудой','+375293220011','','Орша','cap2-camo','TikTok','СДЭК',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(5,'📦 Доставлен','Кристина Дуб','+375445443322','@kris','Брест','sh-blk-s','TikTok','Европочта',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(6,'📦 Доставлен','Роман Шевчук','+375296778899','','Минск','cap-blk-red','Сарафан','Самовывоз',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(7,'📦 Доставлен','Владислав Мороз','+375291223344','@vlad_m','Минск','cap2-blk-wht','TikTok','СДЭК',true,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(8,'📦 Доставлен','Полина Гриб','+375447889911','','Гомель','sh-blk-m','Instagram','Европочта',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(8,'📦 Доставлен','Егор Симонов','+375293556678','@egor_s','Брест','cap-blk-wht','TikTok','Самовывоз',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(9,'📦 Доставлен','Валерия Костюк','+375295667799','@valeria_k','Витебск','cap2-camo','Instagram','СДЭК',true,'Постоянная клиентка',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(10,'📦 Доставлен','Денис Шевцов','+375447112233','','Могилёв','sh-gry-l','Сарафан','Европочта',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(11,'📦 Доставлен','Алина Бондарь','+375291445566','@alina_b','Гродно','cap2-wht','TikTok','СДЭК',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(12,'📦 Доставлен','Кирилл Возняк','+375293778899','','Минск','cap-red-wht','Instagram','Самовывоз',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(13,'📦 Доставлен','Виктория Марчук','+375447334455','@vika_m','Пинск','sh-blk-xs','TikTok','Европочта',true,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(14,'📦 Доставлен','Станислав Юрчик','+375295889900','','Орша','cap2-blk-grn','Сарафан','СДЭК',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(15,'📦 Доставлен','Мария Панасюк','+375291667788','@masha_p','Минск','sh-gry-xs','Instagram','Европочта',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(17,'📦 Доставлен','Артур Дубровский','+375447556677','','Гомель','cap-blk-red','TikTok','СДЭК',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(18,'📦 Доставлен','Юлия Ковальчук','+375293223355','@yulia_k','Брест','cap2-blk-wht','Instagram','Самовывоз',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(20,'📦 Доставлен','Илья Матвеев','+375295445577','','Витебск','sh-blk-l','TikTok','Европочта',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(22,'📦 Доставлен','София Романюк','+375447667788','@sofia_r','Минск','cap2-camo','Сарафан','СДЭК',true,'Заказ на подарок',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(24,'📦 Доставлен','Богдан Крук','+375291889900','','Могилёв','sh-gry-m','Instagram','Европочта',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-    O(25,'📦 Доставлен','Екатерина Зайцева','+375293445577','@katya_z','Гродно','cap-blk-wht','TikTok','СДЭК',false,'',['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']),
-  ]
-  const expenses=[
-    {id:'exp-1',category:'Реклама',amount:450,note:'TikTok Ads — неделя',date:d(1),created_at:iso(1)},
-    {id:'exp-2',category:'Закупка товара',amount:1350,note:'Партия кепок v2 (30 шт)',date:d(3),created_at:iso(3)},
-    {id:'exp-3',category:'Логистика',amount:95,note:'СДЭК за неделю',date:d(1),created_at:iso(1)},
-    {id:'exp-4',category:'Упаковка',amount:60,note:'Коробки + плёнка',date:d(4),created_at:iso(4)},
-    {id:'exp-5',category:'Реклама',amount:300,note:'Instagram промо',date:d(0),created_at:iso(0)},
-    {id:'exp-6',category:'Зарплата',amount:800,note:'Аванс менеджеру',date:d(2),created_at:iso(2)},
-  ]
+  // ── Генератор заявок: 30 дней истории, розница + опт-клиенты (магазины-реселлеры) ──
+  // Детерминированный (без Math.random для сумм/дат) — цифры одинаковые при каждой
+  // перезагрузке демо, не скачут. Опт даёт объём без завышения цены за 1 кепку/худи.
+  const CITIES=['Минск','Гомель','Брест','Витебск','Могилёв','Гродно','Пинск','Орша']
+  const SOURCES_C=['TikTok','Instagram','TikTok','Сарафан','Instagram','ВКонтакте','TikTok','Instagram']
+  const DLV_C=['СДЭК','Европочта','Самовывоз','СДЭК','Европочта','СДЭК']
+  const FIRST_M=[['Артём','artem'],['Максим','maksim'],['Никита','nikita'],['Игорь','igor'],['Сергей','sergey'],['Дмитрий','dmitry'],['Павел','pavel'],['Роман','roman'],['Владислав','vlad'],['Егор','egor'],['Денис','denis'],['Кирилл','kirill'],['Станислав','stas'],['Артур','artur'],['Илья','ilya'],['Богдан','bogdan'],['Виталий','vitaly'],['Олег','oleg'],['Александр','alex'],['Андрей','andrey'],['Тимур','timur'],['Глеб','gleb'],['Вадим','vadim'],['Марк','mark']]
+  const FIRST_F=[['Дарья','dasha'],['Елена','lena'],['Ольга','olya'],['Вероника','nika'],['Анна','anna'],['Кристина','kris'],['Полина','polina'],['Валерия','valeria'],['Алина','alina'],['Виктория','vika'],['Мария','masha'],['Юлия','yulia'],['София','sofia'],['Екатерина','katya'],['Анастасия','nastya'],['Марина','marina'],['Ксения','ksenia'],['Диана','diana'],['Наталья','natasha'],['Татьяна','tanya'],['Ирина','ira'],['Алёна','alena'],['Милана','milana'],['Есения','esenia']]
+  const LAST_M=['Ковалёв','Петров','Волков','Козлов','Ткач','Савчук','Рудой','Шевчук','Симонов','Костюк','Шевцов','Возняк','Юрчик','Дубровский','Матвеев','Крук','Мороз','Гусь','Новик','Лис','Стрельцов','Орлов','Соколов','Царик']
+  const LAST_F=['Сидорова','Морозова','Новик','Гусь','Дуб','Гриб','Бондарь','Марчук','Панасюк','Ковальчук','Романюк','Зайцева','Стрельцова','Орлова','Громова','Соколова','Крук','Юрчик','Дубровская','Матвеева','Лис','Царик','Волкова','Петрова']
+  const retailPerson=idx=>{
+    const male=idx%2===0
+    const fi=male?FIRST_M[idx%FIRST_M.length]:FIRST_F[idx%FIRST_F.length]
+    const la=male?LAST_M[Math.floor(idx/3)%LAST_M.length]:LAST_F[Math.floor(idx/3)%LAST_F.length]
+    return{name:fi[0]+' '+la,translit:fi[1],male}
+  }
+  const phoneFor=idx=>{const codes=['29','44','33','25'];return'+375'+codes[idx%4]+String(1000000+(idx*137)%8999999).padStart(7,'0')}
+  const RETAIL_QTY=[1,1,1,2,1,2,1,3,1,2,1,1,2,4,1]
+  const OPT_QTY=[20,26,32,38,24,30,35,22]
+  const OPT_NAMES=['Магазин «Стритформ»','ИП Ковалёва — шоу-рум','Реселлер Rustavi Wear','Магазин «Кэпворлд»','ИП Бондарь Т.','Шоурум «На Немиге»','Реселлер @dragon_resell','Магазин «Хайп Хаус»','ИП Симонов А.','Шоурум Гомель','Магазин «Дрип Пойнт»','Реселлер @capsbrest','Опт-клиент — Витебск','Магазин «Улица»','ИП Дубровская']
+  const PIDS=Object.keys(P)
+  const RETAIL_STATUS_OLD=['📦 Доставлен','📦 Доставлен','📦 Доставлен','📦 Доставлен','📦 Доставлен','📦 Доставлен','❌ Отменён','📦 Доставлен','📦 Доставлен','📦 Доставлен','🚚 Отправлен','📦 Доставлен']
+  const RETAIL_STATUS_TODAY=['🆕 Новая','📞 Связались','✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен','💳 Оплачен','📦 Доставлен','🚚 Отправлен','✅ Подтверждён','📦 Доставлен','🆕 Новая']
+  const extraFor=st=>st==='📞 Связались'?['📞 Связались']:st==='✅ Подтверждён'?['📞 Связались','✅ Подтверждён']:st==='💳 Оплачен'?['📞 Связались','✅ Подтверждён','💳 Оплачен']:st==='🚚 Отправлен'?['✅ Подтверждён','💳 Оплачен','🚚 Отправлен']:st==='📦 Доставлен'?['✅ Подтверждён','💳 Оплачен','🚚 Отправлен','📦 Доставлен']:st==='❌ Отменён'?['📞 Связались','❌ Отменён']:null
+
+  const orders=[]
+  const LOYAL_POOL=120 // фиксированный пул → часть заказов возвращается к тем же людям (повторные клиенты)
+  for(let k=29;k>=0;k--){
+    const retailN=22+(k*3)%7, optN=4+(k%3===0?1:0)
+    for(let i=0;i<retailN;i++){
+      const slot=k*37+i
+      const personIdx=(slot%5)<3?(slot%LOYAL_POOL):(1000+slot)
+      const person=retailPerson(personIdx)
+      const pid=PIDS[(k*11+i*7)%PIDS.length]
+      const qty=RETAIL_QTY[(k*3+i*5)%RETAIL_QTY.length]
+      const st=k===0?RETAIL_STATUS_TODAY[i%RETAIL_STATUS_TODAY.length]:k===1?(i%6===0?'🚚 Отправлен':'📦 Доставлен'):RETAIL_STATUS_OLD[(k+i)%RETAIL_STATUS_OLD.length]
+      const tg=(personIdx%3===(person.male?0:1))?'@'+person.translit+'_'+(personIdx%97):''
+      orders.push(O(k,st,person.name,phoneFor(personIdx),tg,CITIES[(k+i)%CITIES.length],pid,SOURCES_C[(k+i)%SOURCES_C.length],DLV_C[(k+i*2)%DLV_C.length],i%5===0,'',extraFor(st),qty))
+    }
+    for(let j=0;j<optN;j++){
+      const oi=(k+j*7)%OPT_NAMES.length
+      const pid=PIDS[(k*5+j*9)%PIDS.length]
+      const qty=OPT_QTY[(k+j*3)%OPT_QTY.length]
+      const st=(k===0&&j===0)?'💳 Оплачен':'📦 Доставлен'
+      orders.push(O(k,st,OPT_NAMES[oi],phoneFor(900+oi),'',CITIES[oi%CITIES.length],pid,'Сарафан','СДЭК',false,'Опт-заказ',extraFor(st),qty))
+    }
+  }
+  // Расходы размазаны по всем 30 дням (не свалены в последнюю неделю) — иначе
+  // «Месяц»/«Неделя» в Финансах считают полный месячный опекс против частичной
+  // выручки за период и P&L уходит в минус, хотя бизнес прибыльный.
+  // isoExp — фиксированный офсет (не общий seq с заявками): seq к моменту генерации
+  // расходов уже за 800+, и iso(k) увёл бы created_at «сегодняшних» расходов за
+  // полночь в предыдущие сутки — вкладка «День» в Финансах показывала бы 0 расходов.
+  const isoExp=(k,h)=>new Date(now-k*DAY-(h||12)*3600000).toISOString()
+  const expenses=[]
+  for(let k=29;k>=0;k--){
+    expenses.push({id:'exp-ad'+k,category:'Реклама',amount:1150+((k*13)%9)*60,note:'TikTok/Instagram Ads',date:d(k),created_at:isoExp(k,9)})
+    expenses.push({id:'exp-log'+k,category:'Логистика',amount:520+((k*7)%5)*40,note:'СДЭК/Европочта за день',date:d(k),created_at:isoExp(k,14)})
+    if(k%5===2)expenses.push({id:'exp-stock'+k,category:'Закупка товара',amount:7200+((k*3)%4)*900,note:'Пополнение склада',date:d(k),created_at:isoExp(k,11)})
+    if(k%2===0)expenses.push({id:'exp-pack'+k,category:'Упаковка',amount:270+(k%3)*60,note:'Коробки, плёнка, стикеры',date:d(k),created_at:isoExp(k,16)})
+    if(k%3===0)expenses.push({id:'exp-sal'+k,category:'Зарплата',amount:900+(k%2)*200,note:'Алексей + помощник склад',date:d(k),created_at:isoExp(k,18)})
+  }
   const stock=[
-    {product_id:'cap-blk-wht',quantity:14},{product_id:'cap-blk-red',quantity:9},{product_id:'cap-red-wht',quantity:11},
-    {product_id:'cap2-wht',quantity:7},{product_id:'cap2-blk-wht',quantity:12},{product_id:'cap2-blk-grn',quantity:6},
-    {product_id:'cap2-camo',quantity:2},
-    {product_id:'sh-blk-xs',quantity:5},{product_id:'sh-blk-s',quantity:1},{product_id:'sh-blk-m',quantity:8},{product_id:'sh-blk-l',quantity:4},
-    {product_id:'sh-gry-xs',quantity:6},{product_id:'sh-gry-s',quantity:3},{product_id:'sh-gry-m',quantity:7},{product_id:'sh-gry-l',quantity:5},
+    {product_id:'cap-blk-wht',quantity:38},{product_id:'cap-blk-red',quantity:24},{product_id:'cap-red-wht',quantity:31},
+    {product_id:'cap2-wht',quantity:19},{product_id:'cap2-blk-wht',quantity:42},{product_id:'cap2-blk-grn',quantity:16},
+    {product_id:'cap2-camo',quantity:3},
+    {product_id:'sh-blk-xs',quantity:12},{product_id:'sh-blk-s',quantity:2},{product_id:'sh-blk-m',quantity:27},{product_id:'sh-blk-l',quantity:18},
+    {product_id:'sh-gry-xs',quantity:14},{product_id:'sh-gry-s',quantity:9},{product_id:'sh-gry-m',quantity:23},{product_id:'sh-gry-l',quantity:15},
+    {product_id:'hd-blk-m',quantity:11},{product_id:'hd-blk-l',quantity:7},{product_id:'hd-gry-m',quantity:1},
+    {product_id:'jk-blk-m',quantity:6},{product_id:'jk-blk-l',quantity:2},
   ]
   const notifications=[
-    {id:'ntf-1',title:'Новая заявка',body:'Артём Ковалёв · Камуфляж',order_id:'',time:'10:15',read:false,created_at:iso(0)},
-    {id:'ntf-2',title:'Новая заявка',body:'Дарья Сидорова · Чёрные M',order_id:'',time:'11:02',read:false,created_at:iso(0)},
-    {id:'ntf-3',title:'Заказ отправлен',body:'Игорь Козлов · СДЭК',order_id:'',time:'16:40',read:true,created_at:iso(2)},
+    {id:'ntf-1',title:'Новая заявка',body:'Кепка Dragon v2 · Камуфляж · Минск',order_id:'',time:'10:15',read:false,created_at:iso(0)},
+    {id:'ntf-2',title:'Новая заявка',body:'Шорты Dragon · Чёрные M · Гомель',order_id:'',time:'11:02',read:false,created_at:iso(0)},
+    {id:'ntf-3',title:'Опт-заказ оплачен',body:'Магазин «Стритформ» · 20 шт',order_id:'',time:'16:40',read:true,created_at:iso(2)},
   ]
   return{orders,expenses,stock,notifications,settings:[]}
 }
@@ -1568,7 +1598,11 @@ async function renderInventory(){
       <div style="font-size:13px;font-weight:700;margin-bottom:8px">🧢 Кепки Dragon</div>
       <div class="stock-grid" style="margin-bottom:16px">${PRODUCTS.filter(p=>p.name.includes('Кепка')).map(scCard).join('')}</div>
       <div style="font-size:13px;font-weight:700;margin-bottom:8px">👕 Шорты Dragon</div>
-      <div class="stock-grid">${PRODUCTS.filter(p=>p.name.includes('Шорты')).map(scCard).join('')}</div>
+      <div class="stock-grid" style="margin-bottom:16px">${PRODUCTS.filter(p=>p.name.includes('Шорты')).map(scCard).join('')}</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">🧥 Худи Dragon</div>
+      <div class="stock-grid" style="margin-bottom:16px">${PRODUCTS.filter(p=>p.name.includes('Худи')).map(scCard).join('')}</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">🧥 Куртки Dragon</div>
+      <div class="stock-grid">${PRODUCTS.filter(p=>p.name.includes('Куртка')).map(scCard).join('')}</div>
     </div>`
 }
 async function chgStock(pid,delta,cur){await setStock(pid,Math.max(0,(cur||0)+delta));renderInventory()}
