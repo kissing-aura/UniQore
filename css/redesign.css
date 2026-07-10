@@ -407,9 +407,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 .morph-cap b { display: block; font-family: var(--font-display); font-size: clamp(30px, 4.4vw, 56px); font-weight: 800; letter-spacing: -.02em; margin-top: 6px; color: var(--color-text-primary); }
 .morph-cap b em { color: var(--color-accent); font-style: normal; }
 .morph-cap small { display: block; margin-top: 8px; color: var(--color-text-secondary); font-size: 14px; font-family: var(--font-body); }
-/* мобилка / постер-режим: секция короткая, без пина */
+/* мобилка / постер-режим: секция короткая, без пина; content-visibility —
+   не участвует в layout/paint, пока юзер не доскроллил */
 @media (max-width: 899px) {
-  .morph-stage { height: auto; padding: 72px 0; }
+  .morph-stage { height: auto; padding: 72px 0; content-visibility: auto; contain-intrinsic-size: auto 560px; }
   .morph-pin { height: auto; min-height: 420px; flex-direction: column; align-items: center; gap: 20px; }
   #morph-canvas { display: none; }
   .morph-poster { display: flex; position: relative; inset: auto; min-height: 260px; width: 100%; }
