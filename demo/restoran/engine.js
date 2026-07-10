@@ -1158,7 +1158,7 @@ function viewMenuMatrix() {
   const sx = q => PAD.l + (q / maxQ) * (W - PAD.l - PAD.r);
   const sy = m => PAD.t + (1 - m / maxM) * (H - PAD.t - PAD.b);
   const axQ = sx(avgQty), axM = sy(avgMargin);
-  const dots = rows.map(d => `<circle cx="${sx(Number(d.qty) || 0).toFixed(1)}" cy="${sy(Number(d.margin) || 0).toFixed(1)}" r="7" fill="${QUAD[d.q].color}" fill-opacity="0.88" stroke="var(--surface)" stroke-width="2"><title>${esc(d.name)} · спрос ${d.qty} порц. · маржа ${fmtMoney(d.margin)}</title></circle>`).join('');
+  const dots = rows.map(d => `<circle class="mm-dot" data-dish="${d.id}" cx="${sx(Number(d.qty) || 0).toFixed(1)}" cy="${sy(Number(d.margin) || 0).toFixed(1)}" r="7" fill="${QUAD[d.q].color}" fill-opacity="0.88" stroke="var(--surface)" stroke-width="2"><title>${esc(d.name)} · спрос ${d.qty} порц. · маржа ${fmtMoney(d.margin)}</title></circle>`).join('');
   const svg = `<svg class="mm-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Матрица меню: спрос к марже">
     <line x1="${axQ.toFixed(1)}" y1="${PAD.t}" x2="${axQ.toFixed(1)}" y2="${H - PAD.b}" class="mm-axis"/>
     <line x1="${PAD.l}" y1="${axM.toFixed(1)}" x2="${W - PAD.r}" y2="${axM.toFixed(1)}" class="mm-axis"/>
@@ -1182,7 +1182,7 @@ function viewMenuMatrix() {
       <div class="mm-group__h" style="--kc:${QUAD[k].color}"><span class="mm-group__dot"></span>${esc(QUAD[k].label)}<span class="kb-col__n">${items.length}</span></div>
       <p class="mm-group__advice">${esc(QUAD[k].advice)}</p>
       <div class="mm-group__list">
-        ${items.map(d => `<div class="mm-row"><span class="mm-row__name">${esc(d.name)}</span><span class="mm-row__meta">${d.qty} порц/смену · маржа ${fmtMoney(d.margin)}</span></div>`).join('')}
+        ${items.map(d => `<div class="mm-row" data-dish="${d.id}"><span class="mm-row__name">${esc(d.name)}</span><span class="mm-row__meta">${d.qty} порц/смену · маржа ${fmtMoney(d.margin)}</span></div>`).join('')}
       </div>
     </div>`;
   }).join('');
@@ -1197,6 +1197,7 @@ function viewMenuMatrix() {
       ${horses.length ? `<div class="mm-insight"><span class="mm-insight__ic">${icon('bolt')}</span><div><b>Точка роста.</b> ${horses.length} «рабочих лошадки» (${esc(horses.map(d => d.name).join(', '))}) — спрос высокий, маржа ниже средней. Поднять цену на 5% → <b>+${fmtMoney(opportunity)}/смену</b> без риска потерять заказы.</div></div>` : ''}
       <div class="mm-groups">${groups}</div>
     </div>`;
+  document.querySelectorAll('.mm-dot[data-dish], .mm-row[data-dish]').forEach(el => el.onclick = () => openDetail('dish', el.dataset.dish));
 }
 
 /* ── helpers ── */
