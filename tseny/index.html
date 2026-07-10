@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="description" content="Цены Uniqore: CRM и автоматизация под ключ от $1200 за систему (50% старт / 50% при сдаче) + $150/мес поддержка. Фиксированная цена в договоре, оплата после ТЗ.">
-  <meta name="keywords" content="цена разработки CRM, сколько стоит CRM под ключ, стоимость автоматизации бизнеса">
+  <meta name="description" content="Цены Uniqore: сайт под ключ от $150, полная система (сайт+CRM+боты+учёт) от $1200, AI-таргетолог от $200/мес. Фиксированная цена в договоре, оплата после ТЗ.">
+  <meta name="keywords" content="цена сайта под ключ, стоимость CRM под ключ, цена настройки рекламы, стоимость автоматизации бизнеса">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="Цены — CRM под ключ от $1200 | Uniqore">
   <meta property="og:description" content="Фиксированная цена в договоре, без подписок Bitrix. Оплата только после утверждения ТЗ.">
@@ -59,6 +59,23 @@
     .page-hero h1 em { font-style: normal; color: var(--color-accent); }
     .page-hero__sub { margin: 26px auto 0; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.7; color: var(--color-text-secondary); max-width: 54ch; }
     .pricing { padding-top: 30px; }
+    .pkg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+    .pkg { position: relative; display: flex; flex-direction: column; padding: 34px 28px; border-radius: 20px; border: 1px solid var(--color-border, rgba(255,255,255,.09)); background: var(--color-surface-2, rgba(255,255,255,.02)); transition: transform .35s cubic-bezier(.16,1,.3,1), border-color .35s; }
+    .pkg:hover { transform: translateY(-6px); border-color: rgba(245,197,24,.32); }
+    .pkg--flag { border-color: rgba(245,197,24,.3); background: linear-gradient(155deg, rgba(245,197,24,.09), rgba(255,255,255,.01) 62%); }
+    .pkg__badge { position: absolute; top: -11px; left: 28px; font-family: var(--font-mono, monospace); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: #0A0A0A; background: var(--color-accent); padding: 5px 12px; border-radius: 999px; }
+    .pkg__name { font-family: 'Unbounded', var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
+    .pkg__tag { margin-top: 8px; color: var(--color-text-secondary); font-size: 14.5px; line-height: 1.55; min-height: 44px; }
+    .pkg__price { margin-top: 20px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .pkg__price-val { font-family: 'Unbounded', var(--font-display); font-weight: 800; font-size: 38px; letter-spacing: -.02em; color: var(--color-accent); }
+    .pkg__price-per { font-size: 13.5px; color: var(--color-text-muted, #8a8f98); }
+    .pkg__list { list-style: none; margin: 22px 0 0; padding: 22px 0 0; border-top: 1px solid rgba(255,255,255,.07); display: flex; flex-direction: column; gap: 11px; }
+    .pkg__list li { position: relative; padding-left: 26px; font-size: 14.5px; line-height: 1.5; color: var(--color-text-secondary); }
+    .pkg__list li::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--color-accent); font-weight: 700; }
+    .pkg__cta { margin-top: 26px; }
+    .pkg__cta .btn { width: 100%; }
+    .pricing__legal { text-align: center; margin: 34px auto 0; max-width: 62ch; color: var(--color-text-muted, #8a8f98); font-size: 14px; line-height: 1.7; }
+    @media (max-width: 900px) { .pkg-grid { grid-template-columns: 1fr; } .pkg--flag { order: -1; } }
     .cta-band { padding: 118px 0; text-align: center; position: relative; overflow: hidden; }
     .cta-band__aurora { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(52% 62% at 50% 122%, rgba(245,197,24,0.11), transparent 62%); }
     .cta-band__inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
@@ -139,47 +156,71 @@
       <div class="page-hero__aurora" aria-hidden="true"></div>
       <div class="container">
         <div class="section-label">Цены</div>
-        <h1 class="fx-scatter">Прозрачные цены, <em>без сюрпризов</em></h1>
-        <p class="page-hero__sub">Фиксируем стоимость в договоре до старта. Оплата только после утверждения ТЗ. Никаких ежемесячных лицензий на чужие платформы.</p>
+        <h1 class="fx-scatter">Три услуги, <em>прозрачные цены</em></h1>
+        <p class="page-hero__sub">Берите одну услугу или всё под ключ. Стоимость фиксируем в договоре до старта — оплата только после утверждения ТЗ. Никаких ежемесячных лицензий на чужие платформы.</p>
       </div>
     </section>
 
     <!-- PRICING -->
     <section class="pricing" id="pricing">
       <div class="container">
-        <div class="pricing__card" data-reveal>
-          <div class="pricing__left">
-            <h3>Полная система под ключ</h3>
-            <p>Сайт + CRM + складской учёт + боты на любой платформе + аналитика.<br>
-            Разработка за 4–6 дней. Поддержка и хостинг включены.</p>
-            <ul class="pricing__includes">
-              <li>✓ Анализ бизнеса и ТЗ</li>
-              <li>✓ Кастомная разработка с нуля</li>
-              <li>✓ Развёртывание и хостинг на наших серверах</li>
-              <li>✓ Обучение команды</li>
-              <li>✓ Поддержка и развитие по подписке</li>
-              <li>✓ Документация на систему</li>
-            </ul>
-            <p class="pricing__team-note">Это полноценная студия: офис, большая команда, менеджеры и инфраструктура. Мы берём на себя весь цикл — стратегию, разработку, запуск и постоянное развитие вашей системы.</p>
-          </div>
-          <div class="pricing__right">
-            <div class="pricing__price-block">
-              <div class="pricing__price">
-                <span class="pricing__price-val">от $1200</span>
-                <span class="pricing__price-period">за систему · 50% старт / 50% при сдаче</span>
-              </div>
-              <div class="pricing__price">
-                <span class="pricing__price-val">$150</span>
-                <span class="pricing__price-period">в месяц · подписка на пользование и поддержку</span>
-              </div>
+        <div class="pkg-grid">
+
+          <article class="pkg" data-reveal>
+            <h3 class="pkg__name">Сайты</h3>
+            <p class="pkg__tag">Лендинг или многостраничник под ключ — под ваш бренд, с заявками сразу к вам.</p>
+            <div class="pkg__price">
+              <span class="pkg__price-val">от $150</span>
+              <span class="pkg__price-per">за проект</span>
             </div>
-            <a href="/#contact" class="btn btn--accent btn--lg btn--full">Обсудить проект</a>
-            <p class="pricing__note">
-              Начинаем с бесплатного аудита.<br>
-              Оплата только после утверждения ТЗ.
-            </p>
-          </div>
+            <ul class="pkg__list">
+              <li>Индивидуальный дизайн под ваш бренд</li>
+              <li>Мобильная версия и быстрая загрузка</li>
+              <li>Формы заявок сразу в Telegram / CRM</li>
+              <li>SEO-база, чтобы находили в поиске</li>
+              <li>Домен, хостинг и запуск на нас</li>
+            </ul>
+            <div class="pkg__cta"><a href="/sayty/" class="btn btn--ghost btn--lg">Подробнее о сайтах →</a></div>
+          </article>
+
+          <article class="pkg pkg--flag" data-reveal data-reveal-delay="1">
+            <span class="pkg__badge">Всё под ключ</span>
+            <h3 class="pkg__name">Система под ключ</h3>
+            <p class="pkg__tag">Сайт + CRM + боты + складской учёт + реклама — единая система под ваш бизнес.</p>
+            <div class="pkg__price">
+              <span class="pkg__price-val">от $1200</span>
+              <span class="pkg__price-per">50% старт / 50% при сдаче<br>+ $150/мес · хостинг и поддержка</span>
+            </div>
+            <ul class="pkg__list">
+              <li>Всё из «Сайтов» и «AI-таргетолога»</li>
+              <li>CRM с нуля под ваши процессы</li>
+              <li>Боты и автоматизация рутины</li>
+              <li>Складской учёт и аналитика</li>
+              <li>Обучение команды и документация</li>
+              <li>Развитие и правки в подписке</li>
+            </ul>
+            <div class="pkg__cta"><a href="/sistema/" class="btn btn--accent btn--lg">Подробнее о системе →</a></div>
+          </article>
+
+          <article class="pkg" data-reveal data-reveal-delay="2">
+            <h3 class="pkg__name">AI-таргетолог</h3>
+            <p class="pkg__tag">Настройка и ведение рекламы, чтобы заявки шли стабильно, а не наугад.</p>
+            <div class="pkg__price">
+              <span class="pkg__price-val">от $200</span>
+              <span class="pkg__price-per">в месяц · ведение</span>
+            </div>
+            <ul class="pkg__list">
+              <li>Настройка рекламных кабинетов</li>
+              <li>Креативы и тексты под аудиторию</li>
+              <li>Ведение и оптимизация кампаний</li>
+              <li>Понятные отчёты по заявкам</li>
+              <li>Работаем по факту, без обещаний «х10»</li>
+            </ul>
+            <div class="pkg__cta"><a href="/ai-targetolog/" class="btn btn--ghost btn--lg">Подробнее о рекламе →</a></div>
+          </article>
+
         </div>
+        <p class="pricing__legal">Итоговая цена зависит от объёма и фиксируется в ТЗ до старта. Начинаем с бесплатного аудита — платите только после того, как согласовали, что именно получите.</p>
       </div>
     </section>
 
@@ -263,7 +304,7 @@
           <div class="faq__list" data-reveal>
             <div class="faq-item">
               <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-1"><span>Из чего складывается цена?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
-              <div class="faq-item__a" id="faq-a-1" hidden><p>От $1200 единоразово за разработку (50% на старте, 50% при сдаче) плюс $150/мес — подписка: хостинг, поддержка и текущие правки. Итоговая цена зависит от объёма функций и фиксируется в ТЗ до старта. Масштабные проекты считаем индивидуально.</p></div>
+              <div class="faq-item__a" id="faq-a-1" hidden><p>Зависит от услуги. Сайт — от $150 за проект. AI-таргетолог — от $200/мес за ведение рекламы. Полная система (сайт + CRM + боты + учёт) — от $1200 единоразово (50% на старте, 50% при сдаче) плюс $150/мес: хостинг, поддержка и правки. Итог фиксируется в ТЗ до старта, масштабные проекты считаем индивидуально.</p></div>
             </div>
             <div class="faq-item">
               <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-2"><span>Почему фиксированная цена, а не почасовая?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
