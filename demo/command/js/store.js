@@ -605,6 +605,7 @@
     projects(){ return S.projects; },
     projectStats(){ const p=S.projects; const active=p.filter(x=>x.status==='active'); return { active:active.length, done:p.filter(x=>x.status==='done').length, overdue:active.filter(x=>x.deadline&&new Date(x.deadline)<Date.now()).length, profit:p.reduce((a,x)=>a+(x.price-x.cost),0), value:active.reduce((a,x)=>a+x.price,0) }; },
     moveProjectStage(){},
+    bumpProjectProgress(id){ const p=S.projects.find(x=>x.id===id); if(!p||p.status==='done') return; p.progress=Math.min(100,p.progress+10); if(p.progress>=100){ p.status='done'; p.stage='Запущен'; } save(); },
 
     /* — отделы — */
     departments(){

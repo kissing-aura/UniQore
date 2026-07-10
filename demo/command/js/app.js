@@ -981,7 +981,7 @@
     const payroll=es.reduce((a,x)=>a+x.salary+x.bonus,0);
     const fines=es.reduce((a,x)=>a+UQ.finesFor(x.id),0);
     const avgKpi=es.length?Math.round(es.reduce((a,x)=>a+x.kpi,0)/es.length):0;
-    return `${topbar(isHead?'Моя команда':'Сотрудники', isHead?'Люди под твоим руководством · KPI, план дня, дисциплина':'Команда · KPI, план дня, выплаты, штрафы', isHead?'':`<button class="btn btn--primary btn--sm" data-toast="Найм — скоро">${ic('plus')} Нанять</button>`)}
+    return `${topbar(isHead?'Моя команда':'Сотрудники', isHead?'Люди под твоим руководством · KPI, план дня, дисциплина':'Команда · KPI, план дня, выплаты, штрафы', isHead?'':`<button class="btn btn--primary btn--sm" data-invite>${ic('plus')} Нанять</button>`)}
       <div class="kpirow">
         <div class="card kpi kpi--hero"><div class="eyebrow">В команде</div><div class="kpi__val">${es.length}</div><div class="kpi__sub">${isHead?'твоих людей':st.probation+' на испытательном'}</div></div>
         <div class="card kpi"><div class="eyebrow">Фонд оплаты</div><div class="kpi__val">${usd(payroll)}</div><div class="kpi__sub">оклад + бонусы</div></div>
@@ -1003,35 +1003,49 @@
   }
 
   /* ════════════════════════ БАЗА ЗНАНИЙ ═════════════════════════════════ */
+  let kbFilter='all';
   function vKnowledge(){
-    const items=UQ.knowledge(), cats=UQ.knowledgeCats();
+    const all=UQ.knowledge(), cats=UQ.knowledgeCats();
+    const items=kbFilter==='all'?all:all.filter(k=>k.cat===kbFilter);
     return `${topbar('База знаний','Регламенты, скрипты, инструкции — внутренний Notion', `<button class="btn btn--primary btn--sm" data-toast="Редактор — скоро">${ic('plus')} Статья</button>`)}
       <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:var(--gap)">
-        <span class="chip on">Все <small>${items.length}</small></span>
-        ${cats.map(c=>`<span class="chip" data-toast="${esc(c.cat)}">${esc(c.cat)} <small>${c.n}</small></span>`).join('')}
+        <span class="chip ${kbFilter==='all'?'on':''}" data-kbfilter="all">Все <small>${all.length}</small></span>
+        ${cats.map(c=>`<span class="chip ${kbFilter===c.cat?'on':''}" data-kbfilter="${esc(c.cat)}">${esc(c.cat)} <small>${c.n}</small></span>`).join('')}
       </div>
       <div class="three">
-        ${items.map(k=>`<div class="card card--pad card--hover kb" data-toast="Открываю: ${esc(k.title)}">
+        ${items.map(k=>`<div class="card card--pad card--hover kb" data-article="${k.id}">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">${pill(k.cat,'acc')}${k.pinned?`<span style="color:var(--warn)">${ic('trophy')}</span>`:''}</div>
           <h3 style="font-family:var(--font-head);font-size:15.5px;font-weight:600;margin-bottom:9px;line-height:1.35">${esc(k.title)}</h3>
           <p style="color:var(--text-3);font-size:12.5px;line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${esc(k.body)}</p>
           <div style="margin-top:16px;color:var(--text-4);font-size:11.5px">обновлено ${UQ.fmtDay(k.updated)}</div>
-        </div>`).join('')}
+        </div>`).join('')||`<div class="empty" style="grid-column:1/-1"><h4>Пусто в этой категории</h4><p>Пока нет статей — переключись на «Все»</p></div>`}
       </div>`;
+  }
+  function openArticle(id){
+    const k=UQ.knowledge().find(x=>x.id===id); if(!k) return;
+    let scrim=$('#scrim'); if(!scrim){ scrim=document.createElement('div'); scrim.id='scrim'; scrim.className='scrim'; document.body.appendChild(scrim); }
+    scrim.innerHTML=`<div class="modal" data-modal style="max-width:560px">
+      <div class="modal__head"><span class="brand__mark" style="width:44px;height:44px">${ic('book')}</span>
+        <div><h3>${esc(k.title)}</h3><p>${pill(k.cat,'acc')} <span style="color:var(--text-4);font-size:12px">обновлено ${UQ.fmtDay(k.updated)}</span></p></div>
+        <button class="modal__x" data-close>${ic('x')}</button></div>
+      <div class="modal__body"><p style="font-size:13.5px;line-height:1.75;color:var(--text-2);white-space:pre-wrap">${esc(k.body)}</p></div>
+      <div class="modal__foot"><button class="btn btn--primary btn--block" data-close>Понятно</button></div>
+    </div>`;
   }
 
   /* ════════════════════════ АВТОМАТИЗАЦИЯ ═══════════════════════════════ */
+  const AUTOM_FLOWS=[
+    {name:'Оплата → запуск проекта',trigger:'Сделка оплачена',steps:['Создать проект','Назначить сборщика','Создать задачи','Уведомить клиента','Выставить счёт'],on:true},
+    {name:'Новый лид → приветствие',trigger:'Лид добавлен',steps:['Отправить в WhatsApp','Назначить менеджера','Задача «позвонить»'],on:true},
+    {name:'Сделка застряла → напоминание',trigger:'Нет активности 3 дня',steps:['Уведомить менеджера','Поднять в топ'],on:true},
+    {name:'Клиент не платит → эскалация',trigger:'Просрочка абонплаты 7 дней',steps:['Уведомить владельца','Пометить риск','Задача поддержке'],on:false},
+  ];
   function vAutomation(){
-    const flows=[
-      {name:'Оплата → запуск проекта',trigger:'Сделка оплачена',steps:['Создать проект','Назначить сборщика','Создать задачи','Уведомить клиента','Выставить счёт'],on:true},
-      {name:'Новый лид → приветствие',trigger:'Лид добавлен',steps:['Отправить в WhatsApp','Назначить менеджера','Задача «позвонить»'],on:true},
-      {name:'Сделка застряла → напоминание',trigger:'Нет активности 3 дня',steps:['Уведомить менеджера','Поднять в топ'],on:true},
-      {name:'Клиент не платит → эскалация',trigger:'Просрочка абонплаты 7 дней',steps:['Уведомить владельца','Пометить риск','Задача поддержке'],on:false},
-    ];
+    const flows=AUTOM_FLOWS;
     return `${topbar('Автоматизация','ЕСЛИ → ТО · процессы без кода', `<button class="btn btn--primary btn--sm" data-toast="Конструктор — скоро">${ic('plus')} Сценарий</button>`)}
       <div class="grid" style="gap:14px">
-        ${flows.map(f=>`<div class="card card--pad">
-          <div style="display:flex;align-items:center;gap:13px;margin-bottom:18px"><div class="flow__ic">${ic('flow')}</div><div style="flex:1"><b style="font-size:15px;font-family:var(--font-head)">${esc(f.name)}</b><div style="color:var(--text-3);font-size:12px;margin-top:2px">Триггер: ${esc(f.trigger)}</div></div><span class="toggle ${f.on?'on':''}" data-toast="Переключатель сценария"><i></i></span></div>
+        ${flows.map((f,i)=>`<div class="card card--pad">
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:18px"><div class="flow__ic">${ic('flow')}</div><div style="flex:1"><b style="font-size:15px;font-family:var(--font-head)">${esc(f.name)}</b><div style="color:var(--text-3);font-size:12px;margin-top:2px">Триггер: ${esc(f.trigger)}</div></div><span class="toggle ${f.on?'on':''}" data-automtoggle="${i}"><i></i></span></div>
           <div class="board-scroll"><div class="flow__chain">
             <span class="flow__node flow__node--trig">${ic('bolt')} ${esc(f.trigger)}</span>
             ${f.steps.map(s=>`<span class="flow__arrow">${ic('arrow')}</span><span class="flow__node">${esc(s)}</span>`).join('')}
@@ -1330,7 +1344,7 @@
         <div><div class="dsec__t">${ic('layers')} Проекты (${rel.projects.length})</div>${rel.projects.length?rel.projects.map(p=>`<div class="mini-item" data-open="project:${p.id}"><div class="pal__i__ic">${ic('layers')}</div><div class="mini-item__b"><b>${esc(p.name)}</b><small>${esc(p.stage)} · ${p.progress}%</small></div><span class="mini-item__v">${p.status==='done'?'готов':'в работе'}</span></div>`).join(''):`<div style="color:var(--text-4);font-size:13px">Нет проектов</div>`}</div>
         <div><div class="dsec__t">${ic('cal')} Активность</div><div class="timeline"><div class="tl-item"><div class="tl-item__ic" style="color:var(--good)">${ic('check')}</div><div class="tl-item__b"><h5>CRM запущена</h5><p>${c.deploy!=='—'?esc(c.deploy):'в процессе'}</p></div><div class="tl-item__t">${days}д</div></div><div class="tl-item"><div class="tl-item__ic" style="color:var(--acc-2)">${ic('doc')}</div><div class="tl-item__b"><h5>Договор · оплата ${usd(c.value)}</h5><p>${esc(c.manager.split(' ')[0])}</p></div><div class="tl-item__t">${days+1}д</div></div></div></div>
       </div>
-      <div class="drawer__foot"><button class="btn btn--ghost" data-dclose>Закрыть</button><button class="btn btn--primary btn--block" data-toast="Связаться с клиентом — скоро">${ic('phone')} Связаться</button></div>`;
+      <div class="drawer__foot"><button class="btn btn--ghost btn--block" data-dclose>Закрыть</button></div>`;
   }
   function dayPlanHtml(e){
     const p=UQ.dayPlanFor(e);
@@ -1379,7 +1393,7 @@
         <div><div class="dsec__t">${ic('cal')} Дедлайн</div><div class="drow"><small>Срок сдачи</small><span style="font-weight:600;color:${over?'var(--bad)':'var(--text)'}">${over?'просрочен · '+UQ.fmtDay(p.deadline):UQ.fmtDay(p.deadline)}</span></div></div>
         <div><div class="dsec__t">${ic('doc')} Обсуждение</div><div class="drow"><small>Комментарии команды</small><span>${p.comments||0}</span></div></div>
       </div>
-      <div class="drawer__foot"><button class="btn btn--ghost" data-dclose>Закрыть</button><button class="btn btn--primary btn--block" data-toast="Детали проекта — скоро">${ic('layers')} Открыть проект</button></div>`;
+      <div class="drawer__foot"><button class="btn btn--ghost" data-dclose>Закрыть</button>${p.status==='done'?`<button class="btn btn--primary btn--block" disabled>${ic('check')} Запущен</button>`:`<button class="btn btn--good btn--block" data-bumpproj="${p.id}">${ic('bolt')} Продвинуть на 10%</button>`}</div>`;
   }
 
   /* ── command palette ⌘K ─────────────────────────────────────────────── */
@@ -1485,7 +1499,7 @@
 
   /* ── global event delegation ────────────────────────────────────────── */
   document.addEventListener('click',e=>{
-    const t=e.target.closest('[data-nav],[data-role],[data-lead],[data-close],[data-reveal],[data-status],[data-savecall],[data-copy],[data-lfilter],[data-block],[data-pay],[data-assign],[data-assignpreset],[data-addlead],[data-dial],[data-daily],[data-adddaily],[data-addtask],[data-kr],[data-adddone],[data-script],[data-toast],[data-burger],[data-drop],[data-marknotif],[data-notif],[data-open],[data-dclose],[data-move],[data-pal],[data-invite],[data-invite-submit],[data-penalty],[data-pensubmit],[data-delpen],[data-addop],[data-opsubmit],[data-optype],[data-delop],[data-distribute],[data-logout],[data-dialmode],[data-scriptstage],[data-obj]');
+    const t=e.target.closest('[data-nav],[data-role],[data-lead],[data-close],[data-reveal],[data-status],[data-savecall],[data-copy],[data-lfilter],[data-block],[data-pay],[data-assign],[data-assignpreset],[data-addlead],[data-dial],[data-daily],[data-adddaily],[data-addtask],[data-kr],[data-adddone],[data-script],[data-toast],[data-burger],[data-drop],[data-marknotif],[data-notif],[data-open],[data-dclose],[data-move],[data-pal],[data-invite],[data-invite-submit],[data-penalty],[data-pensubmit],[data-delpen],[data-addop],[data-opsubmit],[data-optype],[data-delop],[data-distribute],[data-logout],[data-dialmode],[data-scriptstage],[data-obj],[data-kbfilter],[data-article],[data-automtoggle],[data-bumpproj]');
     if(!t) return;
     const d=t.dataset;
     if(d.nav){ if($('#side').classList) $('#side').classList.remove('open'); route(d.nav); }
@@ -1533,6 +1547,10 @@
     else if(d.pal!==undefined){ openPal(); }
     else if(d.invite!==undefined){ openInvite(); }
     else if(d.inviteSubmit!==undefined){ submitInvite(); }
+    else if(d.kbfilter){ kbFilter=d.kbfilter; rerender(); }
+    else if(d.article){ openArticle(d.article); }
+    else if(d.automtoggle!==undefined){ const f=AUTOM_FLOWS[+d.automtoggle]; if(f){ f.on=!f.on; toast(f.on?'Сценарий включён':'Сценарий выключен'); rerender(); } }
+    else if(d.bumpproj){ UQ.bumpProjectProgress(d.bumpproj); toast('Прогресс обновлён'); openDrawer('project',d.bumpproj); if(view==='projects'||view==='dashboard') rerender(); }
     else if(d.toast){ toast(d.toast); }
   });
 
