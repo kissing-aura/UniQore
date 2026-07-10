@@ -330,7 +330,7 @@ function showView(key) {
   const n = navItem(key), main = document.getElementById('main');
   document.title = (n ? n.label + ' · ' : '') + (R.brand?.name || 'CRM');
   main.innerHTML = `<div class="page-head">${key !== 'hub' ? `<button class="hub-back" data-hub-nav="hub" aria-label="В рабочий стол">${icon('home')}<span>Рабочий стол</span></button>` : ''}<div class="page-title">${esc(n.label)}</div><div class="ph-actions"><button class="hub-search" data-hub-search aria-label="Поиск">${icon('search')}<kbd>⌘K</kbd></button><button class="btn hidden" id="pageAdd"></button></div></div><div id="viewBody"></div>`;
-  const R_ = { dashboard: viewDashboard, records: viewRecords, kanban: viewKanban, payments: viewPayments, tasks: viewTasks, team: viewTeam, analytics: viewAnalytics, finance: viewFinance, goals: viewGoals, docs: viewDocs, calendar: viewCalendar, reference: viewReference, activity: viewActivity, notifications: viewNotifications, automation: viewAutomation, roles: viewRoles, knowledge: viewKnowledge, integrations: viewIntegrations, files: viewFiles, portal: viewPortal, settings: viewSettings, kitchen: viewKitchen, hub: viewHub };
+  const R_ = { dashboard: viewDashboard, records: viewRecords, kanban: viewKanban, payments: viewPayments, tasks: viewTasks, team: viewTeam, analytics: viewAnalytics, finance: viewFinance, goals: viewGoals, docs: viewDocs, calendar: viewCalendar, reference: viewReference, activity: viewActivity, notifications: viewNotifications, automation: viewAutomation, roles: viewRoles, knowledge: viewKnowledge, integrations: viewIntegrations, files: viewFiles, portal: viewPortal, settings: viewSettings, kitchen: viewKitchen, hub: viewHub, menumatrix: viewMenuMatrix };
   try {
     (R_[n.type] || viewRecords)(n);
   } catch (err) {
@@ -1131,6 +1131,74 @@ function viewKitchen() {
     </div>`;
 }
 
+/* ── ИИ-инженерия меню: матрица спрос×маржа (Kasavana & Smith) ── */
+function viewMenuMatrix() {
+  const dishes = DB.recs('dish').filter(d => d.stage !== 'stopped');
+  const avgQty = dishes.length ? dishes.reduce((s, d) => s + (Number(d.qty) || 0), 0) / dishes.length : 0;
+  const avgMargin = dishes.length ? dishes.reduce((s, d) => s + (Number(d.margin) || 0), 0) / dishes.length : 0;
+  const QUAD = {
+    star:   { label: 'Звёзды',          ic: 'spark', color: 'var(--good)', advice: 'Спрос и маржа выше среднего — держать на видном месте, рецептуру не трогать.' },
+    horse:  { label: 'Рабочие лошадки', ic: 'bolt',  color: 'var(--warn)', advice: 'Заказывают часто, маржа ниже средней — поднять цену на 5–8% или удешевить состав, спрос выдержит.' },
+    puzzle: { label: 'Загадки',         ic: 'tag',   color: 'var(--acc)',  advice: 'Маржа выше средней, но заказывают редко — поднять в топ меню и в рекомендации при заказе.' },
+    dog:    { label: 'Собаки',          ic: 'trash', color: 'var(--text3)', advice: 'Спрос и маржа ниже среднего — кандидат на замену или снятие с меню.' },
+  };
+  const classify = d => {
+    const pop = (Number(d.qty) || 0) >= avgQty, prof = (Number(d.margin) || 0) >= avgMargin;
+    return pop && prof ? 'star' : pop && !prof ? 'horse' : !pop && prof ? 'puzzle' : 'dog';
+  };
+  const rows = dishes.map(d => ({ ...d, q: classify(d) })).sort((a, b) => (Number(b.qty) || 0) - (Number(a.qty) || 0));
+  const counts = { star: 0, horse: 0, puzzle: 0, dog: 0 };
+  rows.forEach(d => counts[d.q]++);
+  const horses = rows.filter(d => d.q === 'horse');
+  const opportunity = horses.reduce((s, d) => s + Math.round((Number(d.qty) || 0) * (Number(d.price) || 0) * 0.05), 0);
+
+  const W = 680, H = 380, PAD = { l: 20, r: 20, t: 20, b: 34 };
+  const maxQ = Math.max(...rows.map(d => Number(d.qty) || 0)) * 1.1 || 1;
+  const maxM = Math.max(...rows.map(d => Number(d.margin) || 0)) * 1.1 || 1;
+  const sx = q => PAD.l + (q / maxQ) * (W - PAD.l - PAD.r);
+  const sy = m => PAD.t + (1 - m / maxM) * (H - PAD.t - PAD.b);
+  const axQ = sx(avgQty), axM = sy(avgMargin);
+  const dots = rows.map(d => `<circle cx="${sx(Number(d.qty) || 0).toFixed(1)}" cy="${sy(Number(d.margin) || 0).toFixed(1)}" r="7" fill="${QUAD[d.q].color}" fill-opacity="0.88" stroke="var(--surface)" stroke-width="2"><title>${esc(d.name)} · спрос ${d.qty} порц. · маржа ${fmtMoney(d.margin)}</title></circle>`).join('');
+  const svg = `<svg class="mm-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Матрица меню: спрос к марже">
+    <line x1="${axQ.toFixed(1)}" y1="${PAD.t}" x2="${axQ.toFixed(1)}" y2="${H - PAD.b}" class="mm-axis"/>
+    <line x1="${PAD.l}" y1="${axM.toFixed(1)}" x2="${W - PAD.r}" y2="${axM.toFixed(1)}" class="mm-axis"/>
+    <text x="${W - PAD.r}" y="${H - 12}" class="mm-lbl" text-anchor="end">спрос →</text>
+    <text x="${PAD.l}" y="${PAD.t - 6}" class="mm-lbl">маржа ↑</text>
+    ${dots}
+  </svg>`;
+
+  const strip = [
+    ['star', counts.star, 'звёзды — держим'],
+    ['horse', counts.horse, 'лошадки — точка роста'],
+    ['puzzle', counts.puzzle, 'загадки — продвигаем'],
+    ['dog', counts.dog, 'кандидаты на замену'],
+  ];
+  const stripHtml = strip.map(([k, v, l]) => `<div class="kb-stat"><span class="kb-stat__ic" style="color:${QUAD[k].color}">${icon(QUAD[k].ic)}</span><div><b>${v}</b><small>${esc(l)}</small></div></div>`).join('');
+
+  const groups = Object.keys(QUAD).map(k => {
+    const items = rows.filter(d => d.q === k);
+    if (!items.length) return '';
+    return `<div class="mm-group">
+      <div class="mm-group__h" style="--kc:${QUAD[k].color}"><span class="mm-group__dot"></span>${esc(QUAD[k].label)}<span class="kb-col__n">${items.length}</span></div>
+      <p class="mm-group__advice">${esc(QUAD[k].advice)}</p>
+      <div class="mm-group__list">
+        ${items.map(d => `<div class="mm-row"><span class="mm-row__name">${esc(d.name)}</span><span class="mm-row__meta">${d.qty} порц/смену · маржа ${fmtMoney(d.margin)}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('viewBody').innerHTML = `
+    <div class="mm">
+      <div class="kb-strip">${stripHtml}</div>
+      <div class="mm-chart-card">
+        <div class="mm-chart-head"><h3>${icon('spark')}Матрица меню — спрос × маржа</h3><p>По истории заказов за смену · пунктир — средние по меню</p></div>
+        ${svg}
+      </div>
+      ${horses.length ? `<div class="mm-insight"><span class="mm-insight__ic">${icon('bolt')}</span><div><b>Точка роста.</b> ${horses.length} «рабочих лошадки» (${esc(horses.map(d => d.name).join(', '))}) — спрос высокий, маржа ниже средней. Поднять цену на 5% → <b>+${fmtMoney(opportunity)}/смену</b> без риска потерять заказы.</div></div>` : ''}
+      <div class="mm-groups">${groups}</div>
+    </div>`;
+}
+
 /* ── helpers ── */
 /* ── Attention (дашборд отвечает на вопросы) ── */
 function attentionCards() {
@@ -1503,7 +1571,7 @@ function checkQuota() {
 
 /* ── валидатор рецепта ── */
 function validateRecipe() {
-  const MODULE_TYPES = ['dashboard', 'records', 'kanban', 'payments', 'tasks', 'team', 'analytics', 'finance', 'goals', 'docs', 'calendar', 'reference', 'activity', 'notifications', 'automation', 'roles', 'knowledge', 'integrations', 'files', 'portal', 'settings', 'kitchen', 'hub'];
+  const MODULE_TYPES = ['dashboard', 'records', 'kanban', 'payments', 'tasks', 'team', 'analytics', 'finance', 'goals', 'docs', 'calendar', 'reference', 'activity', 'notifications', 'automation', 'roles', 'knowledge', 'integrations', 'files', 'portal', 'settings', 'kitchen', 'hub', 'menumatrix'];
   const FIELD_TYPES = ['text', 'number', 'money', 'date', 'select', 'textarea', 'computed', 'gallery'];
   const errs = [];
   try {

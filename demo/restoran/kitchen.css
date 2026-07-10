@@ -29,3 +29,31 @@
 .kb-amt { font-family: var(--font-head); font-weight: 700; font-size: 15px; color: var(--text); }
 .kb-courier { font-size: 11px; color: var(--text2); }
 .kb-empty { text-align: center; color: var(--text3); font-size: 12px; padding: 18px 0; }
+
+/* ── ИИ-инженерия меню — матрица спрос×маржа ── */
+.mm { padding: 2px 0 22px; }
+.mm-chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px 10px; box-shadow: var(--shadow-sm); margin-bottom: 18px; }
+.mm-chart-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 8px; }
+.mm-chart-head h3 { display: flex; align-items: center; gap: 8px; font-family: var(--font-head); font-size: 16px; font-weight: 700; color: var(--text); }
+.mm-chart-head h3 .ic { color: var(--acc); }
+.mm-chart-head p { font-size: 12.5px; color: var(--text3); }
+.mm-svg { width: 100%; height: auto; display: block; }
+.mm-axis { stroke: var(--border2); stroke-width: 1.5; stroke-dasharray: 4 5; }
+.mm-lbl { font-size: 11px; fill: var(--text3); }
+
+.mm-insight { display: flex; gap: 13px; align-items: flex-start; background: var(--acc-dim); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px 18px; margin-bottom: 18px; font-size: 13.5px; line-height: 1.55; color: var(--text2); }
+.mm-insight__ic { width: 34px; height: 34px; flex-shrink: 0; display: grid; place-items: center; background: var(--surface); border-radius: 10px; color: var(--acc); }
+.mm-insight b { color: var(--text); }
+
+.mm-groups { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 900px) { .mm-groups { grid-template-columns: 1fr; } }
+.mm-group { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; }
+.mm-group__h { display: flex; align-items: center; gap: 9px; font-family: var(--font-head); font-weight: 700; font-size: 14.5px; color: var(--text); margin-bottom: 6px; }
+.mm-group__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--kc); flex-shrink: 0; }
+.mm-group__h .kb-col__n { background: var(--kc); }
+.mm-group__advice { font-size: 12.5px; color: var(--text3); line-height: 1.5; margin-bottom: 12px; }
+.mm-group__list { display: flex; flex-direction: column; gap: 8px; }
+.mm-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 13px; padding: 8px 0; border-top: 1px solid var(--border); }
+.mm-row:first-child { border-top: none; padding-top: 0; }
+.mm-row__name { color: var(--text); font-weight: 500; }
+.mm-row__meta { color: var(--text3); font-size: 11.5px; white-space: nowrap; font-family: var(--font-num); }
