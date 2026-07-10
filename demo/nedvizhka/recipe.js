@@ -120,7 +120,7 @@
   ];
 
   // ── Финансы: комиссия за 8 месяцев (продажа ~3% от цены, аренда — первый месяц) ──
-  const commissionByMonth = [1850000, 2050000, 2300000, 2600000, 2750000, 2950000, 3100000, 3263000];
+  const commissionByMonth = [31000000, 35000000, 39000000, 44000000, 47000000, 50000000, 53000000, 55000000];
   const finance = [];
   commissionByMonth.forEach((total, i) => {
     const m = 7 - i, complex = COMPLEXES[i % COMPLEXES.length];

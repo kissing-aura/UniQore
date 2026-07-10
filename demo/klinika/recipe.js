@@ -84,7 +84,7 @@
   // ── Платежи (история 6 мес) ──
   const payments = [];
   for (let m = 6; m >= 0; m--) {
-    const base = 820000 + m * 40000 + ((m * 3) % 2) * 60000;
+    const base = 9000000 + m * 450000 + ((m * 3) % 2) * 660000;
     payments.push({ id: 'pp' + m, title: 'Поступления за ' + new Date(Date.now() - m * 30 * 86400000).toLocaleDateString('ru-RU', { month: 'long' }), kind: 'Оплата услуг', amount: base, status: 'paid', due: monthAgo(m) });
     if (m > 0 && m % 2 === 0) payments.push({ id: 'ins' + m, title: 'Оплата в рассрочку', kind: 'Рассрочка', amount: Math.round(base * 0.22), status: 'paid', due: monthAgo(m) });
   }
@@ -119,13 +119,13 @@
   // ── Финансы (6 мес) ──
   const finance = [];
   for (let m = 5; m >= 0; m--) {
-    const rev = 820000 + m * 40000;
+    const rev = 9000000 + m * 450000;
     finance.push({ id: 'fi' + m, type: 'income', amount: rev, category: 'Услуги стоматологии', date: monthAgo(m) });
     finance.push({ id: 'fins' + m, type: 'income', amount: Math.round(rev * 0.18), category: 'Рассрочка / кредит', date: monthAgo(m) });
-    finance.push({ id: 'fz' + m, type: 'expense', amount: 360000 + (m % 3) * 20000, category: 'Зарплаты врачей', date: monthAgo(m) });
-    finance.push({ id: 'fa' + m, type: 'expense', amount: 95000, category: 'Аренда и коммунальные', date: monthAgo(m) });
-    finance.push({ id: 'fm' + m, type: 'expense', amount: 55000 + (m % 2) * 15000, category: 'Импланты и материалы', date: monthAgo(m) });
-    finance.push({ id: 'fr' + m, type: 'expense', amount: 45000, category: 'Реклама', date: monthAgo(m) });
+    finance.push({ id: 'fz' + m, type: 'expense', amount: 4000000 + (m % 3) * 220000, category: 'Зарплаты врачей', date: monthAgo(m) });
+    finance.push({ id: 'fa' + m, type: 'expense', amount: 1050000, category: 'Аренда и коммунальные', date: monthAgo(m) });
+    finance.push({ id: 'fm' + m, type: 'expense', amount: 600000 + (m % 2) * 165000, category: 'Импланты и материалы', date: monthAgo(m) });
+    finance.push({ id: 'fr' + m, type: 'expense', amount: 500000, category: 'Реклама', date: monthAgo(m) });
   }
 
   window.RECIPE = {

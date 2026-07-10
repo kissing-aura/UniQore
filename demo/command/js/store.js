@@ -274,19 +274,19 @@
 
     // ── СЧЕТА / КАССЫ ───────────────────────────────────────────────────
     const accounts = [
-      {id:'ac1', name:'Тинькофф Бизнес', type:'bank',   balance:42800, cur:'$'},
-      {id:'ac2', name:'Наличная касса',  type:'cash',   balance:3200,  cur:'$'},
-      {id:'ac3', name:'USDT кошелёк',     type:'crypto', balance:11400, cur:'$'},
-      {id:'ac4', name:'Резервный фонд',   type:'bank',   balance:15000, cur:'$'},
+      {id:'ac1', name:'Тинькофф Бизнес', type:'bank',   balance:94000, cur:'$'},
+      {id:'ac2', name:'Наличная касса',  type:'cash',   balance:7000,  cur:'$'},
+      {id:'ac3', name:'USDT кошелёк',     type:'crypto', balance:25000, cur:'$'},
+      {id:'ac4', name:'Резервный фонд',   type:'bank',   balance:33000, cur:'$'},
     ];
 
     // ── ФИНАНСЫ (месяц) ─────────────────────────────────────────────────
     const finance = {
-      income:[ {cat:'Продажи CRM', amount:96000, note:'80 × $1 200'}, {cat:'Поддержка (MRR)', amount:4000, note:'абонплата клиентов'} ],
-      expenses:[ {cat:'Выплаты менеджерам', amount:8000, note:'$100 × сделка'}, {cat:'Зарплаты команды', amount:14000, note:'производство, поддержка, маркетинг'}, {cat:'Сервер / инфра', amount:180, note:'DigitalOcean'}, {cat:'Инструменты / API', amount:600, note:'Claude, домены'}, {cat:'Налоги (УСН 6%)', amount:6000, note:'с оборота'}, {cat:'Прочее', amount:150, note:''} ],
-      months:[ {label:'Фев',rev:41000}, {label:'Мар',rev:54000}, {label:'Апр',rev:63000}, {label:'Май',rev:76000}, {label:'Июн',rev:88000}, {label:'Июл',rev:100000} ],
+      income:[ {cat:'Продажи CRM', amount:216000, note:'180 × $1 200'}, {cat:'Поддержка (MRR)', amount:4000, note:'абонплата клиентов'} ],
+      expenses:[ {cat:'Выплаты менеджерам', amount:18000, note:'$100 × сделка'}, {cat:'Зарплаты команды', amount:22000, note:'производство, поддержка, маркетинг'}, {cat:'Сервер / инфра', amount:300, note:'DigitalOcean'}, {cat:'Инструменты / API', amount:900, note:'Claude, домены'}, {cat:'Налоги (УСН 6%)', amount:13200, note:'с оборота'}, {cat:'Прочее', amount:200, note:''} ],
+      months:[ {label:'Фев',rev:90000}, {label:'Мар',rev:119000}, {label:'Апр',rev:139000}, {label:'Май',rev:167000}, {label:'Июн',rev:194000}, {label:'Июл',rev:220000} ],
       subscriptions:[ {name:'Claude / API', amount:120, next:daysAgo(-4)}, {name:'DigitalOcean', amount:48, next:daysAgo(-9)}, {name:'Домены (5)', amount:12, next:daysAgo(-1)}, {name:'Figma', amount:15, next:daysAgo(-18)} ],
-      taxes:{ rate:6, base:100000, amount:6000, due:daysAgo(-12) },
+      taxes:{ rate:6, base:220000, amount:13200, due:daysAgo(-12) },
       receivables:[ {client:'Медлайн · Клиника', amount:900, days:14}, {client:'Бургер «Классик»', amount:600, days:5}, {client:'Аренда Норд-Сити', amount:1300, days:2} ],
       operations:[
         {id:uid('o'),date:iso(today0()+9*36e5),type:'income',cat:'Оплата CRM',amount:1200,acc:'Тинькофф',note:'Магазин кроссовок'},

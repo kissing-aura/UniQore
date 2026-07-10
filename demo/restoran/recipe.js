@@ -130,14 +130,14 @@
   // ── Финансы (8 месяцев) ──
   const finance = [];
   for (let m = 7; m >= 0; m--) {
-    const baseRev = 680000 + (7 - m) * 40000 + ((m * 5) % 3) * 80000;
+    const baseRev = 18000000 + (7 - m) * 900000 + ((m * 5) % 3) * 1600000;
     finance.push({ id: 'rfi_rev' + m,  type: 'income',  amount: baseRev,                    category: 'Доставка',     date: monthAgo(m) });
     finance.push({ id: 'rfi_hall' + m, type: 'income',  amount: Math.round(baseRev * 0.18), category: 'Зал (самовынос)', date: monthAgo(m) });
     finance.push({ id: 'rfi_cogs' + m, type: 'expense', amount: Math.round(baseRev * 0.42), category: 'Продукты',     date: monthAgo(m) });
-    finance.push({ id: 'rfi_sal' + m,  type: 'expense', amount: 140000,                     category: 'Зарплаты',     date: monthAgo(m) });
-    finance.push({ id: 'rfi_kur' + m,  type: 'expense', amount: 60000 + (m % 4) * 8000,    category: 'Курьеры',      date: monthAgo(m) });
-    finance.push({ id: 'rfi_ads' + m,  type: 'expense', amount: 35000 + (m % 3) * 10000,   category: 'Реклама',      date: monthAgo(m) });
-    if (m % 3 === 0) finance.push({ id: 'rfi_rent' + m, type: 'expense', amount: 90000, category: 'Аренда', date: monthAgo(m) });
+    finance.push({ id: 'rfi_sal' + m,  type: 'expense', amount: 2100000,                    category: 'Зарплаты',     date: monthAgo(m) });
+    finance.push({ id: 'rfi_kur' + m,  type: 'expense', amount: 900000 + (m % 4) * 120000,  category: 'Курьеры',      date: monthAgo(m) });
+    finance.push({ id: 'rfi_ads' + m,  type: 'expense', amount: 525000 + (m % 3) * 150000,  category: 'Реклама',      date: monthAgo(m) });
+    if (m % 3 === 0) finance.push({ id: 'rfi_rent' + m, type: 'expense', amount: 1350000, category: 'Аренда', date: monthAgo(m) });
   }
 
   window.RECIPE = {
