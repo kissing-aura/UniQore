@@ -118,8 +118,10 @@
 
     // — скролл-драйв + подписи —
     var targetProg = 0;
+    // sticky-скролл (CSS position:sticky), БЕЗ GSAP pin — не перехватывает скролл
+    // жёстко (юзер спокойно листает услуги/секцию), морф проигрывается по проходу.
     ScrollTrigger.create({
-      trigger: '#morph', start: 'top top', end: 'bottom bottom', scrub: 0.4, pin: '.morph-pin',
+      trigger: '#morph', start: 'top top', end: 'bottom bottom', scrub: 0.5,
       onUpdate: function (self) { targetProg = self.progress; }
     });
     var T = document.getElementById('morph-t'), S = document.getElementById('morph-s');

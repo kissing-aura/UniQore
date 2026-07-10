@@ -396,8 +396,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 }
 
 /* ═══════════ СИГНАТУРА «Хаос → Система» (morph3d) ═══════════ */
-.morph-stage { height: 480vh; position: relative; background: #0A0E1A; }
-.morph-pin { height: 100vh; overflow: hidden; position: relative; display: flex; align-items: flex-start; justify-content: center; }
+.morph-stage { height: 200vh; position: relative; background: #0A0E1A; }
+.morph-pin { height: 100vh; overflow: hidden; position: sticky; top: 0; display: flex; align-items: flex-start; justify-content: center; }
 #morph-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .morph-poster { position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
   background: radial-gradient(120% 80% at 50% 40%, rgba(205,255,79,.06), transparent 60%), #0A0E1A; }
