@@ -394,3 +394,30 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   .hero__metrics { animation: none; }
   .pricing__includes li:hover, .faq-item__q:hover { transform: none; padding-left: 0; }
 }
+
+/* ═══════════ СИГНАТУРА «Хаос → Система» (morph3d) ═══════════ */
+.morph-stage { height: 480vh; position: relative; background: #0A0E1A; }
+.morph-pin { height: 100vh; overflow: hidden; position: relative; display: flex; align-items: flex-start; justify-content: center; }
+#morph-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.morph-poster { position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+  background: radial-gradient(120% 80% at 50% 40%, rgba(205,255,79,.06), transparent 60%), #0A0E1A; }
+.morph-poster svg { width: min(72vw, 720px); }
+.morph-cap { position: relative; z-index: 3; text-align: center; margin-top: 9vh; pointer-events: none; }
+.morph-cap__k { font-family: var(--font-mono); font-size: 12px; letter-spacing: .16em; color: var(--color-text-muted); text-transform: uppercase; }
+.morph-cap b { display: block; font-family: var(--font-display); font-size: clamp(30px, 4.4vw, 56px); font-weight: 800; letter-spacing: -.02em; margin-top: 6px; color: var(--color-text-primary); }
+.morph-cap b em { color: var(--color-accent); font-style: normal; }
+.morph-cap small { display: block; margin-top: 8px; color: var(--color-text-secondary); font-size: 14px; font-family: var(--font-body); }
+/* мобилка / постер-режим: секция короткая, без пина */
+@media (max-width: 899px) {
+  .morph-stage { height: auto; padding: 72px 0; }
+  .morph-pin { height: auto; min-height: 420px; flex-direction: column; align-items: center; gap: 20px; }
+  #morph-canvas { display: none; }
+  .morph-poster { display: flex; position: relative; inset: auto; min-height: 260px; width: 100%; }
+  .morph-cap { margin-top: 0; order: -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .morph-stage { height: auto; padding: 72px 0; }
+  .morph-pin { height: auto; min-height: 420px; }
+  #morph-canvas { display: none; }
+  .morph-poster { display: flex; position: relative; inset: auto; min-height: 260px; }
+}
