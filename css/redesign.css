@@ -276,3 +276,38 @@ section, .section, .niches, [class*="marquee"] { overflow-x: clip; }
     linear-gradient(118deg, rgba(18,28,56,0.5), rgba(10,14,26,0.08) 55%),
     radial-gradient(120% 78% at 80% 10%, rgba(205,255,79,0.10), transparent 52%) !important;
 }
+
+/* ═══════════ ПОЛИРОВКА по вердикту панели критиков (8→9) ═══════════ */
+
+/* [1] Стат-бар под hero (сигнал 3/4 критиков): курсив Unbounded давал
+   псевдо-serif, выбивался из дисплейной типографики. Прямой + tabular-nums
+   (цифры не «пляшут» при count-up). */
+.hero__metric-num {
+  font-style: normal !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+/* [3] Ниши — читаться как кликабельная воронка, а не plain-list:
+   лайм-индикатор слева выезжает + название сдвигается на hover. */
+.niche-row { position: relative; }
+.niche-row::before {
+  content: ""; position: absolute; left: -2px; top: 22%; bottom: 22%;
+  width: 2px; background: var(--color-accent);
+  transform: scaleY(0); transform-origin: center;
+  transition: transform 0.28s cubic-bezier(0.22,1,0.36,1);
+}
+.niche-row:hover::before, .niche-row:focus-visible::before { transform: scaleY(1); }
+.niche-row .niche-row__name { transition: color 0.25s ease, transform 0.25s cubic-bezier(0.22,1,0.36,1); }
+.niche-row:hover .niche-row__name { transform: translateX(8px); }
+
+/* [6] Единые focus-visible кольца (a11y + премиум-ощущение) — лайм на всех
+   интерактивных: nav, кнопки, чипы, инпуты, FAQ, ссылки-ниши. */
+a:focus-visible, button:focus-visible, .btn:focus-visible,
+input:focus-visible, textarea:focus-visible, select:focus-visible,
+.niche-chip:focus-visible, .niche-row:focus-visible, summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
