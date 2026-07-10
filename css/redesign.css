@@ -422,3 +422,42 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   #morph-canvas { display: none; }
   .morph-poster { display: flex; position: relative; inset: auto; min-height: 260px; }
 }
+
+/* ═══════════ УСЛУГИ — три двери (v3) ═══════════ */
+.services3 { padding: 100px 0 96px; position: relative; }
+.services3__head { text-align: center; max-width: 760px; margin: 0 auto 46px; }
+.services3__head .section-title { margin-top: 10px; }
+.services3__sub { color: var(--color-text-secondary); margin-top: 14px; font-size: 16px; line-height: 1.55; }
+.services3__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.svc-card { display: flex; flex-direction: column; gap: 15px; padding: 32px; border-radius: 20px;
+  background: linear-gradient(162deg, rgba(255,255,255,.035), rgba(255,255,255,.006) 60%);
+  border: 1px solid rgba(255,255,255,.07); text-decoration: none; color: var(--color-text-primary);
+  transition: transform .35s cubic-bezier(.22,1,.36,1), border-color .3s ease, background .3s ease; position: relative; }
+.svc-card:hover { transform: translateY(-6px); border-color: rgba(205,255,79,.3); background: var(--color-surface); }
+.svc-card__top { display: flex; align-items: center; justify-content: space-between; }
+.svc-card__icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 13px; color: var(--color-accent); background: rgba(205,255,79,.06); border: 1px solid rgba(205,255,79,.18); }
+.svc-card__price { font-family: var(--font-mono); font-size: 15px; color: var(--color-accent); font-weight: 600; }
+.svc-card__title { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.02em; margin: 0; }
+.svc-card__desc { color: var(--color-text-secondary); font-size: 15px; line-height: 1.5; margin: 0; }
+.svc-card__list { list-style: none; padding: 0; margin: 2px 0 0; display: flex; flex-direction: column; gap: 8px; }
+.svc-card__list li { position: relative; padding-left: 22px; color: var(--color-text-secondary); font-size: 14px; }
+.svc-card__list li::before { content: '✓'; position: absolute; left: 0; color: var(--color-accent); font-weight: 700; }
+.svc-card__cta { margin-top: auto; padding-top: 12px; color: var(--color-accent); font-weight: 600; font-size: 15px; }
+/* флагман */
+.svc-card--flagship { grid-column: 1 / -1; padding: 0; overflow: hidden;
+  border-color: rgba(205,255,79,.22); background: linear-gradient(118deg, rgba(205,255,79,.08), rgba(255,255,255,.01) 55%); }
+.svc-card--flagship:hover { transform: translateY(-4px); }
+.svc-card__badge { position: absolute; top: 18px; right: 22px; z-index: 2; font-family: var(--font-mono); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: #0A0E1A; background: var(--color-accent); padding: 5px 13px; border-radius: 999px; }
+.svc-card__flag-body { display: grid; grid-template-columns: 1.12fr .88fr; }
+.svc-card__flag-left { padding: 38px 38px 34px; display: flex; flex-direction: column; gap: 14px; }
+.svc-card__price--flag { font-size: 20px; }
+.svc-card__price--flag span { color: var(--color-text-muted); font-size: 13px; font-weight: 400; }
+.svc-card__flag-modules { display: flex; flex-wrap: wrap; align-content: center; gap: 10px; padding: 38px; border-left: 1px solid rgba(205,255,79,.14); }
+.svc-card__flag-modules span { font-family: var(--font-mono); font-size: 13px; color: var(--color-text-secondary); background: rgba(205,255,79,.06); border: 1px solid rgba(205,255,79,.18); border-radius: 999px; padding: 8px 15px; }
+@media (max-width: 760px) {
+  .services3 { padding: 68px 0; }
+  .services3__grid { grid-template-columns: 1fr; }
+  .svc-card__flag-body { grid-template-columns: 1fr; }
+  .svc-card__flag-modules { border-left: none; border-top: 1px solid rgba(205,255,79,.14); padding: 22px 32px 30px; }
+  .svc-card__flag-left { padding: 30px 32px 26px; }
+}
