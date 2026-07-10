@@ -4,6 +4,7 @@
    Сущности: Объекты, Лиды, Сделки, Агенты. */
 (() => {
   const dt = o => new Date(Date.now() + o * 86400000).toISOString();
+  const ds = o => new Date(Date.now() + o * 86400000).toISOString().slice(0, 10);
   const monthAgo = m => { const d = new Date(); d.setMonth(d.getMonth() - m); d.setDate(10 + (m % 3) * 6); return d.toISOString(); };
 
   const COMPLEXES = ['Северный Парк', 'Английский Квартал', 'Ривер Хаус', 'Сколково Парк', 'Флотилия', 'Хамовники Grand', 'Ботанический Сад'];
@@ -83,6 +84,20 @@
     ['Тимофей Орлов', '+7 977 451-33-09', 'Продажа · новостройки', 9, 4.7],
     ['Ксения Белова', '+7 909 880-21-04', 'Аренда · семейная', 17, 4.8],
   ].map((d, i) => ({ id: 'ag' + (i + 1), name: d[0], phone: d[1], specialty: d[2], deals: d[3], rating: d[4], notes: '', createdAt: dt(-(60 - i * 8)) }));
+
+  // ── Задачи / показы (те же лиды и сделки, что и выше — не рассинхронизировано) ──
+  const tasks = [
+    { id: 'nt1', title: 'Показ: Артём Волков — 2-комн «Северный Парк» 64 м²', due: ds(1), start: '15:00', done: false },
+    { id: 'nt2', title: 'Показ: Руслан Тагиров — 3-комн «Северный Парк» 95 м²', due: ds(2), start: '11:30', done: false },
+    { id: 'nt3', title: 'Позвонить Полине Гавриловой — уточнить бюджет по аренде', due: ds(0), done: false },
+    { id: 'nt4', title: 'Позвонить Виктории Ким — новая заявка, студия до 15 млн', due: ds(0), done: false },
+    { id: 'nt5', title: 'Подготовить договор аренды — «Английский Квартал» 1к, Полина Гаврилова', due: ds(1), done: false },
+    { id: 'nt6', title: 'Согласовать финальную цену — Семён Ковалёв, пентхаус «Хамовники Grand»', due: ds(3), done: false },
+    { id: 'nt7', title: 'Юлия Ремизова — не связались 2 дня, перезвонить', due: ds(-1), done: false },
+    { id: 'nt8', title: 'Обновить фото ЖК «Ботанический Сад» — новые от застройщика', due: ds(4), done: false },
+    { id: 'nt9', title: 'Разобрать причину отказа — Егор Стрельцов (сделка потеряна)', due: ds(-2), done: false },
+    { id: 'nt10', title: 'Выплата комиссии агентам за прошлый месяц', due: ds(2), done: false },
+  ];
 
   // ── Финансы: комиссия за 8 месяцев (продажа ~3% от цены, аренда — первый месяц) ──
   const commissionByMonth = [1850000, 2050000, 2300000, 2600000, 2750000, 2950000, 3100000, 3263000];
@@ -174,9 +189,11 @@
       { key: 'deals', label: 'Сделки', type: 'kanban', entity: 'deal', group: 'CRM', icon: 'deal' },
       { key: 'fin', label: 'Финансы', type: 'finance', group: 'CRM', icon: 'chart' },
       { key: 'agents', label: 'Агенты', type: 'records', entity: 'agent', group: 'CRM', icon: 'users' },
+      { key: 'tasks',    label: 'Задачи',            type: 'tasks',    group: 'Работа', icon: 'check' },
+      { key: 'calendar', label: 'Календарь показов', type: 'calendar', group: 'Работа', icon: 'calendar' },
     ],
 
     metrics: [],
-    seed: { finance },
+    seed: { finance, tasks },
   };
 })();
