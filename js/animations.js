@@ -120,6 +120,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.15 });
   document.querySelectorAll('.section-title').forEach(el => wordObs.observe(el));
 
+  // FAILSAFE: гарантируем, что заголовок не застрянет невидимым (opacity:0), если
+  // IntersectionObserver его пропустил — был баг «ghost» на секции «Сколько вы теряете».
+  // Раскрываем любые застрявшие слова, попавшие в вид, по скроллу + один таймаут.
+  function revealStuckTitles() {
+    document.querySelectorAll('.word-reveal:not(.word-reveal--in)').forEach(w => {
+      if (w.getBoundingClientRect().top < window.innerHeight * 0.95) {
+        w.classList.add('word-reveal--in');
+      }
+    });
+  }
+  window.addEventListener('scroll', revealStuckTitles, { passive: true });
+  setTimeout(revealStuckTitles, 1600);
+
   // ── 6. Process connector line draw on scroll ──
   const processSteps = document.querySelector('.process__steps');
   if (processSteps) {

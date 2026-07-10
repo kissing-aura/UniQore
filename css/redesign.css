@@ -345,3 +345,23 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 68%);
   mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 68%);
 }
+
+/* ═══════════ ДОЖИМ 8.5 → 9 (остаток вердикта панели) ═══════════ */
+
+/* [клиппинг] Флагманский CRM-мокап: сайдбар 48px обрезал лейблы
+   «Клиенты/Сделки/Задачи/Аналитика» до «Кли/Сдел/…». Расширить чтобы читались. */
+.mockup-showcase .ms-sidebar { width: 96px !important; padding: 14px 10px !important; }
+.mockup-showcase .ms-nav-item { white-space: nowrap; }
+
+/* [1] Число потерь — крупнейший якорь секции «Сколько вы теряете» (сильнейший сигнал). */
+.mirror__loss { font-size: clamp(30px, 4.2vw, 46px) !important; line-height: 1.1 !important; }
+.mirror-section .section-title { margin-bottom: 14px; }
+
+/* [3] Мотион-когезия: единый hover-лифт на карточках шагов процесса (как у кейсов). */
+.process__step {
+  transition: transform 0.32s cubic-bezier(0.22,1,0.36,1);
+}
+.process__step:hover { transform: translateY(-5px); }
+
+/* [ритм] Ужать тёмную пустоту над секцией потерь. */
+.mirror-section { padding-top: 84px !important; }
