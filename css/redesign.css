@@ -367,7 +367,10 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 .mirror-section { padding-top: 84px !important; }
 
 /* ── Финальные нит-фиксы до чистой 9 ── */
-/* Число потерь — ровные группы (tabular-nums), кернинг не разъезжается. */
+/* Число потерь — ровные плотные группы. Было моно (font-mono) → узкий пробел
+   занимал полную ячейку и «135 000» разъезжалось; переводим на пропорциональный
+   дисплей-шрифт, группы стоят плотно как «38 400» в мокапе. */
+.mirror__num { font-family: var(--font-body) !important; }
 .mirror__num, .mirror__loss { font-variant-numeric: tabular-nums; }
 /* Контраст-safety второй строки заголовков-акцентов (была «на грани» на тёмном). */
 .mockups .section-title em, .mirror-section .section-title em { opacity: 1; }
