@@ -114,7 +114,7 @@
   padding: 0 22px;
   border: 1px solid transparent;
   border-radius: var(--radius-lg);
-  background: rgba(245, 197, 24, 0.04);
+  background: rgba(205, 255, 79, 0.04);
   opacity: 0;
   overflow: hidden;
   transition:
@@ -128,7 +128,7 @@
   max-height: 400px;
   margin-top: 8px;
   padding: 20px 22px;
-  border-color: rgba(245, 197, 24, 0.22);
+  border-color: rgba(205, 255, 79, 0.22);
   opacity: 1;
 }
 @keyframes mirrorIn {
@@ -181,7 +181,7 @@
   color: #000;
   border-color: var(--color-accent);
   font-weight: 600;
-  box-shadow: 0 0 32px rgba(245, 197, 24, 0.22);
+  box-shadow: 0 0 32px rgba(205, 255, 79, 0.22);
   position: relative;
   overflow: hidden;
 }
@@ -199,13 +199,13 @@
 .btn--accent:hover {
   background: #f7cd30;
   border-color: #f7cd30;
-  box-shadow: 0 0 52px rgba(245, 197, 24, 0.48), 0 4px 24px rgba(0,0,0,0.3);
+  box-shadow: 0 0 52px rgba(205, 255, 79, 0.48), 0 4px 24px rgba(0,0,0,0.3);
   transform: translateY(-1px);
 }
 .btn--accent:hover::after { left: 140%; }
 .btn--accent:active {
   transform: translateY(0);
-  box-shadow: 0 0 20px rgba(245, 197, 24, 0.18);
+  box-shadow: 0 0 20px rgba(205, 255, 79, 0.18);
 }
 
 .btn--ghost {
@@ -242,8 +242,8 @@ textarea.field--error {
 }
 
 /* ── Text selection — gold brand signal ── */
-::selection      { background: rgba(245, 197, 24, 0.85); color: #000; text-shadow: none; }
-::-moz-selection { background: rgba(245, 197, 24, 0.85); color: #000; text-shadow: none; }
+::selection      { background: rgba(205, 255, 79, 0.85); color: #000; text-shadow: none; }
+::-moz-selection { background: rgba(205, 255, 79, 0.85); color: #000; text-shadow: none; }
 
 /* ── Custom scrollbar — thin, dark, gold on hover ── */
 @media (pointer: fine) {
@@ -273,7 +273,7 @@ textarea.field--error {
 }
 
 /* skip-to-content для клавиатуры (a11y) */
-.skip-link{position:absolute;left:-9999px;top:0;z-index:100000;background:var(--color-accent,#F5C518);color:#000;padding:10px 16px;border-radius:0 0 8px 0;font-weight:600;text-decoration:none}
+.skip-link{position:absolute;left:-9999px;top:0;z-index:100000;background:var(--color-accent,#CDFF4F);color:#000;padding:10px 16px;border-radius:0 0 8px 0;font-weight:600;text-decoration:none}
 .skip-link:focus{left:0}
 
 /* hero risk-reversal под CTA — настоящая гарантия у точки решения */

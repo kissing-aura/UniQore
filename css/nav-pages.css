@@ -44,7 +44,7 @@
   transition: background var(--transition-fast);
 }
 .nav__dropdown a::after { display: none !important; } /* убрать подчёркивание от .nav__links a */
-.nav__dropdown a:hover { background: rgba(245, 197, 24, 0.08); }
+.nav__dropdown a:hover { background: rgba(205, 255, 79, 0.08); }
 .nav__dd-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
 .nav__dd-desc { font-size: 12px; color: var(--color-text-muted); font-family: var(--font-mono); letter-spacing: .01em; }
 

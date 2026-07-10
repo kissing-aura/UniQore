@@ -77,28 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── 4. KPI numbers in CRM mockup ──
-  const kpiNums = document.querySelectorAll('.ui-mockup__kpi-num');
-  if (kpiNums.length) {
-    const kpiData = [];
-    kpiNums.forEach(el => {
-      const p = parseMetric(el.textContent);
-      kpiData.push(p);
-    });
-
-    const kpiObs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        kpiNums.forEach((el, i) => {
-          const p = kpiData[i];
-          if (!p) return;
-          setTimeout(() => countUp(el, p.num, 1500, p.prefix, p.suffix), 500 + i * 140);
-        });
-        kpiObs.disconnect();
-      });
-    }, { threshold: 0.2 });
-    const kpiGrid = kpiNums[0].closest('.ui-mockup__kpis');
-    if (kpiGrid) kpiObs.observe(kpiGrid);
-  }
+  // ВЛАДЕЛЕЦ #mk1/2/3 — main.js (intro-счёт + живой тик). Второй count-up здесь
+  // гонялся с main.js за те же 3 элемента и давал битые значения ($-7 501 911).
+  // Оставляем main.js единственным источником правды по hero-KPI.
 
   // ── 5. Section title word reveal ──
   function wrapWords(el) {

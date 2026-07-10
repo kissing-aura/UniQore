@@ -193,5 +193,16 @@
   // АВТО-ДЕМО ОТКЛЮЧЕНО — панель больше не морфит контент каждые 6с сама по себе
   // (палило как «панель плавает / скачет»). Ниши переключаются только кликом по чипсам.
   apply('restaurant');
+  // Дефолт-пример: калькулятор сразу отвечен разумными числами (300 клиентов × ₽2 500),
+  // чтобы зона результата не пустовала «мёртвым» нулём. Юзер меняет любую кнопку → живой пересчёт.
+  (function preset() {
+    var cBtn = calc.querySelector('.mirror__opts[data-grp="clients"] button[data-v="300"]');
+    var kBtn = calc.querySelector('.mirror__opts[data-grp="check"] button[data-v="2500"]');
+    if (cBtn && kBtn) {
+      cBtn.classList.add('is-active'); kBtn.classList.add('is-active');
+      calcState.clients = 300; calcState.check = 2500;
+      recalc();
+    }
+  })();
   // setTimeout(startDemo, 5000);
 })();

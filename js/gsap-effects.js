@@ -45,6 +45,23 @@
       });
     }
 
+    // ── 6. SIGNATURE-момент: мокапы «Это ваша система» собираются из глубины ──
+    //    3 окна поднимаются из-под сцены (rotateX + z-depth) со стаггером по
+    //    мере входа секции в экран. Дефолт (без GSAP/reduced-motion) = финал:
+    //    окна просто видны. Только десктоп — на мобилке 3D-глубина не читается.
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!isMobile && !reduced) {
+      const shows = gsap.utils.toArray('.mockup-showcase');
+      if (shows.length) {
+        gsap.timeline({
+          scrollTrigger: { trigger: '.mockups', start: 'top 78%', end: 'top 26%', scrub: 0.6 },
+        }).fromTo(shows,
+          { yPercent: 22, z: -240, rotateX: 15, autoAlpha: 0.35, transformOrigin: '50% 100%' },
+          { yPercent: 0, z: 0, rotateX: 0, autoAlpha: 1, ease: 'power2.out', stagger: 0.14 }
+        );
+      }
+    }
+
     // ── 5. Niches headline travels DOWN with the list (to "Telegram-бизнес") ──
     if (!isMobile) {
       const nHead = document.querySelector('.niches__headline');

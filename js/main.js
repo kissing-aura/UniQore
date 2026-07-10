@@ -290,6 +290,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Revenue counts upward over time; requests / conversion tick subtly.
+  // main.js — ЕДИНСТВЕННЫЙ владелец #mk1/2/3 (intro-счёт от 0 → живой тик).
+  // (animations.js больше их НЕ трогает — раньше гонка давала $-7 501 911.)
   if (!prefersReduced && revEl) {
     let rev = 38400, req = 184, conv = 67;
     function animateNumber(el, to, prefix, suffix) {
@@ -299,6 +301,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const p = Math.min(1, (now - t0) / dur);
         const e = 1 - Math.pow(1 - p, 3);
         el.textContent = prefix + Math.round(from + (to - from) * e).toLocaleString('ru-RU') + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      })(performance.now());
+    }
+    // Вступительный счёт 0 → target (первое впечатление «живого» дашборда).
+    function introCount(el, to, prefix, suffix, dur) {
+      const t0 = performance.now();
+      (function step(now) {
+        const p = Math.min(1, (now - t0) / dur);
+        const e = 1 - Math.pow(1 - p, 3);
+        el.textContent = prefix + Math.round(to * e).toLocaleString('ru-RU') + suffix;
         if (p < 1) requestAnimationFrame(step);
       })(performance.now());
     }
@@ -314,7 +326,26 @@ document.addEventListener('DOMContentLoaded', () => {
         convEl.textContent = conv + '%';
       }
     }
-    setTimeout(() => { rise(); setInterval(rise, 4000); }, 1600);
+    // Запускаем счёт, когда мокап появился в зоне видимости; затем живой тик.
+    let kickedOff = false;
+    function kickoff() {
+      if (kickedOff) return; kickedOff = true;
+      introCount(revEl, rev, '$', '', 1400);
+      if (reqEl) introCount(reqEl, req, '', '', 1200);
+      if (convEl) introCount(convEl, conv, '', '%', 1200);
+      setTimeout(() => { rise(); setInterval(rise, 4000); }, 1700);
+    }
+    const kpiGrid = revEl.closest('.ui-mockup__kpis') || revEl;
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((ents) => {
+        ents.forEach(e => { if (e.isIntersecting) { kickoff(); io.disconnect(); } });
+      }, { threshold: 0.25 });
+      io.observe(kpiGrid);
+      // фолбэк: если уже видно/наблюдатель молчит — стартуем через 1.2с
+      setTimeout(kickoff, 1200);
+    } else {
+      kickoff();
+    }
   }
 
   // ── Hero toast: cycle notifications ──────────────────────────────────

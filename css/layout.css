@@ -10,7 +10,7 @@
   bottom: 0; left: 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, var(--color-accent), rgba(245,197,24,0.4));
+  background: linear-gradient(90deg, var(--color-accent), rgba(205, 255, 79,0.4));
   transform: scaleX(0);
   transform-origin: left center;
   z-index: 101;
@@ -99,8 +99,8 @@ section { padding: var(--section-padding); }
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(46% 52% at 82% 6%, rgba(245, 197, 24, 0.13), transparent 62%),
-    radial-gradient(38% 44% at 4% 82%, rgba(245, 197, 24, 0.05), transparent 60%),
+    radial-gradient(46% 52% at 82% 6%, rgba(205, 255, 79, 0.13), transparent 62%),
+    radial-gradient(38% 44% at 4% 82%, rgba(205, 255, 79, 0.05), transparent 60%),
     radial-gradient(85% 75% at 55% 32%, rgba(10, 10, 12, 0.32), transparent 74%);
 }
 /* Читаемость текста слева + мягкий переход в следующую секцию снизу */
@@ -181,7 +181,7 @@ section { padding: var(--section-padding); }
   content: '';
   position: absolute;
   inset: -60px -60px -60px -40px;
-  background: radial-gradient(ellipse at 50% 40%, rgba(245,197,24,0.08) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 50% 40%, rgba(205, 255, 79,0.08) 0%, transparent 65%);
   pointer-events: none;
   z-index: 0;
 }
@@ -196,7 +196,7 @@ section { padding: var(--section-padding); }
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.05),
     0 40px 100px rgba(0,0,0,0.75),
-    0 0 160px rgba(245,197,24,0.14);
+    0 0 160px rgba(205, 255, 79,0.14);
   transform: perspective(1100px) rotateX(4deg) rotateY(-10deg) translateZ(0px);
   will-change: transform;
   transform-style: preserve-3d;
@@ -264,7 +264,7 @@ section { padding: var(--section-padding); }
 }
 .hero__metric:hover .hero__metric-num {
   color: var(--color-accent);
-  text-shadow: 0 0 28px rgba(245,197,24,0.35);
+  text-shadow: 0 0 28px rgba(205, 255, 79,0.35);
 }
 
 .hero__metric-label {
@@ -294,11 +294,11 @@ section { padding: var(--section-padding); }
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 9px 18px;
-  border: 1px solid rgba(245, 197, 24, 0.22);
-  background: rgba(245, 197, 24, 0.04);
+  border: 1px solid rgba(205, 255, 79, 0.22);
+  background: rgba(205, 255, 79, 0.04);
   border-radius: 100px;
   width: fit-content;
-  box-shadow: 0 0 24px rgba(245, 197, 24, 0.06), inset 0 0 24px rgba(245, 197, 24, 0.03);
+  box-shadow: 0 0 24px rgba(205, 255, 79, 0.06), inset 0 0 24px rgba(205, 255, 79, 0.03);
 }
 
 .hero__subtitle {
@@ -330,7 +330,7 @@ section { padding: var(--section-padding); }
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(245,197,24,0.4) 30%, rgba(245,197,24,0.4) 70%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(205, 255, 79,0.4) 30%, rgba(205, 255, 79,0.4) 70%, transparent);
 }
 .hero__stat {
   display: flex;
@@ -358,19 +358,19 @@ section { padding: var(--section-padding); }
 }
 .hero__glow--1 {
   width: 900px; height: 700px;
-  background: radial-gradient(ellipse, rgba(245, 197, 24, 0.14) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(205, 255, 79, 0.14) 0%, transparent 70%);
   top: -300px; right: -200px;
   animation: aurora-drift-1 14s ease-in-out infinite;
 }
 .hero__glow--2 {
   width: 600px; height: 500px;
-  background: radial-gradient(ellipse, rgba(245, 197, 24, 0.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(205, 255, 79, 0.07) 0%, transparent 70%);
   bottom: -100px; left: 100px;
   animation: aurora-drift-2 18s ease-in-out infinite;
 }
 .hero__glow--3 {
   width: 700px; height: 600px;
-  background: radial-gradient(ellipse, rgba(245, 197, 24, 0.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(205, 255, 79, 0.07) 0%, transparent 70%);
   top: -200px; left: -150px;
   animation: aurora-drift-1 20s ease-in-out infinite reverse;
 }
@@ -490,8 +490,8 @@ section { padding: var(--section-padding); }
   top: 26px; left: 0; right: 0;
   height: 1px;
   background: linear-gradient(90deg,
-    rgba(245,197,24,0.6) 0%,
-    rgba(245,197,24,0.2) 40%,
+    rgba(205, 255, 79,0.6) 0%,
+    rgba(205, 255, 79,0.2) 40%,
     rgba(255,255,255,0.04) 100%
   );
 }
@@ -501,12 +501,12 @@ section { padding: var(--section-padding); }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1px;
-  background: rgba(245, 197, 24, 0.06);
-  border: 1px solid rgba(245, 197, 24, 0.15);
+  background: rgba(205, 255, 79, 0.06);
+  border: 1px solid rgba(205, 255, 79, 0.15);
   margin-bottom: 64px;
   box-shadow:
-    0 0 80px rgba(245, 197, 24, 0.07),
-    0 0 0 1px rgba(245, 197, 24, 0.05) inset;
+    0 0 80px rgba(205, 255, 79, 0.07),
+    0 0 0 1px rgba(205, 255, 79, 0.05) inset;
   position: relative;
   overflow: hidden;
 }
@@ -515,7 +515,7 @@ section { padding: var(--section-padding); }
   position: absolute;
   top: 0; left: 10%; right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(245,197,24,0.7) 30%, rgba(245,197,24,0.7) 70%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(205, 255, 79,0.7) 30%, rgba(205, 255, 79,0.7) 70%, transparent);
   z-index: 0;
 }
 .pricing__left, .pricing__right { position: relative; z-index: 1; }
@@ -547,7 +547,7 @@ section { padding: var(--section-padding); }
 }
 
 /* Telegram contact (added 2026-07-10) */
-.nav__tg{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;color:#F5C518;border:1px solid rgba(245,197,24,.35);transition:background .2s,transform .2s;margin-right:2px;flex:0 0 auto}
-.nav__tg:hover{background:rgba(245,197,24,.12);transform:translateY(-1px)}
+.nav__tg{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;color:#CDFF4F;border:1px solid rgba(205, 255, 79,.35);transition:background .2s,transform .2s;margin-right:2px;flex:0 0 auto}
+.nav__tg:hover{background:rgba(205, 255, 79,.12);transform:translateY(-1px)}
 @media(max-width:768px){.nav__tg{width:34px;height:34px;margin-right:8px}}
-.form-tg-hint{display:block;margin-top:14px;color:#F5C518;text-decoration:underline;text-underline-offset:3px;font-size:15px}
+.form-tg-hint{display:block;margin-top:14px;color:#CDFF4F;text-decoration:underline;text-underline-offset:3px;font-size:15px}

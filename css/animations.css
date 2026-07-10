@@ -68,7 +68,7 @@ body {
   position: fixed;
   top: 0; left: 0;
   width: 32px; height: 32px;
-  border: 1px solid rgba(245, 197, 24, 0.4);
+  border: 1px solid rgba(205, 255, 79, 0.4);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
@@ -79,7 +79,7 @@ body {
 .cursor--hover { width: 20px; height: 20px; }
 .cursor-follower--hover {
   width: 52px; height: 52px;
-  border-color: rgba(245, 197, 24, 0.15);
+  border-color: rgba(205, 255, 79, 0.15);
 }
 
 /* ── Aurora glow animation ── */
@@ -123,8 +123,8 @@ body {
 
 /* ── Hero CTA pulse glow ── */
 @keyframes hero-cta-pulse {
-  0%, 100% { box-shadow: 0 0 24px rgba(245,197,24,0.2), 0 4px 20px rgba(0,0,0,0.2); }
-  50%       { box-shadow: 0 0 52px rgba(245,197,24,0.5), 0 4px 24px rgba(0,0,0,0.28); }
+  0%, 100% { box-shadow: 0 0 24px rgba(205, 255, 79,0.2), 0 4px 20px rgba(0,0,0,0.2); }
+  50%       { box-shadow: 0 0 52px rgba(205, 255, 79,0.5), 0 4px 24px rgba(0,0,0,0.28); }
 }
 .hero .btn--accent {
   animation: hero-cta-pulse 3s ease-in-out infinite;
@@ -132,7 +132,7 @@ body {
 .hero .btn--accent:hover {
   animation: none;
   transform: translateY(-2px);
-  box-shadow: 0 0 64px rgba(245,197,24,0.55), 0 6px 28px rgba(0,0,0,0.32);
+  box-shadow: 0 0 64px rgba(205, 255, 79,0.55), 0 6px 28px rgba(0,0,0,0.32);
 }
 
 /* ── Nav link underline slide-in ── */
@@ -154,7 +154,7 @@ body {
 
 /* ── Pricing price-val glow ── */
 .pricing__price-val {
-  text-shadow: 0 0 60px rgba(245,197,24,0.4), 0 0 24px rgba(245,197,24,0.25);
+  text-shadow: 0 0 60px rgba(205, 255, 79,0.4), 0 0 24px rgba(205, 255, 79,0.25);
 }
 
 /* ── Card hover lift (only on cards without overflow:hidden stacking issues) ── */
@@ -266,7 +266,7 @@ a:focus-visible {
 }
 .mockup-showcase:hover .mockup-showcase__window {
   transform: translateY(-4px);
-  box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 100px rgba(245,197,24,0.1);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 100px rgba(205, 255, 79,0.1);
 }
 
 /* ── Before/After row highlight ── */
@@ -280,7 +280,7 @@ a:focus-visible {
 .trust, .before-after, .mockups, .team {
   background-image: radial-gradient(
     550px circle at var(--glow-x, -200%) var(--glow-y, -200%),
-    rgba(245, 197, 24, 0.028) 0%,
+    rgba(205, 255, 79, 0.028) 0%,
     transparent 65%
   );
 }
@@ -292,7 +292,7 @@ a:focus-visible {
   width: 300px;
   height: 300px;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(245, 197, 24, 0.09) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(205, 255, 79, 0.09) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
   opacity: 0;

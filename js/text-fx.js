@@ -45,16 +45,24 @@
       c.style.display = 'inline-block';
       c.style.willChange = 'transform, opacity';
       c.style.opacity = '0';
-      c.style.transform = 'translate(' + rand(-260, 260).toFixed(0) + 'px,' + rand(-160, 160).toFixed(0) + 'px) rotate(' + rand(-55, 55).toFixed(0) + 'deg) scale(.6)';
-      c.style.transition = 'transform .9s cubic-bezier(.16,1,.3,1), opacity .6s ease';
+      c.style.transform = 'translate(' + rand(-140, 140).toFixed(0) + 'px,' + rand(-90, 90).toFixed(0) + 'px) rotate(' + rand(-30, 30).toFixed(0) + 'deg) scale(.7)';
+      c.style.transition = 'transform .65s cubic-bezier(.16,1,.3,1), opacity .45s ease';
     });
     requestAnimationFrame(function () { requestAnimationFrame(function () {
       chars.forEach(function (c, i) {
-        var d = i * 16 + rand(0, 140);
+        var d = i * 9 + rand(0, 70);
         setTimeout(function () { c.style.transform = 'none'; c.style.opacity = '1'; }, d);
       });
     }); });
-    setTimeout(function () { chars.forEach(function (c) { c.style.willChange = 'auto'; c.style.transition = ''; }); }, 1700 + chars.length * 16);
+    // FAILSAFE: через 2.2с ПРИНУДИТЕЛЬНО собрать все буквы в читаемое финальное
+    // состояние — что бы ни прервало per-char таймеры (медленное устройство,
+    // уход из вьюпорта, сбой). Заголовок НИКОГДА не застрянет нечитаемым.
+    setTimeout(function () {
+      chars.forEach(function (c) {
+        c.style.transform = 'none'; c.style.opacity = '1';
+        c.style.willChange = 'auto'; c.style.transition = '';
+      });
+    }, 1300);
   }
 
   function init() {

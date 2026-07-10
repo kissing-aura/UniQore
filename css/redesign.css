@@ -1,0 +1,278 @@
+/* ============================================================
+   UNIQORE REDESIGN — Deep Tech (направление Б, одобрено 2026-07-10)
+   Слой ПОВЕРХ существующей структуры. Ничего не ломает — только
+   переопределяет визуал. Палитра уже в variables.css.
+   ============================================================ */
+
+/* — убираем старый декор hero (видео/aurora/частицы = перфоманс + не Б) — */
+.hero__bgvideo,
+.hero__aurora,
+#hero-particles,
+.contact__bgvideo { display: none !important; }
+
+/* — фон hero: Deep Tech сетка + glow вместо видео — */
+.hero { position: relative; background: var(--color-bg); overflow: hidden; }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 78% 62% at 28% 42%, #000 18%, transparent 74%);
+          mask-image: radial-gradient(ellipse 78% 62% at 28% 42%, #000 18%, transparent 74%);
+  opacity: .55;
+}
+.hero::after {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  width: 680px; height: 680px; right: -160px; top: 4%;
+  background: radial-gradient(circle, rgba(205,255,79,.30), transparent 62%);
+  filter: blur(46px); opacity: .5;
+}
+.hero__inner { position: relative; z-index: 2; }
+
+/* — типографика hero под Б: крупнее, Unbounded, лайм-акцент — */
+.hero__title {
+  font-family: 'Unbounded', var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: clamp(40px, 4.7vw, 68px);
+  line-height: 1.04; letter-spacing: -.035em;
+}
+.hero__title em { color: var(--color-accent); font-style: normal; }
+.hero__eyebrow {
+  border: 1px solid var(--color-border-hover);
+  background: rgba(255,255,255,.02);
+  border-radius: 100px; padding: 7px 15px;
+}
+.hero__subtitle { color: var(--color-text-secondary); max-width: 34ch; }
+
+/* — правая колонка: 3D-глубина мокапа (perspective + плавающий tilt) — */
+.hero__right { perspective: 1600px; perspective-origin: 60% 40%; }
+.hero__frame {
+  transform: rotateY(-9deg) rotateX(5deg);
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+  box-shadow: 0 40px 90px -40px rgba(0,0,0,.85),
+              0 0 0 1px var(--color-border);
+  animation: uq-float 7s ease-in-out infinite;
+}
+.hero__right:hover .hero__frame { transform: rotateY(-4deg) rotateX(3deg) translateY(-4px); }
+@keyframes uq-float {
+  0%,100% { transform: rotateY(-9deg) rotateX(5deg) translateY(0); }
+  50%     { transform: rotateY(-9deg) rotateX(5deg) translateY(-12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__frame { animation: none; }
+}
+
+/* — кнопка-акцент под Б: лайм, тёмный текст, магнит-ховер — */
+.btn--accent {
+  background: var(--color-accent); color: #0A0E1A;
+  border: none; font-weight: 600;
+  transition: transform .15s ease, box-shadow .25s ease;
+}
+.btn--accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px -10px rgba(205,255,79,.4);
+}
+.btn--ghost { border: 1px solid var(--color-border-hover); color: var(--color-text-primary); }
+.btn--ghost:hover { background: rgba(255,255,255,.04); border-color: var(--color-text-muted); }
+
+/* — метрики hero: акцент лайм на числах — */
+.hero__metric-num em, .hero__metric-num { letter-spacing: -.02em; }
+
+/* — секции ниже: мягкий тёмно-синий сёрфейс вместо чистого чёрного — */
+body, .section, .niches, .cases, .process, .pricing, .faq { background: var(--color-bg); }
+
+/* — мобилка: убрать float-тилт (на тач не нужен, экономит краску) — */
+@media (max-width: 900px) {
+  .hero__frame { transform: none; animation: none; }
+  .hero__right { perspective: none; }
+  .hero::after { right: -40%; opacity: .32; }
+}
+
+/* — мобилка: заголовок мельче + защита от горизонтального overflow — */
+@media (max-width: 640px) {
+  html, body { overflow-x: hidden; }
+  .hero__title { font-size: clamp(30px, 8.4vw, 40px); word-break: normal; }
+  .hero__inner, .hero__split, .hero__left, .hero__right { min-width: 0; max-width: 100%; }
+  .hero__frame { max-width: 100%; }
+  .hero::after { width: 320px; height: 320px; }
+}
+
+/* — перебить mobile.css .hero__title (clamp 44px распирал 390px) — */
+@media (max-width: 768px) {
+  .hero .hero__title { font-size: clamp(28px, 7.4vw, 42px) !important; line-height: 1.05 !important; }
+}
+@media (max-width: 420px) {
+  .hero .hero__title { font-size: clamp(26px, 7.2vw, 34px) !important; }
+}
+
+/* — жёсткая гарантия: заголовок влезает в 390px, длинное слово переносится — */
+@media (max-width: 640px) {
+  .hero .hero__title { font-size: 27px !important; line-height: 1.1 !important; overflow-wrap: anywhere; }
+  .hero__inner, .container { padding-left: 20px !important; padding-right: 20px !important; }
+}
+
+/* — мобилка: кнопки на всю ширину, гарантия переносится — */
+@media (max-width: 640px) {
+  .hero__actions { flex-direction: column; align-items: stretch; gap: 12px; }
+  .hero__actions .btn { width: 100%; justify-content: center; }
+  .hero__assurance { flex-wrap: wrap; }
+  .hero__assurance span { flex: 1 1 auto; min-width: 0; }
+}
+
+/* — ГЛОБАЛЬНЫЙ anti-overflow на мобилке: всё в hero сжимается под экран — */
+@media (max-width: 640px) {
+  .hero__right, .hero__frame, .ui-mockup, .mirror, .niche-switch,
+  .niche-result, .hero__toasts { max-width: 100% !important; width: 100% !important; box-sizing: border-box; }
+  .hero__frame { overflow: hidden; }
+  .ui-mockup__kpi-num { font-size: clamp(14px, 4.4vw, 20px) !important; }
+  .niche-switch { flex-wrap: wrap; }
+  .hero__metrics { flex-wrap: wrap; gap: 20px 12px; }
+}
+
+/* — устранение overflow: старые glow-блобы (у Б свой ::after) + клип marquee — */
+.hero__glow, .hero__glow--1, .hero__glow--2 { display: none !important; }
+.hero { overflow-x: clip; }
+section, .section, .niches, [class*="marquee"] { overflow-x: clip; }
+.marquee, .niches__marquee { max-width: 100vw; }
+/* — добить фантомный горизонт. overflow: glow-псевдоэлементы .cases::before / .faq::before
+   (bleed вправо, right:-120px) + aurora подстраниц. Эти блоки НЕ <section> → клипаем явно. — */
+.cases, .faq, .page-hero { overflow-x: clip; }
+
+/* ============================================================
+   САМОДОСТАТОЧНАЯ ПАЛИТРА Б (защита от перезаписи variables.css
+   параллельной сессией). redesign.css подключён последним →
+   эти :root переменные и переопределения выигрывают. 2026-07-10
+   ============================================================ */
+:root {
+  --color-bg:             #0A0E1A !important;
+  --color-surface:        #121826 !important;
+  --color-surface-2:      #161D2E !important;
+  --color-border:         #1E2536 !important;
+  --color-border-hover:   #2A3448 !important;
+  --color-accent:         #CDFF4F !important;
+  --color-accent-dim:     #9BC22F !important;
+}
+/* захардкоженное золото (rgba 245,197,24) в мокапе/демо → лайм */
+.mockup-bar--accent, .ui-mockup__bar--hi, .ms-bar--hi { background: rgba(205,255,79,0.55) !important; }
+.ui-mockup__bar { background: linear-gradient(to top, rgba(205,255,79,0.12), rgba(205,255,79,0.58)) !important; }
+.ui-dot--yellow, .ms-dot--yellow { background: rgba(205,255,79,0.85) !important; box-shadow: 0 0 6px rgba(205,255,79,0.5) !important; }
+.ui-mockup__kpi-delta, .ms-kpi__delta, .ms-top__rank, .ms-top__num { color: #CDFF4F !important; }
+.ms-kpi--accent { border-color: rgba(205,255,79,0.25) !important; background: rgba(205,255,79,0.05) !important; }
+.tg-avatar { background: rgba(205,255,79,0.2) !important; border-color: rgba(205,255,79,0.4) !important; }
+.tg-bubble--out { background: rgba(205,255,79,0.15) !important; border-color: rgba(205,255,79,0.3) !important; }
+
+/* — последние золотые точки: лого-SVG (инлайн stroke), TG-иконка, мокап-CTA — */
+.nav__logo-mark circle, .nav__logo-mark line,
+.footer__logo circle, .footer__logo line { stroke: #CDFF4F !important; }
+.nav__tg { color: #CDFF4F !important; }
+.ui-mockup__cmdbar-cta, .ui-mockup__nav-item--active,
+.ui-mockup__logo-mark { background: #CDFF4F !important; }
+.btn--accent, .mirror__cta { background: #CDFF4F !important; color: #0A0E1A !important; }
+
+/* — Higgsfield Deep Tech фон для секции контакта (атмосфера, форма читаема) — */
+.contact { position: relative; isolation: isolate; }
+.contact::before {
+  content: ""; position: absolute; inset: 0; z-index: -2;
+  background: url('../assets/dt-cta-bg.jpg') center top / cover no-repeat;
+  opacity: .5;
+}
+.contact::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(10,14,26,.72), rgba(10,14,26,.92));
+}
+
+/* — секция «Зеркало бизнеса» (сигнатура №2, вынесена из hero) — */
+.mirror-section { padding: 110px 0; background: linear-gradient(180deg, #0A0E1A, #0D1322 55%, #0A0E1A); position: relative; overflow: hidden; }
+.mirror-section::before { content:""; position:absolute; width:520px; height:520px; left:-160px; top:-80px;
+  background: radial-gradient(circle, rgba(205,255,79,.14), transparent 60%); filter: blur(30px); pointer-events:none; }
+.mirror-section .section-title { margin-bottom: 12px; }
+.mirror-section__sub { color: var(--color-text-secondary); margin-bottom: 36px; max-width: 44ch; }
+.mirror-section .mirror { max-width: 720px; }
+
+/* — сноска вместо Bitrix-таблицы (ТЗ шаг 2) — */
+.pricing__bitrix-note { color: var(--color-text-muted); font-size: 14.5px; max-width: 62ch; margin: 26px auto 0; text-align: center; line-height: 1.6; }
+
+/* — CLS-фикс: резерв высоты заголовка hero, чтобы догрузка Unbounded не двигала макет — */
+.hero__title { min-height: 3.35em; }
+@media (max-width: 640px) { .hero .hero__title { min-height: 3.5em; } }
+
+/* ─────────────────────────────────────────────────────────────
+   TRUST → асимметричный bento (было repeat(5,1fr) под 5 карточек,
+   осталось 3 → 2 пустые колонки на десктопе. Теперь: 1 крупная
+   featured слева на всю высоту + 2 мелких справа стопкой).
+   ───────────────────────────────────────────────────────────── */
+.trust__grid {
+  grid-template-columns: 1.15fr 0.85fr !important;
+  grid-auto-rows: 1fr;
+  gap: 16px !important;
+}
+.trust-card--feature {
+  grid-row: 1 / span 2;
+  flex-direction: column !important;
+  gap: 20px !important;
+  padding: 34px 32px !important;
+  background: linear-gradient(158deg, rgba(205,255,79,0.08), rgba(255,255,255,0.012) 55%) !important;
+  border-color: rgba(205,255,79,0.16) !important;
+}
+.trust-card--feature::after { opacity: 1 !important; } /* лайм-акцент сверху всегда */
+.trust-card--feature .trust-card__icon { width: 44px; height: 44px; }
+.trust-card--feature .trust-card__title { font-size: 20px; }
+.trust-card--feature .trust-card__desc { max-width: 34ch; }
+.trust-card__stack {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 8px;
+}
+.trust-card__stack span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  background: rgba(205,255,79,0.06);
+  border: 1px solid rgba(205,255,79,0.18);
+  border-radius: 999px;
+  padding: 5px 13px;
+}
+@media (max-width: 720px) {
+  .trust__grid { grid-template-columns: 1fr !important; grid-auto-rows: auto; }
+  .trust-card--feature { grid-row: auto; }
+  .trust-card__stack { padding-top: 4px; }
+}
+
+/* ── Signature-момент: сцена с перспективой для сборки мокапов по скроллу ── */
+.mockups__grid { perspective: 1400px; perspective-origin: 50% 40%; }
+.mockup-showcase { will-change: transform, opacity; transform-style: preserve-3d; }
+
+/* ── Кейс-финал (стоматология, 5-я карта на всю ширину) — 2 колонки:
+      скрин слева, история справа по центру. Раньше узкий контент растягивался
+      в горизонт → вертикальная «чёрная пустота» снизу. ── */
+@media (min-width: 981px) {
+  .cases__grid .case-card--has-top:last-child {
+    display: grid;
+    grid-template-columns: 1.2fr 0.85fr;
+    align-items: stretch;
+  }
+  .cases__grid .case-card--has-top:last-child .case-card__top { height: auto; min-height: 300px; }
+  .cases__grid .case-card--has-top:last-child .case-card__body { justify-content: center; padding: 40px 44px; }
+}
+
+/* ── Подложка niches: приглушить «точки-мусор» до атмосферы, не шум ── */
+.niches__particles { opacity: 0.2 !important; }
+
+/* ── Единый визуальный язык: фото-hero подстраниц сводим к дарк-тех главной.
+      Было: тёплое фото (saturate 1.1) + чисто-чёрный скрим #0A0A0A — выбивалось
+      из холодного #0A0E1A+лайм. Стало: холодный navy-скрим + приглушение тепла
+      + лаймовый ambient-glow как в hero главной. ── */
+.page-hero--media .page-hero__media-el {
+  filter: saturate(0.82) contrast(1.05) brightness(0.9) hue-rotate(-8deg) !important;
+}
+.page-hero--media .page-hero__scrim {
+  background:
+    linear-gradient(180deg, rgba(10,14,26,0.34) 0%, rgba(10,14,26,0.78) 64%, #0A0E1A 100%),
+    linear-gradient(118deg, rgba(18,28,56,0.5), rgba(10,14,26,0.08) 55%),
+    radial-gradient(120% 78% at 80% 10%, rgba(205,255,79,0.10), transparent 52%) !important;
+}

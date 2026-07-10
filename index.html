@@ -109,16 +109,17 @@
   </script>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/reset.css?v=20260707n">
-  <link rel="stylesheet" href="css/variables.css?v=20260707n">
-  <link rel="stylesheet" href="css/typography.css?v=20260707n">
-  <link rel="stylesheet" href="css/layout.css?v=20260710a">
-  <link rel="stylesheet" href="css/components.css?v=20260707n">
-  <link rel="stylesheet" href="css/sections.css?v=20260707n">
-  <link rel="stylesheet" href="css/animations.css?v=20260707n">
-  <link rel="stylesheet" href="css/mobile.css?v=20260707n">
-  <link rel="stylesheet" href="css/nav-pages.css?v=20260707n">
-  <link rel="stylesheet" href="css/enhance.css?v=20260709a">
+  <link rel="stylesheet" href="css/reset.css?v=20260711e">
+  <link rel="stylesheet" href="css/variables.css?v=20260711e">
+  <link rel="stylesheet" href="css/typography.css?v=20260711e">
+  <link rel="stylesheet" href="css/layout.css?v=20260711e">
+  <link rel="stylesheet" href="css/components.css?v=20260711e">
+  <link rel="stylesheet" href="css/sections.css?v=20260711e">
+  <link rel="stylesheet" href="css/animations.css?v=20260711e">
+  <link rel="stylesheet" href="css/mobile.css?v=20260711e">
+  <link rel="stylesheet" href="css/nav-pages.css?v=20260711e">
+  <link rel="stylesheet" href="css/enhance.css?v=20260711e">
+  <link rel="stylesheet" href="css/redesign.css?v=20260711e">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -134,7 +135,7 @@
           s2.src = 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js';
           s2.onload = function() {
             var s3 = document.createElement('script');
-            s3.src = 'js/gsap-effects.js';
+            s3.src = 'js/gsap-effects.js?v=20260711e';
             document.head.appendChild(s3);
           };
           document.head.appendChild(s2);
@@ -149,8 +150,8 @@
   <!-- Fonts: async load to not block first paint -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet"></noscript>
 </head>
 <body>
   <a class="skip-link" href="#main">К содержимому</a>
@@ -226,11 +227,6 @@
     <section class="hero" id="hero">
       <!-- Фон hero: премиум абстракт-видео (золотой поток, Higgsfield) приглушённо
            + aurora-glow + сетка + частицы + зерно. Не мутное bokeh — элегантный дарк. -->
-      <div class="hero__bgvideo bgloop" aria-hidden="true">
-        <video class="bgloop__el" data-role="a" autoplay muted loop playsinline preload="auto"><source src="assets/hero-abstract.mp4?v=20260707n" type="video/mp4"></video>
-        <video class="bgloop__el" data-role="b" autoplay muted loop playsinline preload="auto"><source src="assets/hero-abstract.mp4?v=20260707n" type="video/mp4"></video>
-      </div>
-      <div class="hero__aurora" aria-hidden="true"></div>
       <canvas id="hero-particles" aria-hidden="true"></canvas>
       <div class="container hero__inner">
 
@@ -352,38 +348,7 @@
               <button type="button" class="niche-chip" data-niche="rent">Аренда</button>
               <button type="button" class="niche-chip" data-niche="clinic">Клиника</button>
             </div>
-            <div class="mirror">
-              <div class="mirror__q">Сколько у тебя клиентов в месяц?</div>
-              <div class="mirror__opts" data-grp="clients">
-                <button type="button" data-v="100">~100</button>
-                <button type="button" data-v="300">~300</button>
-                <button type="button" data-v="600">~600</button>
-                <button type="button" data-v="1200">1000+</button>
-              </div>
-              <div class="mirror__q">Средний чек?</div>
-              <div class="mirror__opts" data-grp="check">
-                <button type="button" data-v="1000">₽1 000</button>
-                <button type="button" data-v="2500">₽2 500</button>
-                <button type="button" data-v="5000">₽5 000</button>
-                <button type="button" data-v="12000">₽10 000+</button>
-              </div>
-              <div class="mirror__result">
-                <div class="mirror__loss">Ты теряешь ~<span class="mirror__num">0</span> ₽/мес</div>
-                <div class="mirror__sub">на потерянных заявках и неответах. Мы это ловим — клиент не уходит.</div>
-                <a href="#contact" class="btn btn--accent btn--lg mirror__cta">Забрать свою систему →</a>
-              </div>
-            </div>
 
-            <div class="hero__toasts" aria-hidden="true">
-              <div class="hero__mockup-toast">
-                <span class="mockup-live-dot"></span>
-                <span class="mockup-toast__text">Новая заявка · Михаил С.</span>
-              </div>
-              <div class="hero__mockup-toast hero__mockup-toast--2">
-                <span class="mockup-live-dot mockup-live-dot--green"></span>
-                <span>Лид → Оплата · +$1200</span>
-              </div>
-            </div>
           </div>
 
         </div>
@@ -462,13 +427,16 @@
     <section class="trust" id="trust">
       <div class="container">
         <div class="trust__grid">
-          <div class="trust-card" data-reveal>
+          <div class="trust-card trust-card--feature" data-reveal>
             <div class="trust-card__icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </div>
             <div>
               <div class="trust-card__title">Всё под ключ</div>
               <div class="trust-card__desc">Берём на себя весь процесс — вы получаете готовую работающую систему</div>
+            </div>
+            <div class="trust-card__stack" aria-hidden="true">
+              <span>Сайт</span><span>CRM</span><span>Чат-бот</span><span>Автоматизация</span>
             </div>
           </div>
           <div class="trust-card" data-reveal data-reveal-delay="1">
@@ -489,152 +457,13 @@
               <div class="trust-card__desc">Система строится с нуля под ваши процессы, а не шаблон</div>
             </div>
           </div>
-          <div class="trust-card" data-reveal data-reveal-delay="3">
-            <div class="trust-card__icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div>
-              <div class="trust-card__title">Фиксированная цена</div>
-              <div class="trust-card__desc">Стоимость известна заранее и закреплена в договоре</div>
-            </div>
-          </div>
-          <div class="trust-card" data-reveal data-reveal-delay="4">
-            <div class="trust-card__icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 1v3M10 1v3M14 1v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            </div>
-            <div>
-              <div class="trust-card__title">Поддержка и развитие</div>
-              <div class="trust-card__desc">Ведём, обновляем и улучшаем систему, пока вы растёте</div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
     <!-- SERVICES SECTION -->
-    <section class="services" id="services">
-      <div class="container">
-          <h2 class="section-title">Полная автоматизация<br><em>под вашу нишу</em></h2>
-        <div class="services__grid">
-
-          <div class="service-card service-card--wide" data-index="01" data-reveal>
-            <div class="service-card__icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
-                <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
-                <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M14 17.5h7M17.5 14v7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <h3>Управляйте клиентами<br>в одном месте</h3>
-            <ul class="service-card__features">
-              <li>Вся история каждого клиента — под рукой</li>
-              <li>Сделка ведёт себя сама: напомнит, уведомит, закроет</li>
-              <li>Воронка лид → оплата без ручного контроля</li>
-              <li>Видите кто купил, кто пропал и почему</li>
-            </ul>
-          </div>
-
-          <div class="service-card" data-index="02" data-reveal data-reveal-delay="1">
-            <div class="service-card__icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M3 9l9-6 9 6v11a1 1 0 01-1 1H4a1 1 0 01-1-1V9z" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M9 21V12h6v9" stroke="currentColor" stroke-width="1.5"/>
-              </svg>
-            </div>
-            <h3>Знайте что и где<br>прямо сейчас</h3>
-            <ul class="service-card__features">
-              <li>Остатки в реальном времени</li>
-              <li>Алерт до того как товар закончится</li>
-              <li>Вся история движения в два клика</li>
-              <li>Отчёт за любой период мгновенно</li>
-            </ul>
-          </div>
-
-          <div class="service-card" data-index="03" data-reveal data-reveal-delay="2">
-            <div class="service-card__icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M22 2L11 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <h3>Принимайте заявки<br>без участия 24/7</h3>
-            <ul class="service-card__features">
-              <li>Бот отвечает пока вы спите</li>
-              <li>Клиент получает ответ за секунды</li>
-              <li>Команда узнаёт — мгновенно</li>
-              <li>Личный кабинет без разработки</li>
-            </ul>
-          </div>
-
-          <div class="service-card service-card--wide" data-index="04" data-reveal data-reveal-delay="3">
-            <div class="service-card__icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M18 20V10M12 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <h3>Видите бизнес целиком<br>каждое утро</h3>
-            <ul class="service-card__features">
-              <li>Отчёт в мессенджер до того как вы проснулись</li>
-              <li>Конверсия воронки без Excel и формул</li>
-              <li>Рейтинг кто из команды тащит, кто нет</li>
-              <li>Прогноз выручки на месяц вперёд</li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-    </section>
 
     <!-- BEFORE / AFTER SECTION -->
-    <section class="before-after" id="before-after">
-      <div class="container">
-        <h2 class="section-title">Как меняется<br><em>ваш рабочий день</em></h2>
-        <div class="ba-table" data-reveal>
-          <div class="ba-header">
-            <div class="ba-header__empty"></div>
-            <div class="ba-header__col ba-header__col--before">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              Сейчас
-            </div>
-            <div class="ba-header__col ba-header__col--after">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              С Uniqore
-            </div>
-          </div>
-          <div class="ba-row">
-            <div class="ba-row__label">Учёт клиентов</div>
-            <div class="ba-row__before">Excel-таблицы, мессенджеры, блокноты</div>
-            <div class="ba-row__after">CRM: история, задачи, воронка автоматически</div>
-          </div>
-          <div class="ba-row">
-            <div class="ba-row__label">Общение с клиентом</div>
-            <div class="ba-row__before">Ручные сообщения, пропущенные вопросы</div>
-            <div class="ba-row__after">Бот отвечает клиентам 24/7 за секунды — на любой платформе</div>
-          </div>
-          <div class="ba-row">
-            <div class="ba-row__label">Отчётность</div>
-            <div class="ba-row__before">Часы на формулы в Excel каждую неделю</div>
-            <div class="ba-row__after">Авто-отчёт в мессенджер каждое утро</div>
-          </div>
-          <div class="ba-row">
-            <div class="ba-row__label">Складской учёт</div>
-            <div class="ba-row__before">Не знаете что заканчивается до последнего момента</div>
-            <div class="ba-row__after">Алерт когда товар на минимуме — заранее</div>
-          </div>
-          <div class="ba-row">
-            <div class="ba-row__label">Напоминания</div>
-            <div class="ba-row__before">Помните в голове, забываете позвонить</div>
-            <div class="ba-row__after">Система сама напоминает менеджеру в нужный момент</div>
-          </div>
-          <div class="ba-row">
-            <div class="ba-row__label">Контроль команды</div>
-            <div class="ba-row__before">Не знаете кто работает, а кто нет</div>
-            <div class="ba-row__after">Рейтинг и KPI каждого сотрудника в реальном времени</div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- NICHES SECTION -->
     <section class="niches" id="niches">
@@ -788,11 +617,11 @@
     <!-- MOCKUPS SECTION -->
     <section class="mockups" id="mockups">
       <div class="container">
-        <h2 class="section-title">Посмотрите что<br><em>получает клиент</em></h2>
+        <h2 class="section-title">Это ваша система.<br><em>Через 6 дней.</em></h2>
         <div class="mockups__grid">
 
           <!-- CRM Mockup -->
-          <div class="mockup-showcase" data-reveal>
+          <div class="mockup-showcase">
             <div class="mockup-showcase__label">CRM-система</div>
             <div class="mockup-showcase__window">
               <div class="mockup-showcase__bar">
@@ -835,7 +664,7 @@
           </div>
 
           <!-- Telegram Mockup -->
-          <div class="mockup-showcase" data-reveal data-reveal-delay="1">
+          <div class="mockup-showcase">
             <div class="mockup-showcase__label">Чат-бот</div>
             <div class="mockup-showcase__window mockup-showcase__window--mobile">
               <div class="mockup-showcase__bar mockup-showcase__bar--mobile">
@@ -880,7 +709,7 @@
           </div>
 
           <!-- Analytics Mockup -->
-          <div class="mockup-showcase" data-reveal data-reveal-delay="2">
+          <div class="mockup-showcase">
             <div class="mockup-showcase__label">Аналитика</div>
             <div class="mockup-showcase__window">
               <div class="mockup-showcase__bar">
@@ -918,6 +747,33 @@
           </div>
 
         </div>
+      </div>
+    </section>
+    <section class="mirror-section" id="mirror">
+      <div class="container">
+        <h2 class="section-title">Сколько вы теряете<br><em>без системы?</em></h2>
+        <p class="mirror-section__sub">Две кнопки — и увидите цифру. Считаем по вашей нише.</p>
+            <div class="mirror">
+              <div class="mirror__q">Сколько у тебя клиентов в месяц?</div>
+              <div class="mirror__opts" data-grp="clients">
+                <button type="button" data-v="100">~100</button>
+                <button type="button" data-v="300">~300</button>
+                <button type="button" data-v="600">~600</button>
+                <button type="button" data-v="1200">1000+</button>
+              </div>
+              <div class="mirror__q">Средний чек?</div>
+              <div class="mirror__opts" data-grp="check">
+                <button type="button" data-v="1000">₽1 000</button>
+                <button type="button" data-v="2500">₽2 500</button>
+                <button type="button" data-v="5000">₽5 000</button>
+                <button type="button" data-v="12000">₽10 000+</button>
+              </div>
+              <div class="mirror__result">
+                <div class="mirror__loss">Ты теряешь ~<span class="mirror__num">0</span> ₽/мес</div>
+                <div class="mirror__sub">на потерянных заявках и неответах. Мы это ловим — клиент не уходит.</div>
+                <a href="#contact" class="btn btn--accent btn--lg mirror__cta">Забрать свою систему →</a>
+              </div>
+            </div>
       </div>
     </section>
 
@@ -974,93 +830,8 @@
     </section>
 
     <!-- GUARANTEES SECTION -->
-    <section class="guarantees" id="guarantees">
-      <div class="container">
-        <h2 class="section-title">Работаем<br><em>честно</em></h2>
-        <div class="guarantees__grid">
-
-          <div class="guarantee-card" data-reveal>
-            <div class="guarantee-card__icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <h3>Фиксированная цена</h3>
-            <p>Стоимость закрепляется в договоре до старта — никаких «это не входило в объём». Масштабные проекты считаем индивидуально, но цену вы знаете заранее.</p>
-          </div>
-
-          <div class="guarantee-card" data-reveal data-reveal-delay="1">
-            <div class="guarantee-card__icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <h3>Срок по договору</h3>
-            <p>Сдаём в срок или возвращаем 20% стоимости за каждую неделю просрочки. Нарушение сроков — наш риск, не ваш.</p>
-          </div>
-
-          <div class="guarantee-card" data-reveal data-reveal-delay="2">
-            <div class="guarantee-card__icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <h3>Поддержка по подписке</h3>
-            <p>Система всегда на ходу: обновления, доработки и приоритетные правки входят в ежемесячную подписку. Вы растёте — система растёт с вами.</p>
-          </div>
-
-          <div class="guarantee-card" data-reveal data-reveal-delay="3">
-            <div class="guarantee-card__icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <h3>Официальный договор</h3>
-            <p>Работаем по договору, NDA — по запросу. Прозрачные условия и прямая связь с командой, без посредников и тикет-систем.</p>
-          </div>
-
-        </div>
-      </div>
-    </section>
 
     <!-- TEAM SECTION -->
-    <section class="team" id="team">
-      <div class="container">
-        <div class="team__inner">
-          <div class="team__left" data-reveal>
-            <h2 class="section-title">Кто делает<br><em>проекты</em></h2>
-            <p class="team__desc">Работаем большой командой опытных разработчиков — это полноценная студия, а не фрилансеры-одиночки. Поэтому беремся за проекты любого масштаба и запускаем за дни, а не месяцы.</p>
-          </div>
-          <div class="team__cards" data-reveal data-reveal-delay="1">
-            <div class="team-card">
-              <div class="team-card__icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              </div>
-              <h3>Прямая работа<br>с командой</h3>
-              <p>Общаетесь напрямую с командой, которая ведёт ваш проект. Чёткая коммуникация без испорченного телефона.</p>
-            </div>
-            <div class="team-card">
-              <div class="team-card__icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              </div>
-              <h3>Ежедневные отчёты<br>о прогрессе</h3>
-              <p>Каждый день — апдейт о том, что сделано. Видите прогресс, а не ждёте результат в конце.</p>
-            </div>
-            <div class="team-card">
-              <div class="team-card__icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.11 19.79 19.79 0 01.01 4.38 2 2 0 012 2.22h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="1.5"/></svg>
-              </div>
-              <h3>Поддержка<br>и развитие</h3>
-              <p>Система под постоянной опекой команды — обновления и правки входят в подписку. Живая связь, а не тикет-система.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- PRICING SECTION -->
     <section class="pricing" id="pricing">
@@ -1075,11 +846,8 @@
               <li>✓ Анализ бизнеса и ТЗ</li>
               <li>✓ Кастомная разработка с нуля</li>
               <li>✓ Развёртывание и хостинг на наших серверах</li>
-              <li>✓ Обучение команды</li>
               <li>✓ Поддержка и развитие по подписке</li>
-              <li>✓ Документация на систему</li>
             </ul>
-            <p class="pricing__team-note">Это полноценная студия: офис, большая команда, менеджеры и инфраструктура. Мы берём на себя весь цикл — стратегию, разработку, запуск и постоянное развитие вашей системы.</p>
           </div>
           <div class="pricing__right">
             <div class="pricing__price-block">
@@ -1224,47 +992,7 @@
         </div>
 
         <!-- Сравнение с конкурентами -->
-        <div class="pricing__compare" data-reveal>
-          <h3>Почему не Bitrix24 или amoCRM?</h3>
-          <div class="compare-table">
-            <div class="compare-table__header">
-              <div></div>
-              <div class="compare-table__col compare-table__col--highlight">Uniqore</div>
-              <div class="compare-table__col">Bitrix24</div>
-              <div class="compare-table__col">amoCRM</div>
-            </div>
-            <div class="compare-table__row">
-              <div>Под вашу нишу</div>
-              <div class="compare-table__col compare-table__col--highlight">✓ Полностью</div>
-              <div class="compare-table__col">✗ Универсальный</div>
-              <div class="compare-table__col">✗ Только продажи</div>
-            </div>
-            <div class="compare-table__row">
-              <div>Боты и мессенджеры</div>
-              <div class="compare-table__col compare-table__col--highlight">✓ Нативная</div>
-              <div class="compare-table__col">Платный плагин</div>
-              <div class="compare-table__col">Ограниченная</div>
-            </div>
-            <div class="compare-table__row">
-              <div>Время внедрения</div>
-              <div class="compare-table__col compare-table__col--highlight">4-6 дней</div>
-              <div class="compare-table__col">2-6 месяцев</div>
-              <div class="compare-table__col">1-3 месяца</div>
-            </div>
-            <div class="compare-table__row">
-              <div>Цена в год</div>
-              <div class="compare-table__col compare-table__col--highlight">от $1200 + $1,800</div>
-              <div class="compare-table__col">от $2,400+</div>
-              <div class="compare-table__col">от $1,800+</div>
-            </div>
-            <div class="compare-table__row">
-              <div>Поддержка</div>
-              <div class="compare-table__col compare-table__col--highlight">Личная команда</div>
-              <div class="compare-table__col">Тикет-система</div>
-              <div class="compare-table__col">Тикет-система</div>
-            </div>
-          </div>
-        </div>
+        <p class="pricing__bitrix-note" data-reveal>Bitrix24 и amoCRM — аренда чужой платформы с лишними функциями. У нас — своя система под ваши процессы, без лицензий за каждого сотрудника.</p>
       </div>
     </section>
 
@@ -1310,61 +1038,6 @@
               <div class="faq-item__a" id="faq-a-7" hidden><p>До оплаты мы бесплатно разбираем ваш бизнес и фиксируем точный объём и результат в ТЗ — вы заранее знаете, что получите, за сколько и в какой срок. Цена и сроки закреплены в договоре: не сдадим вовремя — вернём 20% за каждую неделю просрочки. Вы платите за конкретный прописанный результат, а не за «попробуем».</p></div>
             </div>
 
-            <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-13">
-                <span>Кто имеет доступ к моим данным?</span>
-                <span class="faq-item__icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-item__a" id="faq-a-13" hidden><p>Только вы и ваша команда — вход в систему по паролю. Мы не передаём ваши данные третьим лицам, по запросу подписываем NDA. База клиентов остаётся полностью вашей.</p></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-4">
-                <span>Что если потом нужны изменения?</span>
-                <span class="faq-item__icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-item__a" id="faq-a-4" hidden><p>Текущие правки и мелкие доработки входят в ежемесячную подписку ($150/мес). Крупные новые модули оцениваем отдельно — обычно от $200. Система постоянно развивается вместе с вашим бизнесом.</p></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-5">
-                <span>Чем вы отличаетесь от Bitrix24 и amoCRM?</span>
-                <span class="faq-item__icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-item__a" id="faq-a-5" hidden><p>Bitrix24 и amoCRM — универсальные продукты, которые нужно «подгонять» под ваш бизнес. Мы строим систему под ваши процессы с нуля: только нужные функции, никакого лишнего. Плюс нативная интеграция с Telegram, WhatsApp и любыми мессенджерами без дорогих плагинов.</p></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-6">
-                <span>Что нужно подготовить для старта?</span>
-                <span class="faq-item__icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-item__a" id="faq-a-6" hidden><p>Только 60 минут вашего времени на аудит. Мы сами разберёмся в процессах и предложим решение. Всё остальное — разработку, серверы, настройку и запуск — берём на себя. Больше ничего не нужно.</p></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-8">
-                <span>Работаете ли вы с моей нишей?</span>
-                <span class="faq-item__icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-item__a" id="faq-a-8" hidden><p>Работаем с любым малым и средним бизнесом в СНГ и Европе. Посуточная аренда, автосервисы, импортёры, медклиники, интернет-магазины, Telegram-бизнесы. Если у вас бизнес — у нас есть решение.</p></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-10">
-                <span>Можно ли потом расширить систему?</span>
-                <span class="faq-item__icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-item__a" id="faq-a-10" hidden><p>Да, система строится с учётом масштабирования. Новый модуль (аналитика, бот, интеграция) — от $200–300 и 1–3 дня. Мелкие доработки уже входят в подписку ($150/мес).</p></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-11">
-                <span>Как принимается оплата?</span>
-                <span class="faq-item__icon" aria-hidden="true">+</span>
-              </button>
-              <div class="faq-item__a" id="faq-a-11" hidden><p>50% предоплата после подписания ТЗ, 50% после сдачи системы. После запуска начинается подписка $150/мес за пользование и поддержку. Принимаем банковский перевод (SWIFT/SEPA), криптовалюту (USDT, BTC), ЮMoney. Работаем с физическими и юридическими лицами СНГ и Европы.</p></div>
-            </div>
 
           </div>
         </div>
@@ -1372,67 +1045,9 @@
     </section>
 
     <!-- STACK SECTION -->
-    <section class="stack" id="stack">
-      <div class="container">
-        <h2 class="section-title">На чём<br><em>мы строим</em></h2>
-        <div class="stack__groups" data-reveal>
-
-          <div class="stack-group">
-            <div class="stack-group__label">Frontend</div>
-            <div class="stack-group__tags">
-              <span class="stack-tag">React</span>
-              <span class="stack-tag">Next.js</span>
-              <span class="stack-tag">Telegram WebApp</span>
-              <span class="stack-tag">TypeScript</span>
-              <span class="stack-tag">Tailwind CSS</span>
-            </div>
-          </div>
-
-          <div class="stack-group">
-            <div class="stack-group__label">Backend</div>
-            <div class="stack-group__tags">
-              <span class="stack-tag">Node.js</span>
-              <span class="stack-tag">Python</span>
-              <span class="stack-tag">PostgreSQL</span>
-              <span class="stack-tag">Redis</span>
-              <span class="stack-tag">REST API</span>
-            </div>
-          </div>
-
-          <div class="stack-group">
-            <div class="stack-group__label">Интеграции</div>
-            <div class="stack-group__tags">
-              <span class="stack-tag">Telegram Bot API</span>
-              <span class="stack-tag">WhatsApp API</span>
-              <span class="stack-tag">Google Sheets</span>
-              <span class="stack-tag">Stripe</span>
-              <span class="stack-tag">1C</span>
-              <span class="stack-tag">ЕМИАС</span>
-            </div>
-          </div>
-
-          <div class="stack-group">
-            <div class="stack-group__label">Инфраструктура</div>
-            <div class="stack-group__tags">
-              <span class="stack-tag">Docker</span>
-              <span class="stack-tag">VPS</span>
-              <span class="stack-tag">Nginx</span>
-              <span class="stack-tag">CI/CD</span>
-              <span class="stack-tag">SSL</span>
-              <span class="stack-tag">Cloudflare</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
 
     <!-- CONTACT SECTION -->
     <section class="contact" id="contact">
-      <div class="contact__bgvideo bgloop" aria-hidden="true">
-        <video class="bgloop__el" data-role="a" autoplay muted loop playsinline preload="auto"><source src="assets/accent-flow.mp4?v=20260707n" type="video/mp4"></video>
-        <video class="bgloop__el" data-role="b" autoplay muted loop playsinline preload="auto"><source src="assets/accent-flow.mp4?v=20260707n" type="video/mp4"></video>
-      </div>
       <div class="container">
         <div class="section-label">Связаться</div>
         <h2 class="section-title">Расскажите о<br><em>вашем бизнесе</em></h2>
@@ -1513,12 +1128,12 @@
       </div>
       <div class="footer__links">
         <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">Telegram — @UniqoreManager</a>
-        <a href="#services">Услуги</a>
+        <a href="/vozmozhnosti/">Услуги</a>
         <a href="#niches">Ниши</a>
         <a href="#cases">Кейсы</a>
         <a href="#process">Процесс</a>
         <a href="#pricing">Цены</a>
-        <a href="#guarantees">Гарантии</a>
+        <a href="#pricing">Цены и гарантии</a>
         <a href="#faq">FAQ</a>
         <a href="/blog/">Блог</a>
         <a href="#contact">Контакт</a>
@@ -1534,15 +1149,15 @@
 
   <!-- tsParticles init -->
   <!-- JS -->
-  <script src="js/animations.js?v=20260707n" defer></script>
-  <script src="js/particles.js?v=20260707n" defer></script>
-  <script src="js/form.js?v=20260710a" defer></script>
-  <script src="js/main.js?v=20260707n" defer></script>
-  <script src="js/niche-switcher.js?v=20260708d" defer></script>
-  <script src="js/premium.js?v=20260707n" defer></script>
-  <script src="js/bgloop.js?v=20260707n" defer></script>
-  <script src="js/nav-dropdown.js?v=20260707n" defer></script>
-  <script src="js/enhance.js?v=20260708a" defer></script>
+  <script src="js/animations.js?v=20260711e" defer></script>
+  <script src="js/particles.js?v=20260711e" defer></script>
+  <script src="js/form.js?v=20260711e" defer></script>
+  <script src="js/main.js?v=20260711e" defer></script>
+  <script src="js/niche-switcher.js?v=20260711e" defer></script>
+  <script src="js/premium.js?v=20260711e" defer></script>
+  <script src="js/bgloop.js?v=20260711e" defer></script>
+  <script src="js/nav-dropdown.js?v=20260711e" defer></script>
+  <script src="js/enhance.js?v=20260711e" defer></script>
   <!-- effects3d.js отключён: дублировал premium.js (тилт/магнит/счётчики) и вызывал конфликт transform. premium.js — единственный источник. -->
 
   <script>
@@ -1568,5 +1183,6 @@
       }).catch(function () {});
     }
   </script>
+  <script src="js/hero3d.js?v=20260711e" defer></script>
 </body>
 </html>
