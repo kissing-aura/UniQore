@@ -365,3 +365,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 
 /* [ритм] Ужать тёмную пустоту над секцией потерь. */
 .mirror-section { padding-top: 84px !important; }
+
+/* ── Финальные нит-фиксы до чистой 9 ── */
+/* Число потерь — ровные группы (tabular-nums), кернинг не разъезжается. */
+.mirror__num, .mirror__loss { font-variant-numeric: tabular-nums; }
+/* Контраст-safety второй строки заголовков-акцентов (была «на грани» на тёмном). */
+.mockups .section-title em, .mirror-section .section-title em { opacity: 1; }
+/* Уплотнить почти-чёрный низ: мягкий каденс-акцент на стыке FAQ→контакт. */
+.faq { padding-bottom: 72px; }

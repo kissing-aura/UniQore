@@ -87,7 +87,9 @@
     var t0 = performance.now(), dur = 950;
     (function step(now) {
       var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-      lossNumEl.textContent = Math.round(from + (to - from) * e).toLocaleString('ru-RU');
+      // нормализуем узкий/неразрывный пробел-разделитель в обычный, чтобы группы
+      // стояли ровно как «38 400» в мокапе (был визуально разъехавшийся кернинг)
+      lossNumEl.textContent = Math.round(from + (to - from) * e).toLocaleString('ru-RU').replace(/[   ]/g, ' ');
       if (p < 1) requestAnimationFrame(step);
     })(performance.now());
   }
@@ -100,9 +102,10 @@
       // (ввёл свои данные) усиливаем конкретным следующим шагом, а не обезличенной кнопкой.
       if (ctaEl) {
         var niche = NICHES[currentKey];
-        var lossShort = loss >= 1000 ? Math.round(loss / 1000) + 'К' : Math.round(loss);
+        // формат числа в CTA = формату в заголовке результата (было «135К» ≠ «135 000»)
+        var lossFull = Math.round(loss).toLocaleString('ru-RU').replace(/[   ]/g, ' ');
         ctaEl.textContent = niche
-          ? 'Разбор для «' + niche.chip + '» — вернуть ' + lossShort + ' ₽/мес →'
+          ? 'Разбор для «' + niche.chip + '» — вернуть ' + lossFull + ' ₽/мес →'
           : ctaDefault;
       }
     }
