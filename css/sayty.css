@@ -300,6 +300,11 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-pf:hover .sy-pf__frame iframe{transform:scale(.4) translateY(-40%)}
 .sy-pf__real{position:absolute;top:11px;left:11px;z-index:3;font-family:var(--font-mono,monospace);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#08130a;background:var(--sy-l);padding:4px 9px;border-radius:999px;font-weight:700;box-shadow:0 4px 12px -3px rgba(205,255,79,.5)}
 .sy-pf__frame-scrim{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,transparent 60%,rgba(6,9,15,.5));pointer-events:none}
+/* видео-кейс + не-кликабельное превью */
+.sy-pf__video{position:absolute;inset:0;z-index:0;overflow:hidden;background:#0e1420}
+.sy-pf__video video{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.3s cubic-bezier(.2,1,.3,1)}
+.sy-pf:hover .sy-pf__video video{transform:scale(1.06)}
+.sy-pf--preview{cursor:default}
 
 /* ─── "Что получаете" ─── */
 .sy-get__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
