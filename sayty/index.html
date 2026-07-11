@@ -148,10 +148,10 @@
     .pf__bar i { margin-left: 14px; font-style: normal; font-family: var(--font-mono); font-size: 12px; color: var(--color-text-muted); }
     .pf__dot { width: 11px; height: 11px; border-radius: 50%; background: #2b3140; }
     .pf__screen { position: relative; aspect-ratio: 16/10; background-size: cover; background-position: center; display: flex; flex-direction: column; }
-    .pf__screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, rgba(6,8,14,.72) 0%, rgba(6,8,14,.25) 45%, transparent 70%), linear-gradient(0deg, rgba(6,8,14,.6), transparent 55%); }
-    .pf__nav { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 22px 30px; }
+    .pf__screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, rgba(6,8,14,.72) 0%, rgba(6,8,14,.25) 45%, transparent 70%), linear-gradient(0deg, rgba(6,8,14,.6), transparent 55%), linear-gradient(180deg, rgba(6,8,14,.5), transparent 20%); }
+    .pf__nav { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 22px 30px; text-shadow: 0 1px 10px rgba(0,0,0,.55); }
     .pf__brand { font-weight: 800; letter-spacing: .04em; font-size: clamp(16px,1.6vw,20px); color: #fff; }
-    .pf__links { display: flex; gap: 20px; font-size: 12.5px; color: rgba(255,255,255,.72); }
+    .pf__links { display: flex; gap: 20px; font-size: 12.5px; color: rgba(255,255,255,.85); }
     .pf__hero { position: relative; z-index: 2; margin-top: auto; padding: 30px 30px 34px; max-width: 620px; }
     .pf__eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 12px; }
     .pf__h { font-family: var(--font-display); font-weight: 800; font-size: clamp(26px,3.4vw,46px); line-height: 1.02; letter-spacing: -.02em; color: #fff; }
@@ -266,6 +266,78 @@
     @media (max-width: 820px) { .pf-grid { grid-template-columns: 1fr; } }
     /* бейдж типа */
     .pf__type { display: inline-block; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #0A0E1A; background: var(--color-accent); padding: 4px 10px; border-radius: 999px; }
+
+    /* ── РАЗНЫЕ СТРУКТУРЫ САЙТОВ (мини-лейауты внутри рамки) ── */
+    .lay { position: relative; aspect-ratio: 16/10; overflow: hidden; font-size: 12px; }
+    /* товарная сетка (магазин) */
+    .lay-shop { background: #faf8f4; color: #1a1712; display: flex; flex-direction: column; }
+    .lay-shop__nav { display: flex; justify-content: space-between; align-items: center; padding: 13px 20px; border-bottom: 1px solid #ececec; }
+    .lay-shop__nav b { font-size: 15px; font-weight: 800; letter-spacing: .12em; } .lay-shop__nav span { color: #8a8172; font-size: 11px; }
+    .lay-shop__hero { padding: 14px 20px 8px; font-family: var(--font-display); font-size: clamp(15px,1.7vw,22px); font-weight: 800; letter-spacing: -.01em; }
+    .lay-shop__grid { flex: 1; display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; padding: 4px 20px 18px; }
+    .lay-shop__card { background: #fff; border: 1px solid #efe9e0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+    .lay-shop__img { aspect-ratio: 1; background-size: cover; background-position: center; }
+    .lay-shop__meta { padding: 7px 9px; } .lay-shop__meta b { font-size: 10.5px; font-weight: 600; } .lay-shop__price { color: #a06a2e; font-weight: 700; font-size: 11px; margin-top: 2px; }
+    /* портфолио masonry */
+    .lay-port { background: #0b0b0d; padding: 12px; display: grid; grid-template-columns: repeat(4,1fr); grid-auto-rows: 1fr; gap: 8px; }
+    .lay-port__t { border-radius: 8px; background-size: cover; background-position: center; }
+    .lay-port__t--w { grid-column: span 2; } .lay-port__t--h { grid-row: span 2; }
+    .lay-port__brand { position: absolute; top: 14px; left: 18px; z-index: 3; color: #fff; font-weight: 800; font-size: 14px; letter-spacing: .12em; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+    /* блог / журнал */
+    .lay-blog { background: #f4f2ec; color: #17130e; display: grid; grid-template-columns: 1.4fr 1fr; }
+    .lay-blog__feat { padding: 18px; display: flex; flex-direction: column; }
+    .lay-blog__feat-img { flex: 1; border-radius: 10px; background-size: cover; background-position: center; margin-bottom: 12px; min-height: 60px; }
+    .lay-blog__k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #a58e6a; }
+    .lay-blog__feat h4 { font-family: 'Cormorant Garamond', var(--font-display); font-size: clamp(18px,2.2vw,28px); font-weight: 600; line-height: 1.03; margin-top: 4px; }
+    .lay-blog__side { border-left: 1px solid #ddd6c8; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+    .lay-blog__art { border-bottom: 1px solid #e4dfd3; padding-bottom: 11px; } .lay-blog__art h5 { font-family: 'Cormorant Garamond', var(--font-display); font-weight: 600; font-size: 15px; line-height: 1.1; } .lay-blog__art span { font-size: 10px; color: #9a9184; }
+    /* SaaS-лендинг (центр + фичи) */
+    .lay-saasland { background: radial-gradient(80% 60% at 50% -5%,#1b2545,#0a0e18); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 26px 22px; }
+    .lay-saasland h4 { font-family: var(--font-display); font-size: clamp(20px,2.6vw,30px); font-weight: 800; letter-spacing: -.02em; }
+    .lay-saasland p { color: #9aa3b2; font-size: 12px; margin: 7px 0 14px; }
+    .lay-saasland__btn { background: #cdff4f; color: #0a0a0a; padding: 8px 18px; border-radius: 8px; font-size: 11.5px; font-weight: 700; }
+    .lay-saasland__feats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 22px; width: 100%; }
+    .lay-saasland__f { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 12px; text-align: left; }
+    .lay-saasland__f .ic { width: 24px; height: 24px; border-radius: 7px; background: rgba(205,255,79,.16); margin-bottom: 8px; }
+    .lay-saasland__f b { font-size: 11px; } .lay-saasland__f span { font-size: 9.5px; color: #7b8496; display: block; margin-top: 3px; }
+    /* split-screen (фото | форма) */
+    .lay-split { display: grid; grid-template-columns: 1fr 1fr; }
+    .lay-split__img { background-size: cover; background-position: center; }
+    .lay-split__form { background: #0e1420; padding: 24px; display: flex; flex-direction: column; justify-content: center; color: #fff; }
+    .lay-split__form .k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #cdff4f; }
+    .lay-split__form h4 { font-family: var(--font-display); font-size: clamp(17px,2vw,24px); font-weight: 800; margin: 6px 0 12px; line-height: 1.05; }
+    .lay-split__inp { background: #151c2b; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; height: 30px; margin-top: 8px; }
+    .lay-split__btn { background: #cdff4f; color: #0a0a0a; height: 34px; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 700; }
+    /* услуги-карточки */
+    .lay-serv { background: #0f1115; color: #fff; display: flex; flex-direction: column; }
+    .lay-serv__nav { display: flex; justify-content: space-between; align-items: center; padding: 13px 20px; border-bottom: 1px solid rgba(255,255,255,.06); } .lay-serv__nav b { font-weight: 800; } .lay-serv__nav span { font-size: 11px; color: #8b93a3; }
+    .lay-serv__grid { flex: 1; display: grid; grid-template-columns: repeat(2,1fr); gap: 11px; padding: 16px 20px; }
+    .lay-serv__c { background: #161922; border: 1px solid rgba(255,255,255,.06); border-radius: 12px; padding: 13px; }
+    .lay-serv__c .ic { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg,#2a3040,#1a1f2b); margin-bottom: 8px; }
+    .lay-serv__c b { font-size: 12.5px; } .lay-serv__c p { font-size: 10px; color: #7b8496; margin-top: 3px; line-height: 1.4; }
+    /* прайс-таблица */
+    .lay-price { background: #0f1115; color: #fff; display: flex; flex-direction: column; padding: 18px 20px; }
+    .lay-price__h { text-align: center; font-family: var(--font-display); font-size: clamp(15px,1.8vw,20px); font-weight: 800; margin-bottom: 14px; }
+    .lay-price__cols { flex: 1; display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .lay-price__col { background: #161922; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 13px; display: flex; flex-direction: column; }
+    .lay-price__col--f { background: linear-gradient(160deg,rgba(205,255,79,.12),transparent 60%); border-color: rgba(205,255,79,.3); }
+    .lay-price__col .t { font-size: 10.5px; color: #8b93a3; } .lay-price__p { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: #cdff4f; margin: 4px 0 8px; }
+    .lay-price__li { font-size: 9.5px; color: #9aa3b2; margin-top: 5px; padding-left: 12px; position: relative; } .lay-price__li::before { content: "✓"; position: absolute; left: 0; color: #cdff4f; }
+    /* ивент / афиша */
+    .lay-event { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background-size: cover; background-position: center; color: #fff; }
+    .lay-event::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg,rgba(6,8,14,.4),rgba(6,8,14,.72)); }
+    .lay-event > * { position: relative; z-index: 2; }
+    .lay-event__date { font-family: var(--font-mono); letter-spacing: .2em; font-size: 11px; color: #ffd84d; }
+    .lay-event__h { font-family: var(--font-display); font-weight: 800; font-size: clamp(24px,3.4vw,42px); line-height: .95; margin: 8px 0; letter-spacing: -.02em; }
+    .lay-event__btn { border: 1px solid #fff; padding: 8px 22px; border-radius: 999px; font-size: 11.5px; margin-top: 6px; }
+    /* 3D центрированный */
+    .lay-c3d { display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; background-size: cover; background-position: center; color: #fff; padding: 16px 0 28px; }
+    .lay-c3d__nav { font-weight: 800; letter-spacing: .12em; font-size: 14px; text-shadow: 0 1px 10px rgba(0,0,0,.6); }
+    .lay-c3d__b { }
+    .lay-c3d__k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #b3c0ff; }
+    .lay-c3d__h { font-family: var(--font-display); font-weight: 800; font-size: clamp(20px,2.6vw,34px); line-height: 1; margin: 8px 0 12px; letter-spacing: -.02em; text-shadow: 0 2px 20px rgba(0,0,0,.5); }
+    .lay-c3d__btn { background: rgba(179,192,255,.16); border: 1px solid rgba(179,192,255,.5); color: #cdd4ff; padding: 8px 20px; border-radius: 999px; font-size: 11.5px; font-weight: 600; }
+    @media (max-width: 640px) { .lay-shop__grid { grid-template-columns: repeat(2,1fr); } .lay-blog { grid-template-columns: 1fr; } .lay-blog__side { display: none; } .lay-split { grid-template-columns: 1fr; } .lay-split__img { display: none; } .lay-serv__grid, .lay-saasland__feats, .lay-price__cols { grid-template-columns: 1fr; } .lay-price__cols { gap: 6px; } }
   </style>
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962"></script>
@@ -363,140 +435,107 @@
     <section class="works" id="raboty"><div class="container">
       <div class="works__head">
         <h2>Мы делаем сайты <em>любого типа</em></h2>
-        <p>Не один приём на все ниши. Кинематичные, 3D, аниме, минимализм, дашборды, e-commerce — под задачу и под вкус.</p>
+        <p>И это не просто разные картинки — это разные структуры: магазин, блог, портфолио, дашборд, форма, афиша. Под любую задачу.</p>
       </div>
 
-      <!-- ФЛАГМАНЫ: 3 РАЗНЫХ ТИПА -->
       <div class="pf-wrap">
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>salt-kitchen.ru</i></div>
-            <div class="pf__screen" style="background-image:url(/raboty/assets/work-restoran.jpg)">
-              <div class="pf__nav"><span class="pf__brand">SALT</span><span class="pf__links">Меню · Атмосфера · Бронь</span></div>
-              <div class="pf__hero"><div class="pf__eyebrow" style="color:#f0c987">Кинематичный</div><div class="pf__h">Вкус, который помнят</div><div class="pf__sub">Фото на весь экран, кино-атмосфера</div><span class="pf__btn" style="background:rgba(216,162,90,.16);border:1px solid rgba(216,162,90,.5);color:#f0c987">Забронировать</span></div>
-            </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Кинематичный</span><span class="pf__desc">Фото-hero, кино-настроение — ресторан, отель, бренд.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>salt-kitchen.ru</i></div>
+          <div class="pf__screen" style="background-image:url(/raboty/assets/work-restoran.jpg)">
+            <div class="pf__nav"><span class="pf__brand">SALT</span><span class="pf__links">Меню · Атмосфера · Бронь</span></div>
+            <div class="pf__hero"><div class="pf__eyebrow" style="color:#f0c987">Кинематичный лендинг</div><div class="pf__h">Вкус, который помнят</div><div class="pf__sub">Фото на весь экран, кино-настроение</div><span class="pf__btn" style="background:rgba(216,162,90,.16);border:1px solid rgba(216,162,90,.5);color:#f0c987">Забронировать</span></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Фото-hero</span><span class="pf__desc">Фото во весь экран — ресторан, отель, бренд.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>nova-tech.io</i></div>
-            <div class="pf__screen" style="background-image:url(/raboty/assets/work-3d.jpg)">
-              <div class="pf__nav"><span class="pf__brand">NOVA</span><span class="pf__links">Продукт · Технология</span></div>
-              <div class="pf__hero"><div class="pf__eyebrow" style="color:#b3c0ff">3D-сайт · WebGL</div><div class="pf__h">Технологии,<br>которые видно</div><div class="pf__sub">Интерактивная 3D-сцена прямо в браузере</div><span class="pf__btn" style="background:rgba(179,192,255,.15);border:1px solid rgba(179,192,255,.5);color:#cdd4ff">Смотреть 3D</span></div>
-            </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">3D / WebGL</span><span class="pf__desc">Объём, глубина, вау — стартап, авто, крипто, продукт.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>nova-tech.io</i></div>
+          <div class="lay lay-c3d" style="background-image:url(/raboty/assets/work-3d.jpg)">
+            <div class="lay-c3d__nav">NOVA</div>
+            <div class="lay-c3d__b"><div class="lay-c3d__k">3D · WebGL</div><div class="lay-c3d__h">Технологии,<br>которые видно</div><div class="lay-c3d__btn">Смотреть 3D</div></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">3D · центр</span><span class="pf__desc">Объект по центру, вращение — стартап, авто, крипто.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>app.flow.ru</i></div>
-            <div class="pf__screen mk mk--saas">
-              <div class="mk-saas-side"><b>Flow</b><i class="on">Дашборд</i><i>Сделки</i><i>Отчёты</i><i>Команда</i></div>
-              <div class="mk-saas-main">
-                <div class="mk-saas-top">Обзор · октябрь</div>
-                <div class="mk-saas-kpis"><div>2.4М<small>выручка ₽</small></div><div>184<small>сделок</small></div><div>67%<small>конверсия</small></div></div>
-                <div class="mk-saas-chart"><span style="height:44%"></span><span style="height:62%"></span><span style="height:38%"></span><span style="height:80%"></span><span style="height:54%"></span><span style="height:96%"></span><span style="height:70%"></span></div>
-              </div>
-            </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">SaaS / дашборд</span><span class="pf__desc">Интерфейсы, графики, данные — сервисы и личные кабинеты.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>getflow.io</i></div>
+          <div class="lay lay-saasland">
+            <h4>Автоматизируйте продажи</h4><p>CRM, которая работает за вас</p><div class="lay-saasland__btn">Начать бесплатно</div>
+            <div class="lay-saasland__feats"><div class="lay-saasland__f"><div class="ic"></div><b>Воронка</b><span>Все сделки на виду</span></div><div class="lay-saasland__f"><div class="ic"></div><b>Аналитика</b><span>Отчёты в 1 клик</span></div><div class="lay-saasland__f"><div class="ic"></div><b>Интеграции</b><span>Telegram, почта</span></div></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">SaaS-лендинг</span><span class="pf__desc">Оффер по центру + карточки фич — сервисы, продукты.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
       </div>
 
-      <!-- СЕТКА ТИПОВ -->
-      <div class="pf-sub"><h3>И ещё десяток стилей</h3><p>От дерзкого арта до строгой классики — под характер бренда.</p></div>
+      <div class="pf-sub"><h3>Под любую задачу — своя структура</h3><p>Не один шаблон на всё. Каждый тип сайта собран под свою цель.</p></div>
       <div class="pf-grid">
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>pixeldrop.gg</i></div>
-            <div class="pf__screen" style="background-image:url(/raboty/assets/work-anime.jpg)">
-              <div class="pf__nav"><span class="pf__brand">PIXELDROP</span><span class="pf__links">Игры · Комьюнити</span></div>
-              <div class="pf__hero"><div class="pf__eyebrow" style="color:#ffd84d">Аниме / иллюстрация</div><div class="pf__h">Играй по-своему</div><span class="pf__btn" style="background:#ff4d94;color:#fff">Начать</span></div>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>luma-store.ru</i></div>
+          <div class="lay lay-shop">
+            <div class="lay-shop__nav"><b>LUMA</b><span>Каталог · Новинки · Корзина</span></div>
+            <div class="lay-shop__hero">Новая коллекция</div>
+            <div class="lay-shop__grid">
+              <div class="lay-shop__card"><div class="lay-shop__img" style="background-image:url(/raboty/assets/work-magazin.jpg)"></div><div class="lay-shop__meta"><b>Костюм лён</b><div class="lay-shop__price">12 900 ₽</div></div></div>
+              <div class="lay-shop__card"><div class="lay-shop__img" style="background-image:url(/raboty/assets/work-cosmetic.jpg)"></div><div class="lay-shop__meta"><b>Сыворотка</b><div class="lay-shop__price">3 400 ₽</div></div></div>
+              <div class="lay-shop__card"><div class="lay-shop__img" style="background-image:url(/raboty/assets/work-beauty.jpg)"></div><div class="lay-shop__meta"><b>Уход-набор</b><div class="lay-shop__price">5 900 ₽</div></div></div>
+              <div class="lay-shop__card"><div class="lay-shop__img" style="background-image:url(/raboty/assets/work-coffee.jpg)"></div><div class="lay-shop__meta"><b>Зёрна 250г</b><div class="lay-shop__price">790 ₽</div></div></div>
             </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Аниме / илл.</span><span class="pf__desc">Яркий арт — геймдев, ивенты, детские бренды.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Интернет-магазин</span><span class="pf__desc">Каталог с карточками товаров, корзина, оплата.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>still-studio.ru</i></div>
-            <div class="pf__screen mk mk--min">
-              <div class="mk-min-nav"><b>STILL</b><span>Работы · Бюро · Контакт</span></div>
-              <div class="mk-min-hero"><span class="mk-min-eye">Архитектурное бюро</span><h4>Пространство,<br>которое дышит</h4></div>
-              <div class="mk-min-foot">— проектируем с 2014</div>
-            </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Минимализм</span><span class="pf__desc">Воздух и типографика — архитектура, фото, бренды класса люкс.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>studio-f.photo</i></div>
+          <div class="lay lay-port"><div class="lay-port__brand">STUDIO&nbsp;F</div>
+            <div class="lay-port__t lay-port__t--h" style="background-image:url(/raboty/assets/work-restoran.jpg)"></div>
+            <div class="lay-port__t" style="background-image:url(/raboty/assets/work-beauty.jpg)"></div>
+            <div class="lay-port__t" style="background-image:url(/raboty/assets/work-coffee.jpg)"></div>
+            <div class="lay-port__t lay-port__t--w" style="background-image:url(/raboty/assets/work-travel.jpg)"></div>
+            <div class="lay-port__t" style="background-image:url(/raboty/assets/work-hotel.jpg)"></div>
+            <div class="lay-port__t" style="background-image:url(/raboty/assets/work-fitness.jpg)"></div>
+            <div class="lay-port__t" style="background-image:url(/raboty/assets/work-magazin.jpg)"></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Портфолио / галерея</span><span class="pf__desc">Сетка работ — фотограф, студия, агентство.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>rawline.art</i></div>
-            <div class="pf__screen mk mk--brut">
-              <div class="mk-brut-nav"><b>RAWLINE</b><span>MENU</span></div>
-              <div class="mk-brut-hero"><h4>ИСКУССТВО<br>БЕЗ <em>ПРАВИЛ</em></h4></div>
-              <div class="mk-brut-marq">ГАЛЕРЕЯ · ВЫСТАВКИ · 2026 · ГАЛЕРЕЯ · ВЫСТАВКИ ·</div>
-            </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Брутализм</span><span class="pf__desc">Жёсткий контраст, крупный шрифт — арт, музыка, мода.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>journal.coffee</i></div>
+          <div class="lay lay-blog">
+            <div class="lay-blog__feat"><div class="lay-blog__feat-img" style="background-image:url(/raboty/assets/work-coffee.jpg)"></div><div class="lay-blog__k">Кофейная культура</div><h4>Как выбрать зерно для эспрессо</h4></div>
+            <div class="lay-blog__side"><div class="lay-blog__art"><span>Гид</span><h5>5 способов альтернативной заварки</h5></div><div class="lay-blog__art"><span>Обзор</span><h5>Ростеры, о которых стоит знать</h5></div><div class="lay-blog__art"><span>Рецепт</span><h5>Идеальный раф на кокосе</h5></div></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Блог / журнал</span><span class="pf__desc">Колонки, статьи, крупный featured — медиа, контент.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>aura.finance</i></div>
-            <div class="pf__screen mk mk--glass">
-              <div class="mk-glass-nav"><b>AURA</b><span>Функции · Цена</span></div>
-              <div class="mk-glass-hero"><h4>Финансы<br>под контролем</h4><div class="mk-glass-card"><b>+18%</b><small>за месяц</small></div></div>
-            </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Гласморфизм</span><span class="pf__desc">Стекло и градиенты — финтех, приложения, стартапы.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>app.flow.ru</i></div>
+          <div class="pf__screen mk mk--saas">
+            <div class="mk-saas-side"><b>Flow</b><i class="on">Дашборд</i><i>Сделки</i><i>Отчёты</i><i>Команда</i></div>
+            <div class="mk-saas-main"><div class="mk-saas-top">Обзор · октябрь</div><div class="mk-saas-kpis"><div>2.4М<small>выручка ₽</small></div><div>184<small>сделок</small></div><div>67%<small>конверсия</small></div></div><div class="mk-saas-chart"><span style="height:44%"></span><span style="height:62%"></span><span style="height:38%"></span><span style="height:80%"></span><span style="height:54%"></span><span style="height:96%"></span><span style="height:70%"></span></div></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">SaaS / дашборд</span><span class="pf__desc">Личный кабинет, графики, данные — панель управления.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>atelier-store.ru</i></div>
-            <div class="pf__screen" style="background-image:url(/raboty/assets/work-magazin.jpg)">
-              <div class="pf__nav"><span class="pf__brand">ATELIER</span><span class="pf__links">Каталог · Sale</span></div>
-              <div class="pf__hero"><div class="pf__eyebrow" style="color:#e8dcc8">E-commerce</div><div class="pf__h">Новая коллекция</div><span class="pf__btn" style="background:#f3ebdd;color:#20180f;border:none">В каталог</span></div>
-            </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Интернет-магазин</span><span class="pf__desc">Каталог, корзина, оплата — одежда, товары, доставка.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>azimut-hotel.ru</i></div>
+          <div class="lay lay-split">
+            <div class="lay-split__img" style="background-image:url(/raboty/assets/work-hotel.jpg)"></div>
+            <div class="lay-split__form"><div class="k">Бронирование</div><h4>Забронируйте<br>номер</h4><div class="lay-split__inp"></div><div class="lay-split__inp"></div><div class="lay-split__btn">Проверить даты</div></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Split + форма</span><span class="pf__desc">Пол-экрана фото, пол-экрана заявка — услуги, отели.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
-        <article class="pf">
-          <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>nordent-clinic.ru</i></div>
-            <div class="pf__screen" style="background-image:url(/raboty/assets/work-klinika.jpg)">
-              <div class="pf__nav"><span class="pf__brand">Nordent</span><span class="pf__links">Услуги · Цены</span></div>
-              <div class="pf__hero"><div class="pf__eyebrow" style="color:#6fe3d6">Светлый премиум</div><div class="pf__h">Лечение без страха</div><span class="pf__btn" style="background:#12b3a6;color:#04201d">Записаться</span></div>
-            </div>
-          </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Светлый премиум</span><span class="pf__desc">Чисто и доверительно — клиники, услуги, консалтинг.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div>
-        </article>
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>medline-clinic.ru</i></div>
+          <div class="lay lay-serv">
+            <div class="lay-serv__nav"><b>MEDLINE</b><span>Услуги · Врачи · Контакты</span></div>
+            <div class="lay-serv__grid"><div class="lay-serv__c"><div class="ic"></div><b>Диагностика</b><p>Полное обследование за один день</p></div><div class="lay-serv__c"><div class="ic"></div><b>Терапия</b><p>Ведение и лечение под ключ</p></div><div class="lay-serv__c"><div class="ic"></div><b>Анализы</b><p>Результаты онлайн за 24 часа</p></div><div class="lay-serv__c"><div class="ic"></div><b>Вызов на дом</b><p>Врач приедет в удобное время</p></div></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Услуги · карточки</span><span class="pf__desc">Хедер + сетка услуг — клиники, агентства, сервисы.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
+
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>pricing.saas.ru</i></div>
+          <div class="lay lay-price">
+            <div class="lay-price__h">Тарифы, честно</div>
+            <div class="lay-price__cols"><div class="lay-price__col"><div class="t">Старт</div><div class="lay-price__p">990₽</div><div class="lay-price__li">1 пользователь</div><div class="lay-price__li">Базовые отчёты</div></div><div class="lay-price__col lay-price__col--f"><div class="t">Бизнес</div><div class="lay-price__p">2 900₽</div><div class="lay-price__li">До 10 человек</div><div class="lay-price__li">Интеграции</div><div class="lay-price__li">Поддержка 24/7</div></div><div class="lay-price__col"><div class="t">Про</div><div class="lay-price__p">5 900₽</div><div class="lay-price__li">Без лимитов</div><div class="lay-price__li">API и вебхуки</div></div></div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Прайс / тарифы</span><span class="pf__desc">Таблица тарифов с акцентом — SaaS, подписки.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
+
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>still-studio.ru</i></div>
+          <div class="pf__screen mk mk--min">
+            <div class="mk-min-nav"><b>STILL</b><span>Работы · Бюро · Контакт</span></div>
+            <div class="mk-min-hero"><span class="mk-min-eye">Архитектурное бюро</span><h4>Пространство,<br>которое дышит</h4></div>
+            <div class="mk-min-foot">— проектируем с 2014</div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Минимализм</span><span class="pf__desc">Воздух и типографика — архитектура, люкс, фото.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
+
+        <article class="pf"><div class="pf__browser"><div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>signalfest.ru</i></div>
+          <div class="lay lay-event" style="background-image:url(/raboty/assets/work-nedvizh.jpg)">
+            <div class="lay-event__date">14 ДЕКАБРЯ · 2026</div><div class="lay-event__h">SIGNAL<br>FEST</div><div class="lay-event__btn">Купить билет</div>
+          </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Ивент / афиша</span><span class="pf__desc">Центр-афиша, дата, билеты — концерты, конференции.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
 
       </div>
 
-      <!-- ГАЛЕРЕЯ НИШ -->
-      <div class="pf-sub"><h3>И под любую нишу</h3><p>Свой стиль под каждое дело — вот лишь часть направлений.</p></div>
+      <div class="pf-sub"><h3>И под любую нишу — свой характер</h3><p>Вот лишь часть направлений.</p></div>
       <div class="pfg-grid">
-        <div class="pfg pfg--typo">
-          <div class="pfg__body"><span class="pfg__tag">Барбершоп</span><div class="pfg__name">KROB</div><div class="pfg__style">Брутальная типографика</div></div>
-        </div>
-        <div class="pfg" style="background-image:url(/raboty/assets/work-avto.jpg)">
-          <div class="pfg__body"><span class="pfg__tag">Автосервис</span><div class="pfg__name">GARAGE 46</div><div class="pfg__style">Индустриальный тёмный</div></div>
-        </div>
-        <div class="pfg" style="background-image:url(/raboty/assets/work-nedvizh.jpg)">
-          <div class="pfg__body"><span class="pfg__tag">Недвижимость</span><div class="pfg__name">Квартал</div><div class="pfg__style">Премиум, крупные фото</div></div>
-        </div>
-        <div class="pfg" style="background-image:url(/raboty/assets/work-urist.jpg)">
-          <div class="pfg__body"><span class="pfg__tag">Юрист · консалтинг</span><div class="pfg__name">Право&amp;Ко</div><div class="pfg__style">Строгий корпоратив</div></div>
-        </div>
+        <div class="pfg pfg--typo"><div class="pfg__body"><span class="pfg__tag">Барбершоп</span><div class="pfg__name">KROB</div><div class="pfg__style">Брутальная типографика</div></div></div>
+        <div class="pfg" style="background-image:url(/raboty/assets/work-anime.jpg)"><div class="pfg__body"><span class="pfg__tag">Геймдев</span><div class="pfg__name">PIXELDROP</div><div class="pfg__style">Аниме / иллюстрация</div></div></div>
+        <div class="pfg" style="background-image:url(/raboty/assets/work-avto.jpg)"><div class="pfg__body"><span class="pfg__tag">Автосервис</span><div class="pfg__name">GARAGE 46</div><div class="pfg__style">Индустриальный тёмный</div></div></div>
+        <div class="pfg" style="background-image:url(/raboty/assets/work-urist.jpg)"><div class="pfg__body"><span class="pfg__tag">Юрист</span><div class="pfg__name">Право&amp;Ко</div><div class="pfg__style">Строгий корпоратив</div></div></div>
       </div>
 
       <p class="works__note">Это примеры типов и стилей, которые мы делаем под ключ. Ваш сайт собираем с нуля — под вашу нишу, бренд и задачу. И да, <a href="/" style="color:var(--color-accent)">этот сайт</a> мы тоже сделали сами.</p>
