@@ -192,18 +192,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const statsBlock = document.querySelector('.hero__stats');
   if (statsBlock) counterObserver.observe(statsBlock);
 
-  // FAQ accordion
+  // FAQ accordion — плавное раскрытие (max-height вместо мгновенного hidden)
   document.querySelectorAll('.faq-item__q').forEach(btn => {
+    const answer = btn.nextElementSibling;
+    if (answer) { answer.hidden = false; answer.classList.add('faq-a'); } // берём управление высотой на себя
     btn.addEventListener('click', () => {
-      const answer = btn.nextElementSibling;
       const isOpen = btn.getAttribute('aria-expanded') === 'true';
       document.querySelectorAll('.faq-item__q').forEach(b => {
         b.setAttribute('aria-expanded', 'false');
-        b.nextElementSibling.hidden = true;
+        const a = b.nextElementSibling;
+        if (a) { a.classList.remove('is-open'); a.style.maxHeight = ''; }
       });
-      if (!isOpen) {
+      if (!isOpen && answer) {
         btn.setAttribute('aria-expanded', 'true');
-        answer.hidden = false;
+        answer.classList.add('is-open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
       }
     });
   });

@@ -118,3 +118,9 @@
 
 /* ── метрики под hero: чуть воздуха, tabular ── */
 .hero__metric-num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+/* ── FAQ: плавный аккордеон (JS вешает .faq-a / .is-open) ── */
+.faq-a{overflow:hidden;max-height:0;opacity:0;transition:max-height .42s cubic-bezier(.4,0,.2,1),opacity .32s ease}
+.faq-a.is-open{opacity:1}
+.faq-item__icon{transition:transform .32s cubic-bezier(.2,1,.3,1);display:inline-block}
+.faq-item__q[aria-expanded="true"] .faq-item__icon{transform:rotate(45deg)}
