@@ -130,6 +130,14 @@
     .guar span { color: var(--color-text-secondary); font-size: 14px; line-height: 1.55; }
     @media (max-width: 900px) { .guar__grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 560px) { .guar__grid { grid-template-columns: 1fr; } }
+    /* процесс */
+    .proc__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; margin-top: 42px; counter-reset: step; }
+    .proc { position: relative; padding: 30px 26px; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; background: rgba(255,255,255,.02); }
+    .proc::before { counter-increment: step; content: "0" counter(step); font-family: var(--font-mono); font-size: 13px; color: var(--color-accent); letter-spacing: .06em; }
+    .proc b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 12px 0 8px; }
+    .proc span { color: var(--color-text-secondary); font-size: 14px; line-height: 1.55; }
+    @media (max-width: 900px) { .proc__grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .proc__grid { grid-template-columns: 1fr; } }
   </style>
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962"></script>
@@ -282,6 +290,20 @@
         <p>Нужен не просто сайт, а связка сайт + реклама + CRM? Смотрите <a href="/sistema/" style="color:var(--color-accent)">Систему под ключ</a>.</p>
       </div>
     </section>
+
+    <section class="container">
+      <div class="works__head" style="margin-bottom:0">
+        <h2>Как мы <em>работаем</em></h2>
+        <p>Прозрачно, по шагам. Вы видите результат на каждом этапе, а не «через месяц».</p>
+      </div>
+      <div class="proc__grid">
+        <div class="proc"><b>Бриф</b><span>20 минут созвона: разбираем нишу, вашего клиента и цель сайта. Бесплатно.</span></div>
+        <div class="proc"><b>Прототип и дизайн</b><span>Показываем структуру и макет до кода. Согласуем — фиксируем цену и срок.</span></div>
+        <div class="proc"><b>Разработка</b><span>Собираем с нуля: адаптив, скорость, SEO, формы в Telegram и CRM.</span></div>
+        <div class="proc"><b>Запуск</b><span>Домен, хостинг, аналитика — на нас. Передаём готовый работающий сайт.</span></div>
+      </div>
+    </section>
+
     <section class="pricing" id="pricing">
       <div class="container">
         <h2 class="section-title">Пакеты<br><em>сайтов</em></h2>
