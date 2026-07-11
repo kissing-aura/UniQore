@@ -1,0 +1,120 @@
+/* hero-premium.css — high-end полировка hero (Linear/Stripe/Apple уровень).
+   Загружается ПОСЛЕДНИМ → переопределяет базовые стили. Не меняет структуру/цвета/концепцию.
+   Только глубина, свет, стекло, объём, микро-движение. Один акцент — лайм #CDFF4F. */
+
+/* ── глубина фона: несколько мягких световых слоёв + OLED-виньетка ── */
+.hero{position:relative;isolation:isolate}
+.hero::after{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60% 50% at 82% 26%, rgba(205,255,79,.10), transparent 60%),
+    radial-gradient(45% 40% at 12% 8%, rgba(205,255,79,.05), transparent 60%),
+    radial-gradient(120% 120% at 50% 120%, rgba(0,0,0,.5), transparent 55%);
+  mix-blend-mode:screen;opacity:.9;
+}
+.hero__inner{position:relative;z-index:2}
+
+/* ── типографика: тоньше кернинг, чище иерархия ── */
+.hero__title{letter-spacing:-.03em;line-height:1.02}
+.hero__subtitle{letter-spacing:-.01em;color:#a6b0c0;max-width:34ch}
+.hero__eyebrow{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(205,255,79,.18);background:rgba(205,255,79,.04)}
+
+/* ── кнопки уровня Linear ── */
+.hero__actions .btn{transition:transform .22s cubic-bezier(.2,1,.3,1),box-shadow .3s ease,background .2s ease,border-color .2s ease}
+.hero__actions .btn--accent{box-shadow:0 8px 30px -8px rgba(205,255,79,.5),0 1px 0 rgba(255,255,255,.25) inset}
+.hero__actions .btn--accent:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 18px 50px -10px rgba(205,255,79,.65),0 1px 0 rgba(255,255,255,.35) inset}
+.hero__actions .btn--ghost:hover{transform:translateY(-2px);border-color:rgba(205,255,79,.5);box-shadow:0 0 30px -6px rgba(205,255,79,.25)}
+
+/* ── соц-доказательство (300+ команд / 4.9) ── */
+.hero__proof{display:flex;align-items:center;gap:26px;margin-top:30px;flex-wrap:wrap}
+.hero__proof-group{display:flex;align-items:center;gap:13px}
+.hero__proof-avatars{display:flex}
+.hero__proof-av{width:42px;height:42px;border-radius:50%;border:2px solid #0c1220;margin-left:-12px;
+  background-size:cover;background-position:center;box-shadow:0 4px 12px rgba(0,0,0,.4);position:relative}
+.hero__proof-av:first-child{margin-left:0}
+.hero__proof-av--1{background:linear-gradient(135deg,#4a5b74,#212b3d)}
+.hero__proof-av--2{background:linear-gradient(135deg,#5a6a54,#2b3626)}
+.hero__proof-av--3{background:linear-gradient(135deg,#6a5a6a,#332633)}
+.hero__proof-av svg{position:absolute;inset:0;margin:auto;width:22px;height:22px;color:rgba(255,255,255,.55)}
+.hero__proof-t{font-size:15px;font-weight:700;color:#fff;line-height:1.25}
+.hero__proof-t small{display:block;font-size:12.5px;font-weight:500;color:#8792a3;margin-top:2px}
+.hero__proof-stars{display:flex;gap:2px;margin-bottom:3px}
+.hero__proof-stars svg{width:15px;height:15px;color:#CDFF4F}
+@media(max-width:560px){.hero__proof{gap:18px}}
+
+/* ── премиум-фрейм дашборда: стекло + слоистая тень + свечение + лёгкий float ── */
+.hero__right{position:relative;perspective:1600px}
+.hero__frame{
+  position:relative;z-index:2;transform-style:preserve-3d;
+  transform:rotateY(-5deg) rotateX(3deg) translateZ(0);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(20,27,42,.78),rgba(10,14,26,.9));
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.4),
+    0 20px 50px -18px rgba(0,0,0,.75),
+    0 50px 120px -40px rgba(0,0,0,.85),
+    0 0 0 1px rgba(255,255,255,.03) inset,
+    0 1px 0 rgba(255,255,255,.09) inset;
+  animation:heroFloat 9s ease-in-out infinite;
+  will-change:transform;
+}
+@keyframes heroFloat{0%,100%{transform:rotateY(-5deg) rotateX(3deg) translateY(0)}50%{transform:rotateY(-4deg) rotateX(2.4deg) translateY(-9px)}}
+@media(prefers-reduced-motion:reduce){.hero__frame{animation:none}}
+/* свечение-блум за фреймом */
+.hero__right::before{
+  content:'';position:absolute;z-index:1;top:8%;right:-6%;width:78%;height:82%;
+  background:radial-gradient(closest-side, rgba(205,255,79,.28), rgba(205,255,79,.06) 55%, transparent 75%);
+  filter:blur(46px);pointer-events:none;
+}
+/* мягкое отражение под фреймом */
+.hero__right::after{
+  content:'';position:absolute;z-index:0;left:6%;right:6%;bottom:-24px;height:70px;
+  background:radial-gradient(60% 100% at 50% 0%, rgba(0,0,0,.6), transparent 70%);
+  filter:blur(10px);pointer-events:none;
+}
+@media(max-width:900px){
+  .hero__frame{transform:none;animation:none}
+  .hero__right::before{filter:blur(38px);opacity:.8}
+}
+
+/* верхняя панель фрейма — благороднее */
+.hero__frame-bar{border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.015)}
+.hero__frame-url{letter-spacing:.02em;color:#7f8ba0}
+
+/* ── дашборд-мокап: чище стекло, живые числа, hover ── */
+.ui-mockup{background:transparent}
+.ui-mockup__kpi{
+  border:1px solid rgba(255,255,255,.06);border-radius:13px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008));
+  transition:transform .25s cubic-bezier(.2,1,.3,1),border-color .25s,box-shadow .25s;
+}
+.ui-mockup__kpi:hover{transform:translateY(-3px);border-color:rgba(205,255,79,.28);box-shadow:0 12px 30px -14px rgba(0,0,0,.7)}
+.ui-mockup__kpi-num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.ui-mockup__kpi-delta{color:#CDFF4F;background:rgba(205,255,79,.1);border-radius:20px;padding:2px 7px;font-size:10px;font-weight:700}
+
+.ui-mockup__chart{border:1px solid rgba(255,255,255,.05);border-radius:13px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);overflow:hidden;position:relative}
+.ui-mockup__chart::after{content:'';position:absolute;inset:0;background:radial-gradient(70% 100% at 80% 0%, rgba(205,255,79,.06), transparent 60%);pointer-events:none}
+.ui-mockup__bar i,.ui-mockup__bar{transition:height .8s cubic-bezier(.2,1,.3,1)}
+.ui-mockup__bar--hi{filter:drop-shadow(0 0 10px rgba(205,255,79,.5))}
+
+.ui-mockup__row{border-radius:11px;transition:background .2s ease,transform .2s ease}
+.ui-mockup__row:hover{background:rgba(205,255,79,.05);transform:translateX(2px)}
+.ui-badge--done{color:#CDFF4F;border-color:rgba(205,255,79,.4)}
+
+/* ── AI-панель в мокапе (премиум-акцент, как в референсе) ── */
+.ui-mockup__ai{display:flex;gap:11px;align-items:flex-start;margin-top:12px;padding:12px 13px;
+  border:1px solid rgba(205,255,79,.18);border-radius:13px;
+  background:linear-gradient(180deg,rgba(205,255,79,.06),rgba(205,255,79,.01));position:relative;overflow:hidden}
+.ui-mockup__ai::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(#CDFF4F,rgba(205,255,79,.2))}
+.ui-mockup__ai-ic{width:26px;height:26px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;
+  background:rgba(205,255,79,.12);border:1px solid rgba(205,255,79,.3);color:#CDFF4F}
+.ui-mockup__ai-ic svg{width:15px;height:15px}
+.ui-mockup__ai-b{min-width:0}
+.ui-mockup__ai-t{font-size:11px;font-family:var(--font-mono,monospace);text-transform:uppercase;letter-spacing:.06em;color:#9db06a}
+.ui-mockup__ai-x{font-size:12.5px;color:#d6dce6;line-height:1.45;margin-top:3px}
+
+/* ── метрики под hero: чуть воздуха, tabular ── */
+.hero__metric-num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
