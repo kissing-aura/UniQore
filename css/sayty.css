@@ -280,3 +280,23 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-band h2{font-family:'Unbounded',sans-serif;font-weight:700;font-size:clamp(24px,3.6vw,40px);letter-spacing:-.02em;line-height:1.08;position:relative}
 .sy-band p{color:#aab4c4;margin-top:14px;font-size:16px;position:relative}
 .sy-band__cta{margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+
+/* ─── PORTFOLIO: реальные фото-кейсы (фото + оверлей-сайт) + живые iframe ─── */
+.sy-pf__shot{position:relative;aspect-ratio:16/11;overflow:hidden;background:#0e1420}
+.sy-pf__photo{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 1.3s cubic-bezier(.2,1,.3,1)}
+.sy-pf:hover .sy-pf__photo{transform:scale(1.07)}
+.sy-pf__scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(6,9,15,.5),rgba(6,9,15,.28) 42%,rgba(6,9,15,.82))}
+.sy-pf__ui{position:absolute;inset:0;z-index:2;padding:15px 17px;display:flex;flex-direction:column}
+.sy-pf__uinav{display:flex;align-items:center;justify-content:space-between}
+.sy-pf__brand{font-family:'Unbounded',sans-serif;font-weight:800;font-size:14px;letter-spacing:.02em;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.sy-pf__ulinks{font-size:10px;color:rgba(255,255,255,.65)}
+.sy-pf__uihero{margin-top:auto}
+.sy-pf__eyebrow2{font-family:var(--font-mono,monospace);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+.sy-pf__uih{font-family:'Unbounded',sans-serif;font-weight:800;font-size:clamp(17px,2.1vw,21px);line-height:1.05;color:#fff;margin:7px 0 11px;letter-spacing:-.01em;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.sy-pf__uibtn{align-self:flex-start;font-size:11px;font-weight:700;padding:8px 15px;border-radius:9px}
+/* живой iframe (реальный сайт, листается вниз на hover) */
+.sy-pf__frame{position:absolute;inset:0;z-index:1;overflow:hidden;background:#0b0e15}
+.sy-pf__frame iframe{position:absolute;top:0;left:0;width:250%;height:250%;transform:scale(.4);transform-origin:top left;border:0;pointer-events:none;transition:transform 3.4s ease}
+.sy-pf:hover .sy-pf__frame iframe{transform:scale(.4) translateY(-40%)}
+.sy-pf__real{position:absolute;top:11px;left:11px;z-index:3;font-family:var(--font-mono,monospace);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#08130a;background:var(--sy-l);padding:4px 9px;border-radius:999px;font-weight:700;box-shadow:0 4px 12px -3px rgba(205,255,79,.5)}
+.sy-pf__frame-scrim{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,transparent 60%,rgba(6,9,15,.5));pointer-events:none}
