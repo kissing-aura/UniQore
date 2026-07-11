@@ -192,7 +192,7 @@
       el.style.setProperty('--pos', pos + '%');
     }
     function scaleFrame() {
-      if (el.querySelector('.sy-cmp__after iframe')) {
+      if (el.querySelector('.sy-slc__after iframe')) {
         el.style.setProperty('--s', (el.clientWidth / 1366).toFixed(4));
       }
     }
@@ -212,5 +212,5 @@
     window.addEventListener('resize', scaleFrame);
     scaleFrame(); setPos(50);
   }
-  document.querySelectorAll('[data-cmp]').forEach(initCmp);
+  document.querySelectorAll('[data-slc]').forEach(initCmp);
 })();
