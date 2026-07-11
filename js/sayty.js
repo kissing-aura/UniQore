@@ -183,4 +183,34 @@
       f.addEventListener('input', function () { f.style.borderColor = ''; });
     });
   }
+
+  // ── Before/After compare sliders ──
+  function initCmp(el) {
+    var pos = 50, dragging = false;
+    function setPos(p) {
+      pos = p < 0 ? 0 : p > 100 ? 100 : p;
+      el.style.setProperty('--pos', pos + '%');
+    }
+    function scaleFrame() {
+      if (el.querySelector('.sy-cmp__after iframe')) {
+        el.style.setProperty('--s', (el.clientWidth / 1366).toFixed(4));
+      }
+    }
+    function xToPos(clientX) {
+      var r = el.getBoundingClientRect();
+      return (clientX - r.left) / r.width * 100;
+    }
+    el.addEventListener('pointerdown', function (e) {
+      dragging = true; setPos(xToPos(e.clientX));
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    el.addEventListener('pointermove', function (e) {
+      if (dragging) { setPos(xToPos(e.clientX)); e.preventDefault(); }
+    });
+    el.addEventListener('pointerup', function () { dragging = false; });
+    el.addEventListener('pointercancel', function () { dragging = false; });
+    window.addEventListener('resize', scaleFrame);
+    scaleFrame(); setPos(50);
+  }
+  document.querySelectorAll('[data-cmp]').forEach(initCmp);
 })();
