@@ -134,6 +134,7 @@
   <link rel="stylesheet" href="css/enhance.css?v=20260711e">
   <link rel="stylesheet" href="css/redesign.css?v=20260711x">
   <link rel="stylesheet" href="css/hero-premium.css?v=20260711A">
+  <link rel="stylesheet" href="css/dash.css?v=20260711A">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -302,98 +303,73 @@
                 <span class="hero__frame-url">crm.uniqore.pro</span>
                 <span class="hero__frame-demo" style="font:600 10px/1 var(--font-mono,monospace);letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent,#CDFF4F);border:1px solid color-mix(in srgb, var(--color-accent,#CDFF4F) 45%, transparent);border-radius:5px;padding:3px 7px;opacity:.9">Демо</span>
               </div>
-              <div class="ui-mockup">
-                <!-- Command bar — Bloomberg Terminal style, matches CRM v4 -->
-                <div class="ui-mockup__cmdbar">
-                  <div class="ui-mockup__logo-mark"></div>
-                  <div class="ui-mockup__nav">
-                    <div class="ui-mockup__nav-item ui-mockup__nav-item--active"></div>
-                    <div class="ui-mockup__nav-item"></div>
-                    <div class="ui-mockup__nav-item"></div>
-                    <div class="ui-mockup__nav-item"></div>
-                    <div class="ui-mockup__nav-item"></div>
-                    <div class="ui-mockup__nav-item"></div>
+              <div class="ui-mockup dash" id="heroDash">
+                <div class="dash__body">
+                  <div class="dash__rail">
+                    <div class="dash__rail-logo"></div>
+                    <span class="dash__rail-i is-on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span>
+                    <span class="dash__rail-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
+                    <span class="dash__rail-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+                    <span class="dash__rail-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>
+                    <span class="dash__rail-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>
                   </div>
-                  <div class="ui-mockup__cmdbar-cta"></div>
-                </div>
-                <div class="ui-mockup__body">
-                  <div class="ui-mockup__kpis">
-                    <div class="ui-mockup__kpi">
-                      <div class="ui-mockup__kpi-num" id="mk1">$38 400</div>
-                      <div class="ui-mockup__kpi-label">выручка / мес</div>
-                      <div class="ui-mockup__kpi-delta">+18%</div>
+                  <div class="dash__main">
+                    <div class="dash__head">
+                      <div><div class="dash__title">Дашборд</div><div class="dash__sub">crm.uniqore.pro</div></div>
+                      <div class="dash__period">8 недель <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
                     </div>
-                    <div class="ui-mockup__kpi">
-                      <div class="ui-mockup__kpi-num" id="mk2">184</div>
-                      <div class="ui-mockup__kpi-label">заявок</div>
-                      <div class="ui-mockup__kpi-delta">+12%</div>
+                    <div class="dash__kpis">
+                      <div class="dash__kpi"><div class="dash__kpi-l">Выручка</div><div class="dash__kpi-n" data-to="38400" data-pre="$" data-fmt="1">$0</div><div class="dash__kpi-d">↑ 18%</div></div>
+                      <div class="dash__kpi"><div class="dash__kpi-l">Заявки</div><div class="dash__kpi-n" data-to="184">0</div><div class="dash__kpi-d">↑ 12%</div></div>
+                      <div class="dash__kpi"><div class="dash__kpi-l">Прибыль</div><div class="dash__kpi-n" data-to="24600" data-pre="$" data-fmt="1">$0</div><div class="dash__kpi-d">↑ 22%</div></div>
+                      <div class="dash__kpi"><div class="dash__kpi-l">Конверсия</div><div class="dash__kpi-n" data-to="67" data-suf="%">0%</div><div class="dash__kpi-d">↑ 4%</div></div>
                     </div>
-                    <div class="ui-mockup__kpi">
-                      <div class="ui-mockup__kpi-num" id="mk3">67%</div>
-                      <div class="ui-mockup__kpi-label">конверсия</div>
-                      <div class="ui-mockup__kpi-delta">+4%</div>
+                    <div class="dash__row2">
+                      <div class="dash__card dash__chart">
+                        <div class="dash__card-h"><span class="dash__card-t">Динамика выручки</span><span class="dash__card-badge">$ / нед</span></div>
+                        <div class="dash__chart-wrap">
+                          <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+                            <defs><linearGradient id="dashFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CDFF4F" stop-opacity=".32"/><stop offset="1" stop-color="#CDFF4F" stop-opacity="0"/></linearGradient></defs>
+                            <path class="dash__chart-area" d="M6,68 L48,74 L90,58 L132,63 L174,45 L216,52 L258,30 L294,20 L294,100 L6,100 Z"/>
+                            <path class="dash__chart-line" d="M6,68 L48,74 L90,58 L132,63 L174,45 L216,52 L258,30 L294,20"/>
+                            <circle class="dash__chart-dot" cx="294" cy="20" r="3.5"/>
+                          </svg>
+                        </div>
+                        <div class="dash__chart-x"><span>н1</span><span>н2</span><span>н3</span><span>н4</span><span>н5</span><span>н6</span><span>н7</span><span>н8</span></div>
+                      </div>
+                      <div class="dash__card dash__sources">
+                        <div class="dash__card-h"><span class="dash__card-t">Источники заявок</span></div>
+                        <div class="dash__donut">
+                          <svg viewBox="0 0 74 74">
+                            <circle cx="37" cy="37" r="28" stroke="#2a3346" stroke-width="9" stroke-dasharray="176 0" stroke-dashoffset="0"></circle>
+                            <circle cx="37" cy="37" r="28" stroke="#CDFF4F" stroke-dasharray="73.9 102" stroke-dashoffset="0"></circle>
+                            <circle cx="37" cy="37" r="28" stroke="#31e0b0" stroke-dasharray="49.3 126.6" stroke-dashoffset="-73.9"></circle>
+                            <circle cx="37" cy="37" r="28" stroke="#4f8a63" stroke-dasharray="31.7 144.2" stroke-dashoffset="-123.2"></circle>
+                            <circle cx="37" cy="37" r="28" stroke="#3a4556" stroke-dasharray="21.1 154.8" stroke-dashoffset="-154.9"></circle>
+                          </svg>
+                          <div class="dash__legend">
+                            <div class="dash__legend-i"><span class="dash__legend-dot" style="background:#CDFF4F"></span>Instagram <b>42%</b></div>
+                            <div class="dash__legend-i"><span class="dash__legend-dot" style="background:#31e0b0"></span>Telegram <b>28%</b></div>
+                            <div class="dash__legend-i"><span class="dash__legend-dot" style="background:#4f8a63"></span>Сайт <b>18%</b></div>
+                            <div class="dash__legend-i"><span class="dash__legend-dot" style="background:#3a4556"></span>Реклама <b>12%</b></div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="ui-mockup__chart">
-                    <div class="ui-mockup__chart-label">Выручка · 8 недель</div>
-                    <div class="ui-mockup__bars" id="mockupBars">
-                      <div class="ui-mockup__bar" style="--h:38%"></div>
-                      <div class="ui-mockup__bar" style="--h:52%"></div>
-                      <div class="ui-mockup__bar" style="--h:44%"></div>
-                      <div class="ui-mockup__bar" style="--h:68%"></div>
-                      <div class="ui-mockup__bar" style="--h:59%"></div>
-                      <div class="ui-mockup__bar ui-mockup__bar--hi" style="--h:86%"></div>
-                      <div class="ui-mockup__bar" style="--h:72%"></div>
-                      <div class="ui-mockup__bar ui-mockup__bar--hi" style="--h:91%"></div>
+                    <div class="dash__card dash__deals">
+                      <div class="dash__card-h"><span class="dash__card-t">Активные сделки</span><span class="dash__card-badge">24 всего</span></div>
+                      <div class="dash__deal"><span class="dash__deal-ic">М</span><span class="dash__deal-n">Магазин «Стиль»</span><span class="dash__deal-src">Instagram</span><span class="dash__deal-v">$2 400</span><span class="dash__deal-st dash__deal-st--on">Активна</span></div>
+                      <div class="dash__deal"><span class="dash__deal-ic">R</span><span class="dash__deal-n">Кофейня Roasters</span><span class="dash__deal-src">Сайт</span><span class="dash__deal-v">$1 850</span><span class="dash__deal-st dash__deal-st--on">Активна</span></div>
+                      <div class="dash__deal"><span class="dash__deal-ic">Д</span><span class="dash__deal-n">Автосервис Драйв</span><span class="dash__deal-src">Реклама</span><span class="dash__deal-v">$3 200</span><span class="dash__deal-st dash__deal-st--wait">Ждёт</span></div>
                     </div>
-                  </div>
-                  <div class="ui-mockup__table">
-                    <div class="ui-mockup__row">
-                      <span class="ui-dot ui-dot--yellow"></span>
-                      <div class="ui-mockup__row-priority"></div>
-                      <div class="ui-mockup__row-name">Заявка · Ресторан</div>
-                      <div class="ui-mockup__row-val">$950</div>
-                      <div class="ui-badge ui-badge--wip">Новая</div>
-                    </div>
-                    <div class="ui-mockup__row">
-                      <span class="ui-dot ui-dot--green"></span>
-                      <div class="ui-mockup__row-priority ui-mockup__row-priority--hot"></div>
-                      <div class="ui-mockup__row-name">Лид · Студия услуг</div>
-                      <div class="ui-mockup__row-val">$1 100</div>
-                      <div class="ui-badge ui-badge--wip">КП</div>
-                    </div>
-                    <div class="ui-mockup__row ui-mockup__row--won">
-                      <span class="ui-dot ui-dot--green"></span>
-                      <div class="ui-mockup__row-priority"></div>
-                      <div class="ui-mockup__row-name">Сделка · Автосервис</div>
-                      <div class="ui-mockup__row-val">$820</div>
-                      <div class="ui-badge ui-badge--done">Оплата ✓</div>
-                    </div>
-                  </div>
-                  <div class="ui-mockup__ai">
-                    <div class="ui-mockup__ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-3.5 3.2.9 4.8L12 14.8 8.1 17l.9-4.8L5.5 9l4.6-1.4z"/></svg></div>
-                    <div class="ui-mockup__ai-b">
-                      <div class="ui-mockup__ai-t">AI-совет</div>
-                      <div class="ui-mockup__ai-x" id="mkAi">3 лида без ответа больше 2 часов — перезвоните сегодня, конверсия падает.</div>
+                    <div class="dash__ai">
+                      <div class="dash__ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-3.5 3.2.9 4.8L12 14.8 8.1 17l.9-4.8L5.5 9l4.6-1.4z"/></svg></div>
+                      <div><div class="dash__ai-t">AI-рекомендация</div><div class="dash__ai-x">3 заявки без ответа больше 2 часов — перезвоните сегодня, конверсия падает.</div></div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="hero__frame-glow"></div>
-            </div>
-
-            <!-- Статичная разметка (JS только заполняет — вставка через JS сдвигала весь низ страницы, CLS 0.18) -->
-            <div class="niche-result">
-              <span class="niche-result__mark">✓</span>
-              <span class="niche-result__main">Ни одной потерянной брони</span>
-              <span class="niche-result__sub">−2 часа на отчёты каждый день</span>
-            </div>
-            <div class="niche-switch" aria-label="Выберите нишу">
-              <span class="niche-switch__hint">Ваша ниша:</span>
-              <button type="button" class="niche-chip is-active" data-niche="restaurant">Ресторан</button>
-              <button type="button" class="niche-chip" data-niche="barber">Барбершоп</button>
-              <button type="button" class="niche-chip" data-niche="rent">Аренда</button>
-              <button type="button" class="niche-chip" data-niche="clinic">Клиника</button>
             </div>
 
           </div>
@@ -1159,7 +1135,8 @@
   <script src="js/form.js?v=20260711e" defer></script>
   <script src="js/quiz.js?v=20260711A" defer></script>
   <script src="js/main.js?v=20260711A" defer></script>
-  <script src="js/niche-switcher.js?v=20260711A" defer></script>
+  <script src="js/calc.js?v=20260711A" defer></script>
+  <script src="js/dash.js?v=20260711A" defer></script>
   <script src="js/premium.js?v=20260711e" defer></script>
   <script src="js/bgloop.js?v=20260711e" defer></script>
   <script src="js/nav-dropdown.js?v=20260711e" defer></script>
