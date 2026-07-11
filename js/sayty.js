@@ -214,4 +214,20 @@
     scaleFrame(); setPos(50);
   }
   document.querySelectorAll('[data-slc]').forEach(initCmp);
+
+  // ── авто-play видео-кейсов при появлении (autoplay-атрибут не везде срабатывает) ──
+  var pvids = document.querySelectorAll('.sy-pf__video video');
+  if (pvids.length && !reduce) {
+    if ('IntersectionObserver' in window) {
+      var vio = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting) { e.target.play().catch(function () {}); }
+          else { e.target.pause(); }
+        });
+      }, { threshold: 0.25 });
+      pvids.forEach(function (v) { vio.observe(v); });
+    } else {
+      pvids.forEach(function (v) { v.play().catch(function () {}); });
+    }
+  }
 })();
