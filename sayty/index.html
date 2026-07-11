@@ -283,6 +283,20 @@
     /* нимб-акцент (как Sidewave/Hubtown) */
     .pf__halo { position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%); width: min(40%,280px); aspect-ratio: 1; border: 1.5px solid rgba(255,216,77,.55); border-radius: 50%; z-index: 1; pointer-events: none; box-shadow: 0 0 60px rgba(255,216,77,.12), inset 0 0 40px rgba(255,216,77,.08); }
     .pf__halo--lime { border-color: rgba(205,255,79,.5); box-shadow: 0 0 60px rgba(205,255,79,.12), inset 0 0 40px rgba(205,255,79,.08); }
+    /* мобилка: карточки выше (портрет), текст дышит */
+    @media (max-width: 640px) {
+      .pf__screen { aspect-ratio: 4/5; }
+      .pf__h { font-size: clamp(22px,6.4vw,30px); }
+      .pf-grid .pf__h { font-size: clamp(20px,6vw,27px); }
+      .pf__hero { padding: 20px 20px 22px; max-width: 100%; }
+      .pf__hero--center { padding-left: 20px; padding-right: 20px; max-width: 100%; }
+      .pf__hero--right { text-align: left; margin-left: 0; }
+      .pf__nav { padding: 16px 18px; }
+      .pf__sub { font-size: 12.5px; }
+      .pf__side { display: none; }
+      .pf__halo { top: 40%; width: 56%; }
+      .pf-wrap { gap: 44px; }
+    }
 
     /* ── РАЗНЫЕ СТРУКТУРЫ САЙТОВ (мини-лейауты внутри рамки) ── */
     .lay { position: relative; aspect-ratio: 16/10; overflow: hidden; font-size: 12px; }
