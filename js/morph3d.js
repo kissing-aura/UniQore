@@ -53,7 +53,7 @@
 
     // — target: мини-дашборд (KPI ×3, бар-чарт ×7, строки ×6) —
     var tier = navigator.hardwareConcurrency || 4;
-    var DENS = tier >= 8 ? 1 : (tier >= 4 ? 0.75 : 0.5);
+    var DENS = tier >= 8 ? 1.5 : (tier >= 4 ? 1.1 : 0.65); // плотнее — чтобы мелкие чёткие точки читались как сплошные формы
     var PW = 26, PH = 15, ROWY = [], tgt = [];
     function cluster(cx, cy, w, h, n, head) {
       for (var k = 0; k < n; k++) tgt.push({ x: cx + (Math.random() - .5) * w, y: cy + (Math.random() - .5) * h, z: (Math.random() - .5) * .5, head: head || 0 });
@@ -81,7 +81,7 @@
     geo.setAttribute('aHead', new THREE.BufferAttribute(isHead, 1));
     geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
     var mat = new THREE.ShaderMaterial({
-      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      transparent: true, depthWrite: false, blending: THREE.NormalBlending, // не Additive: additive складывал свет → пересвет в белую кашу
       uniforms: { uProg: { value: 0 }, uTime: { value: 0 }, uPix: { value: Math.min(devicePixelRatio, 2) } },
       vertexShader: 'attribute vec3 aStart;attribute vec3 aTarget;attribute float aRnd;attribute float aHead;' +
         'uniform float uProg,uTime,uPix;varying float vMix;varying float vHead;' +
@@ -90,12 +90,12 @@
         'vec3 chaos=aStart;float tw=1.-local;' +
         'chaos.x+=sin(uTime*.9+aRnd*30.)*1.6*tw;chaos.y+=cos(uTime*.7+aRnd*24.)*1.6*tw;chaos.z+=sin(uTime*1.1+aRnd*18.)*1.4*tw;' +
         'vec3 pos=mix(chaos,aTarget,local);vec4 mv=modelViewMatrix*vec4(pos,1.);gl_Position=projectionMatrix*mv;' +
-        'float size=mix(1.8,1.5,local)+aHead*local*0.7;gl_PointSize=size*uPix*(300./-mv.z);}',
+        'float size=mix(0.95,0.5,local)+aHead*local*0.28;gl_PointSize=size*uPix*(150./-mv.z);}', // мельче и не растёт на близи → чёткие точки, не блобы
       fragmentShader: 'precision mediump float;varying float vMix;varying float vHead;' +
-        'void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);if(d>.5)discard;float a=smoothstep(.5,0.,d);' +
-        'vec3 chaosC=vec3(.42,.55,.72);vec3 orderC=vec3(.80,1.,.31);' +
-        'vec3 col=mix(chaosC,orderC,smoothstep(.35,.95,vMix));col=mix(col,vec3(1.),vHead*vMix*.2);' +
-        'gl_FragColor=vec4(col,a*mix(.4,.48,vMix)+vHead*vMix*.08);}'
+        'void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);if(d>.5)discard;float a=smoothstep(.5,.12,d);' + // резче край точки
+        'vec3 chaosC=vec3(.40,.52,.70);vec3 orderC=vec3(.80,1.,.31);' +
+        'vec3 col=mix(chaosC,orderC,smoothstep(.35,.95,vMix));col=mix(col,vec3(.92,1.,.62),vHead*vMix*.5);' +
+        'gl_FragColor=vec4(col,a*mix(.55,.95,vMix)+vHead*vMix*.05);}' // плотная непрозрачность вместо свечения
     });
     scene.add(new THREE.Points(geo, mat));
 
