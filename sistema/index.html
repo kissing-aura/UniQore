@@ -108,6 +108,16 @@
     .core-stage--poster .core-canvas, .core-stage--poster .core-labels { display: none; }
     .core-stage--poster .core-poster { display: flex; }
     @media (max-width: 768px) { .core-viewport { height: min(96vw, 430px); } .core-label { font-size: 11px; padding: 4px 9px; } }
+
+    /* hero без видео: живая сеть-констелляция как фон (в бренде navy+lime) */
+    .page-hero--net { position: relative; overflow: hidden; min-height: 76vh; display: flex; align-items: center; padding: 150px 0 88px; }
+    .page-hero--net > .js-net { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; display: block; opacity: 0.6; }
+    .page-hero--net .page-hero__scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background:
+        radial-gradient(120% 70% at 50% 2%, rgba(205,255,79,0.12), transparent 55%),
+        linear-gradient(180deg, transparent 42%, rgba(10,14,26,0.55) 78%, #0A0E1A 100%); }
+    .page-hero--net .container { position: relative; z-index: 2; width: 100%; }
+    @media (max-width: 768px) { .page-hero--net { min-height: 68vh; padding: 128px 0 64px; } }
   </style>
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962"></script>
@@ -180,7 +190,9 @@
 
   <main id="main">
     <div class="container breadcrumb"><a href="/">Uniqore</a> / Система под ключ</div>
-    <section class="page-hero">
+    <section class="page-hero page-hero--net">
+      <canvas class="js-net" aria-hidden="true"></canvas>
+      <div class="page-hero__scrim" aria-hidden="true"></div>
       <div class="container">
         <div class="page-hero__eyebrow">СИСТЕМА ПОД КЛЮЧ</div>
         <h1>Весь цифровой отдел<br>за <em>$1200</em></h1>
@@ -339,5 +351,6 @@
   <script src="../js/nav-dropdown.js?v=20260710r" defer></script>
   <script src="../js/enhance.js?v=20260711t" defer></script>
   <script src="../js/core3d.js?v=20260711z" defer></script>
+  <script src="../js/contact-net.js?v=20260711z" defer></script>
 </body>
 </html>
