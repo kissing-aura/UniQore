@@ -821,7 +821,7 @@
               <div class="mirror__result">
                 <div class="mirror__loss">Ты теряешь ~<span class="mirror__num">0</span> ₽/мес</div>
                 <div class="mirror__sub">на потерянных заявках и неответах. Мы это ловим — клиент не уходит.</div>
-                <a href="#contact" class="btn btn--accent btn--lg mirror__cta">Забрать свою систему →</a>
+                <a href="#contact" id="calcCta" class="btn btn--accent btn--lg mirror__cta">Показать, как вернуть эти деньги →</a>
               </div>
             </div>
       </div>
@@ -994,29 +994,87 @@
               </div>
             </div>
           </div>
-          <form class="contact__form" id="contact-form" novalidate data-reveal data-reveal-delay="1">
-            <div class="form-group">
-              <label for="name">Ваше имя</label>
-              <input type="text" id="name" name="name" placeholder="Александр" required>
+          <style>
+            .quiz{position:relative}
+            .quiz__head{margin-bottom:22px}
+            .quiz__progress{height:5px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}
+            .quiz__progress i{display:block;height:100%;border-radius:4px;background:var(--color-accent);transition:width .45s cubic-bezier(.2,1,.3,1);width:25%}
+            .quiz__step-label{font-family:var(--font-mono);font-size:12px;color:var(--color-text-muted);margin-top:10px;letter-spacing:.03em}
+            .quiz__step{display:none}
+            .quiz__step.is-active{display:block;animation:qin .4s ease}
+            @keyframes qin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+            .quiz__q{font-family:var(--font-display);font-weight:700;font-size:clamp(19px,3vw,23px);margin-bottom:18px;line-height:1.2}
+            .quiz__opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+            .quiz__opts button{padding:15px 17px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.02);color:var(--color-text-primary);font-family:var(--font-body);font-size:14.5px;font-weight:600;text-align:left;cursor:pointer;transition:.18s}
+            .quiz__opts button:hover{border-color:rgba(205,255,79,.45);background:rgba(205,255,79,.05);transform:translateY(-2px)}
+            .quiz__opts button.is-sel{border-color:var(--color-accent);background:rgba(205,255,79,.12)}
+            .quiz__reward{display:flex;gap:10px;align-items:flex-start;padding:13px 15px;border:1px solid rgba(205,255,79,.25);border-radius:13px;background:linear-gradient(180deg,rgba(205,255,79,.07),rgba(205,255,79,.01));font-size:13.5px;line-height:1.5;color:var(--color-text-secondary);margin-bottom:18px}
+            .quiz__nav{display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap}
+            .quiz__back{background:none;border:0;color:var(--color-text-muted);font-family:var(--font-body);font-size:14px;cursor:pointer;padding:4px 0}
+            .quiz__back:hover{color:var(--color-text-primary)}
+            @media(max-width:520px){.quiz__opts{grid-template-columns:1fr}}
+          </style>
+          <form class="contact__form quiz" id="contact-form" novalidate data-reveal data-reveal-delay="1">
+            <div class="quiz__head">
+              <div class="quiz__progress"><i></i></div>
+              <div class="quiz__step-label">Шаг <span id="quizStep">1</span> из 4 · займёт 20 секунд</div>
             </div>
-            <div class="form-group">
-              <label for="business">Бизнес</label>
-              <input type="text" id="business" name="business" placeholder="Магазин одежды, 5 сотрудников" required>
+
+            <div class="quiz__step is-active" data-step="1">
+              <div class="quiz__q">Какая у вас ниша?</div>
+              <div class="quiz__opts" data-field="niche">
+                <button type="button" data-v="Магазин / e-commerce">Магазин</button>
+                <button type="button" data-v="Доставка еды / кафе">Доставка еды</button>
+                <button type="button" data-v="Недвижимость / аренда">Недвижимость</button>
+                <button type="button" data-v="Услуги / студия">Услуги</button>
+                <button type="button" data-v="Клиника / медицина">Клиника</button>
+                <button type="button" data-v="Другое">Другое</button>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="contact-input">Telegram или WhatsApp</label>
-              <input type="text" id="contact-input" name="contact" placeholder="@username или +375..." required>
+
+            <div class="quiz__step" data-step="2">
+              <div class="quiz__q">Сколько заявок в месяц?</div>
+              <div class="quiz__opts" data-field="volume">
+                <button type="button" data-v="до 100">до 100</button>
+                <button type="button" data-v="100–300">100–300</button>
+                <button type="button" data-v="300–600">300–600</button>
+                <button type="button" data-v="600+">600+</button>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="task">Что хотите автоматизировать?</label>
-              <textarea id="task" name="task" rows="3" placeholder="Кратко опишите — что сейчас делаете вручную и что хотели бы автоматизировать"></textarea>
+
+            <div class="quiz__step" data-step="3">
+              <div class="quiz__q">Где ведёте учёт сейчас?</div>
+              <div class="quiz__opts" data-field="tools">
+                <button type="button" data-v="Тетрадь / Excel">Тетрадь / Excel</button>
+                <button type="button" data-v="Битрикс / amoCRM">Битрикс / amoCRM</button>
+                <button type="button" data-v="Мессенджеры / заметки">Мессенджеры</button>
+                <button type="button" data-v="Никак, в голове">Никак</button>
+              </div>
             </div>
-            <button type="submit" class="btn btn--accent btn--lg btn--full">
-              Отправить заявку
-            </button>
-            <div class="form__crm-badge" id="formCrmBadge">
-              <span class="form__crm-dot"></span>
-              <span id="formCrmBadgeText">Заявки сохраняются в CRM и приходят в Telegram</span>
+
+            <div class="quiz__step" data-step="4">
+              <div class="quiz__q">Куда прислать разбор?</div>
+              <div class="quiz__reward"><span>🎁</span><span>Разбор ваших потерь + план автоматизации под нишу — за 24 часа, бесплатно и без обязательств.</span></div>
+              <div class="form-group">
+                <label for="name">Ваше имя</label>
+                <input type="text" id="name" name="name" placeholder="Александр" required>
+              </div>
+              <div class="form-group">
+                <label for="contact-input">Telegram, WhatsApp или телефон</label>
+                <input type="text" id="contact-input" name="contact" placeholder="@username или +375..." required>
+              </div>
+              <button type="submit" class="btn btn--accent btn--lg btn--full">Получить разбор за 24 часа</button>
+            </div>
+
+            <input type="hidden" id="business" name="business">
+            <input type="hidden" id="task" name="task">
+
+            <div class="quiz__nav">
+              <button type="button" class="quiz__back" id="quizBack" style="display:none">← Назад</button>
+              <div class="form__crm-badge" id="formCrmBadge">
+                <span class="form__crm-dot"></span>
+                <span id="formCrmBadgeText">Заявки сохраняются в CRM и приходят в Telegram</span>
+              </div>
             </div>
             <p class="form__privacy">
               Отправляя форму, вы соглашаетесь с обработкой персональных данных согласно <a href="/politika-konfidencialnosti/" style="color:inherit;text-decoration:underline;opacity:.85">политике конфиденциальности</a>.
@@ -1068,6 +1126,7 @@
   <script src="js/animations.js?v=20260711h" defer></script>
   <script src="js/particles.js?v=20260711e" defer></script>
   <script src="js/form.js?v=20260711e" defer></script>
+  <script src="js/quiz.js?v=20260711A" defer></script>
   <script src="js/main.js?v=20260711A" defer></script>
   <script src="js/niche-switcher.js?v=20260711A" defer></script>
   <script src="js/premium.js?v=20260711e" defer></script>
