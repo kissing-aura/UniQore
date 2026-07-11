@@ -209,7 +209,8 @@
     });
     el.addEventListener('pointerup', function () { dragging = false; });
     el.addEventListener('pointercancel', function () { dragging = false; });
-    window.addEventListener('resize', scaleFrame);
+    if ('ResizeObserver' in window) { new ResizeObserver(scaleFrame).observe(el); }
+    else { window.addEventListener('resize', scaleFrame); }
     scaleFrame(); setPos(50);
   }
   document.querySelectorAll('[data-slc]').forEach(initCmp);
