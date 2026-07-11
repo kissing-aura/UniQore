@@ -50,26 +50,26 @@
     var group = new THREE.Group(); scene.add(group);
 
     // ── ядро: wireframe-кристалл + мягкое свечение + яркая точка ──
-    var ico = new THREE.IcosahedronGeometry(1.7, 1);
+    var ico = new THREE.IcosahedronGeometry(2.15, 1);
     var wire = new THREE.LineSegments(
       new THREE.WireframeGeometry(ico),
       new THREE.LineBasicMaterial({ color: 0xCDFF4F, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false })
     );
     group.add(wire);
     var glow = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.2, 2),
+      new THREE.IcosahedronGeometry(1.5, 2),
       new THREE.MeshBasicMaterial({ color: 0xCDFF4F, transparent: true, opacity: 0.10, blending: THREE.AdditiveBlending, depthWrite: false })
     );
     group.add(glow);
     var coreDot = new THREE.Mesh(
-      new THREE.SphereGeometry(0.34, 18, 18),
+      new THREE.SphereGeometry(0.42, 18, 18),
       new THREE.MeshBasicMaterial({ color: 0xEAFFB0, transparent: true, opacity: 0.92, blending: THREE.AdditiveBlending, depthWrite: false })
     );
     group.add(coreDot);
 
     // ── орбита модулей ──
     var orbit = new THREE.Group(); group.add(orbit);
-    var R = 4.9;
+    var R = 5.3;
     var nodes = [], lines = [], lineMat = [], pulses = [], labelDivs = [];
     var nodeGeo = new THREE.SphereGeometry(0.17, 16, 16);
     var pulseGeo = new THREE.SphereGeometry(0.09, 10, 10);
@@ -120,14 +120,14 @@
       var dt = Math.min(0.05, (now - last) / 1000); last = now;
       var t = now / 1000;
 
-      orbit.rotation.y += dt * 0.16;
-      group.rotation.y += (mx * 0.5 - group.rotation.y) * 0.06;
-      group.rotation.x += (my * 0.32 - group.rotation.x) * 0.06;
+      orbit.rotation.y += dt * 0.095;
+      group.rotation.y += (mx * 0.5 - group.rotation.y) * 0.05;
+      group.rotation.x += (my * 0.32 - group.rotation.x) * 0.05;
 
-      var br = 1 + Math.sin(t * 1.4) * 0.045;
-      wire.scale.setScalar(br); wire.rotation.y += dt * 0.25; wire.rotation.x += dt * 0.11;
+      var br = 1 + Math.sin(t * 0.95) * 0.04;
+      wire.scale.setScalar(br); wire.rotation.y += dt * 0.15; wire.rotation.x += dt * 0.07;
       glow.scale.setScalar(br * 1.02);
-      coreDot.scale.setScalar(1 + Math.sin(t * 2.2) * 0.12);
+      coreDot.scale.setScalar(1 + Math.sin(t * 1.5) * 0.1);
 
       for (var i = 0; i < nodes.length; i++) {
         var on = active === i;
@@ -141,7 +141,7 @@
 
         // пульс стекает node→ядро
         var pu = pulses[i];
-        pu.t = (pu.t + dt * (on ? 0.85 : 0.4)) % 1;
+        pu.t = (pu.t + dt * (on ? 0.6 : 0.28)) % 1;
         pu.mesh.position.copy(nodes[i].position).multiplyScalar(1 - pu.t);
         pu.mesh.material.opacity = (0.25 + 0.7 * Math.sin(pu.t * Math.PI)) * (on ? 1 : 0.65);
 
