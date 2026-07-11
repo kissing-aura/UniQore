@@ -350,10 +350,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Hero toast: cycle notifications ──────────────────────────────────
   const toastMsgs = [
-    'Новая заявка · Михаил С.',
-    'Заявка с сайта · +1 лид',
-    'Follow-up · Кирилл З.',
-    'Новый клиент · Оксана М.',
+    'Новая заявка с сайта',
+    'Заявка из Telegram · +1 лид',
+    'Follow-up отправлен',
+    'Новый клиент в базе',
   ];
   let toastIdx = 0;
   const toastTextEl = document.querySelector('.mockup-toast__text');
