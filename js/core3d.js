@@ -16,11 +16,11 @@
   if (!canvas || !labelsEl || !viewport) return;
 
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var narrow = window.innerWidth < 768;
   var hasGL = false;
   try { var tc = document.createElement('canvas'); hasGL = !!(tc.getContext('webgl') || tc.getContext('experimental-webgl')); } catch (e) {}
   function poster() { stage.classList.add('core-stage--poster'); }
-  if (reduce || narrow || !hasGL) { poster(); return; }
+  // 3D-ядро лёгкое (десяток мешей) — крутим и на мобилке; постер только без WebGL / reduced-motion
+  if (reduce || !hasGL) { poster(); return; }
 
   var MODS = ['Сайт', 'CRM', 'Чат-боты', 'Реклама', 'Склад', 'Аналитика'];
 
@@ -44,8 +44,9 @@
     renderer.setSize(W, H, false);
     renderer.setClearColor(0x000000, 0);
     var scene = new THREE.Scene();
+    var portrait = W < 720;
     var camera = new THREE.PerspectiveCamera(50, W / H, 0.1, 100);
-    camera.position.set(0, 0, 9.4);
+    camera.position.set(0, 0, portrait ? 13.2 : 9.4); // на узком экране отодвигаем, чтобы орбита влезла
 
     var group = new THREE.Group(); scene.add(group);
 
@@ -69,7 +70,7 @@
 
     // ── орбита модулей ──
     var orbit = new THREE.Group(); group.add(orbit);
-    var R = 5.3;
+    var R = portrait ? 3.9 : 5.3;
     var nodes = [], lines = [], lineMat = [], pulses = [], labelDivs = [];
     var nodeGeo = new THREE.SphereGeometry(0.17, 16, 16);
     var pulseGeo = new THREE.SphereGeometry(0.09, 10, 10);
