@@ -81,6 +81,33 @@
     .content-block { max-width: 760px; margin: 0 auto 64px; }
     .content-block h2 { font-family: var(--font-display); font-weight: 700; font-size: 30px; margin-bottom: 20px; }
     .content-block p { color: var(--color-text-secondary); font-size: 16px; line-height: 1.7; margin-bottom: 16px; }
+    .works { padding: 20px 0; }
+    .works__head { text-align: center; max-width: 680px; margin: 0 auto 46px; }
+    .works__head h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px,4vw,44px); letter-spacing: -.02em; line-height: 1.08; }
+    .works__head h2 em { font-style: normal; color: var(--color-accent); }
+    .works__head p { color: var(--color-text-secondary); font-size: 17px; margin-top: 14px; }
+    .works__grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 22px; }
+    .work { display: block; border: 1px solid rgba(255,255,255,.09); border-radius: 18px; overflow: hidden; background: rgba(255,255,255,.02); transition: transform .4s cubic-bezier(.16,1,.3,1), border-color .4s, box-shadow .4s; }
+    .work:hover { transform: translateY(-8px); border-color: rgba(205,255,79,.35); box-shadow: 0 30px 60px rgba(0,0,0,.4); }
+    .work__frame { position: relative; aspect-ratio: 16/9; overflow: hidden; background: #0d1119; }
+    .work__frame iframe { position: absolute; top: 0; left: 0; width: 200%; height: 200%; transform: scale(.5); transform-origin: top left; border: 0; pointer-events: none; }
+    .work__shade { position: absolute; inset: 0; background: linear-gradient(180deg,transparent 66%,rgba(10,14,26,.55)); pointer-events: none; }
+    .work__live { position: absolute; top: 12px; left: 12px; z-index: 2; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #0A0E1A; background: var(--color-accent); padding: 4px 9px; border-radius: 999px; }
+    .work__live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #0A0E1A; animation: wl 1.4s infinite; }
+    @keyframes wl { 0%,100%{opacity:.3} 50%{opacity:1} }
+    .work__body { padding: 18px 22px 24px; }
+    .work__niche { font-family: var(--font-mono); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--color-accent); }
+    .work__name { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 6px 0; }
+    .work__desc { color: var(--color-text-secondary); font-size: 14px; line-height: 1.55; }
+    .work__go { margin-top: 14px; color: var(--color-accent); font-weight: 600; font-size: 14px; }
+    .works__note { text-align: center; color: var(--color-text-muted); font-size: 14px; max-width: 64ch; margin: 32px auto 0; line-height: 1.6; }
+    @media (max-width: 760px) { .works__grid { grid-template-columns: 1fr; } }
+    .guar__grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; margin-top: 42px; }
+    .guar { padding: 28px 26px; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; background: rgba(255,255,255,.02); }
+    .guar b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 17px; margin-bottom: 9px; }
+    .guar span { color: var(--color-text-secondary); font-size: 14px; line-height: 1.55; }
+    @media (max-width: 900px) { .guar__grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .guar__grid { grid-template-columns: 1fr; } }
     .breadcrumb { padding: 100px 0 0; font-size: 13px; color: var(--color-text-muted); }
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
@@ -266,6 +293,33 @@
       </div>
     </section>
 
+    <!-- ЖИВЫЕ ДЕМО -->
+    <section class="works" id="demo"><div class="container">
+      <div class="works__head">
+        <h2>Потрогайте систему <em>вживую</em></h2>
+        <p>Реальные системы под разные ниши — сайты и CRM, собранные с нуля. Откройте любую и покликайте.</p>
+      </div>
+      <div class="works__grid">
+        <a href="/demo/nedvizhka/" target="_blank" rel="noopener" class="work">
+          <div class="work__frame"><span class="work__live">Live</span><iframe src="/demo/nedvizhka/" loading="lazy" tabindex="-1" title="Демо-CRM: недвижимость"></iframe><span class="work__shade"></span></div>
+          <div class="work__body"><div class="work__niche">CRM · Недвижимость</div><div class="work__name">Квартал</div><div class="work__desc">Объекты, сделки, клиенты и аналитика загрузки в одном окне.</div><div class="work__go">Открыть демо →</div></div>
+        </a>
+        <a href="/demo/command/" target="_blank" rel="noopener" class="work">
+          <div class="work__frame"><span class="work__live">Live</span><iframe src="/demo/command/" loading="lazy" tabindex="-1" title="Демо: командный центр"></iframe><span class="work__shade"></span></div>
+          <div class="work__body"><div class="work__niche">Командный центр</div><div class="work__name">Uniqore Command</div><div class="work__desc">Финансы, отделы, проекты и аналитика бизнеса — весь бизнес в одном окне.</div><div class="work__go">Открыть демо →</div></div>
+        </a>
+        <a href="/demo/restoran/" target="_blank" rel="noopener" class="work">
+          <div class="work__frame"><span class="work__live">Live</span><iframe src="/demo/restoran/" loading="lazy" tabindex="-1" title="Демо-CRM: доставка"></iframe><span class="work__shade"></span></div>
+          <div class="work__body"><div class="work__niche">CRM · Доставка</div><div class="work__name">Вкусно</div><div class="work__desc">Заказы, курьеры, выручка и ИИ-аналитик — всё в реальном времени.</div><div class="work__go">Открыть демо →</div></div>
+        </a>
+        <a href="/raboty/restoran/" target="_blank" rel="noopener" class="work">
+          <div class="work__frame"><span class="work__live">Live</span><iframe src="/raboty/restoran/" loading="lazy" tabindex="-1" title="Демо-сайт: ресторан"></iframe><span class="work__shade"></span></div>
+          <div class="work__body"><div class="work__niche">Сайт · Ресторан</div><div class="work__name">SALT</div><div class="work__desc">Пример сайта, который делаем в связке с системой. Кинематичный лендинг.</div><div class="work__go">Открыть демо →</div></div>
+        </a>
+      </div>
+      <p class="works__note">Демо для наглядности — под ваш бизнес собираем систему с нуля: сайт, CRM, боты и учёт связаны под ваши процессы.</p>
+    </div></section>
+
     <section class="pricing" id="pricing">
       <div class="container">
         <h2 class="section-title">Дешевле, чем<br><em>собирать по частям</em></h2>
@@ -292,6 +346,20 @@
         </div>
       </div>
     </section>
+
+    <section class="container">
+      <div class="works__head" style="margin-bottom:0">
+        <h2>Вы ничем <em>не рискуете</em></h2>
+        <p>Мы убрали причины, из-за которых страшно заказывать всё под ключ.</p>
+      </div>
+      <div class="guar__grid">
+        <div class="guar"><b>Оплата после ТЗ</b><span>Сначала аудит, прототип и фикс-цена. Платите, когда понимаете, что получите.</span></div>
+        <div class="guar"><b>Одна команда</b><span>Сайт, CRM, боты и реклама — из одних рук. Не сводите пятерых подрядчиков.</span></div>
+        <div class="guar"><b>Сдаём за 4–6 дней</b><span>Не успели — вернём 20% за каждую неделю просрочки. Это в договоре.</span></div>
+        <div class="guar"><b>Система ваша</b><span>Код и данные на ваших серверах. Развитие и правки — в подписке.</span></div>
+      </div>
+    </section>
+
     <section class="faq" id="faq">
       <div class="container"><div class="faq__inner">
         <div class="faq__header"><h2 class="section-title">Частые<br><em>вопросы</em></h2></div>
