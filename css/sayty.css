@@ -300,3 +300,69 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-pf:hover .sy-pf__frame iframe{transform:scale(.4) translateY(-40%)}
 .sy-pf__real{position:absolute;top:11px;left:11px;z-index:3;font-family:var(--font-mono,monospace);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#08130a;background:var(--sy-l);padding:4px 9px;border-radius:999px;font-weight:700;box-shadow:0 4px 12px -3px rgba(205,255,79,.5)}
 .sy-pf__frame-scrim{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,transparent 60%,rgba(6,9,15,.5));pointer-events:none}
+
+/* ─── "Что получаете" ─── */
+.sy-get__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:960px){.sy-get__grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.sy-get__grid{grid-template-columns:1fr}}
+.sy-get{padding:24px 22px;border:1px solid var(--sy-line);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.006));transition:transform .3s cubic-bezier(.2,1,.3,1),border-color .3s,box-shadow .3s;position:relative;overflow:hidden}
+.sy-get:hover{transform:translateY(-5px);border-color:rgba(205,255,79,.28);box-shadow:0 24px 50px -24px rgba(0,0,0,.7)}
+.sy-get__n{font-family:'Unbounded',sans-serif;font-weight:800;font-size:15px;color:rgba(205,255,79,.35);position:absolute;top:16px;right:18px}
+.sy-get__ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:rgba(205,255,79,.1);border:1px solid rgba(205,255,79,.22);color:var(--sy-l);margin-bottom:16px}
+.sy-get__ic svg{width:23px;height:23px}
+.sy-get__t{font-weight:700;font-size:16.5px;letter-spacing:-.01em}
+.sy-get__d{font-size:13.5px;color:var(--sy-mut);line-height:1.5;margin-top:9px}
+
+/* ─── Before / After ─── */
+.sy-ba2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch;max-width:960px;margin:0 auto 26px}
+@media(max-width:720px){.sy-ba2{grid-template-columns:1fr}}
+.sy-ba2__col{border:1px solid var(--sy-line);border-radius:16px;overflow:hidden;position:relative;background:#0e1420}
+.sy-ba2__col--now{border-color:rgba(205,255,79,.3);box-shadow:0 0 44px -20px rgba(205,255,79,.5)}
+.sy-ba2__lbl{position:absolute;top:12px;left:12px;z-index:3;font-family:var(--font-mono,monospace);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:999px;font-weight:700}
+.sy-ba2__lbl--was{background:rgba(120,130,150,.25);color:#c7ccd6;border:1px solid rgba(255,255,255,.15)}
+.sy-ba2__lbl--now{background:var(--sy-l);color:#08130a}
+.sy-ba2__shot{aspect-ratio:16/10;position:relative;overflow:hidden}
+.sy-ba2__shot img,.sy-ba2__shot .sy-ba2__photo{width:100%;height:100%;object-fit:cover;display:block}
+.sy-ba2__cap{padding:13px 16px;font-size:13px;color:var(--sy-mut);border-top:1px solid var(--sy-line)}
+.sy-ba2__cap b{color:#e9f0fb}
+/* закодированный «плохой сайт ДО» */
+.sy-bad{position:absolute;inset:0;background:#e8e4d0;font-family:'Times New Roman',Times,serif;overflow:hidden;color:#222}
+.sy-bad__top{background:linear-gradient(#3a6ea5,#1e4d7b);color:#ff0;text-align:center;font-weight:700;font-size:15px;padding:6px;text-shadow:1px 1px 0 #000;border-bottom:3px ridge #999}
+.sy-bad__marq{background:#ff0;color:#c00;font-size:10px;font-weight:700;padding:3px 8px;white-space:nowrap;overflow:hidden}
+.sy-bad__nav{display:flex;gap:2px;background:#c0c0c0;padding:3px;font-size:9px}
+.sy-bad__nav span{background:#dcdcdc;border:1px outset #fff;padding:3px 6px;color:#00c}
+.sy-bad__body{padding:10px 12px;display:flex;gap:10px}
+.sy-bad__h{color:#c00;font-size:19px;font-weight:700;text-decoration:underline;line-height:1.1}
+.sy-bad__txt{font-size:9.5px;color:#040;line-height:1.35;margin-top:6px}
+.sy-bad__side{width:78px;flex-shrink:0}
+.sy-bad__banner{background:repeating-linear-gradient(45deg,#f0f,#f0f 8px,#0ff 8px,#0ff 16px);height:46px;border:2px solid #00f;margin-bottom:6px;display:grid;place-items:center;color:#fff;font-size:9px;font-weight:700;text-shadow:1px 1px 0 #000}
+.sy-bad__counter{background:#000;color:#0f0;font-family:'Courier New',monospace;font-size:9px;text-align:center;padding:3px;border:1px solid #0f0}
+.sy-bad__btn{background:linear-gradient(#eee,#aaa);border:2px outset #fff;font-size:9px;padding:4px;text-align:center;margin-top:6px;color:#00c}
+.sy-ba2__meta{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.sy-ba2__m{text-align:center}
+.sy-ba2__m b{display:block;font-family:'Unbounded',sans-serif;font-size:15px;color:var(--sy-l)}
+.sy-ba2__m span{font-size:12px;color:var(--sy-mut)}
+
+/* ─── "Почему не дешёвый за $50" ─── */
+.sy-cheap{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:900px;margin:0 auto}
+@media(max-width:720px){.sy-cheap{grid-template-columns:1fr}}
+.sy-cheap__col{border:1px solid var(--sy-line);border-radius:18px;padding:26px}
+.sy-cheap__col--bad{background:rgba(255,80,80,.03);border-color:rgba(255,80,80,.18)}
+.sy-cheap__col--good{background:rgba(205,255,79,.05);border-color:rgba(205,255,79,.28)}
+.sy-cheap__h{font-weight:700;font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:9px}
+.sy-cheap__col--bad .sy-cheap__h{color:#ff8a8a}.sy-cheap__col--good .sy-cheap__h{color:var(--sy-l)}
+.sy-cheap li{list-style:none;padding-left:26px;position:relative;font-size:14px;line-height:1.5;color:#c7ccd6;margin:11px 0}
+.sy-cheap__col--bad li::before{content:'✕';position:absolute;left:0;color:#ff6b6b;font-weight:700}
+.sy-cheap__col--good li::before{content:'✓';position:absolute;left:0;color:var(--sy-l);font-weight:800}
+
+/* ─── бонусы + доверие у формы ─── */
+.sy-form-bonus{max-width:560px;margin:0 auto 20px;border:1px solid rgba(205,255,79,.22);border-radius:16px;padding:20px 24px;background:linear-gradient(180deg,rgba(205,255,79,.06),rgba(205,255,79,.01))}
+.sy-form-bonus__t{font-weight:700;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:9px}
+.sy-form-bonus__t svg{width:18px;height:18px;color:var(--sy-l)}
+.sy-form-bonus ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+@media(max-width:520px){.sy-form-bonus ul{grid-template-columns:1fr}}
+.sy-form-bonus li{padding-left:24px;position:relative;font-size:13.5px;color:#c7ccd6;line-height:1.4}
+.sy-form-bonus li::before{content:'✓';position:absolute;left:0;color:var(--sy-l);font-weight:800}
+.sy-trustrow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.sy-trustrow__i{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#aeb8c9}
+.sy-trustrow__i svg{width:15px;height:15px;color:var(--sy-mint)}
