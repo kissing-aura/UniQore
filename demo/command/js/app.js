@@ -1236,18 +1236,13 @@
   async function submitInvite(){
     const isEmp=inviteKind==='employee';
     const name=($('[data-inv-name]')||{}).value?.trim();
+    const role=($('[data-inv-role]')||{}).value?.trim();
+    const dept=($('[data-inv-dept]')||{}).value?.trim();
+    const city=($('[data-inv-city]')||{}).value?.trim();
     if(!name){ inviteErr='Укажи имя'; renderInvite(); return; }
     inviteBusy=true; inviteErr=''; renderInvite();
     try{
-      let r;
-      if(isEmp){
-        const role=($('[data-inv-role]')||{}).value?.trim();
-        const dept=($('[data-inv-dept]')||{}).value?.trim();
-        r = await UQ.hireEmployee({name, role, dept});
-      }else{
-        const city=($('[data-inv-city]')||{}).value?.trim();
-        r = await UQ.inviteManager({name, city});
-      }
+      const r = isEmp ? await UQ.hireEmployee({name, role, dept}) : await UQ.inviteManager({name, city});
       inviteBusy=false; inviteResult=r; renderInvite();
       if(view==='managers'||view==='employees') rerender();
     }catch(e){
