@@ -170,6 +170,48 @@
     .pf--puls .pf__eyebrow { color: #d6ff3f; }
     .pf--puls .pf__btn { background: #d6ff3f; color: #0a0a0a; }
     @media (max-width: 640px) { .pf__links { display: none; } .pf-wrap { gap: 66px; } }
+
+    /* подзаголовок формата */
+    .pf-sub { text-align: center; margin: 84px auto 34px; max-width: 640px; }
+    .pf-sub h3 { font-family: var(--font-display); font-weight: 700; font-size: clamp(22px,2.6vw,32px); letter-spacing: -.01em; }
+    .pf-sub p { color: var(--color-text-secondary); font-size: 16px; margin-top: 8px; }
+
+    /* мобильные мокапы (телефон) */
+    .pfm-row { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+    .pfm { width: 260px; border-radius: 34px; padding: 9px; background: #06080e; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 34px 70px rgba(0,0,0,.5); opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(.16,1,.3,1); }
+    .pfm.in { opacity: 1; transform: none; }
+    .pfm__screen { position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 9/19; background-size: cover; background-position: center; display: flex; flex-direction: column; }
+    .pfm__screen::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(6,8,14,.72), transparent 46%), linear-gradient(180deg, rgba(6,8,14,.34), transparent 24%); }
+    .pfm__notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 82px; height: 20px; background: #06080e; border-radius: 0 0 14px 14px; z-index: 3; }
+    .pfm__top { position: relative; z-index: 2; padding: 26px 18px 0; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,.85); }
+    .pfm__brand { font-weight: 800; letter-spacing: .03em; }
+    .pfm__burger { width: 18px; height: 12px; display: inline-flex; flex-direction: column; justify-content: space-between; }
+    .pfm__burger span { height: 2px; background: rgba(255,255,255,.8); border-radius: 2px; }
+    .pfm__hero { position: relative; z-index: 2; margin-top: auto; padding: 18px 18px 22px; }
+    .pfm__eyebrow { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 8px; }
+    .pfm__h { font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1.04; letter-spacing: -.02em; color: #fff; }
+    .pfm__btn { display: block; text-align: center; margin-top: 14px; padding: 11px; border-radius: 12px; font-size: 12.5px; font-weight: 700; }
+    .pfm__cap { text-align: center; margin-top: 14px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-accent); }
+    .pfm--puls .pfm__eyebrow { color: #d6ff3f; } .pfm--puls .pfm__btn { background: #d6ff3f; color: #0a0a0a; }
+    .pfm--coffee .pfm__eyebrow { color: #e6b980; } .pfm--coffee .pfm__btn { background: rgba(230,185,128,.2); border: 1px solid rgba(230,185,128,.5); color: #f0d4ac; }
+    .pfm--beauty .pfm__eyebrow { color: #f2a7c4; } .pfm--beauty .pfm__btn { background: #f2a7c4; color: #3a1424; }
+    @media (max-width: 620px) { .pfm { width: 220px; } }
+
+    /* галерея-сетка */
+    .pfg-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+    .pfg { position: relative; aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); background-size: cover; background-position: center; display: flex; align-items: flex-end; opacity: 0; transform: translateY(26px); transition: .9s cubic-bezier(.16,1,.3,1); }
+    .pfg.in { opacity: 1; transform: none; }
+    .pfg:hover { border-color: rgba(205,255,79,.4); }
+    .pfg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(6,8,14,.85), rgba(6,8,14,.15) 55%, transparent); }
+    .pfg__body { position: relative; z-index: 2; padding: 18px; }
+    .pfg__tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-accent); }
+    .pfg__name { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin-top: 5px; color: #fff; }
+    .pfg__style { color: rgba(255,255,255,.62); font-size: 12.5px; margin-top: 3px; }
+    .pfg--typo { background: linear-gradient(150deg,#161617,#0b0b0c); align-items: center; justify-content: center; overflow: hidden; }
+    .pfg--typo::before { content: "KROB"; position: absolute; font-family: 'Arial Black', var(--font-display); font-weight: 900; font-size: 30vw; max-font-size: 130px; color: rgba(226,98,42,.14); letter-spacing: -.04em; line-height: .8; }
+    .pfg--typo .pfg__body { text-align: center; padding-bottom: 18px; }
+    @media (max-width: 900px) { .pfg-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .pfg-grid { grid-template-columns: 1fr; } }
   </style>
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962"></script>
@@ -267,8 +309,10 @@
     <section class="works" id="raboty"><div class="container">
       <div class="works__head">
         <h2>Сайты, которые мы <em>делаем</em></h2>
-        <p>Не шаблоны из конструктора — каждый собран под нишу и бренд. Вот уровень, на который можно рассчитывать.</p>
+        <p>Разные ниши и стили — тёмные и светлые, строгие и дерзкие. Чтобы под ваш вкус точно нашёлся свой.</p>
       </div>
+
+      <!-- ФЛАГМАНЫ (десктоп) -->
       <div class="pf-wrap">
 
         <article class="pf pf--salt">
@@ -284,7 +328,7 @@
               </div>
             </div>
           </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__tag">Ресторан · лендинг</span><span class="pf__desc">Кино-атмосфера, меню и онлайн-бронь.</span></div><a href="/#contact" class="pf__cta">Хочу такой сайт →</a></div>
+          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__tag">Ресторан · тёмный кино</span><span class="pf__desc">Атмосфера, меню и онлайн-бронь.</span></div><a href="/#contact" class="pf__cta">Хочу такой сайт →</a></div>
         </article>
 
         <article class="pf pf--nord">
@@ -300,27 +344,74 @@
               </div>
             </div>
           </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__tag">Клиника · многостраничник</span><span class="pf__desc">Светлый премиум с онлайн-записью и ценами.</span></div><a href="/#contact" class="pf__cta">Хочу такой сайт →</a></div>
+          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__tag">Клиника · светлый премиум</span><span class="pf__desc">Многостраничник с записью и ценами.</span></div><a href="/#contact" class="pf__cta">Хочу такой сайт →</a></div>
         </article>
 
-        <article class="pf pf--puls">
+        <article class="pf pf--shop">
           <div class="pf__browser">
-            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>pulse-gym.ru</i></div>
-            <div class="pf__screen" style="background-image:url(/raboty/assets/work-fitness.jpg)">
-              <div class="pf__nav"><span class="pf__brand">PULSE</span><span class="pf__links">Направления · Абонементы</span></div>
+            <div class="pf__bar"><span class="pf__dot"></span><span class="pf__dot"></span><span class="pf__dot"></span><i>atelier-store.ru</i></div>
+            <div class="pf__screen" style="background-image:url(/raboty/assets/work-magazin.jpg)">
+              <div class="pf__nav"><span class="pf__brand">ATELIER</span><span class="pf__links">Каталог · Новинки · Sale</span></div>
               <div class="pf__hero">
-                <div class="pf__eyebrow">Фитнес-клуб</div>
-                <div class="pf__h">Стань сильнее<br>версии себя</div>
-                <div class="pf__sub">Зал, групповые и бассейн · первая тренировка бесплатно</div>
-                <span class="pf__btn">Записаться бесплатно</span>
+                <div class="pf__eyebrow" style="color:#e8dcc8">Новая коллекция</div>
+                <div class="pf__h">Осень, которую<br>хочется носить</div>
+                <div class="pf__sub">Каталог, корзина и оплата онлайн · доставка за 2 дня</div>
+                <span class="pf__btn" style="background:#f3ebdd;color:#20180f;border:none">В каталог</span>
               </div>
             </div>
           </div>
-          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__tag">Фитнес · лендинг</span><span class="pf__desc">Энергичный дизайн с записью на пробную.</span></div><a href="/#contact" class="pf__cta">Хочу такой сайт →</a></div>
+          <div class="pf__cap"><div class="pf__cap-l"><span class="pf__tag">Магазин · интернет-магазин</span><span class="pf__desc">Каталог, корзина и приём оплаты.</span></div><a href="/#contact" class="pf__cta">Хочу такой сайт →</a></div>
         </article>
 
       </div>
-      <p class="works__note">Это примеры уровня, который мы делаем под ключ. Ваш сайт собираем с нуля — под вашу нишу, бренд и задачу. И да, <a href="/" style="color:var(--color-accent)">этот сайт</a> мы тоже сделали сами.</p>
+
+      <!-- МОБИЛЬНЫЕ -->
+      <div class="pf-sub"><h3>И под мобильный — где решает каждый экран</h3><p>Больше половины клиентов приходят с телефона. Делаем, чтобы там было так же вкусно.</p></div>
+      <div class="pfm-row">
+        <div class="pfm pfm--puls">
+          <div class="pfm__screen" style="background-image:url(/raboty/assets/work-fitness.jpg)">
+            <div class="pfm__notch"></div>
+            <div class="pfm__top"><span class="pfm__brand">PULSE</span><span class="pfm__burger"><span></span><span></span><span></span></span></div>
+            <div class="pfm__hero"><div class="pfm__eyebrow">Фитнес-клуб</div><div class="pfm__h">Стань сильнее</div><span class="pfm__btn">Пробная тренировка</span></div>
+          </div>
+          <div class="pfm__cap">Фитнес · энергичный</div>
+        </div>
+        <div class="pfm pfm--coffee">
+          <div class="pfm__screen" style="background-image:url(/raboty/assets/work-coffee.jpg)">
+            <div class="pfm__notch"></div>
+            <div class="pfm__top"><span class="pfm__brand">ORA</span><span class="pfm__burger"><span></span><span></span><span></span></span></div>
+            <div class="pfm__hero"><div class="pfm__eyebrow">Кофейня</div><div class="pfm__h">Кофе своей<br>обжарки</div><span class="pfm__btn">Меню и адрес</span></div>
+          </div>
+          <div class="pfm__cap">Кофейня · тёплый editorial</div>
+        </div>
+        <div class="pfm pfm--beauty">
+          <div class="pfm__screen" style="background-image:url(/raboty/assets/work-beauty.jpg)">
+            <div class="pfm__notch"></div>
+            <div class="pfm__top"><span class="pfm__brand">LUNÉ</span><span class="pfm__burger"><span></span><span></span><span></span></span></div>
+            <div class="pfm__hero"><div class="pfm__eyebrow">Ногтевая студия</div><div class="pfm__h">Красота<br>без спешки</div><span class="pfm__btn">Записаться</span></div>
+          </div>
+          <div class="pfm__cap">Бьюти · пастель</div>
+        </div>
+      </div>
+
+      <!-- ГАЛЕРЕЯ -->
+      <div class="pf-sub"><h3>И ещё десятки направлений</h3><p>Свой стиль под каждую нишу — от строгой классики до дерзкого арта.</p></div>
+      <div class="pfg-grid">
+        <div class="pfg pfg--typo">
+          <div class="pfg__body"><span class="pfg__tag">Барбершоп</span><div class="pfg__name">KROB</div><div class="pfg__style">Брутальная типографика</div></div>
+        </div>
+        <div class="pfg" style="background-image:url(/raboty/assets/work-avto.jpg)">
+          <div class="pfg__body"><span class="pfg__tag">Автосервис</span><div class="pfg__name">GARAGE 46</div><div class="pfg__style">Индустриальный тёмный</div></div>
+        </div>
+        <div class="pfg" style="background-image:url(/raboty/assets/work-nedvizh.jpg)">
+          <div class="pfg__body"><span class="pfg__tag">Недвижимость</span><div class="pfg__name">Квартал</div><div class="pfg__style">Премиум, крупные фото</div></div>
+        </div>
+        <div class="pfg" style="background-image:url(/raboty/assets/work-urist.jpg)">
+          <div class="pfg__body"><span class="pfg__tag">Юрист · консалтинг</span><div class="pfg__name">Право&Ко</div><div class="pfg__style">Строгий корпоратив</div></div>
+        </div>
+      </div>
+
+      <p class="works__note">Это примеры уровня и разных стилей, которые мы делаем под ключ. Ваш сайт собираем с нуля — под вашу нишу, бренд и задачу. И да, <a href="/" style="color:var(--color-accent)">этот сайт</a> мы тоже сделали сами.</p>
     </div></section>
 
     <section class="container">
@@ -468,7 +559,7 @@
   <script src="../js/enhance.js?v=20260711t" defer></script>
   <script src="../js/contact-net.js?v=20260711z" defer></script>
   <script>
-    (function(){var els=document.querySelectorAll('.pf');if(!els.length)return;
+    (function(){var els=document.querySelectorAll('.pf, .pfm, .pfg');if(!els.length)return;
       if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('in')});return;}
       var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.15});
       els.forEach(function(e){io.observe(e)});})();
