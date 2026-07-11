@@ -981,7 +981,7 @@
     const payroll=es.reduce((a,x)=>a+x.salary+x.bonus,0);
     const fines=es.reduce((a,x)=>a+UQ.finesFor(x.id),0);
     const avgKpi=es.length?Math.round(es.reduce((a,x)=>a+x.kpi,0)/es.length):0;
-    return `${topbar(isHead?'Моя команда':'Сотрудники', isHead?'Люди под твоим руководством · KPI, план дня, дисциплина':'Команда · KPI, план дня, выплаты, штрафы', isHead?'':`<button class="btn btn--primary btn--sm" data-invite>${ic('plus')} Нанять</button>`)}
+    return `${topbar(isHead?'Моя команда':'Сотрудники', isHead?'Люди под твоим руководством · KPI, план дня, дисциплина':'Команда · KPI, план дня, выплаты, штрафы', isHead?'':`<button class="btn btn--primary btn--sm" data-invite="employee">${ic('plus')} Нанять</button>`)}
       <div class="kpirow">
         <div class="card kpi kpi--hero"><div class="eyebrow">В команде</div><div class="kpi__val">${es.length}</div><div class="kpi__sub">${isHead?'твоих людей':st.probation+' на испытательном'}</div></div>
         <div class="card kpi"><div class="eyebrow">Фонд оплаты</div><div class="kpi__val">${usd(payroll)}</div><div class="kpi__sub">оклад + бонусы</div></div>
@@ -1172,13 +1172,24 @@
   function closeModal(){ stopCallTimer(); callStart=0; const s=$('#scrim'); if(s) s.remove(); modalLead=null; modalRevealed=false; modalStatus=null; inviteResult=null; inviteBusy=false; inviteErr=''; penTarget=null; penErr=''; opDraft=null; }
 
   /* ── invite manager (owner/head — генерация логина прямо в CRM) ───────── */
-  let inviteResult=null, inviteBusy=false, inviteErr='';
-  function openInvite(){ inviteResult=null; inviteBusy=false; inviteErr=''; renderInvite(); }
+  let inviteResult=null, inviteBusy=false, inviteErr='', inviteKind='manager';
+  function openInvite(kind){ inviteKind=kind||'manager'; inviteResult=null; inviteBusy=false; inviteErr=''; renderInvite(); }
   function renderInvite(){
+    const isEmp=inviteKind==='employee';
     let scrim=$('#scrim'); if(!scrim){ scrim=document.createElement('div'); scrim.id='scrim'; scrim.className='scrim'; document.body.appendChild(scrim); }
     if(inviteResult){
       const r=inviteResult;
-      scrim.innerHTML=`<div class="modal" data-modal style="max-width:420px">
+      scrim.innerHTML=isEmp?`<div class="modal" data-modal style="max-width:420px">
+        <div class="modal__head"><span class="brand__mark" style="width:44px;height:44px;background:linear-gradient(150deg,#5be9b8,#2fae86)">${ic('check')}</span>
+          <div><h3>Сотрудник добавлен</h3><p>${esc(r.name)}</p></div>
+          <button class="modal__x" data-close>${ic('x')}</button></div>
+        <div class="modal__body">
+          <div style="padding:12px 14px;border-radius:var(--radius-sm);background:rgba(95,231,178,.1);border:1px solid rgba(95,231,178,.25);color:var(--text-2);font-size:12.5px">
+            ${esc(r.name)} появится в списке команды, статус «испытательный», KPI начнёт считаться со следующего дня.
+          </div>
+        </div>
+        <div class="modal__foot"><button class="btn btn--primary btn--block" data-close>Готово</button></div>
+      </div>`:`<div class="modal" data-modal style="max-width:420px">
         <div class="modal__head"><span class="brand__mark" style="width:44px;height:44px;background:linear-gradient(150deg,#5be9b8,#2fae86)">${ic('check')}</span>
           <div><h3>Менеджер добавлен</h3><p>${esc(r.name)}</p></div>
           <button class="modal__x" data-close>${ic('x')}</button></div>
@@ -1193,7 +1204,21 @@
       </div>`;
       return;
     }
-    scrim.innerHTML=`<div class="modal" data-modal style="max-width:420px">
+    scrim.innerHTML=isEmp?`<div class="modal" data-modal style="max-width:420px">
+      <div class="modal__head"><span class="brand__mark" style="width:44px;height:44px">${ic('headset')}</span>
+        <div><h3>Нанять сотрудника</h3><p>Добавится в команду со статусом «испытательный»</p></div>
+        <button class="modal__x" data-close>${ic('x')}</button></div>
+      <div class="modal__body">
+        <div class="field"><label>Имя <span class="req">*</span></label><input class="input" data-inv-name placeholder="Имя Фамилия" ${inviteBusy?'disabled':''}></div>
+        <div class="field"><label>Роль</label><input class="input" data-inv-role placeholder="Менеджер по продажам" ${inviteBusy?'disabled':''}></div>
+        <div class="field"><label>Отдел</label><input class="input" data-inv-dept placeholder="Продажи" ${inviteBusy?'disabled':''}></div>
+        ${inviteErr?`<div style="color:var(--bad);font-size:12.5px">${esc(inviteErr)}</div>`:''}
+      </div>
+      <div class="modal__foot">
+        <button class="btn btn--ghost" data-close ${inviteBusy?'disabled':''}>Отмена</button>
+        <button class="btn btn--primary btn--block" data-invite-submit ${inviteBusy?'disabled':''}>${inviteBusy?'Нанимаю…':ic('plus')+' Нанять'}</button>
+      </div>
+    </div>`:`<div class="modal" data-modal style="max-width:420px">
       <div class="modal__head"><span class="brand__mark" style="width:44px;height:44px">${ic('headset')}</span>
         <div><h3>Добавить менеджера</h3><p>Логин и пароль сгенерируются сразу</p></div>
         <button class="modal__x" data-close>${ic('x')}</button></div>
@@ -1209,14 +1234,22 @@
     </div>`;
   }
   async function submitInvite(){
+    const isEmp=inviteKind==='employee';
     const name=($('[data-inv-name]')||{}).value?.trim();
-    const city=($('[data-inv-city]')||{}).value?.trim();
     if(!name){ inviteErr='Укажи имя'; renderInvite(); return; }
     inviteBusy=true; inviteErr=''; renderInvite();
     try{
-      const r = await UQ.inviteManager({name, city});
+      let r;
+      if(isEmp){
+        const role=($('[data-inv-role]')||{}).value?.trim();
+        const dept=($('[data-inv-dept]')||{}).value?.trim();
+        r = await UQ.hireEmployee({name, role, dept});
+      }else{
+        const city=($('[data-inv-city]')||{}).value?.trim();
+        r = await UQ.inviteManager({name, city});
+      }
       inviteBusy=false; inviteResult=r; renderInvite();
-      if(view==='managers') rerender();
+      if(view==='managers'||view==='employees') rerender();
     }catch(e){
       inviteBusy=false; inviteErr=(e&&e.message)||'Не получилось создать — попробуй ещё раз'; renderInvite();
     }
@@ -1532,6 +1565,7 @@
     else if(d.delop){ UQ.delOperation(d.delop); toast('Операция удалена'); rerender(); }
     else if(d.distribute!==undefined){ const list=[...document.querySelectorAll('[data-distn]')].map(i=>({id:i.dataset.distn,n:+i.value||0})); const tot=UQ.distributeNumbers(list); toast(tot?(tot+' номеров роздано по KPI'):'В пуле нет номеров'); rerender(); }
     else if(d.addlead!==undefined){ addLead(); }
+    else if(d.drop!==undefined){ importCSVPick(); }
     else if(d.dial){ dialFilter=d.dial; rerender(); }
     else if(d.daily){ UQ.toggleDaily(d.daily); rerender(); }
     else if(d.adddaily!==undefined){ const i=$('[data-newdaily]'); if(i&&i.value){ UQ.addDaily(i.value); rerender(); } }
@@ -1545,7 +1579,7 @@
     else if(d.dclose!==undefined){ closeDrawer(); }
     else if(d.move){ const [did,stg]=d.move.split(':'); UQ.moveDeal(did,stg); toast(stg==='live'?'Сделка запущена 🚀':'Стадия обновлена'); if(view==='pipeline'||view==='dashboard'||view==='clients') rerender(); openDrawer('deal',did); }
     else if(d.pal!==undefined){ openPal(); }
-    else if(d.invite!==undefined){ openInvite(); }
+    else if(d.invite!==undefined){ openInvite(d.invite||'manager'); }
     else if(d.inviteSubmit!==undefined){ submitInvite(); }
     else if(d.kbfilter){ kbFilter=d.kbfilter; rerender(); }
     else if(d.article){ openArticle(d.article); }
@@ -1586,6 +1620,27 @@
     UQ.addLead({business:business.startsWith('«')?business:'«'+business+'»',phone,city:g('city')||'—',niche:g('niche')||'—'});
     toast('Добавлено в пул'); rerender();
   }
+  function importCSVRows(text){
+    const lines=String(text).split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+    let n=0;
+    lines.forEach(line=>{
+      const c=line.split(',').map(s=>s.trim().replace(/^"|"$/g,''));
+      const business=c[0]||'', phone=c[1]||'';
+      if(!business||!phone||/^бизнес$|^business$/i.test(business)) return;
+      UQ.addLead({business:business.startsWith('«')?business:'«'+business+'»',phone,city:c[2]||'—',niche:c[3]||'—'});
+      n++;
+    });
+    toast(n?('Импортировано в пул: '+n):'Не нашёл строк — колонки: бизнес, телефон, город, ниша'); rerender();
+  }
+  function importCSVFile(file){ const r=new FileReader(); r.onload=()=>importCSVRows(r.result); r.readAsText(file,'utf-8'); }
+  function importCSVPick(){
+    const inp=document.createElement('input'); inp.type='file'; inp.accept='.csv,text/csv';
+    inp.onchange=()=>{ if(inp.files[0]) importCSVFile(inp.files[0]); };
+    inp.click();
+  }
+  document.addEventListener('dragover',e=>{ if(e.target.closest('[data-drop]')){ e.preventDefault(); e.target.closest('[data-drop]').classList.add('dragover'); } });
+  document.addEventListener('dragleave',e=>{ const dz=e.target.closest('[data-drop]'); if(dz) dz.classList.remove('dragover'); });
+  document.addEventListener('drop',e=>{ const dz=e.target.closest('[data-drop]'); if(!dz) return; e.preventDefault(); dz.classList.remove('dragover'); const f=e.dataTransfer.files[0]; if(f) importCSVFile(f); });
   document.addEventListener('change',e=>{ const ds=e.target.dataset; if(ds.assignMgr!==undefined){ assignMgr=e.target.value; } if(ds.assignNiche!==undefined){ assignNiche=e.target.value; } });
   document.addEventListener('keydown',e=>{
     const k=e.key, palLive=!!$('#palScrim');

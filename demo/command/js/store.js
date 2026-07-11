@@ -510,6 +510,19 @@
       return { email, password, name };
     },
 
+    /* — нанять сотрудника (не-менеджера) со страницы «Сотрудники» — */
+    async hireEmployee({name, role, dept}){
+      const AV=['#8b7cf6','#63d7ff','#4fe3b0','#ff9f5a','#e05bd1','#5b8cff','#ffc55a','#ff6b81'];
+      const id = uid('e');
+      S.employees.push({
+        id, name, role: role||'Сотрудник', dept: dept||'Общее', color:AV[S.employees.length%AV.length],
+        salary:400, bonus:0, fine:0, kpi:50, since:iso(Date.now()), status:'probation',
+        access:['CRM: свои задачи'], equipment:['Ноутбук'],
+      });
+      save();
+      return { name };
+    },
+
     /* — progress board — */
     tasks(){ return S.tasks; },
     moveTask(id,col){ const t=S.tasks.find(x=>x.id===id); if(t){ t.column=col; save(); } },

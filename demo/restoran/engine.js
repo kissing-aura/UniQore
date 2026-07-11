@@ -1483,7 +1483,11 @@ function viewSettings() {
   document.getElementById('set_theme').value = localStorage.getItem(K('theme')) || R.theme;
   document.getElementById('set_theme').onchange = e => setTheme(e.target.value, true);
   document.getElementById('setThemeReset').onclick = () => { localStorage.removeItem(K('theme')); setTheme(R.theme, false); };
-  document.getElementById('setSave').onclick = () => { toast('Сохранено', 'ok'); };
+  document.getElementById('setSave').onclick = () => {
+    const v = document.getElementById('set_brand').value.trim();
+    if (v) { R.brand = { ...R.brand, name: v }; localStorage.setItem(K('brand_name'), v); document.querySelectorAll('.brand__name').forEach(el => el.textContent = v); }
+    toast('Сохранено', 'ok');
+  };
   document.getElementById('setReset').onclick = () => { if (confirm('Удалить ВСЕ данные этой CRM?')) { Object.keys(localStorage).filter(k => k.startsWith(R.prefix || 'uq_')).forEach(k => localStorage.removeItem(k)); location.reload(); } };
 }
 
