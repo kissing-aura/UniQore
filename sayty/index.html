@@ -264,12 +264,17 @@
         <div class="sy-head">
           <h2 class="sy-h2 sy-rev">Прозрачные <em>цены</em></h2>
           <p class="sy-sub sy-rev" data-d="1">Стоимость фиксируем в договоре до старта. Оплата после утверждения макета — никаких скрытых доплат.</p>
+          <div class="cur-switch cur-switch--center sy-rev" data-d="1" role="group" aria-label="Валюта" style="margin-top:20px">
+            <button type="button" class="cur-switch__btn is-active" data-cur="USD" aria-pressed="true">$</button>
+            <button type="button" class="cur-switch__btn" data-cur="RUB" aria-pressed="false">₽</button>
+            <button type="button" class="cur-switch__btn" data-cur="BYN" aria-pressed="false">Br</button>
+          </div>
         </div>
         <div class="sy-price__grid">
           <div class="sy-pcard sy-rev">
             <div class="sy-pcard__name">Лендинг</div>
             <div class="sy-pcard__who">Одна страница под одну цель — реклама, услуга, продукт.</div>
-            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val">$150</span></div>
+            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val" data-usd="150">$150</span></div>
             <div class="sy-pcard__term"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Готов за 3 дня</div>
             <ul class="sy-pcard__list">
               <li>Индивидуальный дизайн под нишу</li>
@@ -284,7 +289,7 @@
             <div class="sy-pcard__flag">Хит</div>
             <div class="sy-pcard__name">Многостраничный</div>
             <div class="sy-pcard__who">Полноценный сайт: услуги, каталог, о компании, блог.</div>
-            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val">$300</span></div>
+            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val" data-usd="300">$300</span></div>
             <div class="sy-pcard__term"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Готов за 5 дней</div>
             <ul class="sy-pcard__list">
               <li>Всё из лендинга</li>
@@ -298,7 +303,7 @@
           <div class="sy-pcard sy-rev" data-d="2">
             <div class="sy-pcard__name">Сайт + CRM</div>
             <div class="sy-pcard__who">Сайт, который сразу ведёт заявки в вашу CRM-систему.</div>
-            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val">$500</span></div>
+            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val" data-usd="500">$500</span></div>
             <div class="sy-pcard__term"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Готов за 5–7 дней</div>
             <ul class="sy-pcard__list">
               <li>Всё из многостраничного</li>
@@ -649,7 +654,7 @@
 
   <!-- sticky mobile CTA -->
   <div class="sy-sticky" id="sySticky">
-    <div class="sy-sticky__txt"><div class="sy-sticky__t">Сайт от $150 · за 3–5 дней</div><div class="sy-sticky__s">Расчёт бесплатно</div></div>
+    <div class="sy-sticky__txt"><div class="sy-sticky__t">Сайт от <span data-usd="150">$150</span> · за 3–5 дней</div><div class="sy-sticky__s">Расчёт бесплатно</div></div>
     <a href="#zayavka" class="sy-btn sy-btn--main">Получить расчёт</a>
   </div>
 
@@ -659,5 +664,6 @@
   </script>
   <script src="../js/nav-dropdown.js?v=20260710r" defer></script>
   <script src="/js/sayty.js?v=20260711H" defer></script>
+  <script src="../js/currency.js?v=20260712a" defer></script>
 </body>
 </html>
