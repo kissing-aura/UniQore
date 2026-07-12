@@ -690,9 +690,7 @@
     <!-- HOW IT WORKS -->
     <section class="process process--media" id="process">
       <div class="process__media" aria-hidden="true">
-        <video class="process__media-el" autoplay muted loop playsinline preload="auto" poster="assets/hero-process.jpg">
-          <source src="assets/hero-process.mp4?v=20260709a" type="video/mp4">
-        </video>
+        <video class="process__media-el" muted loop playsinline preload="none" poster="assets/hero-process.jpg" data-src="assets/hero-process.mp4?v=20260709a"></video>
       </div>
       <div class="process__scrim" aria-hidden="true"></div>
       <div class="container">
@@ -1034,5 +1032,27 @@
   </script>
   <script src="js/hero3d.js?v=20260711e" defer></script>
   <script src="js/currency.js?v=20260712b" defer></script>
+
+  <!-- Видео «Процесс» (263КБ) — lazy: источник подставляется и запускается только
+       когда секция подходит к экрану. Экономит вес на старте, особенно на мобилке.
+       До этого виден постер. -->
+  <script>
+    (function(){
+      var v = document.querySelector('.process__media-el');
+      if (!v || !v.dataset.src) return;
+      function load(){
+        if (v.dataset.loaded) return; v.dataset.loaded = '1';
+        var s = document.createElement('source');
+        s.src = v.dataset.src; s.type = 'video/mp4';
+        v.appendChild(s); v.load();
+        var p = v.play(); if (p && p.catch) p.catch(function(){});
+      }
+      if (!('IntersectionObserver' in window)) { load(); return; }
+      var io = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if (e.isIntersecting) { load(); io.disconnect(); } });
+      }, { rootMargin: '500px 0px' });
+      io.observe(v);
+    })();
+  </script>
 </body>
 </html>
