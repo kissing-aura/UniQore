@@ -58,9 +58,12 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
 }
 
 /* ── ПЕРЕКЛЮЧАТЕЛЬ ВАЛЮТ ($ / ₽ / Br) ── */
-.cur-switch{display:inline-flex;gap:3px;padding:3px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.02)}
-.cur-switch__btn{appearance:none;border:0;background:none;color:var(--color-text-muted,#8a8f98);font-family:var(--font-mono,monospace);font-size:12.5px;font-weight:600;letter-spacing:.02em;padding:6px 14px;border-radius:999px;cursor:pointer;transition:background .2s ease,color .2s ease}
-.cur-switch__btn:hover{color:var(--color-text-primary,#fff)}
+.cur-switch{display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 2px;border:1px solid rgba(205,255,79,.34);border-radius:999px;background:rgba(205,255,79,.05);box-shadow:0 0 28px -8px rgba(205,255,79,.45)}
+.cur-switch::before{content:"Цены в";align-self:center;padding:0 9px 0 10px;font-family:var(--font-mono,monospace);font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--color-text-secondary,#9aa6be);white-space:nowrap}
+.cur-switch__btn{appearance:none;border:0;background:none;color:rgba(255,255,255,.74);font-family:var(--font-mono,monospace);font-size:13.5px;font-weight:700;letter-spacing:.02em;padding:7px 15px;border-radius:999px;cursor:pointer;transition:background .2s ease,color .2s ease}
+.cur-switch__btn:hover{color:#fff;background:rgba(255,255,255,.07)}
 .cur-switch__btn.is-active{background:var(--color-accent,#CDFF4F);color:#0A0A0A}
-.cur-switch--center{display:flex;justify-content:center;margin:0 0 30px}
+/* --center + .cur-switch на одном элементе: fit-content не даёт пилюле растянуться
+   на всю ширину (иначе кнопки терялись в пустой полосе), margin:auto центрирует. */
+.cur-switch--center{display:flex;width:-moz-fit-content;width:fit-content;margin-left:auto;margin-right:auto;margin-bottom:30px}
 

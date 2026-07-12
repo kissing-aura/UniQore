@@ -41,9 +41,17 @@
     apply(btn.getAttribute('data-cur'));
   });
 
-  document.addEventListener('DOMContentLoaded', function () {
-    var saved = 'USD';
-    try { saved = localStorage.getItem(STORE_KEY) || 'USD'; } catch (e) {}
+  // Валюта по умолчанию — рубли (многие в РФ/РБ не знают курс доллара).
+  // Возвращающийся посетитель сохраняет свой выбор из localStorage.
+  function boot() {
+    var saved = 'RUB';
+    try { saved = localStorage.getItem(STORE_KEY) || 'RUB'; } catch (e) {}
     apply(saved);
-  });
+  }
+  // Скрипт с defer — DOM уже разобран; применяем сразу, чтобы не мигало $→₽.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 })();
