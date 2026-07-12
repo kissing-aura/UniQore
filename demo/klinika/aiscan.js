@@ -272,10 +272,9 @@ window.UQ_AISCAN = (function () {
     scope.querySelectorAll('[data-as-lock]').forEach(function (el) { el.addEventListener('click', function () { scope.querySelector('.as-lock').hidden = false; }); });
     var lc = scope.querySelector('[data-lock-close]'); if (lc) lc.onclick = function () { scope.querySelector('.as-lock').hidden = true; };
     var lock = scope.querySelector('.as-lock'); if (lock) lock.addEventListener('click', function (e) { if (e.target === lock) lock.hidden = true; });
-    // parallax
-    var theatre = scope.querySelector('.as-theatre'), arch = scope.querySelector('.as-arch');
-    theatre.addEventListener('pointermove', function (e) { var r = theatre.getBoundingClientRect(); var dx = (e.clientX - r.left) / r.width - .5, dy = (e.clientY - r.top) / r.height - .5; arch.style.transform = 'rotateY(' + (dx * 9) + 'deg) rotateX(' + (-dy * 7) + 'deg)'; });
-    theatre.addEventListener('pointerleave', function () { arch.style.transform = 'none'; });
+    // Мышиный 3D-наклон дуги убран: из-за лага transition снимок «плыл» за
+    // курсором — для медицинской панорамы выглядело несерьёзно. Снимок статичен,
+    // динамику даёт скан-луч и разметка находок.
   }
 
   return { html: html, init: init };
