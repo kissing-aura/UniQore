@@ -28,10 +28,22 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Uniqore", "item": "https://uniqore.pro/" },
-      { "@type": "ListItem", "position": 2, "name": "Кейсы", "item": "https://uniqore.pro/keysy/" }
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Uniqore", "item": "https://uniqore.pro/" },
+          { "@type": "ListItem", "position": 2, "name": "Кейсы", "item": "https://uniqore.pro/keysy/" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Демо — это рендеры или рабочие системы?", "acceptedAnswer": { "@type": "Answer", "text": "Полностью рабочие: можно кликать и тестировать функции. На этих же технологиях мы строим клиентские системы." } },
+          { "@type": "Question", "name": "Мой бизнес получит такой же дизайн?", "acceptedAnswer": { "@type": "Answer", "text": "Нет. Дизайн каждой CRM собираем уникально под бренд — демо показывает уровень и подход, а не шаблон." } },
+          { "@type": "Question", "name": "За сколько будет готова моя система?", "acceptedAnswer": { "@type": "Answer", "text": "4–6 рабочих дней с момента подписания технического задания." } }
+        ]
+      }
     ]
   }
   </script>
@@ -520,6 +532,39 @@
           </div></div><div class="pf__cap"><div class="pf__cap-l"><span class="pf__type">Фитнес</span><span class="pf__desc">Энергичная подача — спорт, клубы, студии.</span></div><a href="/#contact" class="pf__cta">Хочу такой →</a></div></article>
         </div>
       </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+      <div class="container"><div class="faq__inner">
+        <div class="faq__header"><h2 class="section-title">Частые<br><em>вопросы</em></h2></div>
+        <div class="faq__list">
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fk-1"><span>Демо — это рендеры или рабочие системы?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fk-1" hidden><p>Полностью рабочие: можно кликать и тестировать функции. На этих же технологиях мы строим клиентские системы.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fk-2"><span>Мой бизнес получит такой же дизайн?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fk-2" hidden><p>Нет. Дизайн каждой CRM собираем уникально под ваш бренд — демо показывает уровень и подход, а не готовый шаблон, который вам предложат.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fk-3"><span>Сколько будет стоить система под мою нишу?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fk-3" hidden><p>Зависит от объёма — ориентир в разделе <a href="/tseny/" style="color:var(--color-accent)">Цены</a>, точная цифра после бесплатного аудита.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fk-4"><span>За сколько будет готова моя система?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fk-4" hidden><p>4–6 рабочих дней с момента подписания технического задания — как и демо, которые вы видите здесь.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fk-5"><span>Могу протестировать демо перед тем, как обращаться?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fk-5" hidden><p>Да, все демо открыты — переходите и кликайте, регистрация не нужна.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fk-6"><span>Сайты в разделе «Кейсы сайтов» — это шаблоны?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fk-6" hidden><p>Нет, это иллюстрации стилей и уровня подачи. Ваш сайт делаем с нуля под бренд, готовый макет не переиспользуем.</p></div>
+            </div>
+        </div>
+      </div></div>
     </section>
 
     <!-- CTA BAND -->
