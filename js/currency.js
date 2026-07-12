@@ -4,6 +4,8 @@
   var RATES = { USD: 1, RUB: 78, BYN: 2.87 };
   var ROUND = { USD: 1, RUB: 100, BYN: 10 };
   var SYMBOL = { USD: '$', RUB: '₽', BYN: 'Br' };
+  // Официальный графический знак белорусского рубля (утв. НБ РБ 27.01.2026) — в Unicode/шрифтах пока нет, рисуем SVG.
+  var BYN_SVG = '<svg class="byn-sign" viewBox="76 30 548 644" fill="currentColor" role="img" aria-label="белорусских рублей" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,700) scale(0.1,-0.1)"><path d="M1758 4520 l-3 -2105 -462 -3 -463 -2 0 -305 0 -305 452 -2 452 -3 13 -25 c10 -19 13 -182 13 -733 l0 -708 1313 4 c1470 4 1447 3 1737 79 41 11 91 23 111 28 66 17 263 101 354 151 151 84 301 198 420 321 210 214 349 465 426 764 41 161 52 251 56 469 5 237 -14 388 -74 595 -19 65 -88 232 -113 275 -10 17 -28 48 -40 70 -135 245 -403 488 -701 636 -222 111 -445 173 -744 209 -147 18 -235 20 -1087 20 -829 0 -928 2 -942 16 -14 14 -16 119 -16 1010 0 619 4 1002 10 1013 9 18 70 18 1392 16 761 -2 1447 -1 1526 2 l142 6 0 306 0 306 -1885 0 -1885 0 -2 -2105z m2562 -1190 c242 -28 382 -66 555 -152 131 -66 195 -109 280 -190 123 -116 232 -288 283 -448 70 -218 67 -534 -8 -760 -117 -350 -394 -628 -760 -760 -46 -17 -140 -42 -209 -55 l-125 -25 -922 0 c-828 0 -924 2 -938 16 -14 14 -16 63 -14 427 l3 412 809 3 809 2 -7 46 c-3 26 -6 163 -6 305 l0 259 -789 0 c-704 0 -791 2 -805 16 -14 14 -16 69 -16 458 0 243 3 446 7 449 10 11 1758 8 1853 -3z"/></g></svg>';
   var STORE_KEY = 'uq_currency';
 
   function formatNum(n) {
@@ -15,7 +17,8 @@
     var val = usd * RATES[cur];
     var r = ROUND[cur];
     val = Math.round(val / r) * r;
-    return formatNum(val) + ' ' + SYMBOL[cur];
+    var sym = cur === 'BYN' ? BYN_SVG : SYMBOL[cur];
+    return formatNum(val) + ' ' + sym;
   }
 
   function apply(cur) {
@@ -25,7 +28,7 @@
       if (isNaN(usd)) return;
       var prefix = el.getAttribute('data-prefix') || '';
       var suffix = el.getAttribute('data-suffix') || '';
-      el.textContent = prefix + render(usd, cur) + suffix;
+      el.innerHTML = prefix + render(usd, cur) + suffix;
     });
     document.querySelectorAll('.cur-switch__btn').forEach(function (b) {
       var on = b.getAttribute('data-cur') === cur;

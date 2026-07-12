@@ -67,3 +67,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
    на всю ширину (иначе кнопки терялись в пустой полосе), margin:auto центрирует. */
 .cur-switch--center{display:flex;width:-moz-fit-content;width:fit-content;margin-left:auto;margin-right:auto;margin-bottom:30px}
 
+
+/* Знак белорусского рубля (SVG-глиф, Unicode пока нет) */
+.byn-sign{height:.82em;width:auto;vertical-align:-.09em;display:inline-block}
+.cur-switch__btn .byn-sign{height:1.02em;vertical-align:-.16em}
