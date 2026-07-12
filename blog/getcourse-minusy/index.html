@@ -53,6 +53,8 @@
   <link rel="stylesheet" href="../../css/components.css?v=20260710r">
   <link rel="stylesheet" href="../../css/sections.css?v=20260710r">
   <link rel="stylesheet" href="../../css/mobile.css?v=20260710r">
+  <link rel="stylesheet" href="../../css/nav-pages.css?v=20260710r">
+  <link rel="stylesheet" href="../../css/enhance.css?v=20260710r">
   <link rel="stylesheet" href="../../css/redesign.css?v=20260710v">
   <link rel="stylesheet" href="/css/premium.css?v=20260711A">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -75,7 +77,7 @@
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
     @media (max-width: 768px) {
-      .nav__cta { display: inline-flex !important; }
+      .nav__cta { display: none; }
     }
   </style>
   <!-- Google Analytics 4 -->
@@ -109,15 +111,74 @@
         <span class="nav__logo-text">uniqore</span>
       </a>
       <ul class="nav__links">
-        <li><a href="/#cases">Кейсы</a></li>
-        <li><a href="/#services">Услуги</a></li>
-        <li><a href="/#pricing">Цены</a></li>
+        <li><a href="/vozmozhnosti/">Возможности</a></li>
+        <li class="nav__item--drop">
+          <button type="button" class="nav__drop-toggle" aria-expanded="false">Решения
+            <svg width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav__dropdown" role="menu">
+            <a href="/crm-pod-klyuch/" role="menuitem"><span class="nav__dd-name">CRM под ключ</span><span class="nav__dd-desc">Своя система с нуля</span></a>
+            <a href="/crm-dlya-arendy/" role="menuitem"><span class="nav__dd-name">Посуточная аренда</span><span class="nav__dd-desc">Календарь · залоги · авточаты</span></a>
+            <a href="/crm-dlya-avtoservisa/" role="menuitem"><span class="nav__dd-name">Автосервис</span><span class="nav__dd-desc">Трекинг ремонта · история авто</span></a>
+            <a href="/crm-dlya-sklada/" role="menuitem"><span class="nav__dd-name">Склад и импорт</span><span class="nav__dd-desc">Остатки 24/7 · OCR · GPS</span></a>
+            <a href="/crm-dlya-stomatologii/" role="menuitem"><span class="nav__dd-name">Медицина / стоматология</span><span class="nav__dd-desc">История пациента · ДМС</span></a>
+            <a href="/crm-dlya-internet-magazina/" role="menuitem"><span class="nav__dd-name">Интернет-магазин</span><span class="nav__dd-desc">Заказы · статусы · аналитика</span></a>
+            <a href="/crm-dlya-telegram-biznesa/" role="menuitem"><span class="nav__dd-name">Telegram-бизнес</span><span class="nav__dd-desc">Магазин · рассылки · лояльность</span></a>
+            <a href="/crm-dlya-fitnesa/" role="menuitem"><span class="nav__dd-name">Фитнес-клуб</span><span class="nav__dd-desc">Абонементы · расписание · напоминания</span></a>
+            <a href="/crm-dlya-restorana/" role="menuitem"><span class="nav__dd-name">Ресторан / кафе</span><span class="nav__dd-desc">Заказы · бронь · лояльность</span></a>
+            <a href="/crm-dlya-krasoty/" role="menuitem"><span class="nav__dd-name">Салон красоты</span><span class="nav__dd-desc">Запись · склад · напоминания</span></a>
+            <a href="/crm-dlya-yuristov/" role="menuitem"><span class="nav__dd-name">Юридическая компания</span><span class="nav__dd-desc">Дела · дедлайны · документы</span></a>
+            <a href="/crm-dlya-turagentstva/" role="menuitem"><span class="nav__dd-name">Турагентство</span><span class="nav__dd-desc">Заявки · брони · напоминания</span></a>
+            <a href="/crm-dlya-logistiki/" role="menuitem"><span class="nav__dd-name">Логистика и доставка</span><span class="nav__dd-desc">Трекинг · маршруты · заявки</span></a>
+            <a href="/crm-dlya-remonta-i-stroyki/" role="menuitem"><span class="nav__dd-name">Ремонт и стройка</span><span class="nav__dd-desc">Объекты · сметы · график бригад</span></a>
+            <a href="/crm-dlya-klininga/" role="menuitem"><span class="nav__dd-name">Клининговая компания</span><span class="nav__dd-desc">Заявки · бригады · абонементы</span></a>
+            <a href="/crm-dlya-agentstva-nedvizhimosti/" role="menuitem"><span class="nav__dd-name">Агентство недвижимости</span><span class="nav__dd-desc">Объекты · клиенты · показы</span></a>
+            <a href="/crm-dlya-detskogo-centra/" role="menuitem"><span class="nav__dd-name">Детский центр</span><span class="nav__dd-desc">Расписание · оплаты · напоминания</span></a>
+          </div>
+        </li>
+        <li><a href="/keysy/">Кейсы</a></li>
+        <li><a href="/tseny/">Цены</a></li>
         <li><a href="/blog/">Блог</a></li>
+        <li><a href="/o-nas/">О нас</a></li>
       </ul>
       <a href="https://t.me/UniqoreManager" class="nav__tg" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.5 3.4 2.9 10.6c-1 .4-1 1.4 0 1.7l4.6 1.5 1.8 5.4c.3.9 1.2 1 1.8.3l2.5-2.6 4.7 3.5c.7.5 1.6.1 1.8-.8l3-14.5c.2-1-.7-1.8-1.6-1.7ZM8.7 13.5l9-5.7c.3-.2.6.2.3.5l-7.4 6.8-.3 3-1.6-4.6Z" fill="currentColor"/></svg></a>
       <a href="/#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
+      <button class="nav__burger" id="burger" aria-label="Меню">
+        <span></span><span></span>
+      </button>
     </div>
   </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">✈️ Telegram — @UniqoreManager</a></li>
+      <li><a href="/vozmozhnosti/">Возможности</a></li>
+      <li class="mobile-menu__label">Решения</li>
+      <li><a href="/crm-pod-klyuch/">— CRM под ключ</a></li>
+      <li><a href="/crm-dlya-arendy/">— Посуточная аренда</a></li>
+      <li><a href="/crm-dlya-avtoservisa/">— Автосервис</a></li>
+      <li><a href="/crm-dlya-sklada/">— Склад и импорт</a></li>
+      <li><a href="/crm-dlya-stomatologii/">— Медицина</a></li>
+      <li><a href="/crm-dlya-internet-magazina/">— Интернет-магазин</a></li>
+      <li><a href="/crm-dlya-telegram-biznesa/">— Telegram-бизнес</a></li>
+      <li><a href="/crm-dlya-fitnesa/">— Фитнес-клуб</a></li>
+      <li><a href="/crm-dlya-restorana/">— Ресторан / кафе</a></li>
+      <li><a href="/crm-dlya-krasoty/">— Салон красоты</a></li>
+      <li><a href="/crm-dlya-yuristov/">— Юридическая компания</a></li>
+      <li><a href="/crm-dlya-turagentstva/">— Турагентство</a></li>
+      <li><a href="/crm-dlya-logistiki/">— Логистика и доставка</a></li>
+      <li><a href="/crm-dlya-remonta-i-stroyki/">— Ремонт и стройка</a></li>
+      <li><a href="/crm-dlya-klininga/">— Клининговая компания</a></li>
+      <li><a href="/crm-dlya-agentstva-nedvizhimosti/">— Агентство недвижимости</a></li>
+      <li><a href="/crm-dlya-detskogo-centra/">— Детский центр</a></li>
+      <li><a href="/keysy/">Кейсы</a></li>
+      <li><a href="/tseny/">Цены</a></li>
+      <li><a href="/blog/">Блог</a></li>
+      <li><a href="/o-nas/">О нас</a></li>
+      <li><a href="/#contact" class="btn btn--accent">Обсудить проект</a></li>
+    </ul>
+  </div>
 
   <main id="main">
     <div class="container breadcrumb"><a href="/">Uniqore</a> / <a href="/blog/">Блог</a> / GetCourse: минусы и когда нужна альтернатива</div>
@@ -187,5 +248,10 @@
     </div>
     <div class="container footer__bottom"><span>© 2026 Uniqore. Все права защищены.</span></div>
   </footer>
+
+  <script>
+    (function(){var b=document.getElementById('burger'),m=document.getElementById('mobile-menu');if(b&&m){b.addEventListener('click',function(){m.classList.toggle('open');b.classList.toggle('open');});m.querySelectorAll('a').forEach(function(l){l.addEventListener('click',function(){m.classList.remove('open');b.classList.remove('open');});});}})();
+  </script>
+  <script src="../../js/nav-dropdown.js?v=20260710r" defer></script>
 </body>
 </html>
