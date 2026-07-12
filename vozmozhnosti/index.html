@@ -28,10 +28,22 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Uniqore", "item": "https://uniqore.pro/" },
-      { "@type": "ListItem", "position": 2, "name": "Возможности", "item": "https://uniqore.pro/vozmozhnosti/" }
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Uniqore", "item": "https://uniqore.pro/" },
+          { "@type": "ListItem", "position": 2, "name": "Возможности", "item": "https://uniqore.pro/vozmozhnosti/" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Это готовая платформа или разработка с нуля?", "acceptedAnswer": { "@type": "Answer", "text": "С нуля под ваши процессы. Не Bitrix24 или amoCRM с настройками — только нужные разделы, своя логика воронки, нативные интеграции." } },
+          { "@type": "Question", "name": "Сколько это стоит?", "acceptedAnswer": { "@type": "Answer", "text": "От $1200 разово за разработку, далее $150/мес — хостинг, поддержка и текущие правки." } },
+          { "@type": "Question", "name": "Сколько времени займёт сборка?", "acceptedAnswer": { "@type": "Answer", "text": "4–6 рабочих дней с момента подписания технического задания." } }
+        ]
+      }
     ]
   }
   </script>
@@ -63,6 +75,9 @@
     .page-hero h1 em { font-style: normal; color: var(--color-accent); }
     .page-hero__sub { margin-top: 26px; font-size: clamp(15px, 1.4vw, 18px); line-height: 1.7; color: var(--color-text-secondary); max-width: 46ch; }
     .page-hero__actions { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 14px; }
+    .ph-trust { display: flex; align-items: flex-start; gap: 9px; margin-top: 26px; max-width: 48ch; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary); }
+    .ph-trust svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; color: var(--color-accent); }
+    .ph-trust strong { color: var(--color-text-primary); font-weight: 600; }
     .page-hero__mock { perspective: 1600px; }
     .page-hero__mock .mockup-showcase__window {
       transform: rotateY(-13deg) rotateX(4deg); transform-style: preserve-3d;
@@ -230,6 +245,10 @@
             <div class="page-hero__actions">
               <a href="/#contact" class="btn btn--accent btn--lg">Обсудить проект</a>
               <a href="/keysy/" class="btn btn--ghost btn--lg">Смотреть кейсы →</a>
+            </div>
+            <div class="ph-trust">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Объём и цену фиксируем в договоре до старта. <strong>Код и данные — на ваших серверах.</strong></span>
             </div>
           </div>
           <div class="page-hero__mock" data-reveal>
@@ -518,7 +537,55 @@
       </div>
     </section>
 
-<section class="cta-band">
+<section class="faq" id="faq">
+      <div class="container"><div class="faq__inner">
+        <div class="faq__header"><h2 class="section-title">Частые<br><em>вопросы</em></h2></div>
+        <div class="faq__list">
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-1"><span>Это готовая платформа или разработка с нуля?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-1" hidden><p>С нуля под ваши процессы. Не Bitrix24 или amoCRM с настройками — только нужные разделы, своя логика воронки, нативные интеграции.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-2"><span>Сколько это стоит?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-2" hidden><p>От $1200 разово за разработку, далее $150/мес — хостинг, поддержка и текущие правки. Точная цена — после бесплатного аудита.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-3"><span>Сколько времени займёт сборка?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-3" hidden><p>4–6 рабочих дней с момента подписания технического задания.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-4"><span>Можно взять не всё сразу, а только часть?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-4" hidden><p>Да. Например, только CRM или только чат-бот — модули берутся по отдельности и докручиваются позже.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-5"><span>Данные и код останутся моими?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-5" hidden><p>Да. Система разворачивается на ваших серверах и аккаунтах, код ваш с первого дня — независимо от того, продолжаем мы сотрудничество или нет.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-6"><span>Подойдёт ли для моей ниши?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-6" hidden><p>Строим индивидуально под процессы бизнеса, поэтому подходит для любой ниши с понятной воронкой продаж — от розницы до недвижимости.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-7"><span>Нужно разбираться в CRM, чтобы этим пользоваться?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-7" hidden><p>Нет. Интерфейс делаем максимально простым и обучаем команду при сдаче — без курсов и инструкций на 40 страниц.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-8"><span>Что если понадобятся доработки потом?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-8" hidden><p>Входит в подписку $150/мес — правки и текущая поддержка без нового договора и доплат за каждую мелочь.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-9"><span>А если у меня уже есть сайт или CRM?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-9" hidden><p>Подключим новые модули к существующей системе или предложим миграцию — решаем на бесплатном аудите, без давления.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="fv-10"><span>Работаете по договору?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="fv-10" hidden><p>Да. Объём работ и цена фиксируются в договоре до старта — работаем по этапам, не приняли этап — дальше не платите.</p></div>
+            </div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="cta-band">
       <div class="cta-band__aurora" aria-hidden="true"></div>
       <div class="cta-band__inner">
         <h2 class="fx-scatter">Соберём <em>вашу систему</em> за 4–6 дней</h2>
