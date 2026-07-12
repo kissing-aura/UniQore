@@ -76,6 +76,18 @@
     .page-hero h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(32px, 5vw, 56px); line-height: 1.1; margin-bottom: 20px; }
     .page-hero h1 em { color: var(--color-accent); font-style: normal; }
     .page-hero p { color: var(--color-text-secondary); font-size: 18px; max-width: 620px; margin: 0 auto 32px; }
+    .ph-trust { display: inline-flex; align-items: flex-start; gap: 9px; margin: 24px auto 0; max-width: 54ch; font-size: 13.5px; line-height: 1.55; color: var(--color-text-secondary); text-align: left; }
+    .ph-trust svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; color: var(--color-accent); }
+    .ph-trust strong { color: var(--color-text-primary); font-weight: 600; }
+    .ph-metrics { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 38px; }
+    .ph-metric { padding: 4px 30px; text-align: center; position: relative; }
+    .ph-metric + .ph-metric::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 1px; background: rgba(255,255,255,.1); }
+    .ph-metric b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: -.02em; color: var(--color-text-primary); }
+    .ph-metric span { display: block; font-size: 12px; color: var(--color-text-muted); margin-top: 6px; }
+    @media (max-width: 560px) { .ph-metrics { gap: 14px 0; } .ph-metric { padding: 4px 18px; } .ph-metric b { font-size: 19px; } }
+    .content-block ul.feat-list { list-style: none; padding: 0; margin: 8px 0 16px; display: grid; gap: 11px; }
+    .content-block ul.feat-list li { position: relative; padding-left: 28px; color: var(--color-text-secondary); font-size: 15px; line-height: 1.6; }
+    .content-block ul.feat-list li::before { content: '\2713'; position: absolute; left: 0; top: 0; color: var(--color-accent); font-weight: 700; }
     .content-block { max-width: 760px; margin: 0 auto 64px; }
     .content-block h2 { font-family: var(--font-display); font-weight: 700; font-size: 30px; margin-bottom: 20px; }
     .content-block p { color: var(--color-text-secondary); font-size: 16px; line-height: 1.7; margin-bottom: 16px; }
@@ -219,6 +231,16 @@
         <h1>CRM для <em>детского центра</em><br>и курсов</h1>
         <p>Расписание групп и преподавателей, учёт абонементов и посещаемости, автонапоминания родителям об оплате и занятиях — в одной системе. От $1200, готова за 3–6 дней.</p>
         <a href="#zayavka" class="btn btn--accent btn--lg">Обсудить проект →</a>
+        <div class="ph-trust">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Объём и цену фиксируем в договоре до старта. Работаем по этапам: <strong>не приняли этап — дальше не платите.</strong></span>
+        </div>
+        <div class="ph-metrics">
+          <div class="ph-metric"><b>4–6 <em>дней</em></b><span>до готовой системы</span></div>
+          <div class="ph-metric"><b>От $1200</b><span>фикс, без плагинов</span></div>
+          <div class="ph-metric"><b>Ваш</b><span>код и данные на серверах</span></div>
+          <div class="ph-metric"><b>После ТЗ</b><span>платите, когда ясен результат</span></div>
+        </div>
       </div>
     </section>
 
@@ -229,7 +251,7 @@
         <h2>Что решает CRM</h2>
         <p>Единое расписание групп, преподавателей и кабинетов исключает накладки на этапе записи. Система сама видит, когда у ребёнка заканчивается абонемент, и отправляет родителю напоминание с кнопкой продления заранее — без звонков администратора. Отметка посещаемости на занятии автоматически списывает визит с абонемента и обновляет остаток. По каждому ученику копится история: посещаемость, оплаты, заметки преподавателя о прогрессе.</p>
         <h2>Что входит в систему</h2>
-        <ul style="color:var(--color-text-secondary); line-height:1.9; padding-left:20px; margin-bottom:16px;">
+        <ul class="feat-list">
           <li>Расписание групп и преподавателей по направлениям и кабинетам</li>
           <li>Учёт оплаченных абонементов и автосписание посещений</li>
           <li>Автонапоминания родителям об оплате и ближайшем занятии</li>
@@ -283,6 +305,26 @@
               <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-3"><span>Сколько стоит CRM для детского центра?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
               <div class="faq-item__a" id="faq-a-3" hidden><p>От $1200 разово, готова за 3–6 дней. Далее $150/мес поддержка и хостинг.</p></div>
             </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-4"><span>Что если после сдачи понадобятся доработки?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="faq-a-4" hidden><p>Текущие правки входят в подписку $150/мес. Крупные новые модули оцениваем отдельно, тоже фиксированной ценой.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-5"><span>А если результат меня не устроит?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="faq-a-5" hidden><p>Работаем по этапам: платите после того, как согласовали, что именно получите. Не приняли этап — дальше не платите.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-6"><span>Кому принадлежит код после сдачи?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="faq-a-6" hidden><p>Вам. Система разворачивается на ваших серверах, код ваш с первого дня.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-7"><span>Нужно ли переносить данные из старой системы или Excel?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="faq-a-7" hidden><p>Да, перенос данных и настройка входят в разработку.</p></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-8"><span>Работаете по договору?</span><span class="faq-item__icon" aria-hidden="true">+</span></button>
+              <div class="faq-item__a" id="faq-a-8" hidden><p>Да. Объём работ и цена фиксируются в договоре до старта.</p></div>
+            </div>
           </div>
         </div>
       </div>
@@ -335,6 +377,7 @@
             <div class="form-group"><label for="task">Что нужно сделать?</label><textarea id="task" name="task" rows="3" placeholder="Кратко опишите задачу и желаемый результат"></textarea></div>
             <button type="submit" class="btn btn--accent btn--lg btn--full">Отправить заявку</button>
             <div class="form__crm-badge" id="formCrmBadge"><span class="form__crm-dot"></span><span id="formCrmBadgeText">Заявка приходит нам в Telegram и сохраняется в CRM</span></div>
+            <p style="margin-top:11px;font-size:12.5px;line-height:1.5;color:var(--color-text-muted);text-align:center">Это разбор задачи, а не звонок отдела продаж. Покажем, что реально нужно вашему бизнесу. Не подойдёт — разойдёмся без обид.</p>
             <p class="form__privacy">Отправляя форму, вы соглашаетесь с обработкой персональных данных.</p>
           </form>
         </div>
