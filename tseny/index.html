@@ -58,7 +58,7 @@
   <link rel="stylesheet" href="../css/nav-pages.css?v=20260710r">
   <link rel="stylesheet" href="../css/enhance.css?v=20260710r">
   <link rel="stylesheet" href="../css/redesign.css?v=20260711e">
-  <link rel="stylesheet" href="/css/premium.css?v=20260711A">
+  <link rel="stylesheet" href="/css/premium.css?v=20260712a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -234,13 +234,18 @@
     <!-- PRICING -->
     <section class="pricing" id="pricing">
       <div class="container">
+        <div class="cur-switch cur-switch--center" role="group" aria-label="Валюта">
+          <button type="button" class="cur-switch__btn is-active" data-cur="USD" aria-pressed="true">$</button>
+          <button type="button" class="cur-switch__btn" data-cur="RUB" aria-pressed="false">₽</button>
+          <button type="button" class="cur-switch__btn" data-cur="BYN" aria-pressed="false">Br</button>
+        </div>
         <div class="pkg-grid">
 
           <article class="pkg" data-reveal>
             <h3 class="pkg__name">Сайты</h3>
             <p class="pkg__tag">Лендинг или многостраничник под ключ — под ваш бренд, с заявками сразу к вам.</p>
             <div class="pkg__price">
-              <span class="pkg__price-val">от $150</span>
+              <span class="pkg__price-val" data-usd="150" data-prefix="от ">от $150</span>
               <span class="pkg__price-per">за проект</span>
             </div>
             <ul class="pkg__list">
@@ -258,8 +263,8 @@
             <h3 class="pkg__name">Система под ключ</h3>
             <p class="pkg__tag">Сайт + CRM + боты + складской учёт + реклама — единая система под ваш бизнес.</p>
             <div class="pkg__price">
-              <span class="pkg__price-val">от $1200</span>
-              <span class="pkg__price-per">50% старт / 50% при сдаче<br>+ $150/мес · хостинг и поддержка</span>
+              <span class="pkg__price-val" data-usd="1200" data-prefix="от ">от $1200</span>
+              <span class="pkg__price-per">50% старт / 50% при сдаче<br>+ <span data-usd="150" data-suffix="/мес">$150/мес</span> · хостинг и поддержка</span>
             </div>
             <ul class="pkg__list">
               <li>Всё из «Сайтов» и «AI-таргетолога»</li>
@@ -276,7 +281,7 @@
             <h3 class="pkg__name">AI-таргетолог</h3>
             <p class="pkg__tag">Настройка и ведение рекламы, чтобы заявки шли стабильно, а не наугад.</p>
             <div class="pkg__price">
-              <span class="pkg__price-val">от $200</span>
+              <span class="pkg__price-val" data-usd="200" data-prefix="от ">от $200</span>
               <span class="pkg__price-per">в месяц · ведение</span>
             </div>
             <ul class="pkg__list">
@@ -468,5 +473,6 @@
   <script src="../js/text-fx.js?v=20260711c" defer></script>
   <script src="../js/enhance.js?v=20260711t" defer></script>
   <script src="../js/contact-net.js?v=20260711z" defer></script>
+  <script src="../js/currency.js?v=20260712a" defer></script>
 </body>
 </html>

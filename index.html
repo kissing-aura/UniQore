@@ -904,21 +904,26 @@
       <div class="container">
         <div class="section-label" style="text-align:center;margin:0 auto">Цены</div>
         <h2 class="section-title" style="text-align:center">Прозрачно —<br><em>от $150 до системы</em></h2>
+        <div class="cur-switch cur-switch--center" role="group" aria-label="Валюта">
+          <button type="button" class="cur-switch__btn is-active" data-cur="USD" aria-pressed="true">$</button>
+          <button type="button" class="cur-switch__btn" data-cur="RUB" aria-pressed="false">₽</button>
+          <button type="button" class="cur-switch__btn" data-cur="BYN" aria-pressed="false">Br</button>
+        </div>
         <div class="price-teaser">
           <a class="price-teaser__card" href="/sayty/" data-reveal>
             <span class="price-teaser__name">Сайты под ключ</span>
-            <span class="price-teaser__val">от $150</span>
+            <span class="price-teaser__val" data-usd="150" data-prefix="от ">от $150</span>
             <span class="price-teaser__go">Подробнее →</span>
           </a>
           <a class="price-teaser__card price-teaser__card--flag" href="/sistema/" data-reveal data-reveal-delay="1">
             <span class="price-teaser__badge">Всё включено</span>
             <span class="price-teaser__name">Система под ключ</span>
-            <span class="price-teaser__val">$1200<small> + $150/мес</small></span>
+            <span class="price-teaser__val"><span data-usd="1200">$1200</span><small> + <span data-usd="150" data-suffix="/мес">$150/мес</span></small></span>
             <span class="price-teaser__go">Подробнее →</span>
           </a>
           <a class="price-teaser__card" href="/ai-targetolog/" data-reveal data-reveal-delay="2">
             <span class="price-teaser__name">AI-таргетолог</span>
-            <span class="price-teaser__val">от $200<small>/мес</small></span>
+            <span class="price-teaser__val">от <span data-usd="200">$200</span><small>/мес</small></span>
             <span class="price-teaser__go">Подробнее →</span>
           </a>
         </div>
@@ -1217,5 +1222,6 @@
     }
   </script>
   <script src="js/hero3d.js?v=20260711e" defer></script>
+  <script src="js/currency.js?v=20260712a" defer></script>
 </body>
 </html>

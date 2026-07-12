@@ -56,3 +56,11 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
   .btn,.svc-card,.demo-card,.trust-card,.blog-card,.work,.guar,.price-teaser,.pkg,.nav,.nav__inner{transition:none!important}
   .btn:hover,.svc-card:hover,.demo-card:hover,.work:hover{transform:none}
 }
+
+/* ── ПЕРЕКЛЮЧАТЕЛЬ ВАЛЮТ ($ / ₽ / Br) ── */
+.cur-switch{display:inline-flex;gap:3px;padding:3px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.02)}
+.cur-switch__btn{appearance:none;border:0;background:none;color:var(--color-text-muted,#8a8f98);font-family:var(--font-mono,monospace);font-size:12.5px;font-weight:600;letter-spacing:.02em;padding:6px 14px;border-radius:999px;cursor:pointer;transition:background .2s ease,color .2s ease}
+.cur-switch__btn:hover{color:var(--color-text-primary,#fff)}
+.cur-switch__btn.is-active{background:var(--color-accent,#CDFF4F);color:#0A0A0A}
+.cur-switch--center{display:flex;justify-content:center;margin:0 0 30px}
+
