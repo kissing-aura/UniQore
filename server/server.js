@@ -132,11 +132,12 @@ async function pushLeadToCommandV2(lead) {
       value: 0,
       manager: '—',
       prob: 15,
-      next: 'Связаться: ' + lead.contact + (lead.notes ? ' — ' + lead.notes : ''),
+      next: 'Связаться и уточнить детали',
       last: 'сегодня',
       close: '—',
       source: 'сайт',
       contact: lead.contact,
+      notes: lead.notes || '',
     });
     const patchRes = await fetch(`${CMD_SUPABASE_URL}/rest/v1/uq2_store?id=eq.main`, {
       method: 'PATCH',
