@@ -7,7 +7,12 @@
  *   GET  /api/leads?key=KEY  private — CRM reads all leads (key required)
  *   GET  /api/health         public  — liveness probe
  *
- * Config via env: PORT, DATA_DIR, API_KEY, TG_TOKEN, TG_CHAT
+ * Config via env: PORT, DATA_DIR, API_KEY, TG_TOKEN, TG_CHAT, UQ_SERVICE_EMAIL, UQ_SERVICE_PASSWORD
+ *
+ * Мост в Uniqore Command V2 (2026-07-14): каждый новый лид ТАКЖЕ пытается уйти в Supabase
+ * (uq2_store.data.deals) как новая сделка в Пайплайне — обычными REST-запросами (fetch),
+ * без @supabase/supabase-js, чтобы не тащить зависимость на сервер, где некому её ставить.
+ * Без UQ_SERVICE_EMAIL/UQ_SERVICE_PASSWORD в env — просто тихо пропускается (см. pushLeadToCommandV2).
  */
 const http = require('http');
 const fs = require('fs');
@@ -20,6 +25,12 @@ const DATA_FILE = path.join(DATA_DIR, 'leads.json');
 const API_KEY = process.env.API_KEY || '';
 const TG_TOKEN = process.env.TG_TOKEN || '';
 const TG_CHAT = process.env.TG_CHAT || '';
+
+// ── Uniqore Command V2 (Supabase) — тот же проект, что и CRM/бот ──────────
+const CMD_SUPABASE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co';
+const CMD_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
+const CMD_SERVICE_EMAIL = process.env.UQ_SERVICE_EMAIL || '';
+const CMD_SERVICE_PASSWORD = process.env.UQ_SERVICE_PASSWORD || '';
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, '[]');
@@ -81,6 +92,61 @@ async function sendTelegram(lead) {
   } catch {}
 }
 
+// Авторизуется свежим сервисным логином на каждый лид (не кэшируем токен — их мало и редко,
+// проще не думать про истечение сессии). Без UQ_SERVICE_EMAIL/PASSWORD — тихо возвращает null.
+async function commandV2Auth() {
+  if (!CMD_SERVICE_EMAIL || !CMD_SERVICE_PASSWORD) return null;
+  try {
+    const res = await fetch(`${CMD_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: CMD_SUPABASE_ANON_KEY },
+      body: JSON.stringify({ email: CMD_SERVICE_EMAIL, password: CMD_SERVICE_PASSWORD }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.access_token || null;
+  } catch { return null; }
+}
+
+// Кладёт лид в Пайплайн Uniqore Command V2 как новую сделку (stage='lead'). Best-effort:
+// любая ошибка/отсутствие настройки — просто пропускаем, локальный JSON-файл уже сохранил лид.
+async function pushLeadToCommandV2(lead) {
+  const token = await commandV2Auth();
+  if (!token) return false;
+  try {
+    const headers = {
+      apikey: CMD_SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+    const getRes = await fetch(`${CMD_SUPABASE_URL}/rest/v1/uq2_store?id=eq.main&select=data`, { headers });
+    if (!getRes.ok) return false;
+    const rows = await getRes.json();
+    const store = (rows[0] && rows[0].data) || {};
+    if (!Array.isArray(store.deals)) store.deals = [];
+    store.deals.unshift({
+      id: 'd' + Date.now(),
+      client: lead.company || lead.name,
+      niche: '—',
+      stage: 'lead',
+      value: 0,
+      manager: '—',
+      prob: 15,
+      next: 'Связаться: ' + lead.contact + (lead.notes ? ' — ' + lead.notes : ''),
+      last: 'сегодня',
+      close: '—',
+      source: 'сайт',
+      contact: lead.contact,
+    });
+    const patchRes = await fetch(`${CMD_SUPABASE_URL}/rest/v1/uq2_store?id=eq.main`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ data: store, updated_at: new Date().toISOString() }),
+    });
+    return patchRes.ok;
+  } catch { return false; }
+}
+
 // ── Server ───────────────────────────────────────────────────────────────
 const server = http.createServer((req, res) => {
   const u = new URL(req.url, 'http://localhost');
@@ -120,6 +186,7 @@ const server = http.createServer((req, res) => {
       arr.unshift(lead);
       await writeLeads(arr);
       sendTelegram(lead); // fire-and-forget
+      pushLeadToCommandV2(lead); // fire-and-forget — мост в Пайплайн V2, best-effort
       return json(res, 200, { ok: true, id: lead.id });
     });
     return;
