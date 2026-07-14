@@ -90,6 +90,32 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch { return false; }
   }
 
+  // Мост напрямую в Пайплайн Uniqore Command V2 (2026-07-15) — идёт независимо от
+  // postLeadToAPI выше: тот сервер (206) сохраняет лид локально, но сам не может
+  // достучаться до Supabase без ручного рестарта, к которому нет доступа. Этот вызов
+  // не влияет на успех/ошибку в UI — чисто best-effort копия в CRM.
+  const CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';
+  const CMD_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
+  const CMD_BRIDGE_SECRET = '2dd950726e4ea4428b3af52c5950ef9c43b7afa58370a277';
+  function pushToCommandV2(data) {
+    fetch(CMD_BRIDGE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: CMD_ANON_KEY,
+        Authorization: `Bearer ${CMD_ANON_KEY}`,
+        'x-bridge-secret': CMD_BRIDGE_SECRET,
+      },
+      body: JSON.stringify({
+        name: data.name,
+        business: data.business,
+        contact: data.contact,
+        task: data.task,
+        website: data.website || '',
+      }),
+    }).catch(() => {});
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
@@ -122,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     lastSubmit = Date.now();
+    pushToCommandV2(formData); // fire-and-forget, не ждём и не влияем на статус ниже
     // Primary: store in shared CRM database (server also notifies Telegram).
     const savedToApi = await postLeadToAPI(formData);
     // Fallback: if the API is unreachable, try client-side Telegram (owner config).
