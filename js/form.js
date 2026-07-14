@@ -125,31 +125,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // Primary: store in shared CRM database (server also notifies Telegram).
     const savedToApi = await postLeadToAPI(formData);
     // Fallback: if the API is unreachable, try client-side Telegram (owner config).
-    if (!savedToApi) await sendToTelegram(formData);
-    await new Promise(resolve => setTimeout(resolve, savedToApi ? 300 : 1000));
+    const savedToTelegram = savedToApi ? false : await sendToTelegram(formData);
+    const saved = savedToApi || savedToTelegram;
+    await new Promise(resolve => setTimeout(resolve, saved ? 300 : 400));
 
-    btn.textContent = '✓ Заявка отправлена';
-    btn.classList.add('btn--success');
-    // TG hint after success (2026-07-10)
     let tgHint = form.querySelector('.form-tg-hint');
     if (!tgHint) {
       tgHint = document.createElement('a');
       tgHint.className = 'form-tg-hint';
       tgHint.href = 'https://t.me/UniqoreManager';
       tgHint.target = '_blank'; tgHint.rel = 'noopener';
-      tgHint.textContent = 'Быстрее — напишите нам в Telegram: @UniqoreManager';
       btn.insertAdjacentElement('afterend', tgHint);
     }
-    liveRegion.textContent = 'Заявка успешно отправлена. Ответим в течение 2 часов.';
-    form.reset();
-    required.forEach(field => clearFieldError(field));
+
+    if (saved) {
+      btn.textContent = '✓ Заявка отправлена';
+      btn.classList.remove('btn--error');
+      btn.classList.add('btn--success');
+      tgHint.textContent = 'Быстрее — напишите нам в Telegram: @UniqoreManager';
+      liveRegion.textContent = 'Заявка успешно отправлена. Ответим в течение 2 часов.';
+      form.reset();
+      required.forEach(field => clearFieldError(field));
+    } else {
+      // Реальный сбой (сеть/rate-limit) — раньше тут молча показывался "успех",
+      // хотя заявка никуда не уходила. Честно показываем ошибку + не блокируем повтор.
+      btn.textContent = 'Не отправилось, попробуйте ещё раз';
+      btn.classList.remove('btn--success');
+      btn.classList.add('btn--error');
+      tgHint.textContent = 'Или напишите нам напрямую в Telegram: @UniqoreManager';
+      liveRegion.textContent = 'Не получилось отправить заявку. Попробуйте ещё раз или напишите в Telegram.';
+      lastSubmit = 0;
+    }
 
     setTimeout(() => {
       btn.textContent = originalText;
-      btn.classList.remove('btn--success');
+      btn.classList.remove('btn--success', 'btn--error');
       btn.disabled = false;
       liveRegion.textContent = '';
-    }, 4000);
+    }, saved ? 4000 : 6000);
   });
 
   form.querySelectorAll('[required]').forEach(field => {
