@@ -126,8 +126,8 @@ async function pushLeadToCommandV2(lead) {
     if (!Array.isArray(store.deals)) store.deals = [];
     store.deals.unshift({
       id: 'd' + Date.now(),
-      client: lead.company || lead.name,
-      niche: '—',
+      client: lead.name,
+      niche: lead.company || '—',
       stage: 'lead',
       value: 0,
       manager: '—',
