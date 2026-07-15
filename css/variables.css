@@ -38,5 +38,17 @@
   --transition-spring: 300ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
+/* ── Mobile foundation tokens (2026-07-16, редизайн мобилки) ────────────
+   Единая шкала ритма/типографики, чтобы секции дышали одинаково.
+   Брейкпоинты: sm=430 (телефон) · md=768 (мобилка) · lg=1024 (планшет). */
+:root {
+  --space-section-mobile: clamp(48px, 9vw, 72px);
+  --space-block:   clamp(24px, 6vw, 40px);
+  --measure:       62ch;   /* макс. ширина строки тела */
+  --measure-lead:  46ch;   /* лид/подзаголовки уже */
+  --font-size-base-mobile: 17px;
+  --nav-h-mobile:  76px;
+}
+
 /* Redesign Deep Tech — перекраска лого-SVG без правки HTML (2026-07-10) */
 .nav__logo-mark circle,.nav__logo-mark line,.footer__logo circle,.footer__logo line{stroke:var(--color-accent)!important}
