@@ -266,6 +266,14 @@
   input, textarea, select { font-size: 16px; }
 }
 
+/* ── морф-секция «Хаос→Система» на мобилке: постер крупнее + дыхание подписи ── */
+@media (max-width: 768px) {
+  .morph-poster svg { width: min(88vw, 380px); }
+  .morph-pin { gap: 26px; padding: 0 20px; }
+  .morph-cap { margin-bottom: 2px; }
+  .morph-cap small { display: block; max-width: 32ch; margin-left: auto; margin-right: auto; }
+}
+
 /* ── тач-устройства: демо-CTA «Открыть демо» всегда видим (не по hover) ── */
 @media (hover: none) {
   .demo-card__open { opacity: 1 !important; }

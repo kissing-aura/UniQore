@@ -6,7 +6,9 @@
 (function () {
   'use strict';
 
-  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Перф-гейт: на мобилке (<900) не крутим rAF-цикл — рисуем один статичный кадр
+  // (переиспользуем ветку reduce ниже: draw(0); return). Десктоп ≥900 не затронут.
+  var reduce = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || window.innerWidth < 900;
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
 
   var list = document.querySelectorAll('.contact__net, .js-net');

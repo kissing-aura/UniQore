@@ -19,8 +19,9 @@
   var hasGL = false;
   try { var tc = document.createElement('canvas'); hasGL = !!(tc.getContext('webgl') || tc.getContext('experimental-webgl')); } catch (e) {}
   function poster() { stage.classList.add('core-stage--poster'); }
-  // 3D-ядро лёгкое (десяток мешей) — крутим и на мобилке; постер только без WebGL / reduced-motion
-  if (reduce || !hasGL) { poster(); return; }
+  // Перф-гейт: на мобилке (<900) показываем статичный постер, three не грузим.
+  // Десктоп ≥900 не затронут — 3D-ядро крутится как раньше.
+  if (reduce || !hasGL || window.innerWidth < 900) { poster(); return; }
 
   var MODS = ['Сайт', 'CRM', 'Чат-боты', 'Реклама', 'Склад', 'Аналитика'];
 
