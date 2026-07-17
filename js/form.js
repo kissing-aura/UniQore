@@ -2,6 +2,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
+  // Honeypot (анти-бот): скрытое поле, живой человек его не видит и не трогает.
+  // Инжектим из JS — работает на всех страницах без правки HTML.
+  let honeypot = form.querySelector('input[name="website"]');
+  if (!honeypot) {
+    honeypot = document.createElement('input');
+    honeypot.type = 'text'; honeypot.name = 'website'; honeypot.id = 'uq-website';
+    honeypot.tabIndex = -1; honeypot.autocomplete = 'off';
+    honeypot.setAttribute('aria-hidden', 'true');
+    honeypot.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
+    form.appendChild(honeypot);
+  }
+
   // Escape HTML for Telegram HTML-mode messages
   function tgEsc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
@@ -97,8 +109,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';
   const CMD_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
   const CMD_BRIDGE_SECRET = '2dd950726e4ea4428b3af52c5950ef9c43b7afa58370a277';
+  // Возвращает Promise<bool> — успел ли лид сохраниться в CRM через мост.
+  // Это надёжный канал (Supabase), поэтому его успех ТОЖЕ считается успехом отправки.
   function pushToCommandV2(data) {
-    fetch(CMD_BRIDGE_URL, {
+    return fetch(CMD_BRIDGE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -113,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         task: data.task,
         website: data.website || '',
       }),
-    }).catch(() => {});
+    }).then(r => r.ok).catch(() => false);
   }
 
   form.addEventListener('submit', async (e) => {
@@ -136,6 +150,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     if (!valid) { liveRegion.textContent = 'Пожалуйста, заполните все обязательные поля.'; return; }
 
+    // Валидация контакта: должен быть достижим — telegram (@) или телефон (≥5 цифр).
+    // Иначе лид мёртвый (не с кем связаться) — ловим до отправки.
+    const contactField = form.querySelector('#contact-input');
+    if (contactField && contactField.value.trim()) {
+      const v = contactField.value.trim();
+      const digits = (v.match(/\d/g) || []).length;
+      if (!v.includes('@') && digits < 5) {
+        setFieldError(contactField, 'Оставьте telegram (@ник) или телефон');
+        liveRegion.textContent = 'Укажите telegram или телефон, чтобы мы могли ответить.';
+        return;
+      }
+    }
+
+    // Honeypot заполнен → это бот. Тихо имитируем успех, ничего не отправляя.
+    if (honeypot.value) {
+      btn.textContent = '✓ Заявка отправлена';
+      form.reset();
+      return;
+    }
+
     btn.textContent = 'Отправляем...';
     btn.disabled = true;
     liveRegion.textContent = '';
@@ -145,15 +179,19 @@ document.addEventListener('DOMContentLoaded', () => {
       business: form.querySelector('#business')?.value?.trim() || '',
       contact: form.querySelector('#contact-input')?.value?.trim() || '',
       task: form.querySelector('#task')?.value?.trim() || '',
+      website: honeypot.value || '',
     };
 
     lastSubmit = Date.now();
-    pushToCommandV2(formData); // fire-and-forget, не ждём и не влияем на статус ниже
-    // Primary: store in shared CRM database (server also notifies Telegram).
+    // Два независимых канала. Успех = сохранилось ХОТЯ БЫ в одном (раньше статус
+    // висел только на хрупком сервере 206 → при его падении показывалось ложное
+    // «Не отправилось», хотя лид уже лежал в CRM через мост).
+    const bridgePromise = pushToCommandV2(formData);
     const savedToApi = await postLeadToAPI(formData);
-    // Fallback: if the API is unreachable, try client-side Telegram (owner config).
-    const savedToTelegram = savedToApi ? false : await sendToTelegram(formData);
-    const saved = savedToApi || savedToTelegram;
+    const savedToBridge = await bridgePromise;
+    // Клиентский Telegram-фолбэк — только если оба основных канала не сработали.
+    const savedToTelegram = (savedToApi || savedToBridge) ? false : await sendToTelegram(formData);
+    const saved = savedToApi || savedToBridge || savedToTelegram;
     await new Promise(resolve => setTimeout(resolve, saved ? 300 : 400));
 
     let tgHint = form.querySelector('.form-tg-hint');

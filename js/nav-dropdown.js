@@ -104,16 +104,44 @@
       if (b) b.classList.remove('open');
     });
 
-    // 4) scroll-lock тела, пока меню открыто
+    // 4) scroll-lock тела + синк aria бургера + прятать плавашку, пока меню открыто
     var mo = new MutationObserver(function () {
-      document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+      var open = menu.classList.contains('open');
+      document.body.style.overflow = open ? 'hidden' : '';
+      var b = document.getElementById('burger');
+      if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      var fc = document.getElementById('uq-float-cta');
+      if (fc) fc.style.display = open ? 'none' : '';
     });
     mo.observe(menu, { attributes: true, attributeFilter: ['class'] });
   }
 
+  /* aria для бургера (скринридер должен слышать open/closed) + плавающая
+     кнопка-заявка на мобиле — постоянного CTA на телефоне не было (2026-07-17). */
+  function initA11yAndCTA() {
+    var burger = document.getElementById('burger');
+    if (burger && !burger.hasAttribute('aria-expanded')) {
+      burger.setAttribute('aria-expanded', 'false');
+      if (!burger.getAttribute('aria-label')) burger.setAttribute('aria-label', 'Открыть меню');
+    }
+    if (!document.getElementById('uq-float-cta')) {
+      var target = (document.querySelector('#contact') && '#contact') ||
+                   (document.querySelector('#zayavka') && '#zayavka') ||
+                   'https://t.me/UniqoreManager';
+      var a = document.createElement('a');
+      a.id = 'uq-float-cta';
+      a.href = target;
+      if (target.charAt(0) !== '#') { a.target = '_blank'; a.rel = 'noopener'; }
+      a.setAttribute('aria-label', 'Оставить заявку');
+      a.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Обсудить</span>';
+      document.body.appendChild(a);
+    }
+  }
+
+  function boot() { enhanceMobileMenu(); initA11yAndCTA(); }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', enhanceMobileMenu);
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    enhanceMobileMenu();
+    boot();
   }
 })();
