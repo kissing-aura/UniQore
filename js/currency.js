@@ -21,7 +21,7 @@
     return formatNum(val) + ' ' + sym;
   }
 
-  function apply(cur) {
+  function apply(cur, persist) {
     if (!RATES[cur]) cur = 'USD';
     document.querySelectorAll('[data-usd]').forEach(function (el) {
       var usd = parseFloat(el.getAttribute('data-usd'));
@@ -35,21 +35,23 @@
       b.classList.toggle('is-active', on);
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    try { localStorage.setItem(STORE_KEY, cur); } catch (e) {}
+    if (persist) { try { localStorage.setItem(STORE_KEY, cur); } catch (e) {} }
   }
 
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.cur-switch__btn');
     if (!btn) return;
-    apply(btn.getAttribute('data-cur'));
+    apply(btn.getAttribute('data-cur'), true);
   });
 
-  // Валюта по умолчанию — рубли (многие в РФ/РБ не знают курс доллара).
-  // Возвращающийся посетитель сохраняет свой выбор из localStorage.
+  // Валюта по умолчанию — доллар (нейтрально для холодного трафика BY/РФ, где рубли разные).
+  // Приоритет: явный выбор посетителя (localStorage) > дефолт страницы (data-currency на <html>) > USD.
+  // Автодефолт НЕ пишется в localStorage — только явный клик, чтобы не выдавать авто за выбор.
   function boot() {
-    var saved = 'RUB';
-    try { saved = localStorage.getItem(STORE_KEY) || 'RUB'; } catch (e) {}
-    apply(saved);
+    var saved = null;
+    try { saved = localStorage.getItem(STORE_KEY); } catch (e) {}
+    var pageDefault = document.documentElement.getAttribute('data-currency') || 'USD';
+    apply(saved || pageDefault, false);
   }
   // Скрипт с defer — DOM уже разобран; применяем сразу, чтобы не мигало $→₽.
   if (document.readyState === 'loading') {
