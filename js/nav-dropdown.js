@@ -124,7 +124,11 @@
       burger.setAttribute('aria-expanded', 'false');
       if (!burger.getAttribute('aria-label')) burger.setAttribute('aria-label', 'Открыть меню');
     }
-    if (!document.getElementById('uq-float-cta')) {
+    // Не вставляем плавашку, если у страницы уже есть свой липкий нижний CTA
+    // (например прайс-бар .sy-sticky на /sayty/) — иначе две fixed-кнопки внизу
+    // наезжают друг на друга (слой на слой). Один постоянный CTA на экран.
+    var hasOwnSticky = document.querySelector('.sy-sticky');
+    if (!hasOwnSticky && !document.getElementById('uq-float-cta')) {
       var target = (document.querySelector('#contact') && '#contact') ||
                    (document.querySelector('#zayavka') && '#zayavka') ||
                    'https://t.me/UniqoreManager';
