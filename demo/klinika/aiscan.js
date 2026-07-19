@@ -169,7 +169,9 @@ window.UQ_AISCAN = (function () {
     row.innerHTML = '<div class="as-f__ic">' + f.ic + '</div><div class="as-f__b"><div class="as-f__t">' + esc(f.type) + '<span class="as-pill">' + esc(f.pill) + '</span></div><div class="as-f__n"><b style="color:var(--stx)">Зуб ' + esc(f.tooth) + '</b> · ' + esc(f.note) + (f.plan !== '—' ? '<br><span style="color:var(--scy)">План: ' + esc(f.plan) + '</span>' : '') + '</div><div class="as-f__m"><div class="as-bar"><i></i></div><span class="as-f__c">' + f.conf + '%</span></div></div>';
     box.appendChild(row);
     setTimeout(function () { row.classList.add('in'); row.querySelector('.as-bar i').style.width = f.conf + '%'; }, 20);
-    box.scrollTop = box.scrollHeight;
+    // не автоскроллим когда демо встроено в iframe (карточка на /keysy/) —
+    // иначе превью «едет вниз» само по себе (фидбек Матвея 20.07)
+    if (window.self === window.top) box.scrollTop = box.scrollHeight;
   }
 
   // приколюха: клик по находке → пульс на зубе
