@@ -522,3 +522,38 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 .price-teaser__go { margin-top: auto; padding-top: 10px; color: var(--color-accent); font-weight: 600; font-size: 15px; }
 .price-teaser__note { text-align: center; color: var(--color-text-muted); font-size: 14px; max-width: 60ch; margin: 0 auto; }
 @media (max-width: 820px) { .price-teaser { grid-template-columns: 1fr; } }
+
+/* ── Крафт-полировка «дизайнер, не ИИ» (аудит 20.07): движение с доводкой ── */
+/* Каскад демо-грида вместо всплытия одним блоком (сервис-карточки выше уже стаггерятся) */
+.demo-grid .demo-card:nth-child(2){ transition-delay:.06s }
+.demo-grid .demo-card:nth-child(3){ transition-delay:.12s }
+.demo-grid .demo-card:nth-child(4){ transition-delay:.18s }
+.demo-grid .demo-card:nth-child(5){ transition-delay:.24s }
+.demo-grid .demo-card:nth-child(6){ transition-delay:.30s }
+.demo-grid .demo-card:hover{ transition-delay:0s }
+
+/* Система ховера: внутренности карточки отвечают на лифт, а не только рамка */
+.svc-card__icon{ transition:border-color .3s ease, background .3s ease, transform .35s cubic-bezier(.22,1,.36,1); }
+.svc-card:hover .svc-card__icon{
+  border-color:rgba(205,255,79,.45);
+  background:rgba(205,255,79,.12);
+  transform:translateY(-2px) scale(1.06);
+}
+.svc-card__cta, .demo-card__cta{ display:inline-block; transition:transform .28s cubic-bezier(.22,1,.36,1), color .2s ease; }
+.svc-card:hover .svc-card__cta,
+.demo-card:hover .demo-card__cta{ transform:translateX(5px); color:#DBFF6E; }
+@media(prefers-reduced-motion:reduce){
+  .svc-card:hover .svc-card__icon,
+  .svc-card:hover .svc-card__cta,
+  .demo-card:hover .demo-card__cta{ transform:none; }
+}
+
+/* Типографика: ослабить трекинг мелких заголовков (были почти как 60px hero), чистый рэг */
+.svc-card__title, .demo-card__title{ letter-spacing:-.01em; text-wrap:balance; }
+
+/* ── Единый голос дисплей-шрифта: Unbounded ниже hero (был только в hero, ── */
+/* остальное падало на generic Manrope — главная причина «сделано ИИ», аудит 20.07) */
+.svc-card__title,
+.demo-card__title,
+.price-teaser__val,
+.pkg__title { font-family: 'Unbounded', var(--font-display); }

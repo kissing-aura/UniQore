@@ -197,8 +197,8 @@
   pointer-events: none;
 }
 .btn--accent:hover {
-  background: #f7cd30;
-  border-color: #f7cd30;
+  background: #DBFF6E;
+  border-color: #DBFF6E;
   box-shadow: 0 0 52px rgba(205, 255, 79, 0.48), 0 4px 24px rgba(0,0,0,0.3);
   transform: translateY(-1px);
 }

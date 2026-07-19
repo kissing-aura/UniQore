@@ -21,7 +21,7 @@
   var finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (finePointer) {
     var TILT = 5; // deg — small on purpose, premium not gimmicky
-    var tiltCards = document.querySelectorAll('.svc-card, .pkg, .demo-card, .price-teaser__card');
+    var tiltCards = document.querySelectorAll('.svc-card:not(.svc-card--flagship), .pkg, .demo-card, .price-teaser__card');
     tiltCards.forEach(function (card) {
       card.style.transformStyle = 'preserve-3d';
       card.addEventListener('pointermove', function (e) {
