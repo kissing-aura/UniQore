@@ -139,11 +139,23 @@
     b.addEventListener('pointerleave', function () { b.style.transform = ''; });
   });
 
-  /* ── sticky mobile CTA ── */
+  /* ── sticky mobile CTA (прячется у футера, чтобы НЕ закрывать реквизиты/ИНН) ── */
   var sticky = document.getElementById('sySticky');
-  if (sticky) window.addEventListener('scroll', function () {
-    if (window.scrollY > 640) sticky.classList.add('show'); else sticky.classList.remove('show');
-  }, { passive: true });
+  if (sticky) {
+    var syFooter = document.querySelector('footer.footer') || document.querySelector('.footer');
+    var syncSticky = function () {
+      var nearFooter = false;
+      if (syFooter) {
+        var fr = syFooter.getBoundingClientRect();
+        nearFooter = fr.top < (window.innerHeight - 24);
+      }
+      if (window.scrollY > 640 && !nearFooter) sticky.classList.add('show');
+      else sticky.classList.remove('show');
+    };
+    window.addEventListener('scroll', syncSticky, { passive: true });
+    window.addEventListener('resize', syncSticky, { passive: true });
+    syncSticky();
+  }
 
   /* ── form: валидация + отправка в CRM/Telegram + красивый успех ── */
   var form = document.getElementById('sy-form');

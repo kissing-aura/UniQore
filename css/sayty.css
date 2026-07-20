@@ -272,7 +272,7 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-sticky__t{font-size:13px;font-weight:700;color:#fff;white-space:nowrap}
 .sy-sticky__s{font-size:11px;color:var(--sy-mut)}
 .sy-sticky .sy-btn{padding:12px 18px;font-size:14px}
-@media(max-width:760px){.sy-sticky{display:flex}}
+@media(max-width:760px){.sy-sticky{display:flex}.footer{padding-bottom:calc(88px + env(safe-area-inset-bottom))}}
 
 /* mid CTA band */
 .sy-band{border:1px solid rgba(205,255,79,.2);border-radius:24px;padding:clamp(30px,5vw,50px);text-align:center;position:relative;overflow:hidden;background:linear-gradient(160deg,rgba(205,255,79,.08),rgba(255,255,255,.008) 60%)}
