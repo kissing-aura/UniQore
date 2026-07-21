@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260721a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260721c">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260721d">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -308,76 +308,70 @@
       </div>
     </section>
 
-    <!-- ═══════ 2D / 3D SHOWCASE ═══════ -->
-    <section class="sy-section" style="padding-top:0" id="dimensions">
+    <!-- ═══════ ДИЗАЙНЕР — ПО ЖЕЛАНИЮ ═══════ -->
+    <section class="sy-section" style="padding-top:0" id="design-level">
       <div class="sy-container">
         <div class="sy-head">
-          <h2 class="sy-h2 sy-rev">2D или <em>3D</em> — под задачу</h2>
-          <p class="sy-sub sy-rev" data-d="1">Не «3D ради вау». Показываем разницу вживую — и подскажем, что реально нужно вашему бизнесу.</p>
+          <h2 class="sy-h2 sy-rev">Дизайнер — <em>по желанию</em></h2>
+          <p class="sy-sub sy-rev" data-d="1">Базовый сайт уже с аккуратным дизайном под нишу. Хочешь выделиться сильнее — подключаем дизайнера. Решаешь ты.</p>
         </div>
-        <div class="sy-dim">
-          <!-- 2D -->
-          <div class="sy-dim__card sy-rev">
-            <div class="sy-dim__stage sy-dim__stage--2d" aria-hidden="true">
-              <div class="d2-grid"></div>
-              <div class="d2-win">
-                <div class="d2-topbar"><i style="left:12px;background:#ff5f57"></i><i style="left:26px;background:#febc2e"></i><i style="left:40px;background:#28c840"></i></div>
-                <div class="d2-body2">
-                  <div class="d2-line hl" style="animation-delay:.1s"></div>
-                  <div class="d2-line" style="width:86%;margin-top:11px;animation-delay:.25s"></div>
-                  <div class="d2-line" style="width:68%;margin-top:8px;animation-delay:.4s"></div>
-                  <div class="d2-btn" style="margin-top:16px"></div>
-                </div>
-                <div class="d2-cards"><div style="animation-delay:.9s"></div><div style="animation-delay:1.05s"></div></div>
-              </div>
-              <svg class="d2-cur" viewBox="0 0 24 24" fill="#CDFF4F"><path d="M4 2l0 15 3.8-3.6 2.7 5 2-1-2.7-5 5.2 0z"/></svg>
+
+        <div class="sy-dl" role="radiogroup" aria-label="Уровень дизайна">
+          <button type="button" class="sy-dl__opt is-active sy-rev" role="radio" aria-checked="true" tabindex="0" data-dl="base"
+                  data-summary="без дизайнера — входит в тариф, запуск за 24 часа" data-cta="Получить сайт" data-href="#zayavka">
+            <div class="sy-dl__top">
+              <span class="sy-dl__check" aria-hidden="true"></span>
+              <span class="sy-dl__kicker">Входит в тариф</span>
             </div>
-            <div class="sy-dim__body">
-              <span class="sy-dim__tag">2D · стандарт</span>
-              <h3 class="sy-dim__name">Быстрый конверсионный сайт</h3>
-              <p class="sy-dim__desc">Чёткий дизайн, плавные 2D-анимации, мгновенная загрузка. Заточен под заявки из рекламы. Большинству бизнесов — именно это.</p>
-              <a href="#pricing" class="sy-btn sy-btn--ghost">Смотреть тарифы</a>
+            <h3 class="sy-dl__name">Готовый дизайн под нишу</h3>
+            <p class="sy-dl__lead">Проверенный шаблон, адаптированный под твой бизнес. Быстро и без доплат.</p>
+            <ul class="sy-dl__list">
+              <li>Аккуратный дизайн под вашу сферу</li>
+              <li>Мобильная версия, скорость, SEO</li>
+              <li>Запуск за 24 часа</li>
+            </ul>
+            <span class="sy-dl__for">Кому: быстрый старт, тест ниши, чёткий бюджет</span>
+          </button>
+
+          <button type="button" class="sy-dl__opt sy-dl__opt--pro sy-rev" role="radio" aria-checked="false" tabindex="0" data-dl="pro" data-d="1"
+                  data-summary="с дизайнером — уникальный визуал, цену обсудим по задаче" data-cta="Обсудить с дизайнером" data-href="#zayavka">
+            <div class="sy-dl__top">
+              <span class="sy-dl__check" aria-hidden="true"></span>
+              <span class="sy-dl__kicker sy-dl__kicker--lime">Индивидуально</span>
             </div>
-          </div>
-          <!-- 3D -->
-          <div class="sy-dim__card sy-dim__card--3d sy-rev" data-d="1">
-            <div class="sy-dim__stage sy-dim__stage--3d" id="dim3d" aria-hidden="true">
-              <div class="d3-glow"></div>
-              <div class="d3-scene">
-                <div class="d3-panel d3-p3"><div class="d3-bar sm" style="top:14px"></div><div class="d3-bar" style="top:32px;right:34%"></div></div>
-                <div class="d3-panel d3-p2"><div class="d3-bar lime" style="top:16px;right:42%"></div><div class="d3-bar" style="top:34px"></div><div class="d3-bar sm" style="top:52px"></div></div>
-                <div class="d3-panel d3-p1"><div class="d3-bar" style="top:16px"></div><div class="d3-bar sm" style="top:34px"></div><div class="d3-bar lime" style="top:66px;height:34px;border-radius:8px"></div><div class="d3-bar" style="top:118px"></div><div class="d3-bar sm" style="top:136px"></div><div class="d3-bar" style="top:154px;right:44%"></div></div>
-                <div class="d3-dot" style="--tx:-96px;top:-58px;animation-delay:.2s"></div>
-                <div class="d3-dot" style="--tx:100px;top:56px;animation-delay:1.1s"></div>
-                <div class="d3-dot" style="--tx:78px;top:-84px;animation-delay:.6s"></div>
-              </div>
-            </div>
-            <div class="sy-dim__body">
-              <span class="sy-dim__tag sy-dim__tag--lime">3D · премиум</span>
-              <h3 class="sy-dim__name">Интерактивный 3D-сайт</h3>
-              <p class="sy-dim__desc">Живая глубина, вращение, эффект «дорого» с первой секунды. Для премиум-позиционирования бренда. Цена — индивидуально.</p>
-              <a href="#zayavka" class="sy-btn sy-btn--main" data-mag>Обсудить 3D-сайт</a>
-            </div>
-          </div>
+            <h3 class="sy-dl__name">Уникальный дизайн под бренд</h3>
+            <p class="sy-dl__lead">Дизайнер рисует визуал под ваш бренд — не шаблон. Чтобы вы выделялись, а не сливались с конкурентами.</p>
+            <ul class="sy-dl__list">
+              <li>Индивидуальный визуал и иллюстрации</li>
+              <li>Анимации и микроинтеракции</li>
+              <li>Сильный, узнаваемый бренд</li>
+            </ul>
+            <span class="sy-dl__for">Кому: премиум-позиционирование · доплата по задаче</span>
+          </button>
+        </div>
+
+        <div class="sy-dl__bar sy-rev" data-d="1">
+          <span class="sy-dl__sum" id="dlSum">Твой выбор: без дизайнера — входит в тариф, запуск за 24 часа</span>
+          <a href="#zayavka" class="sy-btn sy-btn--main" id="dlCta" data-mag>Получить сайт</a>
         </div>
       </div>
     </section>
     <script>
     (function(){
-      var stage=document.getElementById('dim3d'); if(!stage) return;
-      var scene=stage.querySelector('.d3-scene'); if(!scene) return;
-      var raf=0;
-      stage.addEventListener('mousemove',function(e){
-        var r=stage.getBoundingClientRect();
-        var px=(e.clientX-r.left)/r.width-0.5, py=(e.clientY-r.top)/r.height-0.5;
-        if(raf) return;
-        raf=requestAnimationFrame(function(){
-          raf=0; scene.style.animationPlayState='paused';
-          scene.style.transform='rotateY('+(px*46)+'deg) rotateX('+(-py*26+6)+'deg)';
+      var group=document.querySelector('.sy-dl'); if(!group) return;
+      var opts=group.querySelectorAll('.sy-dl__opt');
+      var sum=document.getElementById('dlSum'), cta=document.getElementById('dlCta');
+      function pick(el){
+        opts.forEach(function(o){ o.classList.remove('is-active'); o.setAttribute('aria-checked','false'); });
+        el.classList.add('is-active'); el.setAttribute('aria-checked','true');
+        if(sum) sum.textContent='Твой выбор: '+el.getAttribute('data-summary');
+        if(cta){ cta.textContent=el.getAttribute('data-cta'); cta.setAttribute('href',el.getAttribute('data-href')); }
+      }
+      opts.forEach(function(o){
+        o.addEventListener('click',function(){ pick(o); });
+        o.addEventListener('keydown',function(e){
+          if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(o); }
         });
-      });
-      stage.addEventListener('mouseleave',function(){
-        scene.style.transform=''; scene.style.animationPlayState='running';
       });
     })();
     </script>
