@@ -44,14 +44,20 @@
     apply(btn.getAttribute('data-cur'), true);
   });
 
-  // Валюта по умолчанию — доллар (нейтрально для холодного трафика BY/РФ, где рубли разные).
-  // Приоритет: явный выбор посетителя (localStorage) > дефолт страницы (data-currency на <html>) > USD.
+  // РФ-версия сайта (uniqore.ru / ru.*) → цены по умолчанию в РУБЛЯХ.
+  // Остальные (uniqore.pro и пр.) — доллар (нейтрально для холодного трафика).
+  function domainDefault() {
+    var h = (location.hostname || '').toLowerCase();
+    if (/(^|\.)uniqore\.ru$/.test(h) || /^ru\./.test(h)) return 'RUB';
+    return null;
+  }
+  // Приоритет: явный выбор посетителя (localStorage) > домен (.ru → ₽) > дефолт страницы (data-currency) > USD.
   // Автодефолт НЕ пишется в localStorage — только явный клик, чтобы не выдавать авто за выбор.
   function boot() {
     var saved = null;
     try { saved = localStorage.getItem(STORE_KEY); } catch (e) {}
-    var pageDefault = document.documentElement.getAttribute('data-currency') || 'USD';
-    apply(saved || pageDefault, false);
+    var pageDefault = document.documentElement.getAttribute('data-currency');
+    apply(saved || domainDefault() || pageDefault || 'USD', false);
   }
   // Скрипт с defer — DOM уже разобран; применяем сразу, чтобы не мигало $→₽.
   if (document.readyState === 'loading') {
