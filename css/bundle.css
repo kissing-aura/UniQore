@@ -5102,3 +5102,310 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   .dash__kpis{grid-template-columns:1fr 1fr}
 }
 
+/* ==== mobile-refactor.css (override, последним) ==== */
+/* ═══════════════════════════════════════════════════════════════════════
+   mobile-refactor.css — единый мобильный слой (2026-07-16).
+   Подключается ПОСЛЕДНИМ на всех страницах → выигрывает каскадом, а не !important.
+   Все правила строго внутри @media ≤768/≤430 — десктоп не трогаем.
+   Токены ритма/меры — в variables.css.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────────
+   1. КРИТ: заскоупить правило скрытия мокапа (было глобальным → прятало
+      все 4 продуктовых скриншота на /vozmozhnosti/). Действует на любом экране. */
+.mockup-showcase:last-child { display: revert; }
+@media (max-width: 768px) {
+  .mockups__grid .mockup-showcase:last-child { display: none; }
+}
+
+@media (max-width: 768px) {
+
+  /* ───────────────────────────────────────────────────────────────────
+     2. НАВИГАЦИЯ: непрозрачный фон, чтобы контент не просвечивал под шапкой
+        при скролле (баг на блоге/статьях). */
+  .nav {
+    background: rgba(10, 14, 26, 0.86);
+    backdrop-filter: saturate(140%) blur(14px);
+    -webkit-backdrop-filter: saturate(140%) blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* ───────────────────────────────────────────────────────────────────
+     3. МОБИЛЬНОЕ МЕНЮ — трёхзонный оверлей: шапка (nav сверху), скроллимая
+        середина, закреплённый CTA-футер. Чинит критбаг «доскролл невозможен».
+        Структуру аккордеона/футера достраивает nav-dropdown.js. */
+  .mobile-menu {
+    padding: 0;
+    display: none;
+    flex-direction: column;
+    background: var(--color-bg);
+    overscroll-behavior: contain;
+  }
+  .mobile-menu.open { display: flex; }
+
+  /* скроллимая середина */
+  .mobile-menu > ul {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: calc(var(--nav-h-mobile) + 14px) 22px 20px;
+    gap: 2px;
+  }
+  .mobile-menu li { list-style: none; }
+  /* верхний уровень — спокойный кегль, крупная тап-цель через паддинг */
+  .mobile-menu a:not(.btn) {
+    display: block;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+    padding: 13px 0;
+    letter-spacing: -0.01em;
+  }
+  .mobile-menu a:not(.btn):active { color: var(--color-accent); }
+
+  /* аккордеон «Решения» (кнопка строится из .mobile-menu__label в JS) */
+  .mm-acc-toggle {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    cursor: pointer;
+    padding: 13px 0;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--color-text-primary);
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    margin: 6px 0;
+  }
+  .mm-acc-toggle::after {
+    content: "";
+    width: 9px; height: 9px;
+    border-right: 2px solid var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
+    transform: rotate(45deg);
+    transition: transform var(--transition-base);
+    margin-right: 4px;
+  }
+  .mm-acc-toggle[aria-expanded="true"]::after { transform: rotate(-135deg); }
+  .mm-acc-panel {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height var(--transition-slow);
+  }
+  .mm-acc-panel.open { max-height: 720px; }
+  /* ниши внутри аккордеона — компактнее, приглушённее, 2 в ряд */
+  .mm-acc-panel ul,
+  .mm-acc-panel { padding: 0; }
+  .mm-acc-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+    padding: 6px 0 10px;
+  }
+  .mm-acc-list a {
+    font-size: 14.5px !important;
+    font-weight: 500 !important;
+    color: var(--color-text-secondary) !important;
+    padding: 9px 0 !important;
+  }
+  .mm-acc-list a:active { color: var(--color-accent) !important; }
+
+  /* Telegram-строка компактнее (длинная, ломалась в 2 строки) */
+  .mobile-menu a[href*="t.me"] {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: var(--color-text-secondary) !important;
+  }
+
+  /* закреплённый CTA-футер (кнопку переносит JS в .mobile-menu__cta) */
+  .mobile-menu__cta {
+    flex: 0 0 auto;
+    padding: 14px 22px calc(14px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--color-bg);
+  }
+  .mobile-menu__cta .btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  /* бургер поверх меню, крестик белый */
+  .nav__burger { z-index: 101; }
+
+  /* ───────────────────────────────────────────────────────────────────
+     4. HERO-МЕТРИКИ — честная сетка 2×2 без «висячих» разделителей и пустоты.
+        Покрывает и главную (.hero__metrics) и внутренние (.ph-metrics). */
+  .hero__metrics,
+  .ph-metrics {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    padding: 20px 0 8px !important;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .hero__metric,
+  .ph-metric {
+    flex: none !important;
+    padding: 16px 18px !important;
+    margin: 0 !important;
+    border: none !important;
+    background: var(--color-bg);
+  }
+  .hero__metric-sep,
+  .ph-metric-sep { display: none !important; }
+  .hero__metric-num,
+  .ph-metric-num { font-size: 26px !important; }
+  .hero__metric-num em,
+  .ph-metric-num em { font-style: normal; }
+
+  /* ───────────────────────────────────────────────────────────────────
+     5. ТЕЛО/ТИПОГРАФИКА — контраст выше, ширина строки ограничена.
+        (Матвей: «тяжело читать» — серый текст на тёмном утомляет.) */
+  .hero__subtitle,
+  .page-hero p,
+  .section-sub,
+  .prose p,
+  .article p,
+  .article li {
+    color: #B9C0CC;
+  }
+  .prose p, .article p,
+  .section-sub, .hero__subtitle {
+    max-width: var(--measure);
+  }
+  .section-title, .page-hero h1 { max-width: 18ch; }
+
+  /* ───────────────────────────────────────────────────────────────────
+     6. ЦЕНА — не переносить символ валюты на отдельную строку. */
+  .pkg__price,
+  .pricing__price { flex-wrap: nowrap; }
+  .pkg__price-val,
+  .pricing__price-val {
+    font-size: clamp(28px, 8vw, 38px) !important;
+    white-space: nowrap;
+    line-height: 1.05;
+  }
+  @media (max-width: 380px) {
+    .pkg__price-val, .pricing__price-val { font-size: 26px !important; }
+  }
+
+  /* ───────────────────────────────────────────────────────────────────
+     7. РИТМ СЕКЦИЙ — единое «дыхание», чтобы подача не читалась стеной.
+        Не режем контент, а выравниваем вертикальные отступы. */
+  section { padding: var(--space-section-mobile) 0; }
+  .section-title.words-wrapped { margin-bottom: var(--space-block); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   8. КРИТ: morph-секция «Хаос→Система» — показать подпись на мобилке.
+      На ≤899px JS-анимация не запускает fixed-подпись → она невидима. */
+@media (max-width: 899px) {
+  .morph-cap {
+    position: static !important;
+    opacity: 1 !important;
+    transform: none !important;
+    order: -1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   9. PER-TEMPLATE — правки конкретных шаблонов (CSS применяется ко всем
+      экземплярам: 16 ниш / 26 статей сразу, без правки их HTML). */
+@media (max-width: 768px) {
+
+  /* ── БЛОГ-СТАТЬЯ (×26): ритм чтения — ядро жалобы «тяжело изучать» ── */
+  .breadcrumb { padding-top: 84px !important; }
+  .article-body > p:first-of-type {           /* лид-абзац */
+    font-size: 18.5px; line-height: 1.6; color: #C9CFDA;
+  }
+  .article-body p, .article-body li { font-size: 17px; color: #B9C0CC; max-width: var(--measure); }
+  .article-body h2 {
+    font-size: clamp(21px, 5.6vw, 27px); line-height: 1.2;
+    margin-top: 1.7em; letter-spacing: -0.01em;
+  }
+  .article-body h2 + p { margin-top: .6em; }
+  .article-cta { padding: 26px 18px; }
+  .article-cta .btn, .article-cta a.btn {
+    width: 100%; justify-content: center; white-space: normal;
+  }
+
+  /* ── БЛОГ-ЛЕНТА: карточки компактнее и читаемее ── */
+  .blog-card { padding: 22px 20px; }
+  .blog-card__title { font-size: 19px; line-height: 1.25; }
+  .blog-card__desc { color: #ADB4C0; }
+
+  /* ── НИШИ (×16): hero-видео off (перф, постер остаётся), H2 clamp ── */
+  .page-hero--media .page-hero__media-el { display: none !important; }
+  .work h2, .work__body h2, .whatin h2, .works h2 {
+    font-size: clamp(22px, 6vw, 30px); line-height: 1.15;
+  }
+
+  /* ── SISTEMA: пояснения под ценами читаемее ── */
+  .market-compare__note { font-size: 13px !important; line-height: 1.5; }
+
+  /* ── O-NAS / общие FAQ: крупнее вопрос/ответ, крупнее тап ── */
+  .faq-item__q { font-size: 16.5px; line-height: 1.35; }
+  .faq-item__a { font-size: 15px; line-height: 1.7; }
+
+  /* ── KEYSY: proof-strip 2×2 без «висячих» бордеров + демо-CTA видим ── */
+  .proof-strip { display: grid !important; grid-template-columns: 1fr 1fr; gap: 1px; }
+  .proof-strip__item { border: none !important; }
+  /* мобилка = тач: призыв «Открыть демо» не должен зависеть от hover */
+  .demo-card__open { opacity: 1 !important; transform: none !important; }
+
+  /* ── SAYTY: выпрямить 3D-наклон браузера (дешевит на мобилке) ── */
+  .sy-browser { transform: none !important; }
+
+  /* ── универсально: инпуты 16px — iOS Safari не зумит при фокусе ──
+     !important обязателен: боевые формы задают 14–15px с большей специфичностью
+     (sections.css / sayty.css), из-за чего iPhone зумил вьюпорт на фокусе. */
+  input, textarea, select,
+  .form-group input, .contact input, .quiz input, #business, #contact-input,
+  .sy-form input { font-size: 16px !important; }
+
+  /* ── тап-таргеты ≥44px: футер-ссылки, ниши в аккордеоне, бургер ── */
+  .footer a, .site-footer a, .footer__col a, .footer-nav a { padding: 7px 0; display: inline-block; }
+  .mm-acc-list a { min-height: 44px; display: flex; align-items: center; }
+  #burger, .burger { padding: 10px; margin: -10px; }
+}
+
+/* ── морф-секция «Хаос→Система» на мобилке: постер крупнее + дыхание подписи ── */
+@media (max-width: 768px) {
+  .morph-poster svg { width: min(88vw, 380px); }
+  .morph-pin { gap: 26px; padding: 0 20px; }
+  .morph-cap { margin-bottom: 2px; }
+  .morph-cap small { display: block; max-width: 32ch; margin-left: auto; margin-right: auto; }
+}
+
+/* ── тач-устройства: демо-CTA «Открыть демо» всегда видим (не по hover) ── */
+@media (hover: none) {
+  .demo-card__open { opacity: 1 !important; }
+}
+
+/* ── Плавающая кнопка-заявка на мобиле: постоянный CTA (раньше его не было) ── */
+#uq-float-cta { display: none; }
+@media (max-width: 768px) {
+  #uq-float-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    position: fixed; right: 14px; bottom: 14px; z-index: 900;
+    padding: 12px 18px; border-radius: 999px;
+    background: var(--color-accent, #CDFF4F); color: #0A0E1A;
+    font: 600 15px/1 var(--font-display, system-ui), sans-serif;
+    text-decoration: none; box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.05);
+    -webkit-tap-highlight-color: transparent;
+  }
+  #uq-float-cta svg { width: 18px; height: 18px; }
+  #uq-float-cta:active { transform: scale(.96); }
+}
+
