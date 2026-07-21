@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260721a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260721g">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260721h">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -391,20 +391,35 @@
         </div>
 
         <div class="sy-reel sy-rev" data-d="1">
-          <div class="sy-reel__cap">Пример работы команды — анимация логотипа за 5 секунд</div>
-          <div class="sy-work__tile">
-            <span class="sy-work__badge">Команда · моушн</span>
-            <div class="lg-stage" aria-hidden="true">
-              <svg class="lg-mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                <circle class="lg-ring" cx="52" cy="52" r="30"/>
-                <line class="lg-handle" x1="73" y1="73" x2="96" y2="96"/>
-                <circle class="lg-core" cx="52" cy="52" r="6"/>
-              </svg>
-              <div class="lg-word"><span>u</span><span>n</span><span>i</span><span>q</span><span>o</span><span>r</span><span>e</span></div>
-              <div class="lg-sweep"></div>
+          <div class="sy-reel__cap">Работа команды — промо приложения <b>Lovi</b> · AI-сканер кожи</div>
+          <div class="sy-reel__player" id="reelPlayer">
+            <video class="sy-reel__vid" id="reelVid" poster="/assets/reel-lovi-poster.jpg?v=1" preload="none" playsinline>
+              <source src="/assets/reel-lovi.mp4?v=1" type="video/mp4">
+            </video>
+            <button type="button" class="sy-reel__play" id="reelPlay" aria-label="Смотреть ролик">
+              <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="42" cy="42" r="40.5" fill="#CDFF4F" stroke="rgba(255,255,255,.35)"/><path d="M34 27l25 15-25 15z" fill="#08130a"/></svg>
+              <span>Смотреть ролик · 1:34</span>
+            </button>
+          </div>
+          <div class="sy-reel__mini">
+            <div class="sy-reel__cap" style="margin:24px 0 12px">Ещё пример — анимация логотипа за 5 секунд</div>
+            <div class="sy-work__tile">
+              <span class="sy-work__badge">Команда · моушн</span>
+              <div class="lg-stage" aria-hidden="true">
+                <svg class="lg-mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="lg-ring" cx="52" cy="52" r="30"/>
+                  <line class="lg-handle" x1="73" y1="73" x2="96" y2="96"/>
+                  <circle class="lg-core" cx="52" cy="52" r="6"/>
+                </svg>
+                <div class="lg-word"><span>u</span><span>n</span><span>i</span><span>q</span><span>o</span><span>r</span><span>e</span></div>
+                <div class="lg-sweep"></div>
+              </div>
             </div>
           </div>
-          <!-- ФУНДАМЕНТ ВИДЕО (Матвей пришлёт 2-мин шоурил + пара мелких): вставить <video class="sy-reel__vid" src="/assets/reel-team.mp4" poster="..." muted loop playsinline autoplay preload="metadata"> как главный тайл + ряд мелких. -->
+          <!-- ФУНДАМЕНТ: доп. мелкие видео команды — дублировать .sy-reel__player внутри ряда, либо заменить .sy-work__tile на <video>. -->
+          <script>
+          (function(){var p=document.getElementById('reelPlay'),w=document.getElementById('reelPlayer'),v=document.getElementById('reelVid');if(!p||!v||!w)return;p.addEventListener('click',function(){w.classList.add('is-playing');v.setAttribute('controls','');v.play();});})();
+          </script>
         </div>
       </div>
     </section>
