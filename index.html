@@ -122,19 +122,10 @@
   </script>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/reset.css?v=20260711e">
-  <link rel="stylesheet" href="css/variables.css?v=20260717a">
-  <link rel="stylesheet" href="css/typography.css?v=20260720b">
-  <link rel="stylesheet" href="css/layout.css?v=20260711e">
-  <link rel="stylesheet" href="css/components.css?v=20260720b">
-  <link rel="stylesheet" href="css/sections.css?v=20260720b">
-  <link rel="stylesheet" href="css/animations.css?v=20260720b">
-  <link rel="stylesheet" href="css/mobile.css?v=20260711e">
-  <link rel="stylesheet" href="css/nav-pages.css?v=20260711e">
-  <link rel="stylesheet" href="css/enhance.css?v=20260711e">
-  <link rel="stylesheet" href="css/redesign.css?v=20260720b">
-  <link rel="stylesheet" href="css/hero-premium.css?v=20260711B">
-  <link rel="stylesheet" href="css/dash.css?v=20260711A">
+  <!-- CSS: 13 файлов объединены в один bundle.css — 1 render-blocking запрос вместо 13.
+       Критично для нестабильного канала (РФ): одного зависшего CSS хватало на чёрный экран.
+       Bundle пересобирать при правке любого исходника (см. css/*.css). -->
+  <link rel="stylesheet" href="css/bundle.css?v=20260721a">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
