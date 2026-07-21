@@ -127,8 +127,6 @@
 /* ─────────── PRICING ─────────── */
 .sy-price__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
 @media(max-width:900px){.sy-price__grid{grid-template-columns:1fr;max-width:440px;margin:0 auto}}
-.sy-duo{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:840px;margin:0 auto;align-items:stretch}
-@media(max-width:760px){.sy-duo{grid-template-columns:1fr;max-width:440px}}
 .sy-pcard{position:relative;display:flex;flex-direction:column;padding:30px 26px;border-radius:20px;border:1px solid var(--sy-line);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.006));transition:transform .35s cubic-bezier(.2,1,.3,1),border-color .35s,box-shadow .35s;overflow:hidden}
 .sy-pcard:hover{transform:translateY(-6px);border-color:rgba(205,255,79,.3);box-shadow:0 30px 60px -28px rgba(0,0,0,.8)}
 .sy-pcard--flag{border-color:rgba(205,255,79,.35);background:linear-gradient(180deg,rgba(205,255,79,.09),rgba(255,255,255,.008) 60%);box-shadow:0 0 60px -20px rgba(205,255,79,.4)}
