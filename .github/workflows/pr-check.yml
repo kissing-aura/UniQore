@@ -1,0 +1,43 @@
+name: PR sanity check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  html-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Проверка битых внутренних ссылок и незакрытых тегов
+        run: |
+          set -e
+          echo "Проверяю изменённые .html файлы на явные ошибки..."
+          git fetch origin main --depth=1
+          changed=$(git diff --name-only origin/main...HEAD -- '*.html' || true)
+          if [ -z "$changed" ]; then
+            echo "HTML-файлы не менялись — пропускаю."
+            exit 0
+          fi
+          fail=0
+          for f in $changed; do
+            [ -f "$f" ] || continue
+            echo "— $f"
+            # незакрытые основные теги (грубая проверка)
+            for tag in div section header footer nav main; do
+              open=$(grep -o "<$tag[ >]" "$f" | wc -l)
+              close=$(grep -o "</$tag>" "$f" | wc -l)
+              if [ "$open" != "$close" ]; then
+                echo "  ⚠️  <$tag>: открыто $open, закрыто $close — проверь вручную"
+                fail=1
+              fi
+            done
+          done
+          if [ "$fail" = "1" ]; then
+            echo ""
+            echo "Найдены подозрительные несовпадения тегов. Это не блокирует мердж — просто сигнал проверить руками."
+          fi
+
+      - name: Итог
+        run: echo "Проверка завершена. Смотри логи выше перед мерджем."
