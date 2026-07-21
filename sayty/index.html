@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260721a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260721f">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260721g">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -308,51 +308,79 @@
       </div>
     </section>
 
-    <!-- ═══════ ДИЗАЙН-КОМАНДА (апселл-корзина) ═══════ -->
+    <!-- ═══════ ДИЗАЙН-КОМАНДА (конструктор проекта, живая цена) ═══════ -->
     <section class="sy-section" id="design-team">
       <div class="sy-container">
         <div class="sy-head">
           <span class="sy-eyebrow sy-rev"><span class="dot"></span>Дизайн-команда Uniqore</span>
-          <h2 class="sy-h2 sy-rev" style="margin-top:16px">Ваш сайт — <em>не как у всех</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Шаблон запускает быстро, но выглядит похоже на конкурентов. Наши дизайнеры делают проект узнаваемым — под ваш бренд. Дизайн добавляете к сайту сами, как в корзине.</p>
+          <h2 class="sy-h2 sy-rev" style="margin-top:16px">Соберите проект — <em>увидите цену</em></h2>
+          <p class="sy-sub sy-rev" data-d="1">Выберите сайт и решите, нужна ли работа нашей дизайн-команды. Цена собирается на глазах — по нижней границе; точную фиксируем в договоре.</p>
         </div>
 
-        <div class="sy-cart sy-rev" data-d="1">
-          <div class="sy-cart__top">
-            <span class="sy-cart__ttl">В вашем проекте</span>
-            <span class="sy-cart__step">шаг оформления</span>
+        <div class="q-config sy-rev" data-d="1">
+          <div class="q-choices">
+            <div class="q-label">1 · Тип сайта</div>
+            <div class="q-tiers" role="radiogroup" aria-label="Тип сайта">
+              <button type="button" class="q-tier" role="radio" data-t="landing" aria-checked="false">
+                <span class="q-tier__dot"></span>
+                <span class="q-tier__txt"><b>Лендинг</b><span>Одна страница под одну цель</span></span>
+                <span class="q-tier__p" data-usd="150">$150</span>
+              </button>
+              <button type="button" class="q-tier is-on" role="radio" data-t="multi" aria-checked="true">
+                <span class="q-tier__dot"></span>
+                <span class="q-tier__txt"><b>Многостраничный <i>Хит</i></b><span>Услуги, каталог, блог, о компании</span></span>
+                <span class="q-tier__p" data-usd="300">$300</span>
+              </button>
+              <button type="button" class="q-tier" role="radio" data-t="crm" aria-checked="false">
+                <span class="q-tier__dot"></span>
+                <span class="q-tier__txt"><b>Сайт + CRM</b><span>Заявки сразу падают в вашу систему</span></span>
+                <span class="q-tier__p" data-usd="500">$500</span>
+              </button>
+            </div>
+
+            <div class="q-label">2 · Оформление</div>
+            <button type="button" class="q-addon" id="qAddon" aria-pressed="false">
+              <span class="q-addon__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>
+              <span class="q-addon__txt"><b>Работа дизайн-команды</b><span>Уникальный визуал под бренд — не шаблон</span></span>
+              <span class="q-addon__toggle"><i></i></span>
+            </button>
+            <div class="q-perks">
+              <span>Уникальный визуал</span><span>Фирменный стиль</span><span>Иллюстрации</span><span>Анимации</span><span>Моушн-лого</span>
+            </div>
           </div>
 
-          <div class="sy-cart__item">
-            <span class="sy-cart__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span>
-            <div class="sy-cart__info">
-              <b>Сайт под нишу</b>
-              <span>Проверенный дизайн · запуск за 3–5 дней</span>
+          <div class="q-quote">
+            <div class="q-quote__ttl">Ваш проект</div>
+            <div class="q-line">
+              <span><b id="qTierName">Многостраничный</b></span>
+              <span class="q-line__p">
+                <span class="q-base" data-t="landing" data-usd="150">$150</span>
+                <span class="q-base" data-t="multi" data-usd="300">$300</span>
+                <span class="q-base" data-t="crm" data-usd="500">$500</span>
+              </span>
             </div>
-            <span class="sy-cart__flag">включено</span>
-          </div>
-          <p class="sy-cart__note" id="cartNote">Аккуратно — но в нише похожих сайтов много.</p>
-
-          <button type="button" class="sy-cart__addon" id="addonBtn" aria-pressed="false">
-            <span class="sy-cart__ic sy-cart__ic--lime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>
-            <div class="sy-cart__info">
-              <b>Работа дизайн-команды</b>
-              <span>Уникальный визуал под ваш бренд</span>
+            <div class="q-line q-line--des" id="qDesLine">
+              <span>+ Дизайн-команда</span>
+              <span class="q-line__p">
+                <span class="q-des" data-t="landing" data-usd="60">$60</span>
+                <span class="q-des" data-t="multi" data-usd="120">$120</span>
+                <span class="q-des" data-t="crm" data-usd="250">$250</span>
+              </span>
             </div>
-            <span class="sy-cart__add" id="addonState">Добавить</span>
-          </button>
-
-          <div class="sy-cart__perks">
-            <span>Уникальный визуал</span><span>Фирменный стиль</span><span>Иллюстрации</span><span>Анимации</span><span>Моушн-лого</span><span>Иконки под бренд</span>
-          </div>
-
-          <div class="sy-cart__foot">
-            <div class="sy-cart__sum">
-              <span class="sy-cart__sum-l">Итог проекта</span>
-              <b id="cartSum">Сайт под нишу</b>
-              <span class="sy-cart__price">Точная цена — по задаче, зависит от объёма</span>
+            <div class="q-total" id="qTotalWrap">
+              <span class="q-total__l">Итого</span>
+              <span class="q-total__v">
+                <span class="q-tot" data-t="landing" data-d="off" data-usd="150" data-prefix="от ">от $150</span>
+                <span class="q-tot" data-t="landing" data-d="on" data-usd="210" data-prefix="от ">от $210</span>
+                <span class="q-tot" data-t="multi" data-d="off" data-usd="300" data-prefix="от ">от $300</span>
+                <span class="q-tot" data-t="multi" data-d="on" data-usd="420" data-prefix="от ">от $420</span>
+                <span class="q-tot" data-t="crm" data-d="off" data-usd="500" data-prefix="от ">от $500</span>
+                <span class="q-tot" data-t="crm" data-d="on" data-usd="750" data-prefix="от ">от $750</span>
+              </span>
             </div>
-            <a href="#zayavka" class="sy-btn sy-btn--main" id="cartCta" data-mag>Оставить заявку</a>
+            <div class="q-meta"><span>Запуск 3–5 дней</span><span id="qMeta">базовый дизайн</span></div>
+            <a href="#zayavka" class="sy-btn sy-btn--main q-cta" id="qCta" data-mag>Оставить заявку</a>
+            <p class="q-nudge" id="qNudge">Точную цену фиксируем в договоре — без скрытых доплат.</p>
           </div>
         </div>
 
@@ -362,7 +390,6 @@
           <div><b>4.9★</b><span>средняя оценка</span></div>
         </div>
 
-        <!-- ШОУРИЛ команды -->
         <div class="sy-reel sy-rev" data-d="1">
           <div class="sy-reel__cap">Пример работы команды — анимация логотипа за 5 секунд</div>
           <div class="sy-work__tile">
@@ -377,30 +404,39 @@
               <div class="lg-sweep"></div>
             </div>
           </div>
-          <!-- ФУНДАМЕНТ ВИДЕО (Матвей пришлёт: 2-мин шоурил + пара мелких). Вставить как главный тайл + ряд мелких:
-               <video class="sy-reel__vid" src="/assets/reel-team.mp4" poster="/assets/reel-poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
-               Разметка: обёртка .sy-reel__grid > .sy-reel__main (крупное) + .sy-reel__row > .sy-reel__cell (мелкие). -->
+          <!-- ФУНДАМЕНТ ВИДЕО (Матвей пришлёт 2-мин шоурил + пара мелких): вставить <video class="sy-reel__vid" src="/assets/reel-team.mp4" poster="..." muted loop playsinline autoplay preload="metadata"> как главный тайл + ряд мелких. -->
         </div>
       </div>
     </section>
     <script>
     (function(){
-      var btn=document.getElementById('addonBtn'); if(!btn) return;
-      var on=false;
-      var sum=document.getElementById('cartSum'), cta=document.getElementById('cartCta');
-      var st=document.getElementById('addonState'), note=document.getElementById('cartNote');
-      btn.addEventListener('click',function(){
-        on=!on;
-        btn.setAttribute('aria-pressed',on?'true':'false');
-        btn.classList.toggle('is-on',on);
-        if(st) st.textContent=on?'✓ Добавлено':'Добавить';
-        if(sum) sum.textContent=on?'Сайт + работа дизайн-команды':'Сайт под нишу';
-        if(cta) cta.textContent=on?'Оставить заявку с дизайном':'Оставить заявку';
-        if(note){
-          note.textContent=on?'Уникальный вид под бренд — вы выделяетесь и выглядите дороже.':'Аккуратно — но в нише похожих сайтов много.';
-          note.classList.toggle('is-good',on);
-        }
-      });
+      var cfg=document.getElementById('design-team'); if(!cfg) return;
+      var tiers=cfg.querySelectorAll('.q-tier');
+      var addon=document.getElementById('qAddon');
+      if(!tiers.length||!addon) return;
+      var state={t:'multi',d:false};
+      var NAMES={landing:'Лендинг',multi:'Многостраничный',crm:'Сайт + CRM'};
+      var bases=cfg.querySelectorAll('.q-base'), dess=cfg.querySelectorAll('.q-des'), tots=cfg.querySelectorAll('.q-tot');
+      var desLine=document.getElementById('qDesLine'), name=document.getElementById('qTierName');
+      var meta=document.getElementById('qMeta'), cta=document.getElementById('qCta'), nudge=document.getElementById('qNudge');
+      var totalWrap=document.getElementById('qTotalWrap');
+      function show(list,fn){ list.forEach(function(s){ s.style.display=fn(s)?'':'none'; }); }
+      function upd(pop){
+        tiers.forEach(function(b){ var on=b.dataset.t===state.t; b.classList.toggle('is-on',on); b.setAttribute('aria-checked',on?'true':'false'); });
+        addon.classList.toggle('is-on',state.d); addon.setAttribute('aria-pressed',state.d?'true':'false');
+        show(bases,function(s){return s.dataset.t===state.t;});
+        show(dess,function(s){return s.dataset.t===state.t;});
+        show(tots,function(s){return s.dataset.t===state.t && s.dataset.d===(state.d?'on':'off');});
+        if(desLine) desLine.style.display=state.d?'':'none';
+        if(name) name.textContent=NAMES[state.t];
+        if(meta) meta.textContent=state.d?'с дизайн-командой':'базовый дизайн';
+        if(cta) cta.textContent=state.d?'Оставить заявку с дизайном':'Оставить заявку';
+        if(nudge){ nudge.textContent=state.d?'Уникальный вид под бренд — вы не сливаетесь с конкурентами.':'Точную цену фиксируем в договоре — без скрытых доплат.'; nudge.classList.toggle('is-good',state.d); }
+        if(pop && totalWrap){ totalWrap.classList.remove('pop'); void totalWrap.offsetWidth; totalWrap.classList.add('pop'); }
+      }
+      tiers.forEach(function(b){ b.addEventListener('click',function(){ state.t=b.dataset.t; upd(true); }); });
+      addon.addEventListener('click',function(){ state.d=!state.d; upd(true); });
+      upd(false);
     })();
     </script>
 
