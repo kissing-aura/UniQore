@@ -416,3 +416,33 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-dl__sum{font-size:14.5px;color:#e7eaf0;font-weight:600}
 .sy-dl__bar .sy-btn{align-self:center;white-space:nowrap}
 @media(max-width:560px){.sy-dl__bar{flex-direction:column;align-items:stretch;text-align:center}.sy-dl__bar .sy-btn{width:100%;justify-content:center}}
+
+
+/* ═══════════ ПРИМЕР РАБОТЫ ДИЗАЙНЕРА — анимация логотипа (placeholder под первое портфолио) ═══════════ */
+.sy-work{max-width:600px;margin:0 auto;text-align:center}
+.sy-work__tile{position:relative;border:1px solid var(--sy-line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.006));overflow:hidden;box-shadow:0 40px 80px -40px rgba(0,0,0,.8)}
+.sy-work__badge{position:absolute;top:14px;left:14px;z-index:4;font-family:var(--font-mono,monospace);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--sy-l);border:1px solid rgba(205,255,79,.35);background:rgba(205,255,79,.08);border-radius:999px;padding:5px 11px}
+.lg-stage{position:relative;height:clamp(220px,30vw,260px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(120% 90% at 50% 34%,rgba(205,255,79,.08),transparent 60%),#090e16;overflow:hidden}
+.lg-stage::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:34px 34px;-webkit-mask:radial-gradient(78% 74% at 50% 44%,#000,transparent 80%);mask:radial-gradient(78% 74% at 50% 44%,#000,transparent 80%)}
+.lg-mark{width:92px;height:92px;position:relative;z-index:2;overflow:visible}
+.lg-ring,.lg-handle{fill:none;stroke:var(--sy-l);stroke-width:6;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(205,255,79,.6))}
+.lg-ring{stroke-dasharray:220;stroke-dashoffset:220;animation:lgRing 5s ease-in-out infinite}
+.lg-handle{stroke-dasharray:36;stroke-dashoffset:36;animation:lgHandle 5s ease-in-out infinite}
+.lg-core{fill:var(--sy-l);transform-box:fill-box;transform-origin:center;transform:scale(0);animation:lgCore 5s ease-in-out infinite;filter:drop-shadow(0 0 8px var(--sy-l))}
+.lg-word{position:relative;z-index:2;display:flex;gap:1px;font-family:'Unbounded',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.01em;color:#fff}
+.lg-word span{opacity:0;transform:translateY(10px);animation:lgLetter 5s ease-in-out infinite}
+.lg-word span:nth-child(1){animation-delay:.05s}
+.lg-word span:nth-child(2){animation-delay:.12s}
+.lg-word span:nth-child(3){animation-delay:.19s}
+.lg-word span:nth-child(4){animation-delay:.26s}
+.lg-word span:nth-child(5){animation-delay:.33s;color:var(--sy-l)}
+.lg-word span:nth-child(6){animation-delay:.40s}
+.lg-word span:nth-child(7){animation-delay:.47s}
+.lg-sweep{position:absolute;top:0;bottom:0;left:-45%;width:38%;z-index:3;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);transform:skewX(-16deg);animation:lgSweep 5s ease-in-out infinite;pointer-events:none}
+.sy-work__cap{font-size:13.5px;color:var(--sy-mut);line-height:1.55;margin:16px 8px 0}
+@keyframes lgRing{0%{stroke-dashoffset:220}22%,80%{stroke-dashoffset:0}94%,100%{stroke-dashoffset:220}}
+@keyframes lgHandle{0%,14%{stroke-dashoffset:36}30%,80%{stroke-dashoffset:0}94%,100%{stroke-dashoffset:36}}
+@keyframes lgCore{0%,20%{transform:scale(0)}34%,82%{transform:scale(1)}94%,100%{transform:scale(0)}}
+@keyframes lgLetter{0%,32%{opacity:0;transform:translateY(10px)}48%,84%{opacity:1;transform:translateY(0)}96%,100%{opacity:0;transform:translateY(10px)}}
+@keyframes lgSweep{0%,42%{left:-45%}64%{left:106%}100%{left:106%}}
+@media(prefers-reduced-motion:reduce){.lg-ring,.lg-handle,.lg-core,.lg-word span,.lg-sweep{animation:none}.lg-ring,.lg-handle{stroke-dashoffset:0}.lg-core{transform:scale(1)}.lg-word span{opacity:1;transform:none}}
