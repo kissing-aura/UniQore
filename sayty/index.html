@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260721a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260721e">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260721f">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -308,84 +308,65 @@
       </div>
     </section>
 
-    <!-- ═══════ ДИЗАЙНЕР — ПО ЖЕЛАНИЮ ═══════ -->
-    <section class="sy-section" style="padding-top:0" id="design-level">
+    <!-- ═══════ ДИЗАЙН-КОМАНДА (апселл-корзина) ═══════ -->
+    <section class="sy-section" id="design-team">
       <div class="sy-container">
         <div class="sy-head">
-          <h2 class="sy-h2 sy-rev">Дизайнер — <em>по желанию</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Базовый сайт уже с аккуратным дизайном под нишу. Хочешь выделиться сильнее — подключаем дизайнера. Решаешь ты.</p>
+          <span class="sy-eyebrow sy-rev"><span class="dot"></span>Дизайн-команда Uniqore</span>
+          <h2 class="sy-h2 sy-rev" style="margin-top:16px">Ваш сайт — <em>не как у всех</em></h2>
+          <p class="sy-sub sy-rev" data-d="1">Шаблон запускает быстро, но выглядит похоже на конкурентов. Наши дизайнеры делают проект узнаваемым — под ваш бренд. Дизайн добавляете к сайту сами, как в корзине.</p>
         </div>
 
-        <div class="sy-dl" role="radiogroup" aria-label="Уровень дизайна">
-          <button type="button" class="sy-dl__opt is-active sy-rev" role="radio" aria-checked="true" tabindex="0" data-dl="base"
-                  data-summary="без дизайнера — входит в тариф, быстрый запуск" data-cta="Получить сайт" data-href="#zayavka">
-            <div class="sy-dl__top">
-              <span class="sy-dl__check" aria-hidden="true"></span>
-              <span class="sy-dl__kicker">Входит в тариф</span>
+        <div class="sy-cart sy-rev" data-d="1">
+          <div class="sy-cart__top">
+            <span class="sy-cart__ttl">В вашем проекте</span>
+            <span class="sy-cart__step">шаг оформления</span>
+          </div>
+
+          <div class="sy-cart__item">
+            <span class="sy-cart__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg></span>
+            <div class="sy-cart__info">
+              <b>Сайт под нишу</b>
+              <span>Проверенный дизайн · запуск за 3–5 дней</span>
             </div>
-            <h3 class="sy-dl__name">Готовый дизайн под нишу</h3>
-            <p class="sy-dl__lead">Проверенный шаблон, адаптированный под твой бизнес. Быстро и без доплат.</p>
-            <ul class="sy-dl__list">
-              <li>Аккуратный дизайн под вашу сферу</li>
-              <li>Мобильная версия, скорость, SEO</li>
-              <li>Быстрый запуск под рекламу</li>
-            </ul>
-            <span class="sy-dl__for">Кому: быстрый старт, тест ниши, чёткий бюджет</span>
+            <span class="sy-cart__flag">включено</span>
+          </div>
+          <p class="sy-cart__note" id="cartNote">Аккуратно — но в нише похожих сайтов много.</p>
+
+          <button type="button" class="sy-cart__addon" id="addonBtn" aria-pressed="false">
+            <span class="sy-cart__ic sy-cart__ic--lime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>
+            <div class="sy-cart__info">
+              <b>Работа дизайн-команды</b>
+              <span>Уникальный визуал под ваш бренд</span>
+            </div>
+            <span class="sy-cart__add" id="addonState">Добавить</span>
           </button>
 
-          <button type="button" class="sy-dl__opt sy-dl__opt--pro sy-rev" role="radio" aria-checked="false" tabindex="0" data-dl="pro" data-d="1"
-                  data-summary="с дизайнером — уникальный визуал, цену обсудим по задаче" data-cta="Обсудить с дизайнером" data-href="#zayavka">
-            <div class="sy-dl__top">
-              <span class="sy-dl__check" aria-hidden="true"></span>
-              <span class="sy-dl__kicker sy-dl__kicker--lime">Индивидуально</span>
+          <div class="sy-cart__perks">
+            <span>Уникальный визуал</span><span>Фирменный стиль</span><span>Иллюстрации</span><span>Анимации</span><span>Моушн-лого</span><span>Иконки под бренд</span>
+          </div>
+
+          <div class="sy-cart__foot">
+            <div class="sy-cart__sum">
+              <span class="sy-cart__sum-l">Итог проекта</span>
+              <b id="cartSum">Сайт под нишу</b>
+              <span class="sy-cart__price">Точная цена — по задаче, зависит от объёма</span>
             </div>
-            <h3 class="sy-dl__name">Уникальный дизайн под бренд</h3>
-            <p class="sy-dl__lead">Дизайнер вручную наполняет сайт живым, авторским визуалом — не «под копирку». Чтобы вы выделялись, а не сливались с конкурентами.</p>
-            <ul class="sy-dl__list">
-              <li>Индивидуальный визуал и иллюстрации</li>
-              <li>Живые анимации под ваш бренд</li>
-              <li>Авторский взгляд — не шаблон</li>
-            </ul>
-            <span class="sy-dl__for">Кому: премиум-позиционирование · доплата по задаче</span>
-          </button>
+            <a href="#zayavka" class="sy-btn sy-btn--main" id="cartCta" data-mag>Оставить заявку</a>
+          </div>
         </div>
 
-        <div class="sy-dl__bar sy-rev" data-d="1">
-          <span class="sy-dl__sum" id="dlSum">Твой выбор: без дизайнера — входит в тариф, быстрый запуск</span>
-          <a href="#zayavka" class="sy-btn sy-btn--main" id="dlCta" data-mag>Получить сайт</a>
+        <div class="sy-team-proof sy-rev" data-d="1">
+          <div><b>100+</b><span>проектов у команды</span></div>
+          <div><b>30+</b><span>сайтов под ключ</span></div>
+          <div><b>4.9★</b><span>средняя оценка</span></div>
         </div>
-      </div>
-    </section>
-    <script>
-    (function(){
-      var group=document.querySelector('.sy-dl'); if(!group) return;
-      var opts=group.querySelectorAll('.sy-dl__opt');
-      var sum=document.getElementById('dlSum'), cta=document.getElementById('dlCta');
-      function pick(el){
-        opts.forEach(function(o){ o.classList.remove('is-active'); o.setAttribute('aria-checked','false'); });
-        el.classList.add('is-active'); el.setAttribute('aria-checked','true');
-        if(sum) sum.textContent='Твой выбор: '+el.getAttribute('data-summary');
-        if(cta){ cta.textContent=el.getAttribute('data-cta'); cta.setAttribute('href',el.getAttribute('data-href')); }
-      }
-      opts.forEach(function(o){
-        o.addEventListener('click',function(){ pick(o); });
-        o.addEventListener('keydown',function(e){
-          if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(o); }
-        });
-      });
-    })();
-    </script>
 
-    <!-- ═══════ РАБОТЫ ДИЗАЙНЕРА (фундамент под портфолио) ═══════ -->
-    <section class="sy-section" style="padding-top:0" id="dizayner-raboty">
-      <div class="sy-container">
-        <div class="sy-head">
-          <h2 class="sy-h2 sy-rev">Работы <em>дизайнера</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Оживляем не только сайт — логотип, иконки, микроанимации. Вот пример за 5 секунд.</p>
-        </div>
-        <div class="sy-work">
-          <div class="sy-work__tile sy-rev">
-            <span class="sy-work__badge">Пример · анимация логотипа</span>
+        <!-- ШОУРИЛ команды -->
+        <div class="sy-reel sy-rev" data-d="1">
+          <div class="sy-reel__cap">Пример работы команды — анимация логотипа за 5 секунд</div>
+          <div class="sy-work__tile">
+            <span class="sy-work__badge">Команда · моушн</span>
             <div class="lg-stage" aria-hidden="true">
               <svg class="lg-mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                 <circle class="lg-ring" cx="52" cy="52" r="30"/>
@@ -396,11 +377,32 @@
               <div class="lg-sweep"></div>
             </div>
           </div>
-          <p class="sy-work__cap sy-rev" data-d="1">Полное портфолио дизайнера покажем под ваш проект — от логотипа до микроанимаций.</p>
-          <!-- ФУНДАМЕНТ: первая работа дизайнера (анимация логотипа) придёт позже — заменить содержимое .lg-stage на его <video>/<img>, либо продублировать .sy-work__tile для сетки. -->
+          <!-- ФУНДАМЕНТ ВИДЕО (Матвей пришлёт: 2-мин шоурил + пара мелких). Вставить как главный тайл + ряд мелких:
+               <video class="sy-reel__vid" src="/assets/reel-team.mp4" poster="/assets/reel-poster.jpg" muted loop playsinline autoplay preload="metadata"></video>
+               Разметка: обёртка .sy-reel__grid > .sy-reel__main (крупное) + .sy-reel__row > .sy-reel__cell (мелкие). -->
         </div>
       </div>
     </section>
+    <script>
+    (function(){
+      var btn=document.getElementById('addonBtn'); if(!btn) return;
+      var on=false;
+      var sum=document.getElementById('cartSum'), cta=document.getElementById('cartCta');
+      var st=document.getElementById('addonState'), note=document.getElementById('cartNote');
+      btn.addEventListener('click',function(){
+        on=!on;
+        btn.setAttribute('aria-pressed',on?'true':'false');
+        btn.classList.toggle('is-on',on);
+        if(st) st.textContent=on?'✓ Добавлено':'Добавить';
+        if(sum) sum.textContent=on?'Сайт + работа дизайн-команды':'Сайт под нишу';
+        if(cta) cta.textContent=on?'Оставить заявку с дизайном':'Оставить заявку';
+        if(note){
+          note.textContent=on?'Уникальный вид под бренд — вы выделяетесь и выглядите дороже.':'Аккуратно — но в нише похожих сайтов много.';
+          note.classList.toggle('is-good',on);
+        }
+      });
+    })();
+    </script>
 
     <!-- ═══════ ПОЧЕМУ НЕ ДЕШЁВЫЙ ═══════ -->
     <section class="sy-section" style="padding-top:0">
