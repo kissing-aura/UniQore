@@ -338,19 +338,25 @@
   var m = document.querySelector('.sy-mock'), b = document.querySelector('.sy-browser');
   var ph = document.querySelector('.sy-phone');
   if (!m || !b) return;
-  var ticking = false, lx = 0, ly = 0;
-  m.addEventListener('mousemove', function (e) {
-    var r = m.getBoundingClientRect();
-    lx = (e.clientX - r.left) / r.width - 0.5;
-    ly = (e.clientY - r.top) / r.height - 0.5;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var lx = 0, ly = 0, raf = 0;
+  function applyTilt() {
+    raf = 0;
     b.style.transform = 'rotateY(' + (-6 + lx * 3).toFixed(2) + 'deg) rotateX(' + (3 - ly * 2).toFixed(2) + 'deg)';
     if (ph) {
       ph.style.setProperty('--phx', (lx * -22).toFixed(1) + 'px');
       ph.style.setProperty('--phy', (ly * -14).toFixed(1) + 'px');
       ph.style.setProperty('--phry', (lx * 6).toFixed(1) + 'deg');
     }
+  }
+  m.addEventListener('mousemove', function (e) {
+    var r = m.getBoundingClientRect();
+    lx = (e.clientX - r.left) / r.width - 0.5;
+    ly = (e.clientY - r.top) / r.height - 0.5;
+    if (!raf) raf = requestAnimationFrame(applyTilt);
   }, { passive: true });
   m.addEventListener('mouseleave', function () {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
     b.style.transform = '';
     if (ph) { ph.style.setProperty('--phx', '0px'); ph.style.setProperty('--phy', '0px'); ph.style.setProperty('--phry', '0deg'); }
   });
