@@ -61,22 +61,39 @@
       strip:['12 лет','на рынке · гарантия 2 года · статус в Telegram'],
       s2:'Почему мы', s2cards:[['Гарантия','2 года'],['Цена','Фиксирована'],['Статус','В Telegram']] }
   ];
-  function svc(c, hi){ return '<div class="ms-card'+(hi?' ms-card--hi':'')+'"><span class="ms-card__ic"></span><div class="ms-card__t">'+c[0]+'</div><div class="ms-card__d">'+c[1]+'</div></div>'; }
-  function feat(c){ return '<div class="ms-feat"><span class="ms-feat__ic"></span><div class="ms-feat__t">'+c[0]+'</div><div class="ms-feat__d">'+c[1]+'</div></div>'; }
-  function buildSite(v){
-    return ''
-    + '<div class="ms-nav"><span class="ms-logo">'+v.logo+'</span><span class="ms-navlinks"><span>Меню</span><span>О нас</span><span>Кейсы</span><span>Контакты</span></span><span class="ms-cta" style="background:var(--ms-accent);color:var(--ms-ink)">Заказать</span></div>'
-    + '<div class="ms-hero">'
-    +   '<div class="ms-hero__text"><span class="ms-badge" style="background:color-mix(in srgb,var(--ms-accent) 16%,transparent);color:var(--ms-accent)">'+v.chip+'</span><div class="ms-title">'+v.title+'</div><div class="ms-lead">'+v.lead+'</div><div class="ms-btns"><span class="ms-btn" style="background:var(--ms-accent);color:var(--ms-ink)">'+v.btns[0]+'</span><span class="ms-btn ms-btn--2">'+v.btns[1]+'</span></div></div>'
-    +   '<div class="ms-hero__visual"><div class="ms-vis__orb"></div><div class="ms-vis__lines"><i></i><i></i><i></i></div><div class="ms-vis__card"><div class="ms-vis__k" style="color:var(--ms-accent)">'+v.strip[0]+'</div><div class="ms-vis__l">'+v.chip+'</div></div></div>'
-    + '</div>'
-    + '<div class="ms-cards">'+svc(v.cards[0],1)+svc(v.cards[1],0)+svc(v.cards[2],0)+'</div>'
-    + '<div class="ms-strip" style="background:color-mix(in srgb,var(--ms-accent) 12%,#101622)"><div class="ms-strip__k" style="color:var(--ms-accent)">'+v.strip[0]+'</div><div class="ms-strip__t">'+v.strip[1]+'</div></div>'
-    + '<div class="ms-sec">'+v.s2+'</div>'
-    + '<div class="ms-feats">'+feat(v.s2cards[0])+feat(v.s2cards[1])+feat(v.s2cards[2])+'</div>'
-    + '<div class="ms-foot"><span>© 2026 · '+v.logo+'</span><span>сделано в Uniqore</span></div>';
+  function splitAcc(t){
+    var s=t.replace(/<br\s*\/?>/gi,' ').trim().split(/\s+/);
+    var last=s.pop();
+    return (s.length?s.join(' ')+' ':'')+'<em class="lmn-acc">'+last+'</em>';
   }
-  /* мобильная версия того же сайта — для телефона (дуал-девайс) */
+  function buildSite(v){
+    var segs=v.strip[1].split('·').map(function(x){return x.trim();}).filter(Boolean);
+    var bars='<span class="lmn-bars"><i></i><i></i><i></i><i></i><i></i></span>';
+    var rows=v.cards.map(function(c){return '<div class="lmn-row"><span>'+c[0]+'</span><b class="lmn-price">'+c[1]+'</b></div>';}).join('');
+    return '<div class="lmn" style="--acc:'+v.accent+'">'
+    + '<nav class="lmn-nav"><span class="lmn-mono">'+v.logo.charAt(0)+'</span><span class="lmn-brand">'+v.logo+'</span><span class="lmn-links"><span>Меню</span><span>О нас</span><span>Контакты</span></span><a class="lmn-pill">'+v.btns[0]+'</a></nav>'
+    + '<header class="lmn-hero">'
+    +   '<span class="lmn-chip"><i class="lmn-dot"></i>'+v.chip+'</span>'
+    +   '<h1 class="lmn-h1">'+splitAcc(v.title)+'</h1>'
+    +   '<p class="lmn-lead">'+v.lead+'</p>'
+    +   '<div class="lmn-cta"><a class="lmn-pill lmn-pill--lg">'+v.btns[0]+'</a><a class="lmn-ghost">'+v.btns[1]+' →</a></div>'
+    +   '<div class="lmn-proof"><div class="lmn-proof__l"><div class="lmn-proof__n">'+v.cards[0][0]+'</div><div class="lmn-proof__m">★ '+v.strip[0].replace('★','').trim()+' · популярный выбор</div></div><div class="lmn-proof__r"><b class="lmn-price">'+v.cards[0][1]+'</b><span class="lmn-proof__b">'+v.btns[0]+'</span></div></div>'
+    + '</header>'
+    + '<div class="lmn-metrics"><div class="lmn-metric lmn-metric--lg"><b>'+v.strip[0]+'</b><span>'+(segs[0]||'')+'</span></div>'
+    +   (segs[1]?'<div class="lmn-metric"><span>'+segs[1]+'</span></div>':'')
+    +   (segs[2]?'<div class="lmn-metric"><span>'+segs[2]+'</span></div>':'')
+    + '</div>'
+    + '<section class="lmn-bento"><h2 class="lmn-h2">'+v.s2+'</h2><div class="lmn-grid">'
+    +   '<div class="lmn-b lmn-b--lg"><div class="lmn-b__k">'+v.s2cards[0][1]+'</div><div class="lmn-b__t">'+v.s2cards[0][0]+'</div>'+bars+'</div>'
+    +   '<div class="lmn-b"><span class="lmn-b__ic"></span><div class="lmn-b__t">'+v.s2cards[1][0]+'</div><div class="lmn-b__d">'+v.s2cards[1][1]+'</div></div>'
+    +   '<div class="lmn-b"><span class="lmn-b__ic"></span><div class="lmn-b__t">'+v.s2cards[2][0]+'</div><div class="lmn-b__d">'+v.s2cards[2][1]+'</div></div>'
+    + '</div></section>'
+    + '<section class="lmn-show"><h2 class="lmn-h2">Услуги и цены</h2>'+rows+'</section>'
+    + '<section class="lmn-quote"><div class="lmn-quote__mark">“</div><p class="lmn-quote__t">Сайт собрали за 4 дня — заявки пошли с первого запуска рекламы.</p><div class="lmn-quote__a"><span class="lmn-quote__av"></span><span>владелец '+v.logo+'</span></div></section>'
+    + '<section class="lmn-final"><h2 class="lmn-h2 lmn-h2--c">Готовы начать?</h2><a class="lmn-pill lmn-pill--lg">'+v.btns[0]+'</a></section>'
+    + '<footer class="lmn-foot"><span class="lmn-mono">'+v.logo.charAt(0)+'</span><span>© 2026 · '+v.logo+' · сделано в Uniqore</span></footer>'
+    + '</div>';
+  }
   function buildMobile(v){
     return ''
     + '<div class="msm-bar"><span>9:41</span><span class="msm-ss"><i></i><i></i><i></i></span></div>'
