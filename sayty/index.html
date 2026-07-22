@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260721a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260721k">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260721l">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -422,21 +422,38 @@
             </div>
           </div>
 
-          <div class="sy-reel__mini">
-            <div class="sy-reel__cap">Ещё пример — анимация логотипа за 5 секунд</div>
-            <div class="sy-work__tile">
-              <span class="sy-work__badge">Команда · моушн</span>
-              <div class="lg-stage" aria-hidden="true">
-                <svg class="lg-mark" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                  <circle class="lg-ring" cx="52" cy="52" r="30"/>
-                  <line class="lg-handle" x1="73" y1="73" x2="96" y2="96"/>
-                  <circle class="lg-core" cx="52" cy="52" r="6"/>
-                </svg>
-                <div class="lg-word"><span>u</span><span>n</span><span>i</span><span>q</span><span>o</span><span>r</span><span>e</span></div>
-                <div class="lg-sweep"></div>
-              </div>
+          <div class="dz">
+            <div class="dz__head">
+              <h3>Ещё работы <em>дизайна</em></h3>
+              <p>Живые моушн-сцены под бренд — так команда добавляет сайту характер.</p>
+            </div>
+            <div class="dz__grid" id="dzGrid">
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-panelka.mp4?v=1" poster="/assets/dz/dz-panelka.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: панелька"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-coffee.mp4?v=1" poster="/assets/dz/dz-coffee.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: кофе"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-escalator.mp4?v=1" poster="/assets/dz/dz-escalator.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: эскалатор"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-flag.mp4?v=1" poster="/assets/dz/dz-flag.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: флаг"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-fountain.mp4?v=1" poster="/assets/dz/dz-fountain.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: фонтан"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-swing.mp4?v=1" poster="/assets/dz/dz-swing.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: качели"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-smoke.mp4?v=1" poster="/assets/dz/dz-smoke.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: дым"></video></div>
+            </div>
+            <div class="dz__head" style="margin-top:44px">
+              <h3>Анимация <em>логотипов</em></h3>
+              <p>Оживляем бренд — от идеи до финального ролика.</p>
+            </div>
+            <div class="dz__logos" id="dzLogos">
+              <div class="dz__logo"><video src="/assets/dz/dz-dreambid.mp4?v=1" poster="/assets/dz/dz-dreambid.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Логотип Dreambid"></video></div>
+              <div class="dz__logo"><video src="/assets/dz/dz-ravero.mp4?v=1" poster="/assets/dz/dz-ravero.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Логотип Ravero Drums"></video></div>
             </div>
           </div>
+          <script>
+          (function(){
+            var vids=document.querySelectorAll('.dz video'); if(!vids.length) return;
+            if('IntersectionObserver' in window){
+              var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting){var p=v.play();if(p&&p.catch)p.catch(function(){});}else{v.pause();}});},{threshold:0.2});
+              vids.forEach(function(v){io.observe(v);});
+            } else { vids.forEach(function(v){var p=v.play();if(p&&p.catch)p.catch(function(){});}); }
+          })();
+          </script>
           <!-- ФУНДАМЕНТ: доп. мелкие видео — дублировать .rc__frame карточками в ряд (инлайн-плей). -->
           <script>
           (function(){
