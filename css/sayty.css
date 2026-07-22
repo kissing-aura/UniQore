@@ -32,9 +32,9 @@
 
 /* фон-глубина + живая аврора (Linear-style) */
 .sy-bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:var(--sy-bg)}
-.sy-bgfx::after{content:'';position:absolute;inset:-25%;
-  background:radial-gradient(38% 34% at 75% 8%,rgba(205,255,79,.22),transparent 60%),radial-gradient(34% 32% at 12% 22%,rgba(49,224,176,.16),transparent 60%),radial-gradient(32% 32% at 60% 76%,rgba(126,104,255,.11),transparent 60%);
-  filter:blur(26px);animation:syAurora 26s ease-in-out infinite alternate;will-change:transform}
+.sy-bgfx::after{content:'';position:absolute;inset:-30%;
+  background:radial-gradient(40% 38% at 73% 14%,rgba(205,255,79,.30),transparent 60%),radial-gradient(42% 44% at 84% 58%,rgba(205,255,79,.20),transparent 58%),radial-gradient(38% 36% at 10% 20%,rgba(49,224,176,.22),transparent 60%),radial-gradient(38% 42% at 42% 90%,rgba(126,104,255,.15),transparent 60%);
+  filter:blur(30px);animation:syAurora 24s ease-in-out infinite alternate;will-change:transform}
 @keyframes syAurora{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-3%,2.5%) scale(1.08)}100%{transform:translate(2.5%,-2%) scale(1.04)}}
 .sy-bgfx::before{content:'';position:absolute;inset:0;z-index:1;opacity:.5;
   background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
@@ -71,7 +71,8 @@
   box-shadow:0 2px 8px rgba(0,0,0,.5),0 40px 90px -28px rgba(0,0,0,.85),0 90px 170px -60px rgba(0,0,0,.92),0 0 0 1px rgba(205,255,79,.07),0 1px 0 rgba(255,255,255,.1) inset;
   transition:transform .5s cubic-bezier(.2,1,.3,1),box-shadow .4s}
 .sy-browser::after{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 30%)}
-.sy-mock::before{content:'';position:absolute;z-index:1;inset:4% -6% -10% 2%;background:radial-gradient(closest-side,rgba(205,255,79,.32),rgba(205,255,79,.07) 52%,transparent 74%);filter:blur(46px);pointer-events:none}
+.sy-mock::before{content:'';position:absolute;z-index:1;inset:2% -10% -14% -2%;background:radial-gradient(closest-side,rgba(205,255,79,.45),rgba(49,224,176,.14) 48%,transparent 72%);filter:blur(52px);pointer-events:none;animation:syGlowPulse 7s ease-in-out infinite}
+@keyframes syGlowPulse{0%,100%{opacity:.85}50%{opacity:1}}
 .sy-browser__bar{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)}
 .sy-dots{display:flex;gap:6px}.sy-dots span{width:11px;height:11px;border-radius:50%}
 .sy-dots span:nth-child(1){background:#ff5f57}.sy-dots span:nth-child(2){background:#febc2e}.sy-dots span:nth-child(3){background:#28c840}
