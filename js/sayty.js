@@ -36,6 +36,27 @@
     counters.forEach(function (e) { cio.observe(e); });
   }
 
+  /* ── таймлайн: отрисовка линии при въезде (one-shot) ── */
+  var tls = document.querySelectorAll('.sy-tl');
+  if ('IntersectionObserver' in window && !reduce && tls.length) {
+    var tlio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('drawn'); tlio.unobserve(e.target); } });
+    }, { threshold: 0.2 });
+    tls.forEach(function (e) { tlio.observe(e); });
+  } else tls.forEach(function (e) { e.classList.add('drawn'); });
+
+  /* ── spotlight-hover карточек (только desktop-hover, rAF-коалесинг) ── */
+  if (window.matchMedia && window.matchMedia('(hover:hover)').matches && !reduce) {
+    document.querySelectorAll('.sy-feat,.sy-get,.sy-pcard').forEach(function (c) {
+      var raf = 0, mx = 0, my = 0;
+      c.addEventListener('pointermove', function (e) {
+        var r = c.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
+        if (raf) return;
+        raf = requestAnimationFrame(function () { raf = 0; c.style.setProperty('--mx', mx + 'px'); c.style.setProperty('--my', my + 'px'); });
+      }, { passive: true });
+    });
+  }
+
   /* ── floating cards (staggered) ── */
   var fcards = document.querySelectorAll('.sy-fcard');
   if ('IntersectionObserver' in window && fcards.length) {
