@@ -728,6 +728,11 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-midcta__in .sy-btn{flex:0 0 auto}
 @media(max-width:720px){.sy-midcta__in{flex-direction:column;align-items:stretch;text-align:center}.sy-midcta__txt h3{max-width:none}.sy-midcta__txt p{margin-bottom:4px}.sy-midcta__in .sy-btn{width:100%;justify-content:center}}
 
+/* строка про дизайн-команду (замена третьего повтора цифр) */
+.sy-team-line{display:flex;align-items:center;justify-content:center;gap:11px;text-align:center;margin:26px auto 0;max-width:640px;color:var(--sy-txt-soft);font-size:clamp(14px,1.5vw,16px);line-height:1.5}
+.sy-team-line svg{width:20px;height:20px;flex:0 0 auto;color:var(--sy-l)}
+@media(max-width:560px){.sy-team-line{align-items:flex-start;text-align:left;gap:9px}}
+
 /* ═══════════ MOBILE PERF — убрать лаги: тяжёлые постоянные перерисовки прочь ═══════════ */
 /* Планшет и уже: гасим бесконечные декоративные циклы (аврора с blur, сканер шоурила, пульсы) */
 @media(max-width:960px){
