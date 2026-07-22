@@ -670,3 +670,19 @@ textarea.sy-in{resize:vertical;min-height:84px}
 @keyframes lgLetter{0%,32%{opacity:0;transform:translateY(10px)}48%,84%{opacity:1;transform:translateY(0)}96%,100%{opacity:0;transform:translateY(10px)}}
 @keyframes lgSweep{0%,42%{left:-45%}64%{left:106%}100%{left:106%}}
 @media(prefers-reduced-motion:reduce){.lg-ring,.lg-handle,.lg-core,.lg-word span,.lg-sweep{animation:none}.lg-ring,.lg-handle{stroke-dashoffset:0}.lg-core{transform:scale(1)}.lg-word span{opacity:1;transform:none}}
+
+/* ═══════════ MOBILE PERF — убрать лаги: тяжёлые постоянные перерисовки прочь ═══════════ */
+/* Планшет и уже: гасим бесконечные декоративные циклы (аврора с blur, сканер шоурила, пульсы) */
+@media(max-width:960px){
+  .sy-bgfx::after{animation:none;will-change:auto}
+  .sy-mock::before{animation:none}
+  .rc__scan,.rc__b,.rc__hud i,.sy-eyebrow .dot{animation:none}
+}
+/* Телефон: десктоп-мокап целиком прочь (лаг авто-скролла + сплюснутый десктоп = «грубо»),
+   и убираем дубль-повтор чипов (они повторяют список преимуществ выше) */
+@media(max-width:760px){
+  .sy-hero__right{display:none}
+  .sy-hero__chips{display:none}
+  /* липкая шапка переблюривается на каждом кадре скролла — на мобилке плотный фон без blur */
+  .nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(10,14,26,.97)!important}
+}
