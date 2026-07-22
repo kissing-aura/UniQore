@@ -47,10 +47,14 @@
 .sy-hero__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(30px,4vw,56px);align-items:start}
 .sy-mock{margin-top:clamp(6px,3vw,40px)}
 @media(max-width:960px){.sy-hero__grid{grid-template-columns:1fr;gap:44px}.sy-mock{margin-top:0}}
-.sy-hero__h1{font-family:'Unbounded',var(--font-display,sans-serif);font-weight:800;font-size:clamp(34px,5.4vw,64px);line-height:1.02;letter-spacing:-.03em;margin:22px 0 0}
+.sy-hero__left{position:relative}
+.sy-hero__left::before{content:'';position:absolute;left:-12%;top:-4%;width:60%;height:52%;background:radial-gradient(closest-side,rgba(205,255,79,.15),rgba(49,224,176,.05) 55%,transparent 78%);filter:blur(48px);z-index:-1;pointer-events:none}
+.sy-hero__h1{font-family:'Unbounded',var(--font-display,sans-serif);font-weight:800;font-size:var(--sy-fs-h1);line-height:1.0;letter-spacing:-.036em;margin:22px 0 0}
 .sy-hero__h1 em{font-style:normal;color:var(--sy-l);position:relative}
-.sy-hero__lead{margin:20px 0 0;font-size:clamp(16px,1.6vw,19px);line-height:1.6;color:#aab4c4;max-width:40ch}
-.sy-hero__benefits{display:grid;grid-template-columns:1fr 1fr;gap:9px 18px;margin:26px 0 0}
+.sy-hero__h1 em::after{content:'';position:absolute;left:-1px;right:-1px;bottom:-.04em;height:.09em;border-radius:99px;background:var(--sy-l);opacity:.85;transform:scaleX(0);transform-origin:left;transition:transform .6s cubic-bezier(.2,.85,.25,1) .45s;pointer-events:none}
+.sy-hero__h1.in em::after{transform:scaleX(1)}
+.sy-hero__lead{margin:20px 0 0;font-size:var(--sy-fs-lead);line-height:1.55;color:var(--sy-txt-soft);max-width:44ch}
+.sy-hero__benefits{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px;margin:28px 0 0}
 @media(max-width:520px){.sy-hero__benefits{grid-template-columns:1fr}}
 .sy-ben{display:flex;align-items:center;gap:9px;font-size:14px;color:#c7ccd6}
 .sy-ben svg{width:17px;height:17px;flex-shrink:0;color:var(--sy-l)}
@@ -63,6 +67,24 @@
 .sy-hero__chips{display:flex;gap:8px;margin:20px 0 0;flex-wrap:wrap}
 .sy-chip{font-size:12px;color:#aeb8c9;border:1px solid var(--sy-line);border-radius:999px;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.02)}
 .sy-chip svg{width:12px;height:12px;color:var(--sy-mint)}
+
+/* мобильный hero-визуал: лёгкий СТАТИЧНЫЙ телефон-мокап (без анимаций/backdrop-filter, RF-safe) */
+.sy-hero__mviz{display:none}
+@media(max-width:760px){.sy-hero__mviz{display:block;position:relative;width:100%;max-width:248px;margin:36px auto 6px}}
+.sy-mviz__phone{position:relative;border-radius:34px;padding:8px;background:linear-gradient(155deg,#242b35,#0a0e14);border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 60px -26px rgba(0,0,0,.9),0 0 52px -22px rgba(205,255,79,.32)}
+.sy-mviz__notch{position:absolute;top:15px;left:50%;transform:translateX(-50%);width:32%;height:10px;border-radius:99px;background:#000;z-index:2}
+.sy-mviz__screen{border-radius:27px;overflow:hidden;background:radial-gradient(120% 46% at 50% 0,rgba(205,255,79,.09),transparent 60%),#0b1119;padding:28px 13px 14px}
+.sy-mviz__url{font-family:var(--font-mono,monospace);font-size:8px;color:#8792a3;text-align:center;margin-bottom:14px;letter-spacing:.02em}
+.sy-mviz__badge{display:inline-block;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sy-l);background:rgba(205,255,79,.14);padding:3px 8px;border-radius:99px;margin-bottom:9px}
+.sy-mviz__h{font-family:'Unbounded',sans-serif;font-weight:800;font-size:18px;line-height:1.08;color:#fff;letter-spacing:-.01em}
+.sy-mviz__btn{display:inline-block;margin-top:11px;font-size:9px;font-weight:700;color:#08130a;background:var(--sy-l);padding:7px 14px;border-radius:9px}
+.sy-mviz__row{display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,.07);background:#141a26;border-radius:10px;padding:8px 11px;margin-top:8px}
+.sy-mviz__row:first-of-type{margin-top:14px}
+.sy-mviz__row b{font-size:10px;color:#fff;font-weight:700}
+.sy-mviz__row span{font-size:9.5px;color:#9aa6bd}
+.sy-mviz__stat{position:absolute;right:-8px;bottom:20px;background:linear-gradient(180deg,rgba(26,33,49,.97),rgba(12,16,25,.98));border:1px solid rgba(205,255,79,.3);border-radius:13px;padding:9px 13px;box-shadow:0 16px 32px -14px rgba(0,0,0,.85)}
+.sy-mviz__stat b{display:block;font-family:'Unbounded',sans-serif;font-weight:800;font-size:15px;color:var(--sy-l);line-height:1}
+.sy-mviz__stat span{display:block;font-size:9px;color:#9aa6bd;margin-top:3px}
 
 /* browser mockup */
 .sy-mock{position:relative;perspective:1700px;animation:syFloatY 9s ease-in-out infinite}
@@ -676,6 +698,21 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-form__trust{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;margin:2px 0 18px}
 .sy-form__trust span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sy-txt-soft)}
 .sy-form__trust svg{width:13px;height:13px;color:var(--sy-l);flex:none}
+
+/* эмо-блок перед формой (боль → разворот → обещание → соц-док → честная скарсити → воронка) */
+.sy-emo{max-width:760px;margin:0 auto clamp(30px,4vw,46px);text-align:center}
+.sy-emo__pain{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.sy-emo__x{font-size:14px;color:var(--sy-mut);padding:7px 14px;border:1px solid var(--sy-line);border-radius:999px;text-decoration:line-through;text-decoration-color:rgba(255,90,90,.55);text-decoration-thickness:1.5px}
+.sy-emo__turn{font-family:'Unbounded',sans-serif;font-weight:600;color:var(--sy-l);font-size:clamp(15px,1.6vw,18px);margin-bottom:12px}
+.sy-emo__head{font-family:'Unbounded',sans-serif;font-weight:700;font-size:clamp(23px,3.4vw,38px);line-height:1.1;letter-spacing:-.02em;margin:0 auto 14px;max-width:660px;color:#fff}
+.sy-emo__head em{color:var(--sy-l);font-style:normal}
+.sy-emo__sub{color:var(--sy-txt-soft);font-size:var(--sy-fs-sub);max-width:540px;margin:0 auto 22px;line-height:1.5}
+.sy-emo__proof{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:13.5px;color:var(--sy-txt);margin-bottom:18px}
+.sy-emo__proof i{width:4px;height:4px;border-radius:50%;background:var(--sy-mut);opacity:.5;flex:none}
+.sy-emo__scarcity{display:inline-flex;align-items:center;gap:10px;text-align:left;font-size:13.5px;line-height:1.4;color:var(--sy-txt);background:rgba(205,255,79,.06);border:1px solid rgba(205,255,79,.22);padding:10px 16px;border-radius:16px;max-width:520px}
+.sy-emo__pulse{width:9px;height:9px;border-radius:50%;background:var(--sy-l);box-shadow:0 0 0 4px rgba(205,255,79,.16);flex:none}
+.sy-emo__funnel{width:2px;height:clamp(30px,5vw,52px);margin:22px auto 0;background:linear-gradient(var(--sy-l),transparent);border-radius:2px}
+@media(max-width:640px){.sy-emo{margin-bottom:26px}.sy-emo__scarcity{font-size:12.5px}}
 
 /* ═══════════ MOBILE PERF — убрать лаги: тяжёлые постоянные перерисовки прочь ═══════════ */
 /* Планшет и уже: гасим бесконечные декоративные циклы (аврора с blur, сканер шоурила, пульсы) */
