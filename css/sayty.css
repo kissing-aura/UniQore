@@ -1,6 +1,6 @@
 /* sayty.css — конверсионная страница «Сайты под ключ» под горячий трафик Директа.
    Бренд: тёмная тема + лайм #CDFF4F, дорогой минимализм. Scoped: .sy* */
-:root{--sy-l:#CDFF4F;--sy-l2:#a7e33f;--sy-mint:#31e0b0;--sy-bg:#0A0E1A;--sy-surf:rgba(255,255,255,.025);--sy-line:rgba(255,255,255,.08);--sy-txt:#E7EAF0;--sy-mut:#8792a3;--sy-mut2:#5f6b80}
+:root{--sy-l:#CDFF4F;--sy-l2:#a7e33f;--sy-mint:#31e0b0;--sy-bg:#0A0E1A;--sy-surf:rgba(255,255,255,.025);--sy-line:rgba(255,255,255,.08);--sy-txt:#E7EAF0;--sy-mut:#8792a3;--sy-mut2:#5f6b80;--sy-txt-soft:#c2ccd9;--sy-fs-h1:clamp(36px,5vw,60px);--sy-fs-h2:clamp(28px,3.6vw,46px);--sy-fs-lead:clamp(17px,1.5vw,20px);--sy-fs-sub:clamp(16px,1.4vw,19px);--sy-section-y:clamp(80px,10vw,150px);--sy-head-mb:clamp(44px,6vw,76px);--sy-measure:52ch}
 
 /* спрятать старый page-hero целиком — у нас свой */
 .sy{color:var(--sy-txt)}
@@ -13,14 +13,15 @@
 @media(prefers-reduced-motion:reduce){.sy-rev{opacity:1;transform:none;transition:none}}
 
 /* заголовки/кнопки */
-.sy-eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono,monospace);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--sy-l);border:1px solid rgba(205,255,79,.2);background:rgba(205,255,79,.05);padding:7px 14px;border-radius:999px;}
+.sy-eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono,monospace);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sy-l);border:1px solid rgba(205,255,79,.2);background:rgba(205,255,79,.05);padding:7px 14px;border-radius:999px;}
 .sy-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--sy-l);box-shadow:0 0 10px var(--sy-l);animation:syPulse 1.8s infinite}
 @keyframes syPulse{50%{opacity:.4}}
-.sy-h2{font-family:'Unbounded',var(--font-display,sans-serif);font-weight:700;font-size:clamp(28px,4.2vw,50px);line-height:1.06;letter-spacing:-.02em;text-align:center}
+.sy-h2{font-family:'Unbounded',var(--font-display,sans-serif);font-weight:700;font-size:var(--sy-fs-h2);line-height:1.04;letter-spacing:-.026em;text-align:inherit}
 .sy-h2 em{font-style:normal;color:var(--sy-l)}
-.sy-sub{text-align:center;color:var(--sy-mut);font-size:clamp(15px,1.5vw,18px);line-height:1.6;max-width:56ch;margin:18px auto 0}
-.sy-section{padding:clamp(64px,9vw,120px) 0;position:relative}
-.sy-head{margin-bottom:clamp(40px,5vw,60px)}
+.sy-sub{text-align:center;color:var(--sy-txt-soft);font-size:var(--sy-fs-sub);line-height:1.55;max-width:46ch;margin:20px auto 0}
+.sy-section{padding:var(--sy-section-y) 0;position:relative}
+.sy-head{margin-bottom:var(--sy-head-mb);text-align:center;max-width:var(--sy-measure);margin-left:auto;margin-right:auto}
+.sy-head--center{text-align:center}
 
 .sy-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--font-body,Inter,sans-serif);font-weight:700;font-size:15px;padding:15px 26px;border-radius:14px;cursor:pointer;border:1px solid transparent;transition:transform .2s cubic-bezier(.2,1,.3,1),box-shadow .3s ease,background .2s,border-color .2s;text-decoration:none;white-space:nowrap}
 .sy-btn--main{background:linear-gradient(135deg,var(--sy-l),var(--sy-l2));color:#08130a;box-shadow:0 10px 34px -8px rgba(205,255,79,.55),0 1px 0 rgba(255,255,255,.35) inset}
@@ -670,6 +671,11 @@ textarea.sy-in{resize:vertical;min-height:84px}
 @keyframes lgLetter{0%,32%{opacity:0;transform:translateY(10px)}48%,84%{opacity:1;transform:translateY(0)}96%,100%{opacity:0;transform:translateY(10px)}}
 @keyframes lgSweep{0%,42%{left:-45%}64%{left:106%}100%{left:106%}}
 @media(prefers-reduced-motion:reduce){.lg-ring,.lg-handle,.lg-core,.lg-word span,.lg-sweep{animation:none}.lg-ring,.lg-handle{stroke-dashoffset:0}.lg-core{transform:scale(1)}.lg-word span{opacity:1;transform:none}}
+
+/* чипы-гарантии у кнопки формы (перенос секции «Вы ничем не рискуете» вплотную к CTA) */
+.sy-form__trust{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;margin:2px 0 18px}
+.sy-form__trust span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sy-txt-soft)}
+.sy-form__trust svg{width:13px;height:13px;color:var(--sy-l);flex:none}
 
 /* ═══════════ MOBILE PERF — убрать лаги: тяжёлые постоянные перерисовки прочь ═══════════ */
 /* Планшет и уже: гасим бесконечные декоративные циклы (аврора с blur, сканер шоурила, пульсы) */
