@@ -243,3 +243,17 @@
     }
   }
 })();
+
+/* наклон hero-мокапа за курсором (параллакс) */
+(function () {
+  var m = document.querySelector('.sy-mock'), b = document.querySelector('.sy-browser');
+  if (!m || !b) return;
+  var ticking = false, lx = 0, ly = 0;
+  m.addEventListener('mousemove', function (e) {
+    var r = m.getBoundingClientRect();
+    lx = (e.clientX - r.left) / r.width - 0.5;
+    ly = (e.clientY - r.top) / r.height - 0.5;
+    b.style.transform = 'rotateY(' + (-7 + lx * 9).toFixed(2) + 'deg) rotateX(' + (3.5 - ly * 6).toFixed(2) + 'deg)';
+  }, { passive: true });
+  m.addEventListener('mouseleave', function () { b.style.transform = ''; });
+})();
