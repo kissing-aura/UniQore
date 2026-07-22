@@ -12,6 +12,30 @@
     revs.forEach(function (e) { io.observe(e); });
   } else revs.forEach(function (e) { e.classList.add('in'); });
 
+  /* ── счётчики цифр (one-shot, rAF, стоп на финале; fallback = финальное значение) ── */
+  var counters = document.querySelectorAll('.sy-cnt');
+  function runCount(el) {
+    var to = parseFloat(el.getAttribute('data-to')) || 0;
+    var dec = parseInt(el.getAttribute('data-dec'), 10) || 0;
+    var suf = el.getAttribute('data-suf') || '';
+    var start = null, dur = 900;
+    function frame(t) {
+      if (start === null) start = t;
+      var p = Math.min((t - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (to * eased).toFixed(dec) + suf;
+      if (p < 1) requestAnimationFrame(frame);
+      else el.textContent = to.toFixed(dec) + suf;
+    }
+    requestAnimationFrame(frame);
+  }
+  if ('IntersectionObserver' in window && !reduce && counters.length) {
+    var cio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { runCount(e.target); cio.unobserve(e.target); } });
+    }, { threshold: 0.6 });
+    counters.forEach(function (e) { cio.observe(e); });
+  }
+
   /* ── floating cards (staggered) ── */
   var fcards = document.querySelectorAll('.sy-fcard');
   if ('IntersectionObserver' in window && fcards.length) {

@@ -342,6 +342,9 @@
 .sy-tl__i{position:relative;padding:0 0 34px}
 .sy-tl__i:last-child{padding-bottom:0}
 .sy-tl__dot{position:absolute;left:-38px;top:0;width:24px;height:24px;border-radius:50%;background:var(--sy-bg);border:2px solid var(--sy-l);display:grid;place-items:center;color:var(--sy-l);font-size:11px;font-weight:800;box-shadow:0 0 16px rgba(205,255,79,.4)}
+@keyframes syPop{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.sy-tl__i.in .sy-tl__dot{animation:syPop .5s cubic-bezier(.34,1.56,.64,1) both}
+@media(prefers-reduced-motion:reduce){.sy-tl__i.in .sy-tl__dot{animation:none}}
 .sy-tl__day{font-family:var(--font-mono,monospace);font-size:11px;color:var(--sy-l);letter-spacing:.05em}
 .sy-tl__t{font-weight:700;font-size:17px;margin-top:4px}
 .sy-tl__d{font-size:14px;color:var(--sy-mut);line-height:1.5;margin-top:6px}
