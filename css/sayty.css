@@ -716,6 +716,18 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-emo__funnel{width:2px;height:clamp(30px,5vw,52px);margin:22px auto 0;background:linear-gradient(var(--sy-l),transparent);border-radius:2px}
 @media(max-width:640px){.sy-emo{margin-bottom:26px}.sy-emo__scarcity{font-size:12.5px}}
 
+/* MID-CTA плашка после тарифов (несущий lime-акцент — точка входа в форму на пике цены) */
+.sy-midcta{padding:clamp(8px,2.5vw,26px) 0}
+.sy-midcta__in{display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;
+  background:linear-gradient(120deg,color-mix(in srgb,var(--sy-l) 11%,rgba(255,255,255,.02)),rgba(255,255,255,.014));
+  border:1px solid color-mix(in srgb,var(--sy-l) 22%,var(--sy-line));border-radius:24px;
+  padding:clamp(24px,3vw,38px) clamp(24px,3.4vw,44px);
+  box-shadow:0 40px 90px -50px rgba(205,255,79,.3),inset 0 1px 0 rgba(255,255,255,.06)}
+.sy-midcta__txt h3{font-family:'Unbounded',var(--font-display,sans-serif);font-weight:700;font-size:clamp(19px,2.3vw,29px);line-height:1.15;letter-spacing:-.02em;color:#fff;max-width:24ch;margin:0}
+.sy-midcta__txt p{margin:9px 0 0;color:var(--sy-txt-soft);font-size:14px;line-height:1.5}
+.sy-midcta__in .sy-btn{flex:0 0 auto}
+@media(max-width:720px){.sy-midcta__in{flex-direction:column;align-items:stretch;text-align:center}.sy-midcta__txt h3{max-width:none}.sy-midcta__txt p{margin-bottom:4px}.sy-midcta__in .sy-btn{width:100%;justify-content:center}}
+
 /* ═══════════ MOBILE PERF — убрать лаги: тяжёлые постоянные перерисовки прочь ═══════════ */
 /* Планшет и уже: гасим бесконечные декоративные циклы (аврора с blur, сканер шоурила, пульсы) */
 @media(max-width:960px){

@@ -200,13 +200,16 @@
   var sticky = document.getElementById('sySticky');
   if (sticky) {
     var syFooter = document.querySelector('footer.footer') || document.querySelector('.footer');
+    var syZf = document.getElementById('zayavka');
     var syncSticky = function () {
       var nearFooter = false;
       if (syFooter) {
         var fr = syFooter.getBoundingClientRect();
         nearFooter = fr.top < (window.innerHeight - 24);
       }
-      if (window.scrollY > 640 && !nearFooter) sticky.classList.add('show');
+      var nearForm = false;
+      if (syZf) nearForm = syZf.getBoundingClientRect().top < (window.innerHeight * 0.85);
+      if (window.scrollY > 640 && !nearFooter && !nearForm) sticky.classList.add('show');
       else sticky.classList.remove('show');
     };
     window.addEventListener('scroll', syncSticky, { passive: true });
@@ -225,6 +228,13 @@
     var errorRevertTimer = null;
     var submitBtn = form.querySelector('[type=submit]');
     var submitBtnText = submitBtn ? submitBtn.textContent : '';
+    var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'gclid'];
+    function getTrafficSource() {
+      var params = new URLSearchParams(window.location.search);
+      var out = {};
+      UTM_KEYS.forEach(function (k) { out[k] = params.get(k) || ''; });
+      return out;
+    }
     var CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';
     var CMD_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
     var CMD_BRIDGE_SECRET = '2dd950726e4ea4428b3af52c5950ef9c43b7afa58370a277';
@@ -251,13 +261,13 @@
       if (errorRevertTimer) { clearTimeout(errorRevertTimer); errorRevertTimer = null; }
       var btn = submitBtn || form.querySelector('[type=submit]');
       btn.disabled = true; btn.classList.remove('btn--error'); btn.textContent = 'Отправляем…';
-      var data = {
+      var data = Object.assign({
         name: name.value.trim(),
         contact: contact.value.trim(),
         business: (form.querySelector('#sy-niche') || {}).value || '',
         task: (form.querySelector('#sy-comment') || {}).value || '',
         website: ''
-      };
+      }, getTrafficSource());
       var bridgePromise = pushToCommandV2(data);
       var apiPromise = fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
         .then(function (r) { return r.ok; }).catch(function () { return false; });
