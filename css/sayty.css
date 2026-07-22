@@ -89,10 +89,10 @@
 .sy-fcard__ic{width:26px;height:26px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;background:rgba(205,255,79,.14);border:1px solid rgba(205,255,79,.3);color:var(--sy-l)}
 .sy-fcard__ic svg{width:15px;height:15px}
 .sy-fcard small{display:block;font-size:10px;color:var(--sy-mut);font-weight:500}
-.sy-fcard--a{top:6%;left:-7%}.sy-fcard--b{top:34%;right:-9%}.sy-fcard--c{bottom:16%;left:-9%}
-.sy-fcard--d{bottom:-3%;right:4%}
-@media(max-width:960px){.sy-fcard--a{left:2%}.sy-fcard--b{right:2%}.sy-fcard--c{left:2%}.sy-fcard--d{right:2%;bottom:2%}}
-@media(max-width:560px){.sy-fcard--c,.sy-fcard--a{display:none}}
+/* карточки в УГЛАХ мокапа — над баром / под контентом, чтобы не резать текст демо-сайта при автоскролле */
+.sy-fcard--a{top:-3%;left:-5%}.sy-fcard--b{top:9%;right:-7%}.sy-fcard--c{bottom:-5%;left:-4%}
+.sy-fcard--d{bottom:-5%;right:-4%}
+@media(max-width:960px){.sy-fcard--a,.sy-fcard--c{display:none}.sy-fcard--b{top:5%;right:1%}.sy-fcard--d{bottom:1%;right:1%}}
 
 /* mini-site внутри мокапа */
 .ms-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 22px}
