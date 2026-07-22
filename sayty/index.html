@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260721a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260721j">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260721k">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -405,13 +405,19 @@
             <div class="rc__stage" id="reelStage">
               <div class="rc__frame" id="reelFrame" role="button" tabindex="0" aria-label="Смотреть ролик Lovi">
                 <img class="rc__poster" src="/assets/reel-lovi-poster.jpg?v=1" alt="Промо приложения Lovi" loading="lazy">
-                <video class="rc__vid" id="reelVid" src="/assets/reel-lovi.mp4?v=1" poster="/assets/reel-lovi-poster.jpg?v=1" playsinline preload="none"></video>
+                <video class="rc__vid" id="reelVid" src="/assets/reel-lovi.mp4?v=1" poster="/assets/reel-lovi-poster.jpg?v=1" playsinline preload="none" disablepictureinpicture x-webkit-airplay="deny" controlslist="nodownload noplaybackrate noremoteplayback"></video>
                 <div class="rc__grid"></div>
                 <div class="rc__scan"></div>
                 <span class="rc__b rc__b--tl"></span><span class="rc__b rc__b--tr"></span><span class="rc__b rc__b--bl"></span><span class="rc__b rc__b--br"></span>
                 <div class="rc__reticle"></div>
                 <div class="rc__hud"><i></i>SCAN · LOVI</div>
                 <div class="rc__play"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="rc__resume" id="reelResume"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="rc__ctrl" id="reelCtrl">
+                  <button type="button" class="rc__pp" id="reelPP" aria-label="Пауза"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>
+                  <div class="rc__track" id="reelTrack"><div class="rc__fill" id="reelFill"></div></div>
+                  <span class="rc__time" id="reelTime">0:00 / 1:34</span>
+                </div>
               </div>
             </div>
           </div>
@@ -435,21 +441,28 @@
           <script>
           (function(){
             var frame=document.getElementById('reelFrame'),open=document.getElementById('reelOpen'),
-                vid=document.getElementById('reelVid'),stage=document.getElementById('reelStage');
+                vid=document.getElementById('reelVid'),stage=document.getElementById('reelStage'),
+                pp=document.getElementById('reelPP'),track=document.getElementById('reelTrack'),
+                fill=document.getElementById('reelFill'),timeEl=document.getElementById('reelTime');
             if(!frame||!vid) return;
-            var playing=false;
-            function play(){
-              if(playing) return; playing=true;
-              frame.style.transform=''; frame.classList.add('is-playing');
-              vid.setAttribute('controls',''); try{vid.play();}catch(e){}
-            }
-            frame.addEventListener('click',function(){ if(!playing) play(); });
-            frame.addEventListener('keydown',function(e){ if((e.key==='Enter'||e.key===' ')&&!playing){e.preventDefault();play();} });
-            if(open) open.addEventListener('click',play);
+            var started=false;
+            var I_PAUSE='<svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+            var I_PLAY='<svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>';
+            function fmt(s){s=Math.max(0,s|0);var m=(s/60)|0,ss=s%60;return m+':'+(ss<10?'0':'')+ss;}
+            function start(){started=true;frame.style.transform='';frame.classList.add('is-playing');vid.play();}
+            function toggle(){ if(vid.paused) vid.play(); else vid.pause(); }
+            frame.addEventListener('click',function(){ if(!started) start(); else toggle(); });
+            frame.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault(); if(!started) start(); else toggle();} });
+            if(open) open.addEventListener('click',function(){ if(!started) start(); else toggle(); });
+            vid.addEventListener('play',function(){ frame.classList.remove('is-paused'); if(pp){pp.innerHTML=I_PAUSE;pp.setAttribute('aria-label','Пауза');} });
+            vid.addEventListener('pause',function(){ frame.classList.add('is-paused'); if(pp){pp.innerHTML=I_PLAY;pp.setAttribute('aria-label','Смотреть');} });
+            vid.addEventListener('timeupdate',function(){ var d=vid.duration||0; if(fill)fill.style.width=(d?vid.currentTime/d*100:0)+'%'; if(timeEl)timeEl.textContent=fmt(vid.currentTime)+' / '+fmt(d); });
+            if(pp) pp.addEventListener('click',function(e){ e.stopPropagation(); toggle(); });
+            if(track) track.addEventListener('click',function(e){ e.stopPropagation(); var r=track.getBoundingClientRect(),d=vid.duration||0; if(d) vid.currentTime=Math.min(d,Math.max(0,(e.clientX-r.left)/r.width*d)); });
             if(stage&&window.matchMedia&&matchMedia('(hover:hover)').matches){
               var raf=0;
-              stage.addEventListener('mousemove',function(e){ if(playing) return; var r=stage.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;if(raf)return;raf=requestAnimationFrame(function(){raf=0;frame.style.transform='rotateY('+(px*10)+'deg) rotateX('+(-py*8)+'deg)';});});
-              stage.addEventListener('mouseleave',function(){ if(!playing) frame.style.transform=''; });
+              stage.addEventListener('mousemove',function(e){ if(started) return; var r=stage.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;if(raf)return;raf=requestAnimationFrame(function(){raf=0;frame.style.transform='rotateY('+(px*10)+'deg) rotateX('+(-py*8)+'deg)';});});
+              stage.addEventListener('mouseleave',function(){ if(!started) frame.style.transform=''; });
             }
           })();
           </script>
@@ -810,7 +823,7 @@
 
   <!-- sticky mobile CTA -->
   <div class="sy-sticky" id="sySticky">
-    <div class="sy-sticky__txt"><div class="sy-sticky__t">Сайт от <span data-usd="150">$150</span> · за 3–5 дней</div><div class="sy-sticky__s">Расчёт бесплатно</div></div>
+    <div class="sy-sticky__txt"><div class="sy-sticky__t">Сайт от <span data-usd="150">$150</span></div><div class="sy-sticky__s">за 3–5 дней · бесплатный расчёт</div></div>
     <a href="#zayavka" class="sy-btn sy-btn--main">Получить расчёт</a>
   </div>
 
