@@ -198,12 +198,14 @@
 
   /* ── objections accordion ── */
   document.querySelectorAll('.sy-obj__q').forEach(function (q) {
+    q.setAttribute('aria-expanded', 'false');
     q.addEventListener('click', function () {
       var item = q.parentElement, ans = item.querySelector('.sy-obj__a'), open = item.classList.contains('open');
       document.querySelectorAll('.sy-obj__i').forEach(function (i) {
         i.classList.remove('open'); var a = i.querySelector('.sy-obj__a'); if (a) a.style.maxHeight = '';
+        var qq = i.querySelector('.sy-obj__q'); if (qq) qq.setAttribute('aria-expanded', 'false');
       });
-      if (!open) { item.classList.add('open'); ans.style.maxHeight = ans.scrollHeight + 'px'; }
+      if (!open) { item.classList.add('open'); ans.style.maxHeight = ans.scrollHeight + 'px'; q.setAttribute('aria-expanded', 'true'); }
     });
   });
 

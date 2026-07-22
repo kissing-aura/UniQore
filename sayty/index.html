@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260721a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260723l">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260723m">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -754,8 +754,8 @@
         </div>
         <div class="sy-form-wrap sy-rev" data-d="2">
           <form id="sy-form" novalidate>
-            <div class="sy-fg"><label for="sy-name">Ваше имя</label><input class="sy-in" type="text" id="sy-name" placeholder="Александр" required></div>
-            <div class="sy-fg"><label for="sy-contact">Телефон или Telegram</label><input class="sy-in" type="text" id="sy-contact" placeholder="@username или +7…" required></div>
+            <div class="sy-fg"><label for="sy-name">Ваше имя</label><input class="sy-in" type="text" id="sy-name" name="name" placeholder="Александр" autocomplete="name" required></div>
+            <div class="sy-fg"><label for="sy-contact">Телефон или Telegram</label><input class="sy-in" type="text" id="sy-contact" name="contact" placeholder="@username или +7…" autocomplete="tel" required></div>
             <div class="sy-fg"><label for="sy-niche">Ниша бизнеса</label><input class="sy-in" type="text" id="sy-niche" placeholder="Кофейня, автосервис, магазин…"></div>
             <div class="sy-form__trust sy-rev">
               <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Фиксированная цена</span>
@@ -783,7 +783,7 @@
               <div class="sy-form__step"><b>2</b>Разберём нишу и покажем концепцию</div>
               <div class="sy-form__step"><b>3</b>Зафиксируем цену и срок — до оплаты</div>
             </div>
-            <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener" class="sy-btn sy-btn--ghost" style="margin-top:22px">Или напишите нам прямо сейчас →</a>
+            <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener" class="sy-btn sy-btn--main" style="margin-top:22px">Написать сейчас — ответим быстрее →</a>
           </div>
         </div>
       </div>
@@ -826,7 +826,7 @@
     window.addEventListener('scroll',function(){var n=document.getElementById('nav');if(n)n.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
   </script>
   <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
-  <script src="/js/sayty.js?v=20260723l" defer></script>
+  <script src="/js/sayty.js?v=20260723m" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
 </body>
 </html>

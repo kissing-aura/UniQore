@@ -751,6 +751,12 @@ textarea.sy-in{resize:vertical;min-height:84px}
   .sy-feat>*,.sy-get>*,.sy-pcard>*{position:relative;z-index:1}
 }
 
+/* Батч5 a11y: видимый фокус для клавиатуры (тёмная тема была слепой) */
+.sy-btn:focus-visible,.sy-filter__b:focus-visible,.q-tier:focus-visible,.q-addon:focus-visible,.sy-obj__q:focus-visible,.cur-switch__btn:focus-visible,.sy-pf:focus-visible,.rc__frame:focus-visible,.rc__pp:focus-visible,.sy-pcard__cta a:focus-visible{outline:2px solid var(--sy-l);outline-offset:3px}
+.sy-in:focus-visible{outline:2px solid var(--sy-l);outline-offset:1px}
+.sy-btn:disabled,.sy-btn[disabled]{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+@media(max-width:760px){.sy-filter__b{min-height:44px}.cur-switch__btn{min-height:42px}}
+
 /* ═══════════ MOBILE PERF — убрать лаги: тяжёлые постоянные перерисовки прочь ═══════════ */
 /* Планшет и уже: гасим бесконечные декоративные циклы (аврора с blur, сканер шоурила, пульсы) */
 @media(max-width:960px){
