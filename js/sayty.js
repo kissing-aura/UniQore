@@ -34,6 +34,7 @@
   var site = document.getElementById('sySite');
   var scrollWrap = document.getElementById('syScroll');
   var urlEl = document.getElementById('syUrl');
+  var phone = document.getElementById('syPhone');
   var VARIANTS = [
     { chip:'Кофейня', accent:'#CDFF4F', ink:'#08130a', url:'lumen-coffee.ru', logo:'Lumen',
       title:'Кофе, который<br>запоминают.', lead:'Свежая обжарка каждый день. Доставка за 40 минут по всему городу.',
@@ -71,22 +72,33 @@
     + '<div class="ms-cards">'+msCard(v.s2cards[0],0)+msCard(v.s2cards[1],0)+msCard(v.s2cards[2],1)+'</div>'
     + '<div class="ms-strip" style="background:#101622"><div style="font-size:11px;color:#9aa6bd">© 2026 · сделано в Uniqore</div></div>';
   }
+  /* мобильная версия того же сайта — для телефона (дуал-девайс) */
+  function buildMobile(v){
+    return ''
+    + '<div class="msm-bar"><span>9:41</span><span class="msm-ss"><i></i><i></i><i></i></span></div>'
+    + '<div class="msm-nav"><span class="msm-logo">'+v.logo+'</span><span class="msm-burger"><i></i><i></i><i></i></span></div>'
+    + '<div class="msm-hero"><span class="msm-badge" style="background:color-mix(in srgb,var(--ms-accent) 18%,transparent);color:var(--ms-accent)">'+v.chip+'</span><div class="msm-title">'+v.title+'</div><div class="msm-btn" style="background:var(--ms-accent);color:var(--ms-ink)">'+v.btns[0]+'</div></div>'
+    + '<div class="msm-cards"><div class="msm-card msm-card--hi"><b>'+v.cards[0][0]+'</b><span>'+v.cards[0][1]+'</span></div><div class="msm-card"><b>'+v.cards[1][0]+'</b><span>'+v.cards[1][1]+'</span></div></div>'
+    + '<div class="msm-strip"><b>'+v.strip[0]+'</b><span>'+v.strip[1]+'</span></div>';
+  }
+  function paint(v){
+    if (site){ site.style.setProperty('--ms-accent', v.accent); site.style.setProperty('--ms-ink', v.ink); }
+    if (scrollWrap) scrollWrap.innerHTML = buildSite(v);
+    if (urlEl) urlEl.textContent = v.url;
+    if (phone){ phone.style.setProperty('--ms-accent', v.accent); phone.style.setProperty('--ms-ink', v.ink); phone.innerHTML = buildMobile(v); }
+  }
   var vi = 0;
   if (site && scrollWrap) {
-    site.style.setProperty('--ms-accent', VARIANTS[0].accent);
-    site.style.setProperty('--ms-ink', VARIANTS[0].ink);
-    scrollWrap.innerHTML = buildSite(VARIANTS[0]);
-    if (urlEl) urlEl.textContent = VARIANTS[0].url;
+    paint(VARIANTS[0]);
     if (!reduce) setInterval(function () {
       vi = (vi + 1) % VARIANTS.length;
       var v = VARIANTS[vi];
       site.style.opacity = '0';
+      if (phone) phone.style.opacity = '0';
       setTimeout(function () {
-        site.style.setProperty('--ms-accent', v.accent);
-        site.style.setProperty('--ms-ink', v.ink);
-        scrollWrap.innerHTML = buildSite(v);
-        if (urlEl) urlEl.textContent = v.url;
+        paint(v);
         site.style.opacity = '1';
+        if (phone) phone.style.opacity = '1';
       }, 500);
     }, 4600);
   }
