@@ -311,7 +311,7 @@
     var r = m.getBoundingClientRect();
     lx = (e.clientX - r.left) / r.width - 0.5;
     ly = (e.clientY - r.top) / r.height - 0.5;
-    b.style.transform = 'rotateY(' + (-7 + lx * 9).toFixed(2) + 'deg) rotateX(' + (3.5 - ly * 6).toFixed(2) + 'deg)';
+    b.style.transform = 'rotateY(' + (-6 + lx * 3).toFixed(2) + 'deg) rotateX(' + (3 - ly * 2).toFixed(2) + 'deg)';
   }, { passive: true });
   m.addEventListener('mouseleave', function () { b.style.transform = ''; });
 })();
