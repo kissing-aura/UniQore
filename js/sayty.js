@@ -173,10 +173,24 @@
     syncSticky();
   }
 
-  /* ── form: валидация + отправка в CRM/Telegram + красивый успех ── */
+  /* ── form: валидация + отправка в CRM + честный успех/ошибка ──
+     Два независимых канала (как в js/form.js): /api/leads (сервер 206, только
+     на .pro) и Supabase-мост site-lead-bridge (работает на ЛЮБОМ домене, в т.ч.
+     uniqore.ru, где /api/leads не существует). Успех = сработал хотя бы один —
+     раньше здесь безусловно показывался успех даже при провале обоих. */
   var form = document.getElementById('sy-form');
   if (form) {
     var last = 0;
+    var CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';
+    var CMD_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
+    var CMD_BRIDGE_SECRET = '2dd950726e4ea4428b3af52c5950ef9c43b7afa58370a277';
+    function pushToCommandV2(data) {
+      return fetch(CMD_BRIDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: CMD_ANON_KEY, Authorization: 'Bearer ' + CMD_ANON_KEY, 'x-bridge-secret': CMD_BRIDGE_SECRET },
+        body: JSON.stringify(data)
+      }).then(function (r) { return r.ok; }).catch(function () { return false; });
+    }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var now = Date.now();
@@ -191,6 +205,7 @@
       if (!ok) return;
       last = now;
       var btn = form.querySelector('[type=submit]');
+      var originalText = btn.textContent;
       btn.disabled = true; btn.textContent = 'Отправляем…';
       var data = {
         name: name.value.trim(),
@@ -199,13 +214,23 @@
         task: (form.querySelector('#sy-comment') || {}).value || '',
         website: ''
       };
-      fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-        .catch(function () {})
-        .then(function () {
+      var bridgePromise = pushToCommandV2(data);
+      var apiPromise = fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+        .then(function (r) { return r.ok; }).catch(function () { return false; });
+      Promise.all([apiPromise, bridgePromise]).then(function (results) {
+        var saved = results[0] || results[1];
+        if (saved) {
           var okPanel = document.getElementById('syFormOk');
           form.style.display = 'none';
           if (okPanel) okPanel.classList.add('show');
-        });
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Не отправилось, попробуйте ещё раз';
+          btn.classList.add('btn--error');
+          last = 0;
+          setTimeout(function () { btn.textContent = originalText; btn.classList.remove('btn--error'); }, 5000);
+        }
+      });
     });
     form.querySelectorAll('.sy-in').forEach(function (f) {
       f.addEventListener('input', function () { f.style.borderColor = ''; });
