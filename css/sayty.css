@@ -100,12 +100,23 @@
 @keyframes msBuild{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.sy-site__scroll>*,.sy-site__scroll>*>*{opacity:1!important;animation:none!important}}
 /* ── дуал-девайс: телефон рядом с десктопом (тот же сайт адаптивно) ── */
-.sy-phone{position:absolute;left:-12%;bottom:-16%;z-index:4;width:32%;min-width:150px;max-width:214px;aspect-ratio:9/18.6;
+.sy-phone{position:absolute;left:-14%;bottom:-10%;z-index:4;width:30%;min-width:150px;max-width:214px;aspect-ratio:9/18.6;
   border-radius:32px;padding:7px;background:linear-gradient(155deg,#242b35,#0a0e14);border:1px solid rgba(255,255,255,.14);
   box-shadow:0 46px 88px -30px rgba(0,0,0,.92),0 0 62px -22px rgba(205,255,79,.42),0 1px 0 rgba(255,255,255,.13) inset;
-  transform:rotate(-4deg);animation:syPhoneFloat 8.5s ease-in-out infinite;will-change:transform}
-@keyframes syPhoneFloat{50%{transform:rotate(-4deg) translateY(-12px)}}
-@media(prefers-reduced-motion:reduce){.sy-phone{animation:none}}
+  transform:translate3d(0,6px,40px) rotateY(7deg) rotateX(-3deg) rotateZ(-5deg);
+  animation:syPhoneFloat 7s ease-in-out -3.5s infinite;will-change:transform}
+.sy-phone::before{content:'';position:absolute;left:10%;right:10%;bottom:-15%;height:22px;z-index:-1;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(0,0,0,.6),rgba(0,0,0,.28) 55%,transparent 80%);filter:blur(12px);
+  animation:syPhoneShadow 7s ease-in-out -3.5s infinite;pointer-events:none}
+@keyframes syPhoneFloat{
+  0%,100%{transform:translate3d(var(--phx,0px),calc(6px + var(--phy,0px)),40px) rotateY(calc(7deg + var(--phry,0deg))) rotateX(-3deg) rotateZ(-5deg)}
+  50%    {transform:translate3d(var(--phx,0px),calc(-14px + var(--phy,0px)),40px) rotateY(calc(6deg + var(--phry,0deg))) rotateX(-4deg) rotateZ(-4deg)}
+}
+@keyframes syPhoneShadow{
+  0%,100%{opacity:.55;transform:scale(1)}
+  50%    {opacity:.32;transform:scale(.82)}
+}
+@media(prefers-reduced-motion:reduce){.sy-phone,.sy-phone::before{animation:none}}
 .sy-phone__screen{position:relative;width:100%;height:100%;border-radius:26px;overflow:hidden;background:#0b1119}
 .sy-phone__island{position:absolute;top:9px;left:50%;transform:translateX(-50%);z-index:4;width:30%;height:12px;border-radius:99px;background:#000}
 .sy-msite{position:absolute;inset:0;display:flex;flex-direction:column;gap:7px;padding:27px 11px 11px;font-family:var(--font-body,Inter,sans-serif);background:radial-gradient(130% 55% at 50% 0%,color-mix(in srgb,var(--ms-accent) 8%,transparent),transparent 60%),#0b1119;transition:opacity .5s ease}
@@ -126,7 +137,7 @@
 .msm-strip{margin-top:auto;display:flex;align-items:center;gap:6px;border-radius:10px;padding:8px 10px;background:color-mix(in srgb,var(--ms-accent) 12%,#101622)}
 .msm-strip b{font-family:'Unbounded',sans-serif;font-weight:800;font-size:11px;color:var(--ms-accent);flex:0 0 auto}
 .msm-strip span{font-size:8px;color:#9aa6bd;line-height:1.3}
-@media(max-width:1120px){.sy-phone{left:-8%;width:30%}}
+@media(max-width:1120px){.sy-phone{left:-10%;width:29%}}
 @media(max-width:960px){.sy-phone{display:none}}
 .sy-cursor{position:absolute;z-index:6;width:22px;height:22px;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));transition:transform 1.4s cubic-bezier(.5,0,.2,1);transform:translate(40px,60px)}
 .sy-cursor.click{animation:syClick .4s ease}
