@@ -339,25 +339,29 @@
   var ph = document.querySelector('.sy-phone');
   if (!m || !b) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  var lx = 0, ly = 0, raf = 0;
-  function applyTilt() {
-    raf = 0;
-    b.style.transform = 'rotateY(' + (-6 + lx * 3).toFixed(2) + 'deg) rotateX(' + (3 - ly * 2).toFixed(2) + 'deg)';
+  var tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+  var EASE = 0.085; // ниже = мягче/инерционнее
+  function loop() {
+    cx += (tx - cx) * EASE;
+    cy += (ty - cy) * EASE;
+    b.style.transform = 'rotateY(' + (-6 + cx * 3).toFixed(3) + 'deg) rotateX(' + (3 - cy * 2).toFixed(3) + 'deg)';
     if (ph) {
-      ph.style.setProperty('--phx', (lx * -22).toFixed(1) + 'px');
-      ph.style.setProperty('--phy', (ly * -14).toFixed(1) + 'px');
-      ph.style.setProperty('--phry', (lx * 6).toFixed(1) + 'deg');
+      ph.style.setProperty('--phx', (cx * -22).toFixed(2) + 'px');
+      ph.style.setProperty('--phy', (cy * -14).toFixed(2) + 'px');
+      ph.style.setProperty('--phry', (cx * 6).toFixed(2) + 'deg');
     }
+    if (Math.abs(tx - cx) > 0.0004 || Math.abs(ty - cy) > 0.0004) {
+      raf = requestAnimationFrame(loop);
+    } else { cx = tx; cy = ty; raf = 0; }
   }
   m.addEventListener('mousemove', function (e) {
     var r = m.getBoundingClientRect();
-    lx = (e.clientX - r.left) / r.width - 0.5;
-    ly = (e.clientY - r.top) / r.height - 0.5;
-    if (!raf) raf = requestAnimationFrame(applyTilt);
+    tx = (e.clientX - r.left) / r.width - 0.5;
+    ty = (e.clientY - r.top) / r.height - 0.5;
+    if (!raf) raf = requestAnimationFrame(loop);
   }, { passive: true });
   m.addEventListener('mouseleave', function () {
-    if (raf) { cancelAnimationFrame(raf); raf = 0; }
-    b.style.transform = '';
-    if (ph) { ph.style.setProperty('--phx', '0px'); ph.style.setProperty('--phy', '0px'); ph.style.setProperty('--phry', '0deg'); }
+    tx = 0; ty = 0;
+    if (!raf) raf = requestAnimationFrame(loop);
   });
 })();
