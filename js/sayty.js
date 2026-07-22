@@ -340,7 +340,7 @@
   if (!m || !b) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   var tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
-  var EASE = 0.06; // ниже = мягче/инерционнее/тянучее
+  var EASE = 0.045; // ниже = мягче/инерционнее/тянучее
   function loop() {
     cx += (tx - cx) * EASE;
     cy += (ty - cy) * EASE;
