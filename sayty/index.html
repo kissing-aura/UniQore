@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260721a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260721i">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260721j">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -405,6 +405,7 @@
             <div class="rc__stage" id="reelStage">
               <div class="rc__frame" id="reelFrame" role="button" tabindex="0" aria-label="Смотреть ролик Lovi">
                 <img class="rc__poster" src="/assets/reel-lovi-poster.jpg?v=1" alt="Промо приложения Lovi" loading="lazy">
+                <video class="rc__vid" id="reelVid" src="/assets/reel-lovi.mp4?v=1" poster="/assets/reel-lovi-poster.jpg?v=1" playsinline preload="none"></video>
                 <div class="rc__grid"></div>
                 <div class="rc__scan"></div>
                 <span class="rc__b rc__b--tl"></span><span class="rc__b rc__b--tr"></span><span class="rc__b rc__b--bl"></span><span class="rc__b rc__b--br"></span>
@@ -412,13 +413,6 @@
                 <div class="rc__hud"><i></i>SCAN · LOVI</div>
                 <div class="rc__play"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg></div>
               </div>
-            </div>
-          </div>
-
-          <div class="rc-lb" id="reelLb" aria-hidden="true">
-            <button type="button" class="rc-lb__close" id="reelClose" aria-label="Закрыть">✕</button>
-            <div class="rc-lb__inner">
-              <video class="rc-lb__vid" id="reelVid" src="/assets/reel-lovi.mp4?v=1" poster="/assets/reel-lovi-poster.jpg?v=1" playsinline controls preload="none"></video>
             </div>
           </div>
 
@@ -437,24 +431,25 @@
               </div>
             </div>
           </div>
-          <!-- ФУНДАМЕНТ: доп. мелкие видео — дублировать .rc__frame карточками в ряд (тот же лайтбокс). -->
+          <!-- ФУНДАМЕНТ: доп. мелкие видео — дублировать .rc__frame карточками в ряд (инлайн-плей). -->
           <script>
           (function(){
             var frame=document.getElementById('reelFrame'),open=document.getElementById('reelOpen'),
-                lb=document.getElementById('reelLb'),close=document.getElementById('reelClose'),
                 vid=document.getElementById('reelVid'),stage=document.getElementById('reelStage');
-            if(!lb||!vid) return;
-            function openLb(){lb.classList.add('is-open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';try{vid.play();}catch(e){}}
-            function closeLb(){lb.classList.remove('is-open');lb.setAttribute('aria-hidden','true');document.body.style.overflow='';vid.pause();}
-            if(frame){frame.addEventListener('click',openLb);frame.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openLb();}});}
-            if(open) open.addEventListener('click',openLb);
-            if(close) close.addEventListener('click',closeLb);
-            lb.addEventListener('click',function(e){if(e.target===lb)closeLb();});
-            document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb.classList.contains('is-open'))closeLb();});
-            if(stage&&frame&&window.matchMedia&&matchMedia('(hover:hover)').matches){
+            if(!frame||!vid) return;
+            var playing=false;
+            function play(){
+              if(playing) return; playing=true;
+              frame.style.transform=''; frame.classList.add('is-playing');
+              vid.setAttribute('controls',''); try{vid.play();}catch(e){}
+            }
+            frame.addEventListener('click',function(){ if(!playing) play(); });
+            frame.addEventListener('keydown',function(e){ if((e.key==='Enter'||e.key===' ')&&!playing){e.preventDefault();play();} });
+            if(open) open.addEventListener('click',play);
+            if(stage&&window.matchMedia&&matchMedia('(hover:hover)').matches){
               var raf=0;
-              stage.addEventListener('mousemove',function(e){var r=stage.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;if(raf)return;raf=requestAnimationFrame(function(){raf=0;frame.style.transform='rotateY('+(px*10)+'deg) rotateX('+(-py*8)+'deg)';});});
-              stage.addEventListener('mouseleave',function(){frame.style.transform='';});
+              stage.addEventListener('mousemove',function(e){ if(playing) return; var r=stage.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;if(raf)return;raf=requestAnimationFrame(function(){raf=0;frame.style.transform='rotateY('+(px*10)+'deg) rotateX('+(-py*8)+'deg)';});});
+              stage.addEventListener('mouseleave',function(){ if(!playing) frame.style.transform=''; });
             }
           })();
           </script>
