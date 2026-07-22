@@ -30,12 +30,16 @@
 .sy-btn--lg{padding:17px 30px;font-size:16px;border-radius:15px}
 .sy-btn:active{transform:translateY(0) scale(.985)}
 
-/* фон-глубина */
-.sy-bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(60% 45% at 78% 8%,rgba(205,255,79,.08),transparent 60%),radial-gradient(50% 40% at 8% 30%,rgba(49,224,176,.05),transparent 60%),var(--sy-bg)}
-.sy-bgfx::before{content:'';position:absolute;inset:0;opacity:.5;
-  background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
-  background-size:60px 60px;mask:radial-gradient(120% 70% at 50% 0%,#000,transparent 75%)}
+/* фон-глубина + живая аврора (Linear-style) */
+.sy-bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:var(--sy-bg)}
+.sy-bgfx::after{content:'';position:absolute;inset:-25%;
+  background:radial-gradient(38% 34% at 75% 8%,rgba(205,255,79,.22),transparent 60%),radial-gradient(34% 32% at 12% 22%,rgba(49,224,176,.16),transparent 60%),radial-gradient(32% 32% at 60% 76%,rgba(126,104,255,.11),transparent 60%);
+  filter:blur(26px);animation:syAurora 26s ease-in-out infinite alternate;will-change:transform}
+@keyframes syAurora{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-3%,2.5%) scale(1.08)}100%{transform:translate(2.5%,-2%) scale(1.04)}}
+.sy-bgfx::before{content:'';position:absolute;inset:0;z-index:1;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:58px 58px;mask:radial-gradient(120% 72% at 50% 0%,#000,transparent 74%)}
+@media(prefers-reduced-motion:reduce){.sy-bgfx::after{animation:none}}
 
 /* ─────────── HERO ─────────── */
 .sy-hero{position:relative;padding:calc(96px + 4vw) 0 clamp(50px,7vw,90px);overflow:hidden}
@@ -77,6 +81,22 @@
 .sy-site__scroll{position:absolute;top:0;left:0;right:0;will-change:transform;animation:syAutoScroll 15s ease-in-out infinite alternate}
 @keyframes syAutoScroll{0%{transform:translateY(0)}100%{transform:translateY(-46%)}}
 @media(prefers-reduced-motion:reduce){.sy-site__scroll{animation:none}}
+/* сборка демо-сайта на глазах при загрузке (Framer-style) — по nth-child контейнера (порядок: nav, hero, cards, strip, ...) */
+.sy-site__scroll>:nth-child(1),
+.sy-site__scroll>:nth-child(2)>*,
+.sy-site__scroll>:nth-child(3)>*,
+.sy-site__scroll>:nth-child(4){opacity:0;animation:msBuild .6s cubic-bezier(.2,.85,.25,1) forwards}
+.sy-site__scroll>:nth-child(1){animation-delay:.12s}
+.sy-site__scroll>:nth-child(2)>*:nth-child(1){animation-delay:.26s}
+.sy-site__scroll>:nth-child(2)>*:nth-child(2){animation-delay:.36s}
+.sy-site__scroll>:nth-child(2)>*:nth-child(3){animation-delay:.46s}
+.sy-site__scroll>:nth-child(2)>*:nth-child(4){animation-delay:.56s}
+.sy-site__scroll>:nth-child(3)>*:nth-child(1){animation-delay:.62s}
+.sy-site__scroll>:nth-child(3)>*:nth-child(2){animation-delay:.70s}
+.sy-site__scroll>:nth-child(3)>*:nth-child(3){animation-delay:.78s}
+.sy-site__scroll>:nth-child(4){animation-delay:.88s}
+@keyframes msBuild{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.sy-site__scroll>*,.sy-site__scroll>*>*{opacity:1!important;animation:none!important}}
 .sy-cursor{position:absolute;z-index:6;width:22px;height:22px;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));transition:transform 1.4s cubic-bezier(.5,0,.2,1);transform:translate(40px,60px)}
 .sy-cursor.click{animation:syClick .4s ease}
 @keyframes syClick{50%{transform:scale(.8)}}
