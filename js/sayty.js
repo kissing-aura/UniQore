@@ -61,16 +61,20 @@
       strip:['12 лет','на рынке · гарантия 2 года · статус в Telegram'],
       s2:'Почему мы', s2cards:[['Гарантия','2 года'],['Цена','Фиксирована'],['Статус','В Telegram']] }
   ];
-  function msCard(c, hi){ return '<div class="ms-card" style="background:'+(hi?'color-mix(in srgb,var(--ms-accent) 10%,#141a26)':'#141a26')+'"><div class="ms-card__t">'+c[0]+'</div><div class="ms-card__d">'+c[1]+'</div></div>'; }
+  function svc(c, hi){ return '<div class="ms-card'+(hi?' ms-card--hi':'')+'"><span class="ms-card__ic"></span><div class="ms-card__t">'+c[0]+'</div><div class="ms-card__d">'+c[1]+'</div></div>'; }
+  function feat(c){ return '<div class="ms-feat"><span class="ms-feat__ic"></span><div class="ms-feat__t">'+c[0]+'</div><div class="ms-feat__d">'+c[1]+'</div></div>'; }
   function buildSite(v){
     return ''
-    + '<div class="ms-nav"><span class="ms-logo">'+v.logo+'</span><span class="ms-navlinks"><span>Меню</span><span>О нас</span><span>Контакты</span></span><span class="ms-cta" style="background:var(--ms-accent);color:var(--ms-ink)">Заказать</span></div>'
-    + '<div class="ms-hero"><span class="ms-badge" style="background:color-mix(in srgb,var(--ms-accent) 16%,transparent);color:var(--ms-accent)">'+v.chip+'</span><div class="ms-title">'+v.title+'</div><div class="ms-lead">'+v.lead+'</div><div class="ms-btns"><span class="ms-btn" style="background:var(--ms-accent);color:var(--ms-ink)">'+v.btns[0]+'</span><span class="ms-btn ms-btn--2">'+v.btns[1]+'</span></div></div>'
-    + '<div class="ms-cards">'+msCard(v.cards[0],1)+msCard(v.cards[1],0)+msCard(v.cards[2],0)+'</div>'
-    + '<div class="ms-strip" style="background:color-mix(in srgb,var(--ms-accent) 12%,#101622)"><div style="font-family:\'Unbounded\',sans-serif;font-weight:800;color:var(--ms-accent)">'+v.strip[0]+'</div><div style="font-size:11px;color:#9aa6bd">'+v.strip[1]+'</div></div>'
-    + '<div class="ms-hero" style="padding-top:8px"><div class="ms-title" style="font-size:19px">'+v.s2+'</div></div>'
-    + '<div class="ms-cards">'+msCard(v.s2cards[0],0)+msCard(v.s2cards[1],0)+msCard(v.s2cards[2],1)+'</div>'
-    + '<div class="ms-strip" style="background:#101622"><div style="font-size:11px;color:#9aa6bd">© 2026 · сделано в Uniqore</div></div>';
+    + '<div class="ms-nav"><span class="ms-logo">'+v.logo+'</span><span class="ms-navlinks"><span>Меню</span><span>О нас</span><span>Кейсы</span><span>Контакты</span></span><span class="ms-cta" style="background:var(--ms-accent);color:var(--ms-ink)">Заказать</span></div>'
+    + '<div class="ms-hero">'
+    +   '<div class="ms-hero__text"><span class="ms-badge" style="background:color-mix(in srgb,var(--ms-accent) 16%,transparent);color:var(--ms-accent)">'+v.chip+'</span><div class="ms-title">'+v.title+'</div><div class="ms-lead">'+v.lead+'</div><div class="ms-btns"><span class="ms-btn" style="background:var(--ms-accent);color:var(--ms-ink)">'+v.btns[0]+'</span><span class="ms-btn ms-btn--2">'+v.btns[1]+'</span></div></div>'
+    +   '<div class="ms-hero__visual"><div class="ms-vis__orb"></div><div class="ms-vis__lines"><i></i><i></i><i></i></div><div class="ms-vis__card"><div class="ms-vis__k" style="color:var(--ms-accent)">'+v.strip[0]+'</div><div class="ms-vis__l">'+v.chip+'</div></div></div>'
+    + '</div>'
+    + '<div class="ms-cards">'+svc(v.cards[0],1)+svc(v.cards[1],0)+svc(v.cards[2],0)+'</div>'
+    + '<div class="ms-strip" style="background:color-mix(in srgb,var(--ms-accent) 12%,#101622)"><div class="ms-strip__k" style="color:var(--ms-accent)">'+v.strip[0]+'</div><div class="ms-strip__t">'+v.strip[1]+'</div></div>'
+    + '<div class="ms-sec">'+v.s2+'</div>'
+    + '<div class="ms-feats">'+feat(v.s2cards[0])+feat(v.s2cards[1])+feat(v.s2cards[2])+'</div>'
+    + '<div class="ms-foot"><span>© 2026 · '+v.logo+'</span><span>сделано в Uniqore</span></div>';
   }
   /* мобильная версия того же сайта — для телефона (дуал-девайс) */
   function buildMobile(v){
