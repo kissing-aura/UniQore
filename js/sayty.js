@@ -198,6 +198,9 @@
   var form = document.getElementById('sy-form');
   if (form) {
     var last = 0;
+    var errorRevertTimer = null;
+    var submitBtn = form.querySelector('[type=submit]');
+    var submitBtnText = submitBtn ? submitBtn.textContent : '';
     var CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';
     var CMD_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
     var CMD_BRIDGE_SECRET = '2dd950726e4ea4428b3af52c5950ef9c43b7afa58370a277';
@@ -221,9 +224,9 @@
       });
       if (!ok) return;
       last = now;
-      var btn = form.querySelector('[type=submit]');
-      var originalText = btn.textContent;
-      btn.disabled = true; btn.textContent = 'Отправляем…';
+      if (errorRevertTimer) { clearTimeout(errorRevertTimer); errorRevertTimer = null; }
+      var btn = submitBtn || form.querySelector('[type=submit]');
+      btn.disabled = true; btn.classList.remove('btn--error'); btn.textContent = 'Отправляем…';
       var data = {
         name: name.value.trim(),
         contact: contact.value.trim(),
@@ -245,7 +248,11 @@
           btn.textContent = 'Не отправилось, попробуйте ещё раз';
           btn.classList.add('btn--error');
           last = 0;
-          setTimeout(function () { btn.textContent = originalText; btn.classList.remove('btn--error'); }, 5000);
+          errorRevertTimer = setTimeout(function () {
+            btn.textContent = submitBtnText;
+            btn.classList.remove('btn--error');
+            errorRevertTimer = null;
+          }, 5000);
         }
       });
     });
