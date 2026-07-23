@@ -119,7 +119,7 @@
     + '<nav class="lmn-nav"><span class="lmn-mono">'+v.logo.charAt(0)+'</span><span class="lmn-brand">'+v.logo+'</span><span class="lmn-links"><span>Меню</span><span>О нас</span><span>Контакты</span></span><a class="lmn-pill">'+v.btns[0]+'</a></nav>'
     + '<header class="lmn-hero">'
     +   '<span class="lmn-chip"><i class="lmn-dot"></i>'+v.chip+'</span>'
-    +   '<h1 class="lmn-h1">'+splitAcc(v.title)+'</h1>'
+    +   '<div class="lmn-h1">'+splitAcc(v.title)+'</div>'
     +   '<p class="lmn-lead">'+v.lead+'</p>'
     +   '<div class="lmn-cta"><a class="lmn-pill lmn-pill--lg">'+v.btns[0]+'</a><a class="lmn-ghost">'+v.btns[1]+' →</a></div>'
     +   '<div class="lmn-proof"><div class="lmn-proof__l"><div class="lmn-proof__n">'+v.cards[0][0]+'</div><div class="lmn-proof__m">★ '+v.strip[0].replace('★','').trim()+' · популярный выбор</div></div><div class="lmn-proof__r"><b class="lmn-price">'+v.cards[0][1]+'</b><span class="lmn-proof__b">'+v.btns[0]+'</span></div></div>'
@@ -297,6 +297,10 @@
       Promise.all([apiPromise, bridgePromise]).then(function (results) {
         var saved = results[0] || results[1];
         if (saved) {
+          // Конверсия засчитывается на РЕАЛЬНУЮ отправку (не на клик) — цель для Директа/Ads.
+          // В Метрике нужно создать JS-цель с идентификатором «lead».
+          try { if (window.ym) ym(110585817, 'reachGoal', 'lead'); } catch (e) {}
+          try { if (window.gtag) gtag('event', 'generate_lead', { form_id: 'sayty' }); } catch (e) {}
           var okPanel = document.getElementById('syFormOk');
           form.style.display = 'none';
           if (okPanel) okPanel.classList.add('show');
