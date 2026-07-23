@@ -899,3 +899,10 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-legal2 .sy-legal__req{margin:20px 0 16px;padding-top:18px;border-top:1px solid var(--sy-line)}
 .sy-legal2 .sy-real__link{margin-top:auto}
 @media(max-width:760px){.sy-office2{min-height:320px}}
+
+/* Убираем декоративные уголки-скобки у заголовков — на многострочных съезжают криво */
+.sy-h2 em::before,.sy-h2 em::after{display:none!important}
+
+/* Мусорка (анимация дизайнера) в блоке боли — «старый сайт = мусор» */
+.sy-emo__trash{width:clamp(150px,20vw,208px);margin:0 auto clamp(16px,2.4vw,26px);border-radius:16px;overflow:hidden;border:1px solid var(--sy-line);box-shadow:0 18px 50px -20px rgba(0,0,0,.7);line-height:0}
+.sy-emo__trash video{display:block;width:100%;height:auto}
