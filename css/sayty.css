@@ -821,3 +821,38 @@ textarea.sy-in{resize:vertical;min-height:84px}
   .sy-feat:hover::before,.sy-get:hover::before,.sy-pcard:hover::before{opacity:.6;transform:scale(1)}
 }
 @media(prefers-reduced-motion:reduce){.sy-h2 em::before,.sy-h2 em::after{opacity:.92;transition:none}.sy-feat::before,.sy-get::before,.sy-pcard::before{transition:none}}
+
+/* ═══════ Оплата после макета — 3 шага ═══════ */
+.sy-pay__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:clamp(30px,4vw,46px)}
+@media(max-width:760px){.sy-pay__grid{grid-template-columns:1fr;gap:12px}}
+.sy-paystep{position:relative;padding:26px 24px;border-radius:18px;border:1px solid var(--sy-line);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.006));display:flex;flex-direction:column;gap:7px}
+.sy-paystep__n{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:11px;background:color-mix(in srgb,var(--sy-l) 13%,transparent);color:var(--sy-l);font-family:'Unbounded',sans-serif;font-weight:800;font-size:16px;border:1px solid color-mix(in srgb,var(--sy-l) 30%,transparent);margin-bottom:8px}
+.sy-paystep b{font-family:'Unbounded',sans-serif;font-weight:700;font-size:17px;color:var(--sy-txt);letter-spacing:-.01em}
+.sy-paystep span{font-size:14px;line-height:1.5;color:var(--sy-mut)}
+.sy-paystep:last-child{border-color:color-mix(in srgb,var(--sy-l) 32%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--sy-l) 7%,transparent),transparent)}
+.sy-paystep:last-child .sy-paystep__n{background:var(--sy-l);color:#08130a}
+
+/* ═══════ Реальная компания — офис + юрлицо ═══════ */
+.sy-real__grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:clamp(30px,4vw,46px)}
+@media(max-width:760px){.sy-real__grid{grid-template-columns:1fr}}
+.sy-real__card{border:1px solid var(--sy-line);border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.006));overflow:hidden;display:flex;flex-direction:column}
+.sy-real__tag{display:inline-block;font-family:var(--font-mono,monospace);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--sy-l);margin-bottom:10px}
+.sy-real__title{font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;color:var(--sy-txt);margin-bottom:12px;display:block;letter-spacing:-.01em}
+.sy-real__row{display:block;font-size:14.5px;color:var(--sy-txt-soft);line-height:1.55}
+.sy-real__row--mut{color:var(--sy-mut);font-size:13px;margin-top:5px}
+.sy-real__link{margin-top:auto;padding-top:18px;color:var(--sy-l);font-weight:600;font-size:14px;text-decoration:none;display:inline-block}
+.sy-real__link:hover{text-decoration:underline}
+.sy-office{padding:0}
+.sy-office__map{position:relative;height:172px;border-bottom:1px solid var(--sy-line);overflow:hidden;background:repeating-linear-gradient(90deg,transparent 0 38px,rgba(205,255,79,.045) 38px 39px),repeating-linear-gradient(0deg,transparent 0 32px,rgba(205,255,79,.045) 32px 33px),radial-gradient(120% 90% at 62% 42%,rgba(49,224,176,.12),transparent 62%),#0b1020}
+.sy-office__map::before{content:'';position:absolute;left:-10%;right:-10%;top:56%;height:16px;background:linear-gradient(90deg,transparent,rgba(125,211,252,.22),transparent);transform:rotate(-9deg)}
+.sy-office__pin{position:absolute;left:60%;top:42%;width:20px;height:20px;transform:translate(-50%,-50%)}
+.sy-office__pin-dot{position:absolute;inset:0;margin:auto;width:12px;height:12px;border-radius:50%;background:var(--sy-l);box-shadow:0 0 0 4px color-mix(in srgb,var(--sy-l) 22%,transparent),0 0 18px var(--sy-l);z-index:2}
+.sy-office__pin::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--sy-l);opacity:.5;animation:syPinPulse 2s infinite}
+@keyframes syPinPulse{0%{transform:scale(.6);opacity:.6}100%{transform:scale(2);opacity:0}}
+.sy-office__body{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1}
+.sy-legal{padding:24px}
+.sy-legal__req{display:flex;gap:26px;margin:4px 0 14px}
+.sy-legal__req div{display:flex;flex-direction:column;gap:3px}
+.sy-legal__req span{font-size:11px;color:var(--sy-mut);text-transform:uppercase;letter-spacing:.08em}
+.sy-legal__req b{font-family:var(--font-mono,monospace);font-size:15px;color:var(--sy-txt);letter-spacing:.02em;font-weight:600}
+@media(prefers-reduced-motion:reduce){.sy-office__pin::after{animation:none}}
