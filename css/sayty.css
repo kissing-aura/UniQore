@@ -856,3 +856,12 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-legal__req span{font-size:11px;color:var(--sy-mut);text-transform:uppercase;letter-spacing:.08em}
 .sy-legal__req b{font-family:var(--font-mono,monospace);font-size:15px;color:var(--sy-txt);letter-spacing:.02em;font-weight:600}
 @media(prefers-reduced-motion:reduce){.sy-office__pin::after{animation:none}}
+
+/* Телефон: в шапке (десктоп) + акцентом в блоке доверия */
+.nav__tel{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--sy-txt,#E7EAF0);text-decoration:none;white-space:nowrap;transition:color .2s}
+.nav__tel svg{opacity:.7;flex:0 0 auto}
+.nav__tel:hover{color:var(--sy-l)}
+.nav__tel:hover svg{opacity:1}
+@media(max-width:1080px){.nav__tel{display:none}}
+.sy-real__phone{display:inline-block;margin-top:12px;font-family:'Unbounded',sans-serif;font-weight:700;font-size:clamp(18px,2vw,21px);color:var(--sy-l);text-decoration:none;letter-spacing:.01em}
+.sy-real__phone:hover{text-decoration:underline}
