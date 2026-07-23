@@ -772,3 +772,22 @@ textarea.sy-in{resize:vertical;min-height:84px}
   /* липкая шапка переблюривается на каждом кадре скролла — на мобилке плотный фон без blur */
   .nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(10,14,26,.97)!important}
 }
+
+/* ═══════════ UNIQORE · RETICLE — фирменная система (мотив «визир лупы» × 3 масштаба) ═══════════ */
+/* SIGNATURE 1 · Reticle-eyebrow: перекрестие вместо мягкой пульс-точки (+убирает infinite-пульс) */
+.sy-eyebrow{border-radius:7px;padding:6px 13px;letter-spacing:.16em;background:rgba(205,255,79,.045);border-color:rgba(205,255,79,.22)}
+.sy-eyebrow .dot{width:10px;height:10px;border-radius:50%;border:1px solid rgba(205,255,79,.5);background:linear-gradient(var(--sy-l),var(--sy-l)) center/1.3px 6px no-repeat,linear-gradient(var(--sy-l),var(--sy-l)) center/6px 1.3px no-repeat;box-shadow:none;animation:none}
+
+/* SIGNATURE 2 · Визир-скобки на акцентном слове заголовка (только .sy-h2 em — hero H1 не трогаем) */
+.sy-h2 em{font-style:normal;color:var(--sy-l);position:relative;white-space:nowrap;padding:0 .22em}
+.sy-h2 em::before,.sy-h2 em::after{content:"";position:absolute;width:.32em;height:.32em;border:2px solid var(--sy-mint);opacity:0;pointer-events:none;transition:opacity .55s ease .1s}
+.sy-h2 em::before{top:-.14em;left:-.04em;border-right:0;border-bottom:0}
+.sy-h2 em::after{bottom:-.14em;right:-.04em;border-left:0;border-top:0}
+.sy-h2.in em::before,.sy-h2.in em::after,.in .sy-h2 em::before,.in .sy-h2 em::after{opacity:.92}
+
+/* SIGNATURE 3 · Авто-фокус скобки на карточках при наведении (только hover-устройства) */
+@media(hover:hover){
+  .sy-feat::before,.sy-get::before,.sy-pcard::before{content:"";position:absolute;inset:11px;z-index:2;pointer-events:none;opacity:0;transform:scale(.97);transform-origin:center;transition:opacity .3s ease,transform .35s cubic-bezier(.2,1,.3,1);background:linear-gradient(var(--sy-l),var(--sy-l)) left top/14px 1.5px no-repeat,linear-gradient(var(--sy-l),var(--sy-l)) left top/1.5px 14px no-repeat,linear-gradient(var(--sy-l),var(--sy-l)) right bottom/14px 1.5px no-repeat,linear-gradient(var(--sy-l),var(--sy-l)) right bottom/1.5px 14px no-repeat}
+  .sy-feat:hover::before,.sy-get:hover::before,.sy-pcard:hover::before{opacity:.6;transform:scale(1)}
+}
+@media(prefers-reduced-motion:reduce){.sy-h2 em::before,.sy-h2 em::after{opacity:.92;transition:none}.sy-feat::before,.sy-get::before,.sy-pcard::before{transition:none}}
