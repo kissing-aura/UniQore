@@ -297,6 +297,8 @@
 .sy-pcard--flag{border-color:rgba(205,255,79,.35);background:linear-gradient(180deg,rgba(205,255,79,.09),rgba(255,255,255,.008) 60%);box-shadow:0 0 60px -20px rgba(205,255,79,.4)}
 .sy-pcard__flag{position:absolute;top:16px;right:16px;font-family:var(--font-mono,monospace);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#08130a;background:var(--sy-l);padding:4px 10px;border-radius:999px}
 .sy-pcard__name{font-family:'Unbounded',sans-serif;font-weight:700;font-size:20px;letter-spacing:-.01em}
+/* Узкие экраны: гарантируем зазор между длинным заголовком тарифа и бейджем «Хит» */
+@media(max-width:430px){.sy-pcard__name{font-size:18px;letter-spacing:-.02em}.sy-pcard__flag{top:14px;right:14px;padding:3px 9px;font-size:9px}}
 .sy-pcard__who{color:var(--sy-mut);font-size:13px;margin-top:6px;min-height:36px}
 .sy-pcard__price{margin-top:18px;display:flex;align-items:baseline;gap:8px}
 .sy-pcard__from{font-size:13px;color:var(--sy-mut)}
@@ -773,6 +775,10 @@ textarea.sy-in{resize:vertical;min-height:84px}
   .sy-feat::after,.sy-get::after,.sy-pcard::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(205,255,79,.07),transparent 66%);z-index:0}
   .sy-feat:hover::after,.sy-get:hover::after,.sy-pcard:hover::after{opacity:1}
   .sy-feat>*,.sy-get>*,.sy-pcard>*{position:relative;z-index:1}
+  /* Fix: правило выше роняло absolute-бейджи в поток → «Хит» налезал на заголовок
+     тарифа, номера 01–04 — на иконку. Возвращаем им absolute (специфичность выше). */
+  .sy-pcard>.sy-pcard__flag{position:absolute}
+  .sy-get>.sy-get__n{position:absolute}
 }
 
 /* Батч5 a11y: видимый фокус для клавиатуры (тёмная тема была слепой) */
