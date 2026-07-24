@@ -324,7 +324,7 @@
         if (saved) {
           // Конверсия засчитывается на РЕАЛЬНУЮ отправку (не на клик) — цель для Директа/Ads.
           // В Метрике нужно создать JS-цель с идентификатором «lead».
-          try { if (window.ym) ym(110585817, 'reachGoal', 'lead'); } catch (e) {}
+          try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'lead'); } catch (e) {}
           try { if (window.gtag) gtag('event', 'generate_lead', { form_id: 'sayty' }); } catch (e) {}
           var okPanel = document.getElementById('syFormOk');
           form.style.display = 'none';
@@ -407,10 +407,10 @@
     if (!a) return;
     var href = a.getAttribute('href') || '';
     if (href.indexOf('tel:') === 0) {
-      try { if (window.ym) ym(110585817, 'reachGoal', 'call'); } catch (_) {}
+      try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'call'); } catch (_) {}
       try { if (window.gtag) gtag('event', 'contact_phone'); } catch (_) {}
     } else if (/t\.me\//i.test(href)) {
-      try { if (window.ym) ym(110585817, 'reachGoal', 'telegram'); } catch (_) {}
+      try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'telegram'); } catch (_) {}
       try { if (window.gtag) gtag('event', 'contact_telegram'); } catch (_) {}
     }
   }, true);
