@@ -251,6 +251,20 @@
     var errorRevertTimer = null;
     var submitBtn = form.querySelector('[type=submit]');
     var submitBtnText = submitBtn ? submitBtn.textContent : '';
+    // inline-ошибки в стиле сайта: подсветка поля + текст под ним
+    function setErr(field, boxId, msg) {
+      var box = boxId && document.getElementById(boxId);
+      if (box) { box.textContent = msg || ''; box.classList.toggle('show', !!msg); }
+      if (field) field.style.borderColor = msg ? '#ff6b6b' : '';
+    }
+    // контакт валиден = телефон (10–15 цифр) ИЛИ Telegram (@username / t.me / голый ник)
+    function validContact(v) {
+      v = (v || '').trim();
+      var digits = v.replace(/\D/g, '');
+      var isPhone = digits.length >= 10 && digits.length <= 15;
+      var isTg = /@[a-zA-Z0-9_]{3,}/.test(v) || /t\.me\//i.test(v) || (/^[a-zA-Z0-9_]{4,}$/.test(v) && /[a-zA-Z]/.test(v));
+      return isPhone || isTg;
+    }
     var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'gclid'];
     function getTrafficSource() {
       var params = new URLSearchParams(window.location.search);
@@ -274,11 +288,15 @@
       if (now - last < 20000) return;
       var name = form.querySelector('#sy-name');
       var contact = form.querySelector('#sy-contact');
+      var consent = form.querySelector('#sy-consent');
       var ok = true;
-      [name, contact].forEach(function (f) {
-        if (!f.value.trim()) { f.style.borderColor = '#ff6b6b'; ok = false; }
-        else f.style.borderColor = '';
-      });
+      if (!name.value.trim()) { setErr(name, 'syErrName', 'Как к вам обращаться?'); ok = false; }
+      else setErr(name, 'syErrName', '');
+      if (!contact.value.trim()) { setErr(contact, 'syErrContact', 'Оставьте телефон или Telegram'); ok = false; }
+      else if (!validContact(contact.value)) { setErr(contact, 'syErrContact', 'Проверьте: +7 900 000-00-00 или @username'); ok = false; }
+      else setErr(contact, 'syErrContact', '');
+      if (consent && !consent.checked) { setErr(null, 'syErrConsent', 'Нужно согласие на обработку данных'); ok = false; }
+      else setErr(null, 'syErrConsent', '');
       if (!ok) return;
       last = now;
       if (errorRevertTimer) { clearTimeout(errorRevertTimer); errorRevertTimer = null; }
@@ -318,8 +336,14 @@
       });
     });
     form.querySelectorAll('.sy-in').forEach(function (f) {
-      f.addEventListener('input', function () { f.style.borderColor = ''; });
+      f.addEventListener('input', function () {
+        f.style.borderColor = '';
+        if (f.id === 'sy-name') setErr(null, 'syErrName', '');
+        if (f.id === 'sy-contact') setErr(null, 'syErrContact', '');
+      });
     });
+    var consentEl = form.querySelector('#sy-consent');
+    if (consentEl) consentEl.addEventListener('change', function () { if (consentEl.checked) setErr(null, 'syErrConsent', ''); });
   }
 
   // ── Before/After compare sliders ──
@@ -368,6 +392,21 @@
       pvids.forEach(function (v) { v.play().catch(function () {}); });
     }
   }
+
+  /* ── цели на клик по телефону и Telegram (микроконверсии для Директа/Ads) ──
+     В Метрике создать JS-цели: «call» и «telegram». Форма шлёт цель «lead». */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (href.indexOf('tel:') === 0) {
+      try { if (window.ym) ym(110585817, 'reachGoal', 'call'); } catch (_) {}
+      try { if (window.gtag) gtag('event', 'contact_phone'); } catch (_) {}
+    } else if (/t\.me\//i.test(href)) {
+      try { if (window.ym) ym(110585817, 'reachGoal', 'telegram'); } catch (_) {}
+      try { if (window.gtag) gtag('event', 'contact_telegram'); } catch (_) {}
+    }
+  }, true);
 })();
 
 /* наклон hero-мокапа за курсором (параллакс) */

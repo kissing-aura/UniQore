@@ -906,3 +906,16 @@ textarea.sy-in{resize:vertical;min-height:84px}
 /* Мусорка (анимация дизайнера) в блоке боли — «старый сайт = мусор» */
 .sy-emo__trash{width:clamp(150px,20vw,208px);margin:0 auto clamp(16px,2.4vw,26px);border-radius:16px;overflow:hidden;border:1px solid var(--sy-line);box-shadow:0 18px 50px -20px rgba(0,0,0,.7);line-height:0}
 .sy-emo__trash video{display:block;width:100%;height:auto}
+
+/* Согласие на обработку ПДн (152-ФЗ) + inline-ошибки формы — в стиле сайта */
+.sy-consent{display:flex;align-items:flex-start;gap:11px;margin:16px auto 2px;max-width:560px;cursor:pointer;font-size:12.5px;line-height:1.5;color:var(--sy-mut2,#8b95a8);user-select:none;text-align:left}
+.sy-consent input{position:absolute;opacity:0;width:1px;height:1px}
+.sy-consent__box{flex:0 0 20px;width:20px;height:20px;border:1.6px solid var(--sy-line);border-radius:6px;display:grid;place-items:center;margin-top:1px;transition:.18s;background:rgba(255,255,255,.02);color:#08130a}
+.sy-consent__box svg{width:12px;height:12px;stroke-width:3;opacity:0;transform:scale(.5);transition:.18s}
+.sy-consent input:checked+.sy-consent__box{background:var(--sy-l);border-color:var(--sy-l)}
+.sy-consent input:checked+.sy-consent__box svg{opacity:1;transform:scale(1)}
+.sy-consent input:focus-visible+.sy-consent__box{outline:2px solid var(--sy-l);outline-offset:2px}
+.sy-consent a{color:var(--sy-l);text-decoration:underline;text-underline-offset:2px}
+.sy-err{max-height:0;overflow:hidden;opacity:0;color:#ff8a8a;font-size:12px;line-height:1.4;transition:max-height .2s,opacity .2s,margin .2s}
+.sy-err.show{max-height:44px;opacity:1;margin:6px 0 2px}
+.sy-err--center{text-align:center}
