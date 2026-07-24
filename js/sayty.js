@@ -169,16 +169,23 @@
     }, 4600);
   }
 
-  /* ── курсор ── */
+  /* ── курсор: ходит по ВИДИМОЙ правой зоне мокапа (телефон слева-снизу его больше не прячет), плавно ── */
   var cursor = document.getElementById('syCursor');
-  if (cursor && !reduce) {
-    var spots = [[70, 60], [190, 130], [250, 210], [130, 250], [60, 180]];
+  var cursorView = document.querySelector('.sy-browser__view');
+  if (cursor && cursorView && !reduce) {
+    // точки как доли вьюпорта — все правее телефона (он занимает левые ~32% снизу), так курсор всегда в кадре
+    var fspots = [[0.44, 0.16], [0.74, 0.30], [0.56, 0.54], [0.82, 0.64], [0.50, 0.40]];
     var ci = 0;
-    setInterval(function () {
-      ci = (ci + 1) % spots.length;
-      cursor.style.transform = 'translate(' + spots[ci][0] + 'px,' + spots[ci][1] + 'px)';
-      setTimeout(function () { cursor.classList.add('click'); setTimeout(function () { cursor.classList.remove('click'); }, 420); }, 1200);
-    }, 2400);
+    function moveCursor() {
+      var w = cursorView.clientWidth, h = cursorView.clientHeight;
+      if (!w || !h) return;
+      var f = fspots[ci];
+      cursor.style.transform = 'translate(' + Math.round(f[0] * w) + 'px,' + Math.round(f[1] * h) + 'px)';
+      setTimeout(function () { cursor.classList.add('click'); setTimeout(function () { cursor.classList.remove('click'); }, 420); }, 900);
+      ci = (ci + 1) % fspots.length;
+    }
+    moveCursor();
+    setInterval(moveCursor, 2600);
   }
 
   /* ── portfolio filter ── */
