@@ -35,6 +35,8 @@
 .sy-h2 em{font-style:normal;color:var(--sy-l)}
 .sy-sub{text-align:center;color:var(--sy-txt-soft);font-size:var(--sy-fs-sub);line-height:1.55;max-width:46ch;margin:20px auto 0}
 .sy-section{padding:var(--sy-section-y) 0;position:relative}
+/* Мобилка: сжимаем вертикальные отступы секций — было 80px×2 на каждую (×16 секций = ~2560px впустую), делает страницу марафоном */
+@media(max-width:640px){:root{--sy-section-y:50px;--sy-head-mb:32px}.dz{display:none}}
 .sy-head{margin-bottom:var(--sy-head-mb);text-align:center;max-width:var(--sy-measure);margin-left:auto;margin-right:auto}
 .sy-head--center{text-align:center}
 .sy-head--left{text-align:left;margin-left:0;max-width:42ch}
