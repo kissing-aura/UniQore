@@ -4703,6 +4703,8 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 
 /* [ритм] Ужать тёмную пустоту над секцией потерь. */
 .mirror-section { padding-top: 84px !important; }
+/* мобилка: mirror выбивался из ритма (84/110 vs 64 у других) — выравниваем */
+@media(max-width:640px){.mirror-section{padding:52px 0 !important}}
 
 /* ── Финальные нит-фиксы до чистой 9 ── */
 /* Число потерь — ровные плотные группы. Было моно (font-mono) → узкий пробел
