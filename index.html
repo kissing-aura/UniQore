@@ -125,7 +125,7 @@
   <!-- CSS: 13 файлов объединены в один bundle.css — 1 render-blocking запрос вместо 13.
        Критично для нестабильного канала (РФ): одного зависшего CSS хватало на чёрный экран.
        Bundle пересобирать при правке любого исходника (см. css/*.css). -->
-  <link rel="stylesheet" href="css/bundle.css?v=20260724c">
+  <link rel="stylesheet" href="css/bundle.css?v=20260724f">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -374,6 +374,10 @@
               </div>
               <div class="hero__frame-glow"></div>
             </div>
+            <!-- floating-карточки — оживляют мокап (как на /sayty/) -->
+            <div class="hero__fcard hero__fcard--a"><span class="hero__fcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><div>Заявки растут<small>из рекламы</small></div></div>
+            <div class="hero__fcard hero__fcard--b"><span class="hero__fcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><div>Всё в одной системе<small>сайт · CRM · реклама</small></div></div>
+            <div class="hero__fcard hero__fcard--c"><span class="hero__fcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div>4–6 дней<small>до запуска</small></div></div>
 
           </div>
 
