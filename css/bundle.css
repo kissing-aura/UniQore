@@ -412,6 +412,7 @@ section { padding: var(--section-padding); }
   line-height: 1;
   letter-spacing: -0.03em;
   transition: color var(--transition-base), text-shadow var(--transition-base);
+  white-space: nowrap;
 }
 .hero__metric:hover .hero__metric-num {
   color: var(--color-accent);
