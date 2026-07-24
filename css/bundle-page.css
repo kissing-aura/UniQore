@@ -868,18 +868,19 @@ section { padding: var(--section-padding); }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   font-family: var(--font-body);
-  padding: 12px 24px;
+  padding: 13px 26px;
   cursor: pointer;
   transition: all var(--transition-base);
   white-space: nowrap;
   border: 1px solid transparent;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  border-radius: 14px;
 }
-.btn--lg   { padding: 16px 36px; font-size: 13px; }
+.btn--lg   { padding: 16px 34px; font-size: 15px; }
 .btn--full { width: 100%; }
 
 .btn--accent {
