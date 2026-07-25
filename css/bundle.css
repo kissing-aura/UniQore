@@ -5426,3 +5426,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   #uq-float-cta:active { transform: scale(.96); }
 }
 
+
+/* Телефон в шапке — живой канал связи (анти-скам) + работает цель call */
+.nav__tel{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--color-text-primary,#E7EAF0);text-decoration:none;white-space:nowrap;transition:color .2s}
+.nav__tel svg{opacity:.7;flex:0 0 auto}
+.nav__tel:hover{color:var(--color-accent,#CDFF4F)}
+.nav__tel:hover svg{opacity:1}
+@media(max-width:1200px){.nav__tel{display:none}}
+/* Телефон занял место в шапке — на средних десктопах ужимаем разрядку, иначе «О нас» переносится и CTA обрезается */
+@media(min-width:1201px) and (max-width:1520px){.nav__inner{gap:26px}.nav__links{gap:24px}}
