@@ -204,6 +204,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (saved) {
+      // Конверсия засчитывается на РЕАЛЬНУЮ доставку лида (не на клик по кнопке).
+      // Счётчик берём из UQ_MID: uniqore.ru → 111003646 (РФ-реклама), .pro → 110585817.
+      try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'lead'); } catch (e) {}
+      try { if (window.gtag) gtag('event', 'generate_lead', { form_id: 'main' }); } catch (e) {}
       btn.textContent = '✓ Заявка отправлена';
       btn.classList.remove('btn--error');
       btn.classList.add('btn--success');
