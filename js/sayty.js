@@ -275,8 +275,14 @@
     var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'gclid'];
     function getTrafficSource() {
       var params = new URLSearchParams(window.location.search);
-      var out = {};
-      UTM_KEYS.forEach(function (k) { out[k] = params.get(k) || ''; });
+      var out = {}, saved = {};
+      // первый источник визита переживает переходы по страницам (sessionStorage)
+      try { saved = JSON.parse(sessionStorage.getItem('uq_attr') || '{}'); } catch (e) {}
+      UTM_KEYS.forEach(function (k) { out[k] = params.get(k) || saved[k] || ''; });
+      // ClientID Метрики — ключ связки «продажа в CRM ↔ рекламный клик» (офлайн-конверсии)
+      out.ym_client_id = window.UQ_CID || '';
+      out.ym_counter = window.UQ_MID || '';
+      out.page = location.pathname;
       return out;
     }
     var CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';

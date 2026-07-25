@@ -206,6 +206,14 @@
     (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id='+window.UQ_MID, 'ym');
 
     ym(window.UQ_MID, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    /* Сквозная аналитика: ClientID Метрики + первый источник визита — уходят с заявкой в CRM,
+       чтобы потом связать продажу с рекламным кликом (офлайн-конверсии). */
+    try { ym(window.UQ_MID, 'getClientID', function (id) { window.UQ_CID = id; }); } catch (_) {}
+    try {
+      var uqP = new URLSearchParams(location.search), uqK = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid','gclid'], uqF = {}, uqAny = false;
+      uqK.forEach(function (k) { var v = uqP.get(k) || ''; uqF[k] = v; if (v) uqAny = true; });
+      if (uqAny && !sessionStorage.getItem('uq_attr')) sessionStorage.setItem('uq_attr', JSON.stringify(uqF));
+    } catch (_) {}
     /* Микроконверсии: клик по телефону → цель call, по Telegram → telegram (в тот же счётчик UQ_MID). */
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
@@ -625,7 +633,7 @@
   <script src="../js/enhance.js?v=20260720b" defer></script>
   <script src="../js/core3d.js?v=20260716a" defer></script>
   <script src="../js/contact-net.js?v=20260716a" defer></script>
-  <script src="../js/form.js?v=20260725a" defer></script>
+  <script src="../js/form.js?v=20260725c" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
 </body>
 </html>

@@ -90,13 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: data.name,
-          business: data.business,
-          contact: data.contact,
-          task: data.task,
-          website: data.website || '', // honeypot
-        }),
+        // Шлём data целиком: кроме полей формы там атрибуция (utm/yclid/ClientID),
+        // раньше она обрезалась белым списком и лиды с главной были без источника.
+        body: JSON.stringify({ ...data, website: data.website || '' }),
       });
       return res.ok;
     } catch { return false; }
@@ -120,13 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Authorization: `Bearer ${CMD_ANON_KEY}`,
         'x-bridge-secret': CMD_BRIDGE_SECRET,
       },
-      body: JSON.stringify({
-        name: data.name,
-        business: data.business,
-        contact: data.contact,
-        task: data.task,
-        website: data.website || '',
-      }),
+      body: JSON.stringify({ ...data, website: data.website || '' }),
     }).then(r => r.ok).catch(() => false);
   }
 
@@ -174,12 +164,28 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.disabled = true;
     liveRegion.textContent = '';
 
+    // Атрибуция: первый источник визита (sessionStorage, чтобы не терялся при переходах)
+    // + ClientID Метрики — по нему потом связываем продажу из CRM с рекламным кликом.
+    const attribution = (() => {
+      const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'gclid'];
+      const out = {};
+      let saved = {};
+      try { saved = JSON.parse(sessionStorage.getItem('uq_attr') || '{}'); } catch (e) {}
+      const params = new URLSearchParams(location.search);
+      keys.forEach(k => { out[k] = params.get(k) || saved[k] || ''; });
+      out.ym_client_id = window.UQ_CID || '';
+      out.ym_counter = window.UQ_MID || '';
+      out.page = location.pathname;
+      return out;
+    })();
+
     const formData = {
       name: form.querySelector('#name')?.value?.trim() || '',
       business: form.querySelector('#business')?.value?.trim() || '',
       contact: form.querySelector('#contact-input')?.value?.trim() || '',
       task: form.querySelector('#task')?.value?.trim() || '',
       website: honeypot.value || '',
+      ...attribution,
     };
 
     lastSubmit = Date.now();
