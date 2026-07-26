@@ -51,7 +51,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260725b">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260724b">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260724c">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Шрифты грузим НЕ render-blocking: страница рисуется сразу в системном фолбэке, гугл-шрифты подменяются по готовности (display=swap). Защита от тормозов Google Fonts у РФ-трафика. -->
@@ -86,10 +86,13 @@
   <nav class="nav" id="nav">
     <div class="container nav__inner">
       <a href="/" class="nav__logo" aria-label="Uniqore">
-        <svg class="nav__logo-mark" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
-          <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
-        </svg>
+        <span class="nav__logo-mark nav__logo-3d">
+          <video class="nav__logo-vid" src="/assets/dz/uniqore-3dlogo.mp4?v=1" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+          <svg class="nav__logo-svg" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
+            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+        </span>
         <span class="nav__logo-text">uniqore</span>
       </a>
       <ul class="nav__links">
@@ -910,7 +913,7 @@
     window.addEventListener('scroll',function(){var n=document.getElementById('nav');if(n)n.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
   </script>
   <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
-  <script src="/js/sayty.js?v=20260724b" defer></script>
+  <script src="/js/sayty.js?v=20260724c" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
 </body>
 </html>

@@ -832,6 +832,11 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-brandseal .sy-sub{margin-left:auto;margin-right:auto}
 .sy-brandseal .sy-btn{margin-top:24px}
 
+/* nav 3D-логотип (/sayty/): видео-лупа крутится по скроллу на десктопе; на мобилке — чёткий SVG (перф) */
+.nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:0 0 auto}
+.nav__logo-vid{width:32px;height:32px;object-fit:cover;display:none;pointer-events:none;-webkit-mask:radial-gradient(closest-side,#000 56%,transparent 90%);mask:radial-gradient(closest-side,#000 56%,transparent 90%)}
+@media(min-width:761px) and (hover:hover){.nav__logo-3d .nav__logo-vid{display:block}.nav__logo-3d .nav__logo-svg{display:none}}
+
 /* ═══════ Оплата после макета — 3 шага ═══════ */
 .sy-pay__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:clamp(30px,4vw,46px)}
 @media(max-width:760px){.sy-pay__grid{grid-template-columns:1fr;gap:12px}}

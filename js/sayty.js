@@ -487,3 +487,23 @@
   window.addEventListener('resize', function () { if (!raf) raf = requestAnimationFrame(scrub); }, { passive: true });
   scrub();
 })();
+
+/* nav-логотип: 3D-лупа вращается по скроллу (desktop hover only; каждые ~480px = один оборот) */
+(function () {
+  var nv = document.querySelector('.nav__logo-vid');
+  if (!nv) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var desktop = window.matchMedia && window.matchMedia('(min-width:761px) and (hover:hover)').matches;
+  if (!desktop || reduce) return; // мобилка: показан SVG, видео не грузим/не крутим
+  try { nv.pause(); } catch (e) {}
+  var raf = 0, dur = 0;
+  function upd() {
+    raf = 0;
+    if (!dur) return;
+    try { nv.currentTime = ((window.scrollY / 480) % 1) * dur; } catch (e) {}
+  }
+  nv.addEventListener('loadedmetadata', function () { dur = nv.duration || 0; upd(); });
+  if (nv.readyState >= 1) dur = nv.duration || 0;
+  window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true });
+  upd();
+})();
