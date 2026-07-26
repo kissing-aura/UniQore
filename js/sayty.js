@@ -496,14 +496,23 @@
   var desktop = window.matchMedia && window.matchMedia('(min-width:761px) and (hover:hover)').matches;
   if (!desktop || reduce) return; // мобилка: показан SVG, видео не грузим/не крутим
   try { nv.pause(); } catch (e) {}
-  var raf = 0, dur = 0;
-  function upd() {
-    raf = 0;
-    if (!dur) return;
-    try { nv.currentTime = ((window.scrollY / 480) % 1) * dur; } catch (e) {}
+  var raf = 0, dur = 0, cur = 0, target = 0;
+  function computeTarget() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? window.scrollY / max : 0;
+    if (p < 0) p = 0; else if (p > 1) p = 1;
+    target = p * dur;               // весь скролл страницы = один плавный оборот, без прыжков
   }
-  nv.addEventListener('loadedmetadata', function () { dur = nv.duration || 0; upd(); });
-  if (nv.readyState >= 1) dur = nv.duration || 0;
-  window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true });
-  upd();
+  function tick() {
+    raf = 0;
+    cur += (target - cur) * 0.12;   // lerp — масляно, без рывков
+    try { nv.currentTime = cur; } catch (e) {}
+    if (Math.abs(target - cur) > 0.008) raf = requestAnimationFrame(tick);
+    else cur = target;
+  }
+  function onScroll() { if (!dur) return; computeTarget(); if (!raf) raf = requestAnimationFrame(tick); }
+  nv.addEventListener('loadedmetadata', function () { dur = nv.duration || 0; computeTarget(); cur = target; try { nv.currentTime = cur; } catch (e) {} });
+  if (nv.readyState >= 1) { dur = nv.duration || 0; computeTarget(); cur = target; }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
 })();

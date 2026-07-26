@@ -832,10 +832,12 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-brandseal .sy-sub{margin-left:auto;margin-right:auto}
 .sy-brandseal .sy-btn{margin-top:24px}
 
-/* nav 3D-логотип (/sayty/): видео-лупа крутится по скроллу на десктопе; на мобилке — чёткий SVG (перф) */
-.nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:0 0 auto}
-.nav__logo-vid{width:32px;height:32px;object-fit:cover;display:none;pointer-events:none;-webkit-mask:radial-gradient(closest-side,#000 56%,transparent 90%);mask:radial-gradient(closest-side,#000 56%,transparent 90%)}
-@media(min-width:761px) and (hover:hover){.nav__logo-3d .nav__logo-vid{display:block}.nav__logo-3d .nav__logo-svg{display:none}}
+/* nav 3D-логотип (/sayty/): яркая видео-лупа, плавно вращается по скроллу на десктопе; на мобилке — чёткий SVG (перф) */
+.nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
+.nav__logo-3d::before{content:'';position:absolute;inset:-3px;border-radius:50%;background:radial-gradient(closest-side,rgba(205,255,79,.28),transparent 70%);opacity:.55;pointer-events:none}
+.nav__logo-vid{position:relative;width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;filter:brightness(1.18) saturate(1.2);-webkit-mask:radial-gradient(closest-side,#000 72%,transparent 96%);mask:radial-gradient(closest-side,#000 72%,transparent 96%)}
+@media(min-width:761px) and (hover:hover){.nav__logo-3d .nav__logo-vid{display:block}.nav__logo-3d .nav__logo-svg{display:none}.nav__logo-3d::before{opacity:.55}}
+@media(max-width:760px),(hover:none){.nav__logo-3d::before{display:none}}
 
 /* ═══════ Оплата после макета — 3 шага ═══════ */
 .sy-pay__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:clamp(30px,4vw,46px)}
