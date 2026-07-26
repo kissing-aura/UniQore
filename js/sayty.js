@@ -454,3 +454,36 @@
     if (!raf) raf = requestAnimationFrame(loop);
   });
 })();
+
+/* бренд-сил: 3D-лого вращается по скроллу (desktop scrub); на мобилке/reduce — плавный автолуп в зоне видимости */
+(function () {
+  var v = document.querySelector('.sy-brandseal__v');
+  if (!v) return;
+  var sec = v.closest('.sy-brandseal');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var desktop = window.matchMedia && window.matchMedia('(min-width:761px)').matches;
+  if (!desktop || reduce) {
+    v.loop = true;
+    var tryplay = function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) tryplay(); else v.pause(); }); }, { threshold: 0.2 });
+      io.observe(v);
+    } else tryplay();
+    return;
+  }
+  try { v.pause(); } catch (e) {}
+  var raf = 0, dur = 0;
+  function scrub() {
+    raf = 0;
+    if (!dur) return;
+    var r = sec.getBoundingClientRect(), vh = window.innerHeight;
+    var p = (vh - r.top) / (vh + r.height);
+    p = p < 0 ? 0 : p > 1 ? 1 : p;
+    try { v.currentTime = p * dur; } catch (e) {}
+  }
+  v.addEventListener('loadedmetadata', function () { dur = v.duration || 0; scrub(); });
+  if (v.readyState >= 1) dur = v.duration || 0;
+  window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(scrub); }, { passive: true });
+  window.addEventListener('resize', function () { if (!raf) raf = requestAnimationFrame(scrub); }, { passive: true });
+  scrub();
+})();

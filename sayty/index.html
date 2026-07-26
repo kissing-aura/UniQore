@@ -51,7 +51,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260725b">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260724k">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260724b">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Шрифты грузим НЕ render-blocking: страница рисуется сразу в системном фолбэке, гугл-шрифты подменяются по готовности (display=swap). Защита от тормозов Google Fonts у РФ-трафика. -->
@@ -452,6 +452,7 @@
               <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-fountain.mp4?v=1" poster="/assets/dz/dz-fountain.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: фонтан"></video></div>
               <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-swing.mp4?v=1" poster="/assets/dz/dz-swing.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: качели"></video></div>
               <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-smoke.mp4?v=1" poster="/assets/dz/dz-smoke.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: дым"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-coffee2.mp4?v=1" poster="/assets/dz/dz-coffee2.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: кофе"></video></div>
             </div>
             <div class="dz__head" style="margin-top:44px">
               <h3>Анимация <em>логотипов</em></h3>
@@ -681,6 +682,21 @@
     </section>
 
 
+    <!-- ═══════ BRAND SEAL (3D-лого, вращение по скроллу) ═══════ -->
+    <section class="sy-section sy-brandseal" id="brandseal">
+      <div class="sy-container">
+        <div class="sy-brandseal__in sy-rev">
+          <div class="sy-brandseal__viz">
+            <video class="sy-brandseal__v" src="/assets/dz/uniqore-3dlogo.mp4?v=1" poster="/assets/dz/uniqore-3dlogo.jpg?v=1" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+          </div>
+          <span class="sy-eyebrow"><span class="dot"></span>Почему именно Uniqore</span>
+          <h2 class="sy-h2">Находим то, что превращает клики в <em>клиентов</em></h2>
+          <p class="sy-sub">Не просто сайт — система под заявки. Дизайн, скорость, аналитика и CRM работают на одну цель.</p>
+          <a href="#zayavka" class="sy-btn sy-btn--main" data-mag>Получить бесплатный расчёт <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+    </section>
+
     <!-- ═══════ OBJECTIONS ═══════ -->
     <section class="sy-section" id="faq">
       <div class="sy-container">
@@ -894,7 +910,7 @@
     window.addEventListener('scroll',function(){var n=document.getElementById('nav');if(n)n.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
   </script>
   <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
-  <script src="/js/sayty.js?v=20260725a" defer></script>
+  <script src="/js/sayty.js?v=20260724b" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
 </body>
 </html>

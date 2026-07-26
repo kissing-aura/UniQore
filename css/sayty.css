@@ -824,6 +824,14 @@ textarea.sy-in{resize:vertical;min-height:84px}
 }
 @media(prefers-reduced-motion:reduce){.sy-h2 em::before,.sy-h2 em::after{opacity:.92;transition:none}.sy-feat::before,.sy-get::before,.sy-pcard::before{transition:none}}
 
+/* ═══════════ BRAND SEAL — 3D-лого, вращение по скроллу ═══════════ */
+.sy-brandseal__in{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
+.sy-brandseal__viz{position:relative;width:min(340px,72vw);aspect-ratio:1/1;margin-bottom:8px}
+.sy-brandseal__viz::before{content:'';position:absolute;inset:14%;border-radius:50%;background:radial-gradient(closest-side,rgba(205,255,79,.16),rgba(49,224,176,.06) 55%,transparent 74%);filter:blur(28px)}
+.sy-brandseal__v{position:relative;width:100%;height:100%;object-fit:cover;display:block;-webkit-mask:radial-gradient(closest-side,#000 66%,transparent 92%);mask:radial-gradient(closest-side,#000 66%,transparent 92%)}
+.sy-brandseal .sy-sub{margin-left:auto;margin-right:auto}
+.sy-brandseal .sy-btn{margin-top:24px}
+
 /* ═══════ Оплата после макета — 3 шага ═══════ */
 .sy-pay__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:clamp(30px,4vw,46px)}
 @media(max-width:760px){.sy-pay__grid{grid-template-columns:1fr;gap:12px}}
