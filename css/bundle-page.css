@@ -2625,6 +2625,10 @@ textarea.field--error {
   line-height: 1.8;
 }
 .faq-item__a[hidden] { display: none; }
+/* JS (main.js) снимает [hidden] со всех ответов сразу и берёт высоту под себя через .faq-a/.is-open —
+   без этого правила ответы остаются видимыми в полный рост, пока не открыты. Было пропущено в этом бандле. */
+.faq-a { overflow: hidden; max-height: 0; opacity: 0; transition: max-height .42s cubic-bezier(.4,0,.2,1), opacity .32s ease; }
+.faq-a.is-open { opacity: 1; }
 
 /* ── Tech Stack ── */
 .stack__groups {
