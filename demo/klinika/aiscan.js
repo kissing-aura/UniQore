@@ -169,7 +169,9 @@ window.UQ_AISCAN = (function () {
     row.innerHTML = '<div class="as-f__ic">' + f.ic + '</div><div class="as-f__b"><div class="as-f__t">' + esc(f.type) + '<span class="as-pill">' + esc(f.pill) + '</span></div><div class="as-f__n"><b style="color:var(--stx)">Зуб ' + esc(f.tooth) + '</b> · ' + esc(f.note) + (f.plan !== '—' ? '<br><span style="color:var(--scy)">План: ' + esc(f.plan) + '</span>' : '') + '</div><div class="as-f__m"><div class="as-bar"><i></i></div><span class="as-f__c">' + f.conf + '%</span></div></div>';
     box.appendChild(row);
     setTimeout(function () { row.classList.add('in'); row.querySelector('.as-bar i').style.width = f.conf + '%'; }, 20);
-    box.scrollTop = box.scrollHeight;
+    // не автоскроллим когда демо встроено в iframe (карточка на /keysy/) —
+    // иначе превью «едет вниз» само по себе (фидбек Матвея 20.07)
+    if (window.self === window.top) box.scrollTop = box.scrollHeight;
   }
 
   // приколюха: клик по находке → пульс на зубе
@@ -272,10 +274,9 @@ window.UQ_AISCAN = (function () {
     scope.querySelectorAll('[data-as-lock]').forEach(function (el) { el.addEventListener('click', function () { scope.querySelector('.as-lock').hidden = false; }); });
     var lc = scope.querySelector('[data-lock-close]'); if (lc) lc.onclick = function () { scope.querySelector('.as-lock').hidden = true; };
     var lock = scope.querySelector('.as-lock'); if (lock) lock.addEventListener('click', function (e) { if (e.target === lock) lock.hidden = true; });
-    // parallax
-    var theatre = scope.querySelector('.as-theatre'), arch = scope.querySelector('.as-arch');
-    theatre.addEventListener('pointermove', function (e) { var r = theatre.getBoundingClientRect(); var dx = (e.clientX - r.left) / r.width - .5, dy = (e.clientY - r.top) / r.height - .5; arch.style.transform = 'rotateY(' + (dx * 9) + 'deg) rotateX(' + (-dy * 7) + 'deg)'; });
-    theatre.addEventListener('pointerleave', function () { arch.style.transform = 'none'; });
+    // Мышиный 3D-наклон дуги убран: из-за лага transition снимок «плыл» за
+    // курсором — для медицинской панорамы выглядело несерьёзно. Снимок статичен,
+    // динамику даёт скан-луч и разметка находок.
   }
 
   return { html: html, init: init };

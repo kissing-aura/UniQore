@@ -12,6 +12,51 @@
     revs.forEach(function (e) { io.observe(e); });
   } else revs.forEach(function (e) { e.classList.add('in'); });
 
+  /* ── счётчики цифр (one-shot, rAF, стоп на финале; fallback = финальное значение) ── */
+  var counters = document.querySelectorAll('.sy-cnt');
+  function runCount(el) {
+    var to = parseFloat(el.getAttribute('data-to')) || 0;
+    var dec = parseInt(el.getAttribute('data-dec'), 10) || 0;
+    var suf = el.getAttribute('data-suf') || '';
+    var start = null, dur = 900;
+    function frame(t) {
+      if (start === null) start = t;
+      var p = Math.min((t - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (to * eased).toFixed(dec) + suf;
+      if (p < 1) requestAnimationFrame(frame);
+      else el.textContent = to.toFixed(dec) + suf;
+    }
+    requestAnimationFrame(frame);
+  }
+  if ('IntersectionObserver' in window && !reduce && counters.length) {
+    var cio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { runCount(e.target); cio.unobserve(e.target); } });
+    }, { threshold: 0.6 });
+    counters.forEach(function (e) { cio.observe(e); });
+  }
+
+  /* ── таймлайн: отрисовка линии при въезде (one-shot) ── */
+  var tls = document.querySelectorAll('.sy-tl');
+  if ('IntersectionObserver' in window && !reduce && tls.length) {
+    var tlio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('drawn'); tlio.unobserve(e.target); } });
+    }, { threshold: 0.2 });
+    tls.forEach(function (e) { tlio.observe(e); });
+  } else tls.forEach(function (e) { e.classList.add('drawn'); });
+
+  /* ── spotlight-hover карточек (только desktop-hover, rAF-коалесинг) ── */
+  if (window.matchMedia && window.matchMedia('(hover:hover)').matches && !reduce) {
+    document.querySelectorAll('.sy-feat,.sy-get,.sy-pcard').forEach(function (c) {
+      var raf = 0, mx = 0, my = 0;
+      c.addEventListener('pointermove', function (e) {
+        var r = c.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
+        if (raf) return;
+        raf = requestAnimationFrame(function () { raf = 0; c.style.setProperty('--mx', mx + 'px'); c.style.setProperty('--my', my + 'px'); });
+      }, { passive: true });
+    });
+  }
+
   /* ── floating cards (staggered) ── */
   var fcards = document.querySelectorAll('.sy-fcard');
   if ('IntersectionObserver' in window && fcards.length) {
@@ -34,6 +79,7 @@
   var site = document.getElementById('sySite');
   var scrollWrap = document.getElementById('syScroll');
   var urlEl = document.getElementById('syUrl');
+  var phone = document.getElementById('syPhone');
   var VARIANTS = [
     { chip:'Кофейня', accent:'#CDFF4F', ink:'#08130a', url:'lumen-coffee.ru', logo:'Lumen',
       title:'Кофе, который<br>запоминают.', lead:'Свежая обжарка каждый день. Доставка за 40 минут по всему городу.',
@@ -60,47 +106,86 @@
       strip:['12 лет','на рынке · гарантия 2 года · статус в Telegram'],
       s2:'Почему мы', s2cards:[['Гарантия','2 года'],['Цена','Фиксирована'],['Статус','В Telegram']] }
   ];
-  function msCard(c, hi){ return '<div class="ms-card" style="background:'+(hi?'color-mix(in srgb,var(--ms-accent) 10%,#141a26)':'#141a26')+'"><div class="ms-card__t">'+c[0]+'</div><div class="ms-card__d">'+c[1]+'</div></div>'; }
+  function splitAcc(t){
+    var s=t.replace(/<br\s*\/?>/gi,' ').trim().split(/\s+/);
+    var last=s.pop();
+    return (s.length?s.join(' ')+' ':'')+'<em class="lmn-acc">'+last+'</em>';
+  }
   function buildSite(v){
+    var segs=v.strip[1].split('·').map(function(x){return x.trim();}).filter(Boolean);
+    var bars='<span class="lmn-bars"><i></i><i></i><i></i><i></i><i></i></span>';
+    var rows=v.cards.map(function(c){return '<div class="lmn-row"><span>'+c[0]+'</span><b class="lmn-price">'+c[1]+'</b></div>';}).join('');
+    return '<div class="lmn" style="--acc:'+v.accent+'">'
+    + '<nav class="lmn-nav"><span class="lmn-mono">'+v.logo.charAt(0)+'</span><span class="lmn-brand">'+v.logo+'</span><span class="lmn-links"><span>Меню</span><span>О нас</span><span>Контакты</span></span><a class="lmn-pill">'+v.btns[0]+'</a></nav>'
+    + '<header class="lmn-hero">'
+    +   '<span class="lmn-chip"><i class="lmn-dot"></i>'+v.chip+'</span>'
+    +   '<div class="lmn-h1">'+splitAcc(v.title)+'</div>'
+    +   '<p class="lmn-lead">'+v.lead+'</p>'
+    +   '<div class="lmn-cta"><a class="lmn-pill lmn-pill--lg">'+v.btns[0]+'</a><a class="lmn-ghost">'+v.btns[1]+' →</a></div>'
+    +   '<div class="lmn-proof"><div class="lmn-proof__l"><div class="lmn-proof__n">'+v.cards[0][0]+'</div><div class="lmn-proof__m">★ '+v.strip[0].replace('★','').trim()+' · популярный выбор</div></div><div class="lmn-proof__r"><b class="lmn-price">'+v.cards[0][1]+'</b><span class="lmn-proof__b">'+v.btns[0]+'</span></div></div>'
+    + '</header>'
+    + '<div class="lmn-metrics"><div class="lmn-metric lmn-metric--lg"><b>'+v.strip[0]+'</b><span>'+(segs[0]||'')+'</span></div>'
+    +   (segs[1]?'<div class="lmn-metric"><span>'+segs[1]+'</span></div>':'')
+    +   (segs[2]?'<div class="lmn-metric"><span>'+segs[2]+'</span></div>':'')
+    + '</div>'
+    + '<section class="lmn-bento"><h2 class="lmn-h2">'+v.s2+'</h2><div class="lmn-grid">'
+    +   '<div class="lmn-b lmn-b--lg"><div class="lmn-b__k">'+v.s2cards[0][1]+'</div><div class="lmn-b__t">'+v.s2cards[0][0]+'</div>'+bars+'</div>'
+    +   '<div class="lmn-b"><span class="lmn-b__ic"></span><div class="lmn-b__t">'+v.s2cards[1][0]+'</div><div class="lmn-b__d">'+v.s2cards[1][1]+'</div></div>'
+    +   '<div class="lmn-b"><span class="lmn-b__ic"></span><div class="lmn-b__t">'+v.s2cards[2][0]+'</div><div class="lmn-b__d">'+v.s2cards[2][1]+'</div></div>'
+    + '</div></section>'
+    + '<section class="lmn-show"><h2 class="lmn-h2">Услуги и цены</h2>'+rows+'</section>'
+    + '<section class="lmn-quote"><div class="lmn-quote__mark">“</div><p class="lmn-quote__t">Сайт собрали за 4 дня — заявки пошли с первого запуска рекламы.</p><div class="lmn-quote__a"><span class="lmn-quote__av"></span><span>владелец '+v.logo+'</span></div></section>'
+    + '<section class="lmn-final"><h2 class="lmn-h2 lmn-h2--c">Готовы начать?</h2><a class="lmn-pill lmn-pill--lg">'+v.btns[0]+'</a></section>'
+    + '<footer class="lmn-foot"><span class="lmn-mono">'+v.logo.charAt(0)+'</span><span>© 2026 · '+v.logo+' · сделано в Uniqore</span></footer>'
+    + '</div>';
+  }
+  function buildMobile(v){
     return ''
-    + '<div class="ms-nav"><span class="ms-logo">'+v.logo+'</span><span class="ms-navlinks"><span>Меню</span><span>О нас</span><span>Контакты</span></span><span class="ms-cta" style="background:var(--ms-accent);color:var(--ms-ink)">Заказать</span></div>'
-    + '<div class="ms-hero"><span class="ms-badge" style="background:color-mix(in srgb,var(--ms-accent) 16%,transparent);color:var(--ms-accent)">'+v.chip+'</span><div class="ms-title">'+v.title+'</div><div class="ms-lead">'+v.lead+'</div><div class="ms-btns"><span class="ms-btn" style="background:var(--ms-accent);color:var(--ms-ink)">'+v.btns[0]+'</span><span class="ms-btn ms-btn--2">'+v.btns[1]+'</span></div></div>'
-    + '<div class="ms-cards">'+msCard(v.cards[0],1)+msCard(v.cards[1],0)+msCard(v.cards[2],0)+'</div>'
-    + '<div class="ms-strip" style="background:color-mix(in srgb,var(--ms-accent) 12%,#101622)"><div style="font-family:\'Unbounded\',sans-serif;font-weight:800;color:var(--ms-accent)">'+v.strip[0]+'</div><div style="font-size:11px;color:#9aa6bd">'+v.strip[1]+'</div></div>'
-    + '<div class="ms-hero" style="padding-top:8px"><div class="ms-title" style="font-size:19px">'+v.s2+'</div></div>'
-    + '<div class="ms-cards">'+msCard(v.s2cards[0],0)+msCard(v.s2cards[1],0)+msCard(v.s2cards[2],1)+'</div>'
-    + '<div class="ms-strip" style="background:#101622"><div style="font-size:11px;color:#9aa6bd">© 2026 · сделано в Uniqore</div></div>';
+    + '<div class="msm-bar"><span>9:41</span><span class="msm-ss"><i></i><i></i><i></i></span></div>'
+    + '<div class="msm-nav"><span class="msm-logo">'+v.logo+'</span><span class="msm-burger"><i></i><i></i><i></i></span></div>'
+    + '<div class="msm-hero"><span class="msm-badge" style="background:color-mix(in srgb,var(--ms-accent) 18%,transparent);color:var(--ms-accent)">'+v.chip+'</span><div class="msm-title">'+v.title+'</div><div class="msm-btn" style="background:var(--ms-accent);color:var(--ms-ink)">'+v.btns[0]+'</div></div>'
+    + '<div class="msm-cards"><div class="msm-card msm-card--hi"><b>'+v.cards[0][0]+'</b><span>'+v.cards[0][1]+'</span></div><div class="msm-card"><b>'+v.cards[1][0]+'</b><span>'+v.cards[1][1]+'</span></div></div>'
+    + '<div class="msm-strip"><b>'+v.strip[0]+'</b><span>'+v.strip[1]+'</span></div>';
+  }
+  function paint(v){
+    if (site){ site.style.setProperty('--ms-accent', v.accent); site.style.setProperty('--ms-ink', v.ink); }
+    if (scrollWrap) scrollWrap.innerHTML = buildSite(v);
+    if (urlEl) urlEl.textContent = v.url;
+    if (phone){ phone.style.setProperty('--ms-accent', v.accent); phone.style.setProperty('--ms-ink', v.ink); phone.innerHTML = buildMobile(v); }
   }
   var vi = 0;
   if (site && scrollWrap) {
-    site.style.setProperty('--ms-accent', VARIANTS[0].accent);
-    site.style.setProperty('--ms-ink', VARIANTS[0].ink);
-    scrollWrap.innerHTML = buildSite(VARIANTS[0]);
-    if (urlEl) urlEl.textContent = VARIANTS[0].url;
+    paint(VARIANTS[0]);
     if (!reduce) setInterval(function () {
       vi = (vi + 1) % VARIANTS.length;
       var v = VARIANTS[vi];
       site.style.opacity = '0';
+      if (phone) phone.style.opacity = '0';
       setTimeout(function () {
-        site.style.setProperty('--ms-accent', v.accent);
-        site.style.setProperty('--ms-ink', v.ink);
-        scrollWrap.innerHTML = buildSite(v);
-        if (urlEl) urlEl.textContent = v.url;
+        paint(v);
         site.style.opacity = '1';
+        if (phone) phone.style.opacity = '1';
       }, 500);
     }, 4600);
   }
 
-  /* ── курсор ── */
+  /* ── курсор: ходит по ВИДИМОЙ правой зоне мокапа (телефон слева-снизу его больше не прячет), плавно ── */
   var cursor = document.getElementById('syCursor');
-  if (cursor && !reduce) {
-    var spots = [[70, 60], [190, 130], [250, 210], [130, 250], [60, 180]];
+  var cursorView = document.querySelector('.sy-browser__view');
+  if (cursor && cursorView && !reduce) {
+    // точки как доли вьюпорта — все правее телефона (он занимает левые ~32% снизу), так курсор всегда в кадре
+    var fspots = [[0.44, 0.16], [0.74, 0.30], [0.56, 0.54], [0.82, 0.64], [0.50, 0.40]];
     var ci = 0;
-    setInterval(function () {
-      ci = (ci + 1) % spots.length;
-      cursor.style.transform = 'translate(' + spots[ci][0] + 'px,' + spots[ci][1] + 'px)';
-      setTimeout(function () { cursor.classList.add('click'); setTimeout(function () { cursor.classList.remove('click'); }, 420); }, 1200);
-    }, 2400);
+    function moveCursor() {
+      var w = cursorView.clientWidth, h = cursorView.clientHeight;
+      if (!w || !h) return;
+      var f = fspots[ci];
+      cursor.style.transform = 'translate(' + Math.round(f[0] * w) + 'px,' + Math.round(f[1] * h) + 'px)';
+      setTimeout(function () { cursor.classList.add('click'); setTimeout(function () { cursor.classList.remove('click'); }, 420); }, 900);
+      ci = (ci + 1) % fspots.length;
+    }
+    moveCursor();
+    setInterval(moveCursor, 2600);
   }
 
   /* ── portfolio filter ── */
@@ -120,12 +205,14 @@
 
   /* ── objections accordion ── */
   document.querySelectorAll('.sy-obj__q').forEach(function (q) {
+    q.setAttribute('aria-expanded', 'false');
     q.addEventListener('click', function () {
       var item = q.parentElement, ans = item.querySelector('.sy-obj__a'), open = item.classList.contains('open');
       document.querySelectorAll('.sy-obj__i').forEach(function (i) {
         i.classList.remove('open'); var a = i.querySelector('.sy-obj__a'); if (a) a.style.maxHeight = '';
+        var qq = i.querySelector('.sy-obj__q'); if (qq) qq.setAttribute('aria-expanded', 'false');
       });
-      if (!open) { item.classList.add('open'); ans.style.maxHeight = ans.scrollHeight + 'px'; }
+      if (!open) { item.classList.add('open'); ans.style.maxHeight = ans.scrollHeight + 'px'; q.setAttribute('aria-expanded', 'true'); }
     });
   });
 
@@ -139,49 +226,137 @@
     b.addEventListener('pointerleave', function () { b.style.transform = ''; });
   });
 
-  /* ── sticky mobile CTA ── */
+  /* ── sticky mobile CTA (прячется у футера, чтобы НЕ закрывать реквизиты/ИНН) ── */
   var sticky = document.getElementById('sySticky');
-  if (sticky) window.addEventListener('scroll', function () {
-    if (window.scrollY > 640) sticky.classList.add('show'); else sticky.classList.remove('show');
-  }, { passive: true });
+  if (sticky) {
+    var syFooter = document.querySelector('footer.footer') || document.querySelector('.footer');
+    var syZf = document.getElementById('zayavka');
+    var syncSticky = function () {
+      var nearFooter = false;
+      if (syFooter) {
+        var fr = syFooter.getBoundingClientRect();
+        nearFooter = fr.top < (window.innerHeight - 24);
+      }
+      var nearForm = false;
+      if (syZf) nearForm = syZf.getBoundingClientRect().top < (window.innerHeight * 0.85);
+      if (window.scrollY > 640 && !nearFooter && !nearForm) sticky.classList.add('show');
+      else sticky.classList.remove('show');
+    };
+    window.addEventListener('scroll', syncSticky, { passive: true });
+    window.addEventListener('resize', syncSticky, { passive: true });
+    syncSticky();
+  }
 
-  /* ── form: валидация + отправка в CRM/Telegram + красивый успех ── */
+  /* ── form: валидация + отправка в CRM + честный успех/ошибка ──
+     Два независимых канала (как в js/form.js): /api/leads (сервер 206, только
+     на .pro) и Supabase-мост site-lead-bridge (работает на ЛЮБОМ домене, в т.ч.
+     uniqore.ru, где /api/leads не существует). Успех = сработал хотя бы один —
+     раньше здесь безусловно показывался успех даже при провале обоих. */
   var form = document.getElementById('sy-form');
   if (form) {
     var last = 0;
+    var errorRevertTimer = null;
+    var submitBtn = form.querySelector('[type=submit]');
+    var submitBtnText = submitBtn ? submitBtn.textContent : '';
+    // inline-ошибки в стиле сайта: подсветка поля + текст под ним
+    function setErr(field, boxId, msg) {
+      var box = boxId && document.getElementById(boxId);
+      if (box) { box.textContent = msg || ''; box.classList.toggle('show', !!msg); }
+      if (field) field.style.borderColor = msg ? '#ff6b6b' : '';
+    }
+    // контакт валиден = телефон (10–15 цифр) ИЛИ Telegram (@username / t.me / голый ник)
+    function validContact(v) {
+      v = (v || '').trim();
+      var digits = v.replace(/\D/g, '');
+      var isPhone = digits.length >= 10 && digits.length <= 15;
+      var isTg = /@[a-zA-Z0-9_]{3,}/.test(v) || /t\.me\//i.test(v) || (/^[a-zA-Z0-9_]{4,}$/.test(v) && /[a-zA-Z]/.test(v));
+      return isPhone || isTg;
+    }
+    var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'gclid'];
+    function getTrafficSource() {
+      var params = new URLSearchParams(window.location.search);
+      var out = {}, saved = {};
+      // первый источник визита переживает переходы по страницам (sessionStorage)
+      try { saved = JSON.parse(sessionStorage.getItem('uq_attr') || '{}'); } catch (e) {}
+      UTM_KEYS.forEach(function (k) { out[k] = params.get(k) || saved[k] || ''; });
+      // ClientID Метрики — ключ связки «продажа в CRM ↔ рекламный клик» (офлайн-конверсии)
+      out.ym_client_id = window.UQ_CID || '';
+      out.ym_counter = window.UQ_MID || '';
+      out.page = location.pathname;
+      return out;
+    }
+    var CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';
+    var CMD_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
+    var CMD_BRIDGE_SECRET = '2dd950726e4ea4428b3af52c5950ef9c43b7afa58370a277';
+    function pushToCommandV2(data) {
+      return fetch(CMD_BRIDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: CMD_ANON_KEY, Authorization: 'Bearer ' + CMD_ANON_KEY, 'x-bridge-secret': CMD_BRIDGE_SECRET },
+        body: JSON.stringify(data)
+      }).then(function (r) { return r.ok; }).catch(function () { return false; });
+    }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var now = Date.now();
       if (now - last < 20000) return;
       var name = form.querySelector('#sy-name');
       var contact = form.querySelector('#sy-contact');
+      var consent = form.querySelector('#sy-consent');
       var ok = true;
-      [name, contact].forEach(function (f) {
-        if (!f.value.trim()) { f.style.borderColor = '#ff6b6b'; ok = false; }
-        else f.style.borderColor = '';
-      });
+      if (!name.value.trim()) { setErr(name, 'syErrName', 'Как к вам обращаться?'); ok = false; }
+      else setErr(name, 'syErrName', '');
+      if (!contact.value.trim()) { setErr(contact, 'syErrContact', 'Оставьте телефон или Telegram'); ok = false; }
+      else if (!validContact(contact.value)) { setErr(contact, 'syErrContact', 'Проверьте: +7 900 000-00-00 или @username'); ok = false; }
+      else setErr(contact, 'syErrContact', '');
+      if (consent && !consent.checked) { setErr(null, 'syErrConsent', 'Нужно согласие на обработку данных'); ok = false; }
+      else setErr(null, 'syErrConsent', '');
       if (!ok) return;
       last = now;
-      var btn = form.querySelector('[type=submit]');
-      btn.disabled = true; btn.textContent = 'Отправляем…';
-      var data = {
+      if (errorRevertTimer) { clearTimeout(errorRevertTimer); errorRevertTimer = null; }
+      var btn = submitBtn || form.querySelector('[type=submit]');
+      btn.disabled = true; btn.classList.remove('btn--error'); btn.textContent = 'Отправляем…';
+      var data = Object.assign({
         name: name.value.trim(),
         contact: contact.value.trim(),
         business: (form.querySelector('#sy-niche') || {}).value || '',
         task: (form.querySelector('#sy-comment') || {}).value || '',
         website: ''
-      };
-      fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-        .catch(function () {})
-        .then(function () {
+      }, getTrafficSource());
+      var bridgePromise = pushToCommandV2(data);
+      var apiPromise = fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+        .then(function (r) { return r.ok; }).catch(function () { return false; });
+      Promise.all([apiPromise, bridgePromise]).then(function (results) {
+        var saved = results[0] || results[1];
+        if (saved) {
+          // Конверсия засчитывается на РЕАЛЬНУЮ отправку (не на клик) — цель для Директа/Ads.
+          // В Метрике нужно создать JS-цель с идентификатором «lead».
+          try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'lead'); } catch (e) {}
+          try { if (window.gtag) gtag('event', 'generate_lead', { form_id: 'sayty' }); } catch (e) {}
           var okPanel = document.getElementById('syFormOk');
           form.style.display = 'none';
           if (okPanel) okPanel.classList.add('show');
-        });
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Не отправилось, попробуйте ещё раз';
+          btn.classList.add('btn--error');
+          last = 0;
+          errorRevertTimer = setTimeout(function () {
+            btn.textContent = submitBtnText;
+            btn.classList.remove('btn--error');
+            errorRevertTimer = null;
+          }, 5000);
+        }
+      });
     });
     form.querySelectorAll('.sy-in').forEach(function (f) {
-      f.addEventListener('input', function () { f.style.borderColor = ''; });
+      f.addEventListener('input', function () {
+        f.style.borderColor = '';
+        if (f.id === 'sy-name') setErr(null, 'syErrName', '');
+        if (f.id === 'sy-contact') setErr(null, 'syErrContact', '');
+      });
     });
+    var consentEl = form.querySelector('#sy-consent');
+    if (consentEl) consentEl.addEventListener('change', function () { if (consentEl.checked) setErr(null, 'syErrConsent', ''); });
   }
 
   // ── Before/After compare sliders ──
@@ -230,4 +405,114 @@
       pvids.forEach(function (v) { v.play().catch(function () {}); });
     }
   }
+
+  /* ── цели на клик по телефону и Telegram (микроконверсии для Директа/Ads) ──
+     В Метрике создать JS-цели: «call» и «telegram». Форма шлёт цель «lead». */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (href.indexOf('tel:') === 0) {
+      try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'call'); } catch (_) {}
+      try { if (window.gtag) gtag('event', 'contact_phone'); } catch (_) {}
+    } else if (/t\.me\//i.test(href)) {
+      try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'telegram'); } catch (_) {}
+      try { if (window.gtag) gtag('event', 'contact_telegram'); } catch (_) {}
+    }
+  }, true);
+})();
+
+/* наклон hero-мокапа за курсором (параллакс) */
+(function () {
+  var m = document.querySelector('.sy-mock'), b = document.querySelector('.sy-browser');
+  var ph = document.querySelector('.sy-phone');
+  if (!m || !b) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+  var EASE = 0.045; // ниже = мягче/инерционнее/тянучее
+  function loop() {
+    cx += (tx - cx) * EASE;
+    cy += (ty - cy) * EASE;
+    b.style.transform = 'rotateY(' + (-6 + cx * 3).toFixed(3) + 'deg) rotateX(' + (3 - cy * 2).toFixed(3) + 'deg)';
+    if (ph) {
+      ph.style.setProperty('--phx', (cx * -22).toFixed(2) + 'px');
+      ph.style.setProperty('--phy', (cy * -14).toFixed(2) + 'px');
+      ph.style.setProperty('--phry', (cx * 6).toFixed(2) + 'deg');
+    }
+    if (Math.abs(tx - cx) > 0.0004 || Math.abs(ty - cy) > 0.0004) {
+      raf = requestAnimationFrame(loop);
+    } else { cx = tx; cy = ty; raf = 0; }
+  }
+  m.addEventListener('mousemove', function (e) {
+    var r = m.getBoundingClientRect();
+    tx = (e.clientX - r.left) / r.width - 0.5;
+    ty = (e.clientY - r.top) / r.height - 0.5;
+    if (!raf) raf = requestAnimationFrame(loop);
+  }, { passive: true });
+  m.addEventListener('mouseleave', function () {
+    tx = 0; ty = 0;
+    if (!raf) raf = requestAnimationFrame(loop);
+  });
+})();
+
+/* бренд-сил: 3D-лого вращается по скроллу (desktop scrub); на мобилке/reduce — плавный автолуп в зоне видимости */
+(function () {
+  var v = document.querySelector('.sy-brandseal__v');
+  if (!v) return;
+  var sec = v.closest('.sy-brandseal');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var desktop = window.matchMedia && window.matchMedia('(min-width:761px)').matches;
+  if (!desktop || reduce) {
+    v.loop = true;
+    var tryplay = function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) tryplay(); else v.pause(); }); }, { threshold: 0.2 });
+      io.observe(v);
+    } else tryplay();
+    return;
+  }
+  try { v.pause(); } catch (e) {}
+  var raf = 0, dur = 0;
+  function scrub() {
+    raf = 0;
+    if (!dur) return;
+    var r = sec.getBoundingClientRect(), vh = window.innerHeight;
+    var p = (vh - r.top) / (vh + r.height);
+    p = p < 0 ? 0 : p > 1 ? 1 : p;
+    try { v.currentTime = p * dur; } catch (e) {}
+  }
+  v.addEventListener('loadedmetadata', function () { dur = v.duration || 0; scrub(); });
+  if (v.readyState >= 1) dur = v.duration || 0;
+  window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(scrub); }, { passive: true });
+  window.addEventListener('resize', function () { if (!raf) raf = requestAnimationFrame(scrub); }, { passive: true });
+  scrub();
+})();
+
+/* nav-логотип: 3D-лупа вращается по скроллу (desktop hover only; каждые ~480px = один оборот) */
+(function () {
+  var nv = document.querySelector('.nav__logo-vid');
+  if (!nv) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var desktop = window.matchMedia && window.matchMedia('(min-width:761px) and (hover:hover)').matches;
+  if (!desktop || reduce) return; // мобилка: показан SVG, видео не грузим/не крутим
+  try { nv.pause(); } catch (e) {}
+  var raf = 0, dur = 0, cur = 0, target = 0;
+  function computeTarget() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? window.scrollY / max : 0;
+    if (p < 0) p = 0; else if (p > 1) p = 1;
+    target = p * dur;               // весь скролл страницы = один плавный оборот, без прыжков
+  }
+  function tick() {
+    raf = 0;
+    cur += (target - cur) * 0.12;   // lerp — масляно, без рывков
+    try { nv.currentTime = cur; } catch (e) {}
+    if (Math.abs(target - cur) > 0.008) raf = requestAnimationFrame(tick);
+    else cur = target;
+  }
+  function onScroll() { if (!dur) return; computeTarget(); if (!raf) raf = requestAnimationFrame(tick); }
+  nv.addEventListener('loadedmetadata', function () { dur = nv.duration || 0; computeTarget(); cur = target; try { nv.currentTime = cur; } catch (e) {} });
+  if (nv.readyState >= 1) { dur = nv.duration || 0; computeTarget(); cur = target; }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
 })();

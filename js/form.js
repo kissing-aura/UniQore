@@ -2,6 +2,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
+  // Honeypot (анти-бот): скрытое поле, живой человек его не видит и не трогает.
+  // Инжектим из JS — работает на всех страницах без правки HTML.
+  let honeypot = form.querySelector('input[name="website"]');
+  if (!honeypot) {
+    honeypot = document.createElement('input');
+    honeypot.type = 'text'; honeypot.name = 'website'; honeypot.id = 'uq-website';
+    honeypot.tabIndex = -1; honeypot.autocomplete = 'off';
+    honeypot.setAttribute('aria-hidden', 'true');
+    honeypot.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
+    form.appendChild(honeypot);
+  }
+
   // Escape HTML for Telegram HTML-mode messages
   function tgEsc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
@@ -78,16 +90,34 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: data.name,
-          business: data.business,
-          contact: data.contact,
-          task: data.task,
-          website: data.website || '', // honeypot
-        }),
+        // Шлём data целиком: кроме полей формы там атрибуция (utm/yclid/ClientID),
+        // раньше она обрезалась белым списком и лиды с главной были без источника.
+        body: JSON.stringify({ ...data, website: data.website || '' }),
       });
       return res.ok;
     } catch { return false; }
+  }
+
+  // Мост напрямую в Пайплайн Uniqore Command V2 (2026-07-15) — идёт независимо от
+  // postLeadToAPI выше: тот сервер (206) сохраняет лид локально, но сам не может
+  // достучаться до Supabase без ручного рестарта, к которому нет доступа. Этот вызов
+  // не влияет на успех/ошибку в UI — чисто best-effort копия в CRM.
+  const CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';
+  const CMD_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
+  const CMD_BRIDGE_SECRET = '2dd950726e4ea4428b3af52c5950ef9c43b7afa58370a277';
+  // Возвращает Promise<bool> — успел ли лид сохраниться в CRM через мост.
+  // Это надёжный канал (Supabase), поэтому его успех ТОЖЕ считается успехом отправки.
+  function pushToCommandV2(data) {
+    return fetch(CMD_BRIDGE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: CMD_ANON_KEY,
+        Authorization: `Bearer ${CMD_ANON_KEY}`,
+        'x-bridge-secret': CMD_BRIDGE_SECRET,
+      },
+      body: JSON.stringify({ ...data, website: data.website || '' }),
+    }).then(r => r.ok).catch(() => false);
   }
 
   form.addEventListener('submit', async (e) => {
@@ -110,46 +140,104 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     if (!valid) { liveRegion.textContent = 'Пожалуйста, заполните все обязательные поля.'; return; }
 
+    // Валидация контакта: должен быть достижим — telegram (@) или телефон (≥5 цифр).
+    // Иначе лид мёртвый (не с кем связаться) — ловим до отправки.
+    const contactField = form.querySelector('#contact-input');
+    if (contactField && contactField.value.trim()) {
+      const v = contactField.value.trim();
+      const digits = (v.match(/\d/g) || []).length;
+      if (!v.includes('@') && digits < 5) {
+        setFieldError(contactField, 'Оставьте telegram (@ник) или телефон');
+        liveRegion.textContent = 'Укажите telegram или телефон, чтобы мы могли ответить.';
+        return;
+      }
+    }
+
+    // Honeypot заполнен → это бот. Тихо имитируем успех, ничего не отправляя.
+    if (honeypot.value) {
+      btn.textContent = '✓ Заявка отправлена';
+      form.reset();
+      return;
+    }
+
     btn.textContent = 'Отправляем...';
     btn.disabled = true;
     liveRegion.textContent = '';
+
+    // Атрибуция: первый источник визита (sessionStorage, чтобы не терялся при переходах)
+    // + ClientID Метрики — по нему потом связываем продажу из CRM с рекламным кликом.
+    const attribution = (() => {
+      const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'gclid'];
+      const out = {};
+      let saved = {};
+      try { saved = JSON.parse(sessionStorage.getItem('uq_attr') || '{}'); } catch (e) {}
+      const params = new URLSearchParams(location.search);
+      keys.forEach(k => { out[k] = params.get(k) || saved[k] || ''; });
+      out.ym_client_id = window.UQ_CID || '';
+      out.ym_counter = window.UQ_MID || '';
+      out.page = location.pathname;
+      return out;
+    })();
 
     const formData = {
       name: form.querySelector('#name')?.value?.trim() || '',
       business: form.querySelector('#business')?.value?.trim() || '',
       contact: form.querySelector('#contact-input')?.value?.trim() || '',
       task: form.querySelector('#task')?.value?.trim() || '',
+      website: honeypot.value || '',
+      ...attribution,
     };
 
     lastSubmit = Date.now();
-    // Primary: store in shared CRM database (server also notifies Telegram).
+    // Два независимых канала. Успех = сохранилось ХОТЯ БЫ в одном (раньше статус
+    // висел только на хрупком сервере 206 → при его падении показывалось ложное
+    // «Не отправилось», хотя лид уже лежал в CRM через мост).
+    const bridgePromise = pushToCommandV2(formData);
     const savedToApi = await postLeadToAPI(formData);
-    // Fallback: if the API is unreachable, try client-side Telegram (owner config).
-    if (!savedToApi) await sendToTelegram(formData);
-    await new Promise(resolve => setTimeout(resolve, savedToApi ? 300 : 1000));
+    const savedToBridge = await bridgePromise;
+    // Клиентский Telegram-фолбэк — только если оба основных канала не сработали.
+    const savedToTelegram = (savedToApi || savedToBridge) ? false : await sendToTelegram(formData);
+    const saved = savedToApi || savedToBridge || savedToTelegram;
+    await new Promise(resolve => setTimeout(resolve, saved ? 300 : 400));
 
-    btn.textContent = '✓ Заявка отправлена';
-    btn.classList.add('btn--success');
-    // TG hint after success (2026-07-10)
     let tgHint = form.querySelector('.form-tg-hint');
     if (!tgHint) {
       tgHint = document.createElement('a');
       tgHint.className = 'form-tg-hint';
       tgHint.href = 'https://t.me/UniqoreManager';
       tgHint.target = '_blank'; tgHint.rel = 'noopener';
-      tgHint.textContent = 'Быстрее — напишите нам в Telegram: @UniqoreManager';
       btn.insertAdjacentElement('afterend', tgHint);
     }
-    liveRegion.textContent = 'Заявка успешно отправлена. Ответим в течение 2 часов.';
-    form.reset();
-    required.forEach(field => clearFieldError(field));
+
+    if (saved) {
+      // Конверсия засчитывается на РЕАЛЬНУЮ доставку лида (не на клик по кнопке).
+      // Счётчик берём из UQ_MID: uniqore.ru → 111003646 (РФ-реклама), .pro → 110585817.
+      try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'lead'); } catch (e) {}
+      try { if (window.gtag) gtag('event', 'generate_lead', { form_id: 'main' }); } catch (e) {}
+      btn.textContent = '✓ Заявка отправлена';
+      btn.classList.remove('btn--error');
+      btn.classList.add('btn--success');
+      tgHint.textContent = 'Быстрее — напишите нам в Telegram: @UniqoreManager';
+      liveRegion.textContent = 'Заявка успешно отправлена. Ответим в течение 2 часов.';
+      form.reset();
+      required.forEach(field => clearFieldError(field));
+    } else {
+      // Реальный сбой (сеть/rate-limit) — раньше тут молча показывался "успех",
+      // хотя заявка никуда не уходила. Честно показываем ошибку + не блокируем повтор.
+      btn.textContent = 'Не отправилось, попробуйте ещё раз';
+      btn.classList.remove('btn--success');
+      btn.classList.add('btn--error');
+      tgHint.textContent = 'Или напишите нам напрямую в Telegram: @UniqoreManager';
+      liveRegion.textContent = 'Не получилось отправить заявку. Попробуйте ещё раз или напишите в Telegram.';
+      lastSubmit = 0;
+    }
 
     setTimeout(() => {
       btn.textContent = originalText;
-      btn.classList.remove('btn--success');
+      btn.classList.remove('btn--success', 'btn--error');
       btn.disabled = false;
       liveRegion.textContent = '';
-    }, 4000);
+    }, saved ? 4000 : 6000);
   });
 
   form.querySelectorAll('[required]').forEach(field => {

@@ -138,6 +138,7 @@
   /* ── shell ──────────────────────────────────────────────────────────── */
   function mount(){
     document.body.innerHTML = `<div class="bloom"></div>
+      <div class="side-scrim" id="sideScrim"></div>
       <div class="app">
         <aside class="side" id="side"></aside>
         <main class="main" id="main"></main>
@@ -146,7 +147,16 @@
         <img class="uq-badge__sym" src="uq-mark.png" alt="" width="15" height="15">
         <span class="uq-badge__word">uniqore</span>
       </a>`;
+    $('#sideScrim').addEventListener('click', closeSide);
     renderSide(); route(view);
+  }
+  function closeSide(){
+    const s=$('#side'); if(s) s.classList.remove('open');
+    const sc=$('#sideScrim'); if(sc) sc.classList.remove('show');
+  }
+  function openSide(){
+    const s=$('#side'); if(s) s.classList.add('open');
+    const sc=$('#sideScrim'); if(sc) sc.classList.add('show');
   }
 
   function renderSide(){
@@ -169,6 +179,7 @@
       <div class="brand">
         <span class="brand__mark">${ic('bolt')}</span>
         <span class="brand__name"><b>Uniqore</b> <span>Command</span></span>
+        <button class="side__close" data-sideclose aria-label="Закрыть меню">${ic('x')}</button>
       </div>
       ${groups}
       <div class="side__foot">
@@ -1527,16 +1538,17 @@
 
   /* ── global event delegation ────────────────────────────────────────── */
   document.addEventListener('click',e=>{
-    const t=e.target.closest('[data-nav],[data-role],[data-lead],[data-close],[data-reveal],[data-status],[data-savecall],[data-copy],[data-lfilter],[data-block],[data-pay],[data-assign],[data-assignpreset],[data-addlead],[data-dial],[data-daily],[data-adddaily],[data-addtask],[data-kr],[data-adddone],[data-script],[data-toast],[data-burger],[data-drop],[data-marknotif],[data-notif],[data-open],[data-dclose],[data-move],[data-pal],[data-invite],[data-invite-submit],[data-penalty],[data-pensubmit],[data-delpen],[data-addop],[data-opsubmit],[data-optype],[data-delop],[data-distribute],[data-logout],[data-dialmode],[data-scriptstage],[data-obj],[data-kbfilter],[data-article],[data-automtoggle],[data-bumpproj]');
+    const t=e.target.closest('[data-nav],[data-role],[data-lead],[data-close],[data-reveal],[data-status],[data-savecall],[data-copy],[data-lfilter],[data-block],[data-pay],[data-assign],[data-assignpreset],[data-addlead],[data-dial],[data-daily],[data-adddaily],[data-addtask],[data-kr],[data-adddone],[data-script],[data-toast],[data-burger],[data-sideclose],[data-drop],[data-marknotif],[data-notif],[data-open],[data-dclose],[data-move],[data-pal],[data-invite],[data-invite-submit],[data-penalty],[data-pensubmit],[data-delpen],[data-addop],[data-opsubmit],[data-optype],[data-delop],[data-distribute],[data-logout],[data-dialmode],[data-scriptstage],[data-obj],[data-kbfilter],[data-article],[data-automtoggle],[data-bumpproj]');
     if(!t) return;
     const d=t.dataset;
-    if(d.nav){ if($('#side').classList) $('#side').classList.remove('open'); route(d.nav); }
+    if(d.nav){ closeSide(); route(d.nav); }
     else if(d.role){ if(window.UQ_CLOUD) return; /* в проде роль строго из логина, смена запрещена */ const role=d.role; S.session.role=role;
       if(role==='head'){ const h=UQ.heads()[0]; if(h) S.session.managerId=h.id; }
       else if(role==='manager' && S.session.managerId==='h1'){ S.session.managerId='m1'; }
       view=DEFAULT_VIEW[role]; UQ.save(); route(view); }
     else if(d.logout!==undefined){ if(UQ.signOut) UQ.signOut(); }
-    else if(d.burger!==undefined){ $('#side').classList.toggle('open'); }
+    else if(d.burger!==undefined){ $('#side').classList.contains('open') ? closeSide() : openSide(); }
+    else if(d.sideclose!==undefined){ closeSide(); }
     else if(d.lead){ openCall(d.lead); }
     else if(d.close!==undefined){ closeModal(); }
     else if(d.reveal!==undefined){ modalRevealed=true; callStart=Date.now(); try{navigator.clipboard&&navigator.clipboard.writeText(modalLead.phone);}catch(_){} toast('Номер скопирован'); renderModal(); startCallTimer(); }

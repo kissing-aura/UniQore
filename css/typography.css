@@ -31,9 +31,10 @@ h1, h2, h3 {
 }
 
 .section-title {
+  font-family: 'Unbounded', var(--font-display);
   font-size: clamp(42px, 5.6vw, 78px);
-  font-weight: 800;
-  line-height: 1.02;
+  font-weight: 700;
+  line-height: 1.04;
   letter-spacing: -0.035em;
   margin-bottom: 64px;
 }

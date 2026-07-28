@@ -10,14 +10,14 @@
   <meta property="og:description" content="Пошаговый разбор автоматизации складского учёта и импорта: GPS-трекинг груза, OCR-накладные, остатки в реальном времени.">
   <meta property="og:type" content="article">
   <meta property="og:locale" content="ru_RU">
-  <meta property="og:image" content="https://uniqore.pro/assets/logo-full.jpg">
-  <meta property="og:image:width" content="400">
-  <meta property="og:image:height" content="120">
+  <meta property="og:image" content="https://uniqore.pro/assets/og-cover.jpg?v=20260712">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://uniqore.pro/blog/kak-avtomatizirovat-sklad/">
   <meta property="og:site_name" content="Uniqore">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Как автоматизировать склад и учёт товара: практический разбор | Uniqore">
-  <meta name="twitter:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta name="twitter:image" content="https://uniqore.pro/assets/og-cover.jpg?v=20260712">
   <meta name="theme-color" content="#0A0A0A">
   <link rel="canonical" href="https://uniqore.pro/blog/kak-avtomatizirovat-sklad/">
   <link rel="icon" href="../../favicon.ico" sizes="any">
@@ -53,15 +53,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="../../css/reset.css?v=20260710r">
-  <link rel="stylesheet" href="../../css/variables.css?v=20260710r">
-  <link rel="stylesheet" href="../../css/typography.css?v=20260710r">
-  <link rel="stylesheet" href="../../css/layout.css?v=20260710r">
-  <link rel="stylesheet" href="../../css/components.css?v=20260710r">
-  <link rel="stylesheet" href="../../css/sections.css?v=20260710r">
-  <link rel="stylesheet" href="../../css/mobile.css?v=20260710r">
-  <link rel="stylesheet" href="../../css/redesign.css?v=20260710v">
-  <link rel="stylesheet" href="/css/premium.css?v=20260711A">
+  <link rel="stylesheet" href="/css/bundle-page.css?v=20260727a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -76,7 +68,7 @@
     .article-body p { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; margin-bottom: 16px; }
     .article-body ul { color: var(--color-text-secondary); line-height: 1.9; padding-left: 20px; margin-bottom: 16px; }
     .article-body strong { color: var(--color-text-primary); }
-    .article-cta { max-width: 720px; margin: 40px auto 0; padding: 28px; border: 1px solid rgba(245,197,24,0.18); border-radius: 16px; background: linear-gradient(180deg, rgba(245,197,24,.05), rgba(245,197,24,.01)); text-align:center; }
+    .article-cta { max-width: 720px; margin: 40px auto 0; padding: 28px; border: 1px solid rgba(205,255,79,0.18); border-radius: 16px; background: linear-gradient(180deg, rgba(205,255,79,.05), rgba(205,255,79,.01)); text-align:center; }
     .article-cta p { color: var(--color-text-secondary); margin-bottom: 16px; }
     .blog-related { max-width: 720px; margin: 48px auto 64px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.06); }
     .blog-related__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); letter-spacing: .05em; margin-bottom: 16px; }
@@ -86,7 +78,7 @@
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
     @media (max-width: 768px) {
-      .nav__cta { display: inline-flex !important; }
+      .nav__cta { display: none; }
     }
   </style>
   <!-- Google Analytics 4 -->
@@ -99,13 +91,29 @@
   </script>
   <!-- Yandex.Metrika counter (id 110585817, created by site owner in Yandex Metrika UI) -->
   <script type="text/javascript">
+    window.UQ_MID = /(^|\.)uniqore\.ru$/.test(location.hostname) ? 111003646 : 110585817;
     (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
     m[i].l=1*new Date();
     for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=110585817', 'ym');
+    (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id='+window.UQ_MID, 'ym');
 
-    ym(110585817, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    ym(window.UQ_MID, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    /* Сквозная аналитика: ClientID Метрики + первый источник визита — уходят с заявкой в CRM,
+       чтобы потом связать продажу с рекламным кликом (офлайн-конверсии). */
+    try { ym(window.UQ_MID, 'getClientID', function (id) { window.UQ_CID = id; }); } catch (_) {}
+    try {
+      var uqP = new URLSearchParams(location.search), uqK = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid','gclid'], uqF = {}, uqAny = false;
+      uqK.forEach(function (k) { var v = uqP.get(k) || ''; uqF[k] = v; if (v) uqAny = true; });
+      if (uqAny && !sessionStorage.getItem('uq_attr')) sessionStorage.setItem('uq_attr', JSON.stringify(uqF));
+    } catch (_) {}
+    /* Микроконверсии: клик по телефону → цель call, по Telegram → telegram (в тот же счётчик UQ_MID). */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
+      var h = a.getAttribute('href') || '';
+      if (h.indexOf('tel:') === 0) { try { if (window.ym) ym(window.UQ_MID, 'reachGoal', 'call'); } catch (_) {} try { if (window.gtag) gtag('event', 'contact_phone'); } catch (_) {} }
+      else if (/t\.me\//i.test(h)) { try { if (window.ym) ym(window.UQ_MID, 'reachGoal', 'telegram'); } catch (_) {} try { if (window.gtag) gtag('event', 'contact_telegram'); } catch (_) {} }
+    }, true);
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/110585817" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 </head>
@@ -114,21 +122,82 @@
     <div class="container nav__inner">
       <a href="/" class="nav__logo" aria-label="Uniqore">
         <svg class="nav__logo-mark" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
-          <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
+          <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
         </svg>
         <span class="nav__logo-text">uniqore</span>
       </a>
       <ul class="nav__links">
-        <li><a href="/#cases">Кейсы</a></li>
-        <li><a href="/#services">Услуги</a></li>
-        <li><a href="/#pricing">Цены</a></li>
+        <li><a href="/vozmozhnosti/">Возможности</a></li>
+        <li class="nav__item--drop">
+          <button type="button" class="nav__drop-toggle" aria-expanded="false">Решения
+            <svg width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav__dropdown" role="menu">
+            <a href="/crm-pod-klyuch/" role="menuitem"><span class="nav__dd-name">CRM под ключ</span><span class="nav__dd-desc">Своя система с нуля</span></a>
+            <a href="/crm-dlya-arendy/" role="menuitem"><span class="nav__dd-name">Посуточная аренда</span><span class="nav__dd-desc">Календарь · залоги · авточаты</span></a>
+            <a href="/crm-dlya-avtoservisa/" role="menuitem"><span class="nav__dd-name">Автосервис</span><span class="nav__dd-desc">Трекинг ремонта · история авто</span></a>
+            <a href="/crm-dlya-sklada/" role="menuitem"><span class="nav__dd-name">Склад и импорт</span><span class="nav__dd-desc">Остатки 24/7 · OCR · GPS</span></a>
+            <a href="/crm-dlya-stomatologii/" role="menuitem"><span class="nav__dd-name">Медицина / стоматология</span><span class="nav__dd-desc">История пациента · ДМС</span></a>
+            <a href="/crm-dlya-internet-magazina/" role="menuitem"><span class="nav__dd-name">Интернет-магазин</span><span class="nav__dd-desc">Заказы · статусы · аналитика</span></a>
+            <a href="/crm-dlya-telegram-biznesa/" role="menuitem"><span class="nav__dd-name">Telegram-бизнес</span><span class="nav__dd-desc">Магазин · рассылки · лояльность</span></a>
+            <a href="/crm-dlya-fitnesa/" role="menuitem"><span class="nav__dd-name">Фитнес-клуб</span><span class="nav__dd-desc">Абонементы · расписание · напоминания</span></a>
+            <a href="/crm-dlya-restorana/" role="menuitem"><span class="nav__dd-name">Ресторан / кафе</span><span class="nav__dd-desc">Заказы · бронь · лояльность</span></a>
+            <a href="/crm-dlya-krasoty/" role="menuitem"><span class="nav__dd-name">Салон красоты</span><span class="nav__dd-desc">Запись · склад · напоминания</span></a>
+            <a href="/crm-dlya-yuristov/" role="menuitem"><span class="nav__dd-name">Юридическая компания</span><span class="nav__dd-desc">Дела · дедлайны · документы</span></a>
+            <a href="/crm-dlya-turagentstva/" role="menuitem"><span class="nav__dd-name">Турагентство</span><span class="nav__dd-desc">Заявки · брони · напоминания</span></a>
+            <a href="/crm-dlya-logistiki/" role="menuitem"><span class="nav__dd-name">Логистика и доставка</span><span class="nav__dd-desc">Трекинг · маршруты · заявки</span></a>
+            <a href="/crm-dlya-remonta-i-stroyki/" role="menuitem"><span class="nav__dd-name">Ремонт и стройка</span><span class="nav__dd-desc">Объекты · сметы · график бригад</span></a>
+            <a href="/crm-dlya-klininga/" role="menuitem"><span class="nav__dd-name">Клининговая компания</span><span class="nav__dd-desc">Заявки · бригады · абонементы</span></a>
+            <a href="/crm-dlya-agentstva-nedvizhimosti/" role="menuitem"><span class="nav__dd-name">Агентство недвижимости</span><span class="nav__dd-desc">Объекты · клиенты · показы</span></a>
+            <a href="/crm-dlya-detskogo-centra/" role="menuitem"><span class="nav__dd-name">Детский центр</span><span class="nav__dd-desc">Расписание · оплаты · напоминания</span></a>
+          </div>
+        </li>
+        <li><a href="/keysy/">Кейсы</a></li>
+        <li><a href="/tseny/">Цены</a></li>
         <li><a href="/blog/">Блог</a></li>
+        <li><a href="/o-nas/">О нас</a></li>
       </ul>
+      <a href="tel:+79616495107" class="nav__tel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>+7 961 649-51-07</a>
       <a href="https://t.me/UniqoreManager" class="nav__tg" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.5 3.4 2.9 10.6c-1 .4-1 1.4 0 1.7l4.6 1.5 1.8 5.4c.3.9 1.2 1 1.8.3l2.5-2.6 4.7 3.5c.7.5 1.6.1 1.8-.8l3-14.5c.2-1-.7-1.8-1.6-1.7ZM8.7 13.5l9-5.7c.3-.2.6.2.3.5l-7.4 6.8-.3 3-1.6-4.6Z" fill="currentColor"/></svg></a>
       <a href="/#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
+      <button class="nav__burger" id="burger" aria-label="Меню">
+        <span></span><span></span>
+      </button>
     </div>
   </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="tel:+79616495107">📞 +7 961 649-51-07</a></li>
+      <li><a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">✈️ Telegram — @UniqoreManager</a></li>
+      <li><a href="/vozmozhnosti/">Возможности</a></li>
+      <li class="mobile-menu__label">Решения</li>
+      <li><a href="/crm-pod-klyuch/">— CRM под ключ</a></li>
+      <li><a href="/crm-dlya-arendy/">— Посуточная аренда</a></li>
+      <li><a href="/crm-dlya-avtoservisa/">— Автосервис</a></li>
+      <li><a href="/crm-dlya-sklada/">— Склад и импорт</a></li>
+      <li><a href="/crm-dlya-stomatologii/">— Медицина</a></li>
+      <li><a href="/crm-dlya-internet-magazina/">— Интернет-магазин</a></li>
+      <li><a href="/crm-dlya-telegram-biznesa/">— Telegram-бизнес</a></li>
+      <li><a href="/crm-dlya-fitnesa/">— Фитнес-клуб</a></li>
+      <li><a href="/crm-dlya-restorana/">— Ресторан / кафе</a></li>
+      <li><a href="/crm-dlya-krasoty/">— Салон красоты</a></li>
+      <li><a href="/crm-dlya-yuristov/">— Юридическая компания</a></li>
+      <li><a href="/crm-dlya-turagentstva/">— Турагентство</a></li>
+      <li><a href="/crm-dlya-logistiki/">— Логистика и доставка</a></li>
+      <li><a href="/crm-dlya-remonta-i-stroyki/">— Ремонт и стройка</a></li>
+      <li><a href="/crm-dlya-klininga/">— Клининговая компания</a></li>
+      <li><a href="/crm-dlya-agentstva-nedvizhimosti/">— Агентство недвижимости</a></li>
+      <li><a href="/crm-dlya-detskogo-centra/">— Детский центр</a></li>
+      <li><a href="/keysy/">Кейсы</a></li>
+      <li><a href="/tseny/">Цены</a></li>
+      <li><a href="/blog/">Блог</a></li>
+      <li><a href="/o-nas/">О нас</a></li>
+      <li><a href="/#contact" class="btn btn--accent">Обсудить проект</a></li>
+    </ul>
+  </div>
 
   <main id="main">
     <div class="container breadcrumb"><a href="/">Uniqore</a> / <a href="/blog/">Блог</a> / Как автоматизировать склад и учёт товара</div>
@@ -182,23 +251,29 @@
       <div class="footer__brand">
         <a href="/" class="nav__logo footer__logo" aria-label="Uniqore">
           <svg class="nav__logo-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
-            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
+            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
           </svg>
           <span class="nav__logo-text">uniqore</span>
         </a>
         <p>Индивидуальные системы<br>автоматизации для бизнеса</p>
       </div>
       <div class="footer__links">
+        <a href="tel:+79616495107">+7 961 649-51-07</a>
         <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">Telegram — @UniqoreManager</a>
-        <a href="/#services">Услуги</a>
+        <a href="/#uslugi">Услуги</a>
         <a href="/#cases">Кейсы</a>
-        <a href="/#pricing">Цены</a>
+        <a href="/tseny/">Цены</a>
         <a href="/blog/">Блог</a>
         <a href="/#contact">Контакт</a>
       </div>
     </div>
-    <div class="container footer__bottom"><span>© 2026 Uniqore. Все права защищены.</span></div>
+    <div class="container footer__bottom"><span>© 2026 Uniqore. Все права защищены.</span> <span style="opacity:.6">ОГРН 1257700498978 · ИНН 9703230935</span></div>
   </footer>
+
+  <script>
+    (function(){var b=document.getElementById('burger'),m=document.getElementById('mobile-menu');if(b&&m){b.addEventListener('click',function(){m.classList.toggle('open');b.classList.toggle('open');});m.querySelectorAll('a').forEach(function(l){l.addEventListener('click',function(){m.classList.remove('open');b.classList.remove('open');});});}})();
+  </script>
+  <script src="../../js/nav-dropdown.js?v=20260720a" defer></script>
 </body>
 </html>

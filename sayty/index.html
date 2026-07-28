@@ -1,27 +1,31 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-currency="RUB">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="description" content="Сайты под ключ от $150: лендинг за 3 дня, многостраничник за 5. Индивидуальный дизайн, SEO, мобильная версия, Telegram и CRM. Фиксированная цена в договоре, оплата после ТЗ.">
+  <meta name="description" content="Сайты под ключ от 11 700 ₽: лендинг за 3 дня, многостраничник за 5. Индивидуальный дизайн, SEO, мобильная версия, Telegram и CRM. Фиксированная цена в договоре, оплата после утверждения макета.">
   <meta name="keywords" content="сайт под ключ, заказать сайт, разработка сайта, лендинг под ключ, сайт для бизнеса, создание сайта">
   <meta name="robots" content="index, follow">
-  <meta property="og:title" content="Сайты под ключ от $150 — под нишу, не шаблон | Uniqore">
+  <meta property="og:title" content="Сайты под ключ от 11 700 ₽ — под нишу, не шаблон | Uniqore">
   <meta property="og:description" content="Индивидуальный сайт за 3–5 дней: дизайн, мобилка, SEO, Telegram и CRM из коробки. Фиксированная цена в договоре.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
-  <meta property="og:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta property="og:image" content="https://uniqore.pro/assets/og-cover.jpg?v=20260712">
   <meta property="og:url" content="https://uniqore.pro/sayty/">
   <meta property="og:site_name" content="Uniqore">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Сайты под ключ от $150 — под нишу, не шаблон">
-  <meta name="twitter:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta name="twitter:title" content="Сайты под ключ от 11 700 ₽ — под нишу, не шаблон">
+  <meta name="twitter:image" content="https://uniqore.pro/assets/og-cover.jpg?v=20260712">
   <meta name="theme-color" content="#0A0E1A">
   <link rel="canonical" href="https://uniqore.pro/sayty/">
-  <link rel="icon" href="../favicon.ico" sizes="any">
-  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
-  <title>Сайты под ключ от $150 — за 3–5 дней | Uniqore</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <title>Сайты под ключ от 11 700 ₽ — за 3–5 дней | Uniqore</title>
 
   <script type="application/ld+json">
   {
@@ -34,7 +38,7 @@
       { "@type": "Service", "@id": "https://uniqore.pro/sayty/#service", "name": "Разработка сайтов под ключ",
         "provider": { "@id": "https://uniqore.pro/#org" },
         "description": "Индивидуальные сайты под ключ: лендинги и многостраничники за 3–5 дней. Дизайн, SEO, мобильная версия, Telegram и CRM.",
-        "offers": { "@type": "Offer", "price": "150", "priceCurrency": "USD", "availability": "https://schema.org/InStock" },
+        "offers": { "@type": "Offer", "price": "11700", "priceCurrency": "RUB", "availability": "https://schema.org/InStock" },
         "serviceType": "Web Development", "areaServed": ["BY","RU","UA","PL"] },
       { "@type": "FAQPage", "mainEntity": [
         { "@type": "Question", "name": "Почему так быстро — 3–5 дней?", "acceptedAnswer": { "@type": "Answer", "text": "У нас отлаженный процесс и собственные наработки: не собираем сайт с нуля каждый раз, а быстро адаптируем проверенную структуру под вашу нишу. Лендинг — 3 дня, многостраничник — до 5 рабочих дней с момента ТЗ." } },
@@ -46,34 +50,43 @@
   }
   </script>
 
-  <link rel="stylesheet" href="../css/reset.css?v=20260710r">
-  <link rel="stylesheet" href="../css/variables.css?v=20260710r">
-  <link rel="stylesheet" href="../css/typography.css?v=20260710r">
-  <link rel="stylesheet" href="../css/layout.css?v=20260710r">
-  <link rel="stylesheet" href="../css/components.css?v=20260710r">
-  <link rel="stylesheet" href="../css/sections.css?v=20260710r">
-  <link rel="stylesheet" href="../css/mobile.css?v=20260710r">
-  <link rel="stylesheet" href="../css/nav-pages.css?v=20260710r">
-  <link rel="stylesheet" href="../css/enhance.css?v=20260710r">
-  <link rel="stylesheet" href="../css/redesign.css?v=20260711v">
-  <link rel="stylesheet" href="/css/premium.css?v=20260711A">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260711I">
+  <link rel="stylesheet" href="/css/bundle-page.css?v=20260727a">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260724e">
+  <style>/* критический размер видео инлайном — держит вёрстку даже при устаревшем кэше внешнего CSS (защита от «гигант-лого») */
+  .nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
+  .nav__logo-vid{width:100%;height:100%;object-fit:cover;display:none}
+  @media(min-width:761px) and (hover:hover){.nav__logo-3d .nav__logo-vid{display:block}.nav__logo-3d .nav__logo-svg{display:none}}
+  .sy-brandseal__viz{position:relative;width:min(340px,72vw);aspect-ratio:1/1;margin:0 auto}
+  .sy-brandseal__v{width:100%;height:100%;object-fit:cover;display:block}
+  .dz__grid video,.dz__logos video{width:100%;height:100%;display:block}
+  main video{max-width:100%}</style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Шрифты грузим НЕ render-blocking: страница рисуется сразу в системном фолбэке, гугл-шрифты подменяются по готовности (display=swap). Защита от тормозов Google Fonts у РФ-трафика. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
 
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RJ67F53962');</script>
-  <!-- Yandex.Metrika (110585817) -->
+  <!-- Yandex.Metrika — по домену: uniqore.ru → 111003646 (РФ-реклама), иначе → 110585817 (.pro) -->
   <script type="text/javascript">
+    window.UQ_MID = /(^|\.)uniqore\.ru$/.test(location.hostname) ? 111003646 : 110585817;
     (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();
     for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=110585817','ym');
-    ym(110585817,'init',{ssr:true,webvisor:true,clickmap:true,ecommerce:"dataLayer",accurateTrackBounce:true,trackLinks:true});
+    (window,document,'script','https://mc.yandex.ru/metrika/tag.js?id='+window.UQ_MID,'ym');
+    ym(window.UQ_MID,'init',{ssr:true,webvisor:true,clickmap:true,ecommerce:"dataLayer",accurateTrackBounce:true,trackLinks:true});
+    /* Сквозная аналитика: ClientID Метрики + первый источник визита — уходят с заявкой в CRM,
+       чтобы потом связать продажу с рекламным кликом (офлайн-конверсии). */
+    try { ym(window.UQ_MID, 'getClientID', function (id) { window.UQ_CID = id; }); } catch (_) {}
+    try {
+      var uqP = new URLSearchParams(location.search), uqK = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid','gclid'], uqF = {}, uqAny = false;
+      uqK.forEach(function (k) { var v = uqP.get(k) || ''; uqF[k] = v; if (v) uqAny = true; });
+      if (uqAny && !sessionStorage.getItem('uq_attr')) sessionStorage.setItem('uq_attr', JSON.stringify(uqF));
+    } catch (_) {}
   </script>
-  <noscript><div><img src="https://mc.yandex.ru/watch/110585817" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
+  <noscript><div><img src="https://mc.yandex.ru/watch/110585817" style="position:absolute;left:-9999px;" alt=""/><img src="https://mc.yandex.ru/watch/111003646" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
 </head>
 <body class="sy">
   <div class="sy-bgfx" aria-hidden="true"></div>
@@ -81,43 +94,22 @@
   <nav class="nav" id="nav">
     <div class="container nav__inner">
       <a href="/" class="nav__logo" aria-label="Uniqore">
-        <svg class="nav__logo-mark" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
-          <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
-        </svg>
+        <span class="nav__logo-mark nav__logo-3d">
+          <video class="nav__logo-vid" src="/assets/dz/uniqore-3dlogo-nav.mp4?v=1" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+          <svg class="nav__logo-svg" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
+            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+        </span>
         <span class="nav__logo-text">uniqore</span>
       </a>
       <ul class="nav__links">
-        <li><a href="/vozmozhnosti/">Возможности</a></li>
-        <li class="nav__item--drop">
-          <button type="button" class="nav__drop-toggle" aria-expanded="false">Решения
-            <svg width="11" height="7" viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="nav__dropdown" role="menu">
-            <a href="/crm-pod-klyuch/" role="menuitem"><span class="nav__dd-name">CRM под ключ</span><span class="nav__dd-desc">Своя система с нуля</span></a>
-            <a href="/crm-dlya-arendy/" role="menuitem"><span class="nav__dd-name">Посуточная аренда</span><span class="nav__dd-desc">Календарь · залоги · авточаты</span></a>
-            <a href="/crm-dlya-avtoservisa/" role="menuitem"><span class="nav__dd-name">Автосервис</span><span class="nav__dd-desc">Трекинг ремонта · история авто</span></a>
-            <a href="/crm-dlya-sklada/" role="menuitem"><span class="nav__dd-name">Склад и импорт</span><span class="nav__dd-desc">Остатки 24/7 · OCR · GPS</span></a>
-            <a href="/crm-dlya-stomatologii/" role="menuitem"><span class="nav__dd-name">Медицина / стоматология</span><span class="nav__dd-desc">История пациента · ДМС</span></a>
-            <a href="/crm-dlya-internet-magazina/" role="menuitem"><span class="nav__dd-name">Интернет-магазин</span><span class="nav__dd-desc">Заказы · статусы · аналитика</span></a>
-            <a href="/crm-dlya-telegram-biznesa/" role="menuitem"><span class="nav__dd-name">Telegram-бизнес</span><span class="nav__dd-desc">Магазин · рассылки · лояльность</span></a>
-            <a href="/crm-dlya-fitnesa/" role="menuitem"><span class="nav__dd-name">Фитнес-клуб</span><span class="nav__dd-desc">Абонементы · расписание · напоминания</span></a>
-            <a href="/crm-dlya-restorana/" role="menuitem"><span class="nav__dd-name">Ресторан / кафе</span><span class="nav__dd-desc">Заказы · бронь · лояльность</span></a>
-            <a href="/crm-dlya-krasoty/" role="menuitem"><span class="nav__dd-name">Салон красоты</span><span class="nav__dd-desc">Запись · склад · напоминания</span></a>
-            <a href="/crm-dlya-yuristov/" role="menuitem"><span class="nav__dd-name">Юридическая компания</span><span class="nav__dd-desc">Дела · дедлайны · документы</span></a>
-            <a href="/crm-dlya-turagentstva/" role="menuitem"><span class="nav__dd-name">Турагентство</span><span class="nav__dd-desc">Заявки · брони · напоминания</span></a>
-            <a href="/crm-dlya-logistiki/" role="menuitem"><span class="nav__dd-name">Логистика и доставка</span><span class="nav__dd-desc">Трекинг · маршруты · заявки</span></a>
-            <a href="/crm-dlya-remonta-i-stroyki/" role="menuitem"><span class="nav__dd-name">Ремонт и стройка</span><span class="nav__dd-desc">Объекты · сметы · график бригад</span></a>
-            <a href="/crm-dlya-klininga/" role="menuitem"><span class="nav__dd-name">Клининговая компания</span><span class="nav__dd-desc">Заявки · бригады · абонементы</span></a>
-            <a href="/crm-dlya-agentstva-nedvizhimosti/" role="menuitem"><span class="nav__dd-name">Агентство недвижимости</span><span class="nav__dd-desc">Объекты · клиенты · показы</span></a>
-            <a href="/crm-dlya-detskogo-centra/" role="menuitem"><span class="nav__dd-name">Детский центр</span><span class="nav__dd-desc">Расписание · оплаты · напоминания</span></a>
-          </div>
-        </li>
-        <li><a href="/keysy/">Кейсы</a></li>
-        <li><a href="/tseny/">Цены</a></li>
-        <li><a href="/blog/">Блог</a></li>
-        <li><a href="/o-nas/">О нас</a></li>
+        <li><a href="#features">Что получите</a></li>
+        <li><a href="#pricing">Цены</a></li>
+        <li><a href="#portfolio">Работы</a></li>
+        <li><a href="#faq">Вопросы</a></li>
       </ul>
+      <a href="tel:+79616495107" class="nav__tel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>+7 961 649-51-07</a>
       <a href="https://t.me/UniqoreManager" class="nav__tg" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.5 3.4 2.9 10.6c-1 .4-1 1.4 0 1.7l4.6 1.5 1.8 5.4c.3.9 1.2 1 1.8.3l2.5-2.6 4.7 3.5c.7.5 1.6.1 1.8-.8l3-14.5c.2-1-.7-1.8-1.6-1.7ZM8.7 13.5l9-5.7c.3-.2.6.2.3.5l-7.4 6.8-.3 3-1.6-4.6Z" fill="currentColor"/></svg></a>
       <a href="#zayavka" class="btn btn--accent nav__cta">Получить расчёт</a>
       <button class="nav__burger" id="burger" aria-label="Меню"><span></span><span></span></button>
@@ -126,12 +118,12 @@
 
   <div class="mobile-menu" id="mobile-menu">
     <ul>
+      <li><a href="tel:+79616495107">📞 +7 961 649-51-07</a></li>
       <li><a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">✈️ Telegram — @UniqoreManager</a></li>
-      <li><a href="/vozmozhnosti/">Возможности</a></li>
-      <li><a href="/keysy/">Кейсы</a></li>
-      <li><a href="/tseny/">Цены</a></li>
-      <li><a href="/blog/">Блог</a></li>
-      <li><a href="/o-nas/">О нас</a></li>
+      <li><a href="#features">Что получите</a></li>
+      <li><a href="#pricing">Цены</a></li>
+      <li><a href="#portfolio">Работы</a></li>
+      <li><a href="#faq">Вопросы</a></li>
       <li><a href="#zayavka" class="btn btn--accent">Получить расчёт</a></li>
     </ul>
   </div>
@@ -144,21 +136,21 @@
         <div class="sy-hero__grid">
           <div class="sy-hero__left">
             <span class="sy-eyebrow sy-rev"><span class="dot"></span>Сайты под ключ · за 3–5 дней</span>
-            <h1 class="sy-hero__h1 sy-rev" data-d="1">Сайт под ключ за 3–5 дней,<br><em>что приводит клиентов из рекламы.</em></h1>
-            <p class="sy-hero__lead sy-rev" data-d="2">Индивидуальный сайт под вашу нишу — не шаблон. Сразу готов под Яндекс Директ: дизайн, мобильная версия, SEO, метрика и цели, Telegram и CRM внутри.</p>
+            <h1 class="sy-hero__h1 sy-rev" data-d="1">Сайт под ключ за 3–5 дней,<br>что <em>приводит клиентов</em> из рекламы.</h1>
+            <p class="sy-hero__lead sy-rev" data-d="2">Индивидуальный сайт под вашу нишу, готовый приводить заявки из рекламы — с первого дня запуска.</p>
             <div class="sy-hero__benefits sy-rev" data-d="3">
               <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Запуск за 3–5 дней</span>
-              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Индивидуальный дизайн</span>
-              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Подготовка под Яндекс Директ</span>
-              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>SEO-структура внутри</span>
-              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Telegram + CRM заявки</span>
-              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Мобильная версия</span>
-              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Фиксированная цена</span>
-              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Работаем по договору</span>
+              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Индивидуальный дизайн — не шаблон</span>
+              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Готов под Яндекс Директ</span>
+              <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Telegram + CRM внутри</span>
             </div>
             <div class="sy-hero__cta sy-rev" data-d="4">
               <a href="#zayavka" class="sy-btn sy-btn--main sy-btn--lg" data-mag>Получить бесплатный расчёт <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
               <a href="#portfolio" class="sy-btn sy-btn--ghost sy-btn--lg">Посмотреть проекты</a>
+            </div>
+            <div class="sy-hero__pricebar sy-rev" data-d="4">
+              <span class="sy-pricepill">от&nbsp;<b data-usd="150">$150</b></span>
+              <span class="sy-pricepill__note">Цену фиксируем в договоре · оплата после утверждения макета</span>
             </div>
             <div class="sy-trustrow sy-rev" data-d="4" style="justify-content:flex-start;margin-top:14px">
               <span class="sy-trustrow__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Ответим за 15 минут</span>
@@ -166,16 +158,25 @@
               <span class="sy-trustrow__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Без обязательств</span>
             </div>
             <div class="sy-hero__proof sy-rev" data-d="5">
-              <div class="sy-stat"><span class="sy-stat__n">300+</span><span class="sy-stat__l">проектов</span></div>
+              <div class="sy-stat"><span class="sy-stat__n">100+</span><span class="sy-stat__l">проектов</span></div>
               <div class="sy-hero__proof-sep"></div>
-              <div class="sy-stat"><span class="sy-stat__n">120+</span><span class="sy-stat__l">сайтов</span></div>
+              <div class="sy-stat"><span class="sy-stat__n">30+</span><span class="sy-stat__l">сайтов</span></div>
               <div class="sy-hero__proof-sep"></div>
-              <div class="sy-stat"><span class="sy-stat__n">4.9★</span><span class="sy-stat__l">рейтинг</span></div>
+              <div class="sy-stat"><span class="sy-stat__n">70+</span><span class="sy-stat__l">CRM-систем</span></div>
             </div>
-            <div class="sy-hero__chips sy-rev" data-d="5">
-              <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Работаем по договору</span>
-              <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Фиксированная цена</span>
-              <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Без шаблонов</span>
+            <div class="sy-hero__mviz sy-rev" data-d="5" aria-hidden="true">
+              <div class="sy-mviz__phone">
+                <div class="sy-mviz__notch"></div>
+                <div class="sy-mviz__screen">
+                  <div class="sy-mviz__url">lumen-coffee.ru</div>
+                  <span class="sy-mviz__badge">Кофейня</span>
+                  <div class="sy-mviz__h">Кофе, который<br>запоминают.</div>
+                  <div class="sy-mviz__btn">Смотреть меню</div>
+                  <div class="sy-mviz__row"><b>Эспрессо</b><span>от 180 ₽</span></div>
+                  <div class="sy-mviz__row"><b>Раф</b><span>от 260 ₽</span></div>
+                </div>
+              </div>
+              <div class="sy-mviz__stat"><b>Заявки идут</b><span>после запуска</span></div>
             </div>
           </div>
 
@@ -211,10 +212,17 @@
                       <div class="ms-strip" style="background:#101622"><div style="font-size:11px;color:#9aa6bd">© 2026 · сделано в Uniqore</div></div>
                     </div>
                   </div>
+                  <div class="lmn-grain" aria-hidden="true"></div>
                   <svg class="sy-cursor" id="syCursor" viewBox="0 0 24 24" fill="#fff" stroke="#0a0e17" stroke-width="1.4" stroke-linejoin="round"><path d="M5 3l14 8-6 1.5L10 20 5 3z"/></svg>
                 </div>
               </div>
-              <div class="sy-fcard sy-fcard--a" data-i="0"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><div>+37 заявок<small>за первый месяц</small></div></div>
+              <div class="sy-phone" aria-hidden="true">
+                <div class="sy-phone__screen">
+                  <span class="sy-phone__island"></span>
+                  <div class="sy-msite" id="syPhone"></div>
+                </div>
+              </div>
+              <div class="sy-fcard sy-fcard--a" data-i="0"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><div>Заявки растут<small>из рекламы</small></div></div>
               <div class="sy-fcard sy-fcard--b" data-i="1"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></span><div>PageSpeed 98<small>Google</small></div></div>
               <div class="sy-fcard sy-fcard--c" data-i="2"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg></span><div>Mobile First<small>идеально на телефоне</small></div></div>
               <div class="sy-fcard sy-fcard--d" data-i="3"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div>3–5 дней<small>до запуска</small></div></div>
@@ -228,32 +236,33 @@
     <section class="sy-trust">
       <div class="sy-container">
         <div class="sy-trust__grid">
-          <div class="sy-trust__i sy-rev"><div class="sy-trust__n">300+</div><div class="sy-trust__l">реализованных проектов</div></div>
-          <div class="sy-trust__i sy-rev" data-d="1"><div class="sy-trust__n">120+</div><div class="sy-trust__l">запущенных сайтов</div></div>
-          <div class="sy-trust__i sy-rev" data-d="2"><div class="sy-trust__n">4.9<span class="star">★</span></div><div class="sy-trust__l">средний рейтинг</div></div>
-          <div class="sy-trust__i sy-rev" data-d="3"><div class="sy-trust__n">3–5</div><div class="sy-trust__l">дней средний запуск</div></div>
+          <div class="sy-trust__i sy-rev"><div class="sy-trust__n"><span class="sy-cnt" data-to="100" data-suf="+">100+</span></div><div class="sy-trust__l">проектов автоматизации</div></div>
+          <div class="sy-trust__i sy-rev" data-d="1"><div class="sy-trust__n"><span class="sy-cnt" data-to="30" data-suf="+">30+</span></div><div class="sy-trust__l">коммерческих сайтов</div></div>
+          <div class="sy-trust__i sy-rev" data-d="2"><div class="sy-trust__n"><span class="sy-cnt" data-to="70" data-suf="+">70+</span></div><div class="sy-trust__l">CRM-систем</div></div>
+          <div class="sy-trust__i sy-rev" data-d="3"><div class="sy-trust__n">0&nbsp;₽</div><div class="sy-trust__l">предоплата — оплата после макета</div></div>
         </div>
         <div class="sy-trust__chips">
           <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Работаем по договору</span>
           <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Фиксированная цена</span>
-          <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Без шаблонов</span>
+          <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Собираем с нуля</span>
           <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Передаём исходники</span>
         </div>
+        <a href="#portfolio" class="sy-trust__names sy-rev">Среди наших работ&nbsp;— <b>Bien&nbsp;Sûr</b> · <b>Немеция</b> · <b>Dragon&nbsp;Brand</b> · <b>Lovi</b> · <b>IDTuning</b> · <b>MILLA</b> <span class="sy-trust__names-go">смотреть&nbsp;→</span></a>
       </div>
     </section>
 
     <!-- ═══════ ЧТО ПОЛУЧАЕТЕ ═══════ -->
-    <section class="sy-section" style="padding-bottom:0">
+    <section class="sy-section" id="features" style="padding-bottom:0">
       <div class="sy-container">
-        <div class="sy-head">
+        <div class="sy-head sy-head--left">
           <h2 class="sy-h2 sy-rev">Вы получаете не просто <em>сайт</em></h2>
           <p class="sy-sub sy-rev" data-d="1">А инструмент, который превращает рекламный трафик в заявки и продажи.</p>
         </div>
         <div class="sy-get__grid">
-          <div class="sy-get sy-rev"><div class="sy-get__n">01</div><div class="sy-get__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-3.5 3.2.9 4.8L12 14.8 8.1 17l.9-4.8L5.5 9l4.6-1.4z"/></svg></div><div class="sy-get__t">Сайт под вашу нишу</div><div class="sy-get__d">Не шаблон Tilda — структура собрана под ваших клиентов и путь к заявке.</div></div>
-          <div class="sy-get sy-rev" data-d="1"><div class="sy-get__n">02</div><div class="sy-get__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div><div class="sy-get__t">Готовность к рекламе</div><div class="sy-get__d">Яндекс Директ, метрика, аналитика и цели настроены — можно лить трафик сразу.</div></div>
-          <div class="sy-get sy-rev" data-d="2"><div class="sy-get__n">03</div><div class="sy-get__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 3.4 2.9 10.6c-1 .4-1 1.4 0 1.7l4.6 1.5 1.8 5.4c.3.9 1.2 1 1.8.3l2.5-2.6 4.7 3.5c.7.5 1.6.1 1.8-.8z"/></svg></div><div class="sy-get__t">Система обработки заявок</div><div class="sy-get__d">Каждая заявка сразу в Telegram и CRM с уведомлением — ни один лид не теряется.</div></div>
-          <div class="sy-get sy-rev" data-d="3"><div class="sy-get__n">04</div><div class="sy-get__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="sy-get__t">Скорость загрузки</div><div class="sy-get__d">PageSpeed 95+ — сайт грузится мгновенно и не теряет клиентов из рекламы.</div></div>
+          <div class="sy-get sy-rev"><div class="sy-get__n">01</div><div class="sy-get__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-3.5 3.2.9 4.8L12 14.8 8.1 17l.9-4.8L5.5 9l4.6-1.4z"/></svg></div><div class="sy-get__t">Заявки, а не просмотры</div><div class="sy-get__d">Структура ведёт посетителя к действию — трафик превращается в обращения, а не в отказы.</div></div>
+          <div class="sy-get sy-rev" data-d="1"><div class="sy-get__n">02</div><div class="sy-get__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div><div class="sy-get__t">Окупаемая реклама</div><div class="sy-get__d">Готов под Яндекс Директ с первого дня: метрика и цели настроены — видно отдачу с каждого рубля.</div></div>
+          <div class="sy-get sy-rev" data-d="2"><div class="sy-get__n">03</div><div class="sy-get__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 3.4 2.9 10.6c-1 .4-1 1.4 0 1.7l4.6 1.5 1.8 5.4c.3.9 1.2 1 1.8.3l2.5-2.6 4.7 3.5c.7.5 1.6.1 1.8-.8z"/></svg></div><div class="sy-get__t">Ни одного потерянного лида</div><div class="sy-get__d">Каждая заявка мгновенно в Telegram и CRM — вы отвечаете первым, пока клиент ещё горячий.</div></div>
+          <div class="sy-get sy-rev" data-d="3"><div class="sy-get__n">04</div><div class="sy-get__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="sy-get__t">Клиент, который не ушёл</div><div class="sy-get__d">Сайт грузится мгновенно (PageSpeed 95+) — никто не закрывает вкладку, не дождавшись загрузки.</div></div>
         </div>
       </div>
     </section>
@@ -261,15 +270,20 @@
     <!-- ═══════ PRICING ═══════ -->
     <section class="sy-section" id="pricing">
       <div class="sy-container">
-        <div class="sy-head">
+        <div class="sy-head sy-head--center">
           <h2 class="sy-h2 sy-rev">Прозрачные <em>цены</em></h2>
           <p class="sy-sub sy-rev" data-d="1">Стоимость фиксируем в договоре до старта. Оплата после утверждения макета — никаких скрытых доплат.</p>
+          <div class="cur-switch cur-switch--center sy-rev" data-d="1" role="group" aria-label="Валюта" style="margin-top:20px">
+            <button type="button" class="cur-switch__btn is-active" data-cur="USD" aria-pressed="true" aria-label="Цены в долларах">$</button>
+            <button type="button" class="cur-switch__btn" data-cur="RUB" aria-pressed="false" aria-label="Цены в рублях">₽</button>
+            <button type="button" class="cur-switch__btn" data-cur="BYN" aria-pressed="false" aria-label="Цены в белорусских рублях"><svg class="byn-sign" viewBox="76 30 548 644" fill="currentColor" role="img" aria-label="белорусских рублей" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,700) scale(0.1,-0.1)"><path d="M1758 4520 l-3 -2105 -462 -3 -463 -2 0 -305 0 -305 452 -2 452 -3 13 -25 c10 -19 13 -182 13 -733 l0 -708 1313 4 c1470 4 1447 3 1737 79 41 11 91 23 111 28 66 17 263 101 354 151 151 84 301 198 420 321 210 214 349 465 426 764 41 161 52 251 56 469 5 237 -14 388 -74 595 -19 65 -88 232 -113 275 -10 17 -28 48 -40 70 -135 245 -403 488 -701 636 -222 111 -445 173 -744 209 -147 18 -235 20 -1087 20 -829 0 -928 2 -942 16 -14 14 -16 119 -16 1010 0 619 4 1002 10 1013 9 18 70 18 1392 16 761 -2 1447 -1 1526 2 l142 6 0 306 0 306 -1885 0 -1885 0 -2 -2105z m2562 -1190 c242 -28 382 -66 555 -152 131 -66 195 -109 280 -190 123 -116 232 -288 283 -448 70 -218 67 -534 -8 -760 -117 -350 -394 -628 -760 -760 -46 -17 -140 -42 -209 -55 l-125 -25 -922 0 c-828 0 -924 2 -938 16 -14 14 -16 63 -14 427 l3 412 809 3 809 2 -7 46 c-3 26 -6 163 -6 305 l0 259 -789 0 c-704 0 -791 2 -805 16 -14 14 -16 69 -16 458 0 243 3 446 7 449 10 11 1758 8 1853 -3z"/></g></svg></button>
+          </div>
         </div>
         <div class="sy-price__grid">
           <div class="sy-pcard sy-rev">
             <div class="sy-pcard__name">Лендинг</div>
             <div class="sy-pcard__who">Одна страница под одну цель — реклама, услуга, продукт.</div>
-            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val">$150</span></div>
+            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val" data-usd="150">$150</span></div>
             <div class="sy-pcard__term"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Готов за 3 дня</div>
             <ul class="sy-pcard__list">
               <li>Индивидуальный дизайн под нишу</li>
@@ -278,13 +292,13 @@
               <li>Форма заявки → Telegram</li>
               <li>Готов под запуск рекламы</li>
             </ul>
-            <div class="sy-pcard__cta"><a href="#zayavka" class="sy-btn sy-btn--ghost">Узнать стоимость</a></div>
+            <div class="sy-pcard__cta"><a href="#zayavka" class="sy-btn sy-btn--ghost">Получить расчёт</a></div>
           </div>
           <div class="sy-pcard sy-pcard--flag sy-rev" data-d="1">
             <div class="sy-pcard__flag">Хит</div>
             <div class="sy-pcard__name">Многостраничный</div>
             <div class="sy-pcard__who">Полноценный сайт: услуги, каталог, о компании, блог.</div>
-            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val">$300</span></div>
+            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val" data-usd="300">$300</span></div>
             <div class="sy-pcard__term"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Готов за 5 дней</div>
             <ul class="sy-pcard__list">
               <li>Всё из лендинга</li>
@@ -298,7 +312,7 @@
           <div class="sy-pcard sy-rev" data-d="2">
             <div class="sy-pcard__name">Сайт + CRM</div>
             <div class="sy-pcard__who">Сайт, который сразу ведёт заявки в вашу CRM-систему.</div>
-            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val">$500</span></div>
+            <div class="sy-pcard__price"><span class="sy-pcard__from">от</span><span class="sy-pcard__val" data-usd="500">$500</span></div>
             <div class="sy-pcard__term"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Готов за 5–7 дней</div>
             <ul class="sy-pcard__list">
               <li>Всё из многостраничного</li>
@@ -307,64 +321,250 @@
               <li>Аналитика продаж</li>
               <li>Автоуведомления команде</li>
             </ul>
-            <div class="sy-pcard__cta"><a href="#zayavka" class="sy-btn sy-btn--ghost">Обсудить проект</a></div>
+            <div class="sy-pcard__cta"><a href="#zayavka" class="sy-btn sy-btn--ghost">Получить расчёт</a></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ═══════ ПОЧЕМУ НЕ ДЕШЁВЫЙ ═══════ -->
-    <section class="sy-section" style="padding-top:0">
+    <!-- ═══════ MID-CTA (после тарифов, на пике ценового интереса) ═══════ -->
+    <section class="sy-midcta sy-rev">
+      <div class="sy-container">
+        <div class="sy-midcta__in">
+          <div class="sy-midcta__txt">
+            <h3>Соберём структуру под ваши заявки и назовём точную цену — за 15 минут</h3>
+            <p>Бесплатно и без обязательств. Концепцию первого экрана покажем до оплаты.</p>
+          </div>
+          <a href="#zayavka" class="sy-btn sy-btn--main sy-btn--lg" data-mag>Получить бесплатный расчёт <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ ДИЗАЙН-КОМАНДА (конструктор проекта, живая цена) ═══════ -->
+    <section class="sy-section sy-section--band" id="design-team">
       <div class="sy-container">
         <div class="sy-head">
-          <h2 class="sy-h2 sy-rev">Почему не сайт <em>за $50?</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Дешёвый сайт кажется экономией — пока не запустишь на него платную рекламу.</p>
+          <span class="sy-eyebrow sy-rev"><span class="dot"></span>Дизайн-команда Uniqore</span>
+          <h2 class="sy-h2 sy-rev">Соберите проект — <em>увидите цену</em></h2>
+          <p class="sy-sub sy-rev" data-d="1">Выберите сайт и решите, нужна ли работа нашей дизайн-команды. Цена собирается на глазах — по нижней границе; точную фиксируем в договоре.</p>
         </div>
-        <div class="sy-cheap sy-rev">
-          <div class="sy-cheap__col sy-cheap__col--bad">
-            <div class="sy-cheap__h"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Дешёвый сайт за $50</div>
-            <ul>
-              <li>Часто не проходит модерацию Директа</li>
-              <li>Медленно грузится — трафик отваливается</li>
-              <li>Не конвертирует посетителей в заявки</li>
-              <li>Шаблон, который нельзя масштабировать</li>
-              <li>Вы платите за клики, а лидов нет</li>
-            </ul>
+
+        <div class="q-config sy-rev" data-d="1">
+          <div class="q-choices">
+            <div class="q-label">1 · Тип сайта</div>
+            <div class="q-tiers" role="radiogroup" aria-label="Тип сайта">
+              <button type="button" class="q-tier" role="radio" data-t="landing" aria-checked="false">
+                <span class="q-tier__dot"></span>
+                <span class="q-tier__txt"><b>Лендинг</b><span>Одна страница под одну цель</span></span>
+                <span class="q-tier__p" data-usd="150">$150</span>
+              </button>
+              <button type="button" class="q-tier is-on" role="radio" data-t="multi" aria-checked="true">
+                <span class="q-tier__dot"></span>
+                <span class="q-tier__txt"><b>Многостраничный <i>Хит</i></b><span>Услуги, каталог, блог, о компании</span></span>
+                <span class="q-tier__p" data-usd="300">$300</span>
+              </button>
+              <button type="button" class="q-tier" role="radio" data-t="crm" aria-checked="false">
+                <span class="q-tier__dot"></span>
+                <span class="q-tier__txt"><b>Сайт + CRM</b><span>Заявки сразу падают в вашу систему</span></span>
+                <span class="q-tier__p" data-usd="500">$500</span>
+              </button>
+            </div>
+
+            <div class="q-label">2 · Оформление</div>
+            <button type="button" class="q-addon" id="qAddon" aria-pressed="false">
+              <span class="q-addon__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>
+              <span class="q-addon__txt"><b>Работа дизайн-команды</b><span>Уникальный визуал под бренд — не шаблон</span></span>
+              <span class="q-addon__toggle"><i></i></span>
+            </button>
+            <div class="q-perks">
+              <span>Уникальный визуал</span><span>Фирменный стиль</span><span>Иллюстрации</span><span>Анимации</span><span>Моушн-лого</span>
+            </div>
           </div>
-          <div class="sy-cheap__col sy-cheap__col--good">
-            <div class="sy-cheap__h"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Сайт от Uniqore</div>
-            <ul>
-              <li>Индивидуальная структура под заявки</li>
-              <li>PageSpeed 95+ и подготовка под Директ</li>
-              <li>Аналитика, метрика и цели внутри</li>
-              <li>Telegram + CRM — заявки не теряются</li>
-              <li>Дешевле лид — выше окупаемость рекламы</li>
-            </ul>
+
+          <div class="q-quote">
+            <div class="q-quote__ttl">Ваш проект</div>
+            <div class="q-line">
+              <span><b id="qTierName">Многостраничный</b></span>
+              <span class="q-line__p">
+                <span class="q-base" data-t="landing" data-usd="150">$150</span>
+                <span class="q-base" data-t="multi" data-usd="300">$300</span>
+                <span class="q-base" data-t="crm" data-usd="500">$500</span>
+              </span>
+            </div>
+            <div class="q-line q-line--des" id="qDesLine">
+              <span>+ Дизайн-команда</span>
+              <span class="q-line__p">
+                <span class="q-des" data-t="landing" data-usd="60">$60</span>
+                <span class="q-des" data-t="multi" data-usd="120">$120</span>
+                <span class="q-des" data-t="crm" data-usd="250">$250</span>
+              </span>
+            </div>
+            <div class="q-total" id="qTotalWrap">
+              <span class="q-total__l">Итого</span>
+              <span class="q-total__v">
+                <span class="q-tot" data-t="landing" data-d="off" data-usd="150" data-prefix="от ">от $150</span>
+                <span class="q-tot" data-t="landing" data-d="on" data-usd="210" data-prefix="от ">от $210</span>
+                <span class="q-tot" data-t="multi" data-d="off" data-usd="300" data-prefix="от ">от $300</span>
+                <span class="q-tot" data-t="multi" data-d="on" data-usd="420" data-prefix="от ">от $420</span>
+                <span class="q-tot" data-t="crm" data-d="off" data-usd="500" data-prefix="от ">от $500</span>
+                <span class="q-tot" data-t="crm" data-d="on" data-usd="750" data-prefix="от ">от $750</span>
+              </span>
+            </div>
+            <div class="q-meta"><span>Запуск 3–5 дней</span><span id="qMeta">базовый дизайн</span></div>
+            <a href="#zayavka" class="sy-btn sy-btn--main q-cta" id="qCta" data-mag>Оставить заявку</a>
+            <p class="q-nudge" id="qNudge">Точную цену фиксируем в договоре — без скрытых доплат.</p>
           </div>
+        </div>
+
+        <div class="sy-team-line sy-rev" data-d="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-3.5 3.2.9 4.8L12 14.8 8.1 17l.9-4.8L5.5 9l4.6-1.4z"/></svg>Съёмка, 3D-продукт, моушн и код — под одной крышей. Не фрилансер на аутсорсе.</div>
+
+        <div class="sy-reel sy-rev" data-d="1">
+          <div class="rc">
+            <div class="rc__meta">
+              <div class="rc__chips"><span>Моушн</span><span>Промо-ролик</span><span>AI-интерфейс</span></div>
+              <h3 class="rc__title">Lovi</h3>
+              <div class="rc__sub">Кейс команды · приложение AI-сканера кожи</div>
+              <p class="rc__desc">Съёмка, 3D-продукт, анимированный интерфейс и моушн-брендинг — всё под одну идею. Собрала наша дизайн-команда.</p>
+              <button type="button" class="rc__open" id="reelOpen">
+                <span class="rc__open-ic"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg></span>
+                Смотреть кейс · 1:34
+              </button>
+            </div>
+            <div class="rc__stage" id="reelStage">
+              <div class="rc__frame" id="reelFrame" role="button" tabindex="0" aria-label="Смотреть ролик Lovi">
+                <img class="rc__poster" src="/assets/reel-lovi-poster.jpg?v=1" alt="Промо приложения Lovi" loading="lazy">
+                <video class="rc__vid" id="reelVid" src="/assets/reel-lovi.mp4?v=1" poster="/assets/reel-lovi-poster.jpg?v=1" playsinline preload="none" disablepictureinpicture x-webkit-airplay="deny" controlslist="nodownload noplaybackrate noremoteplayback"></video>
+                <div class="rc__grid"></div>
+                <div class="rc__scan"></div>
+                <span class="rc__b rc__b--tl"></span><span class="rc__b rc__b--tr"></span><span class="rc__b rc__b--bl"></span><span class="rc__b rc__b--br"></span>
+                <div class="rc__reticle"></div>
+                <div class="rc__hud"><i></i>SCAN · LOVI</div>
+                <div class="rc__play"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="rc__resume" id="reelResume"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg></div>
+                <div class="rc__ctrl" id="reelCtrl">
+                  <button type="button" class="rc__pp" id="reelPP" aria-label="Пауза"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>
+                  <div class="rc__track" id="reelTrack"><div class="rc__fill" id="reelFill"></div></div>
+                  <span class="rc__time" id="reelTime">0:00 / 1:34</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dz">
+            <div class="dz__head">
+              <h3>Ещё работы <em>дизайна</em></h3>
+              <p>Живые моушн-сцены под бренд — так команда добавляет сайту характер.</p>
+            </div>
+            <div class="dz__grid" id="dzGrid">
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-panelka.mp4?v=1" poster="/assets/dz/dz-panelka.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: панелька"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-trash.mp4?v=1" poster="/assets/dz/dz-trash.jpg?v=1" muted loop autoplay playsinline preload="metadata" disablepictureinpicture aria-label="Работа: мусорный контейнер"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-escalator.mp4?v=1" poster="/assets/dz/dz-escalator.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: эскалатор"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-flag.mp4?v=1" poster="/assets/dz/dz-flag.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: флаг"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-fountain.mp4?v=1" poster="/assets/dz/dz-fountain.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: фонтан"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-swing.mp4?v=1" poster="/assets/dz/dz-swing.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: качели"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-smoke.mp4?v=1" poster="/assets/dz/dz-smoke.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: дым"></video></div>
+              <div class="dz__card"><video class="dz__v" src="/assets/dz/dz-coffee2.mp4?v=1" poster="/assets/dz/dz-coffee2.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Работа: кофе"></video></div>
+            </div>
+            <div class="dz__head" style="margin-top:44px">
+              <h3>Анимация <em>логотипов</em></h3>
+              <p>Оживляем бренд — от идеи до финального ролика.</p>
+            </div>
+            <div class="dz__logos" id="dzLogos">
+              <div class="dz__logo"><video src="/assets/dz/dz-dreambid.mp4?v=1" poster="/assets/dz/dz-dreambid.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Логотип Dreambid"></video></div>
+              <div class="dz__logo"><video src="/assets/dz/dz-ravero.mp4?v=1" poster="/assets/dz/dz-ravero.jpg?v=1" muted loop playsinline preload="none" disablepictureinpicture aria-label="Логотип Ravero Drums"></video></div>
+            </div>
+          </div>
+          <script>
+          (function(){
+            var vids=document.querySelectorAll('.dz video'); if(!vids.length) return;
+            if('IntersectionObserver' in window){
+              var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting){var p=v.play();if(p&&p.catch)p.catch(function(){});}else{v.pause();}});},{threshold:0.2});
+              vids.forEach(function(v){io.observe(v);});
+            } else { vids.forEach(function(v){var p=v.play();if(p&&p.catch)p.catch(function(){});}); }
+          })();
+          </script>
+          <!-- ФУНДАМЕНТ: доп. мелкие видео — дублировать .rc__frame карточками в ряд (инлайн-плей). -->
+          <script>
+          (function(){
+            var frame=document.getElementById('reelFrame'),open=document.getElementById('reelOpen'),
+                vid=document.getElementById('reelVid'),stage=document.getElementById('reelStage'),
+                pp=document.getElementById('reelPP'),track=document.getElementById('reelTrack'),
+                fill=document.getElementById('reelFill'),timeEl=document.getElementById('reelTime');
+            if(!frame||!vid) return;
+            var started=false;
+            var I_PAUSE='<svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+            var I_PLAY='<svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>';
+            function fmt(s){s=Math.max(0,s|0);var m=(s/60)|0,ss=s%60;return m+':'+(ss<10?'0':'')+ss;}
+            function start(){started=true;frame.style.transform='';frame.classList.add('is-playing');vid.play();}
+            function toggle(){ if(vid.paused) vid.play(); else vid.pause(); }
+            frame.addEventListener('click',function(){ if(!started) start(); else toggle(); });
+            frame.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault(); if(!started) start(); else toggle();} });
+            if(open) open.addEventListener('click',function(){ if(!started) start(); else toggle(); });
+            vid.addEventListener('play',function(){ frame.classList.remove('is-paused'); if(pp){pp.innerHTML=I_PAUSE;pp.setAttribute('aria-label','Пауза');} });
+            vid.addEventListener('pause',function(){ frame.classList.add('is-paused'); if(pp){pp.innerHTML=I_PLAY;pp.setAttribute('aria-label','Смотреть');} });
+            vid.addEventListener('timeupdate',function(){ var d=vid.duration||0; if(fill)fill.style.width=(d?vid.currentTime/d*100:0)+'%'; if(timeEl)timeEl.textContent=fmt(vid.currentTime)+' / '+fmt(d); });
+            if(pp) pp.addEventListener('click',function(e){ e.stopPropagation(); toggle(); });
+            if(track) track.addEventListener('click',function(e){ e.stopPropagation(); var r=track.getBoundingClientRect(),d=vid.duration||0; if(d) vid.currentTime=Math.min(d,Math.max(0,(e.clientX-r.left)/r.width*d)); });
+            if(stage&&window.matchMedia&&matchMedia('(hover:hover)').matches){
+              var raf=0;
+              stage.addEventListener('mousemove',function(e){ if(started) return; var r=stage.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;if(raf)return;raf=requestAnimationFrame(function(){raf=0;frame.style.transform='rotateY('+(px*10)+'deg) rotateX('+(-py*8)+'deg)';});});
+              stage.addEventListener('mouseleave',function(){ if(!started) frame.style.transform=''; });
+            }
+          })();
+          </script>
         </div>
       </div>
     </section>
+    <script>
+    (function(){
+      var cfg=document.getElementById('design-team'); if(!cfg) return;
+      var tiers=cfg.querySelectorAll('.q-tier');
+      var addon=document.getElementById('qAddon');
+      if(!tiers.length||!addon) return;
+      var state={t:'multi',d:false};
+      var NAMES={landing:'Лендинг',multi:'Многостраничный',crm:'Сайт + CRM'};
+      var bases=cfg.querySelectorAll('.q-base'), dess=cfg.querySelectorAll('.q-des'), tots=cfg.querySelectorAll('.q-tot');
+      var desLine=document.getElementById('qDesLine'), name=document.getElementById('qTierName');
+      var meta=document.getElementById('qMeta'), cta=document.getElementById('qCta'), nudge=document.getElementById('qNudge');
+      var totalWrap=document.getElementById('qTotalWrap');
+      function show(list,fn){ list.forEach(function(s){ s.style.display=fn(s)?'':'none'; }); }
+      function upd(pop){
+        tiers.forEach(function(b){ var on=b.dataset.t===state.t; b.classList.toggle('is-on',on); b.setAttribute('aria-checked',on?'true':'false'); });
+        addon.classList.toggle('is-on',state.d); addon.setAttribute('aria-pressed',state.d?'true':'false');
+        show(bases,function(s){return s.dataset.t===state.t;});
+        show(dess,function(s){return s.dataset.t===state.t;});
+        show(tots,function(s){return s.dataset.t===state.t && s.dataset.d===(state.d?'on':'off');});
+        if(desLine) desLine.style.display=state.d?'':'none';
+        if(name) name.textContent=NAMES[state.t];
+        if(meta) meta.textContent=state.d?'с дизайн-командой':'базовый дизайн';
+        if(cta) cta.textContent=state.d?'Оставить заявку с дизайном':'Оставить заявку';
+        if(nudge){ nudge.textContent=state.d?'Уникальный вид под бренд — вы не сливаетесь с конкурентами.':'Точную цену фиксируем в договоре — без скрытых доплат.'; nudge.classList.toggle('is-good',state.d); }
+        if(pop && totalWrap){ totalWrap.classList.remove('pop'); void totalWrap.offsetWidth; totalWrap.classList.add('pop'); }
+      }
+      tiers.forEach(function(b){ b.addEventListener('click',function(){ state.t=b.dataset.t; upd(true); }); });
+      addon.addEventListener('click',function(){ state.d=!state.d; upd(true); });
+      upd(false);
+    })();
+    </script>
+
 
     <!-- ═══════ PORTFOLIO ═══════ -->
-    <section class="sy-section" id="portfolio" style="padding-top:0">
+    <section class="sy-section" id="portfolio">
       <div class="sy-container">
         <div class="sy-head">
           <h2 class="sy-h2 sy-rev">Работы, которые <em>работают</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Каждый сайт собран под нишу с нуля. Наведите — увидите, как выглядит вживую.</p>
+          <p class="sy-sub sy-rev" data-d="1">Реальные клиентские сайты — каждый собран под нишу и бренд с нуля, не шаблон.</p>
         </div>
         <div class="sy-filter sy-rev" data-d="1">
           <button class="sy-filter__b is-on" data-f="all">Все</button>
-          <button class="sy-filter__b" data-f="food">Общепит</button>
-          <button class="sy-filter__b" data-f="beauty">Красота</button>
           <button class="sy-filter__b" data-f="services">Услуги</button>
-          <button class="sy-filter__b" data-f="med">Медицина</button>
+          <button class="sy-filter__b" data-f="food">Общепит</button>
           <button class="sy-filter__b" data-f="shop">Магазины</button>
-          <button class="sy-filter__b" data-f="premium">Premium · 3D</button>
         </div>
         <div class="sy-pf__grid">
           <a href="/raboty/dragon/" target="_blank" rel="noopener" class="sy-pf sy-pf--wide sy-rev" data-cat="shop">
             <div class="sy-pf__shot">
-              <span class="sy-pf__real">● Живой сайт — открыть</span><span class="sy-pf__speed">⚡ 98</span>
+              <span class="sy-pf__real">● Живой сайт — открыть</span>
               <div class="sy-pf__frame"><iframe src="/raboty/dragon/" loading="lazy" tabindex="-1" title="Dragon Brand" scrolling="no"></iframe></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
@@ -372,128 +572,94 @@
           </a>
           <div class="sy-pf sy-pf--preview sy-rev" data-cat="services" data-d="1">
             <div class="sy-pf__shot">
-              <span class="sy-pf__tag">Автосервис</span><span class="sy-pf__speed">⚡ 98</span>
-              <div class="sy-pf__video"><video src="/assets/hero-avtoservisa.mp4" autoplay muted loop playsinline preload="metadata"></video></div>
-              <div class="sy-pf__scrim"></div>
-              <div class="sy-pf__ui"><div class="sy-pf__uinav"><span class="sy-pf__brand">DRIVE</span><span class="sy-pf__ulinks">Услуги · Запись</span></div><div class="sy-pf__uihero"><span class="sy-pf__eyebrow2" style="color:#fb923c">[ Автосервис ]</span><div class="sy-pf__uih">Ремонт<br>без сюрпризов</div><span class="sy-pf__uibtn" style="background:rgba(251,146,60,.18);border:1px solid rgba(251,146,60,.5);color:#fdba74">Записаться</span></div></div>
-            </div>
-            <div class="sy-pf__b"><div class="sy-pf__name">DRIVE · автосервис</div><div class="sy-pf__task">Лендинг с видео-подачей: услуги, честный прайс, онлайн-запись. Заявки в Telegram.</div><div class="sy-pf__foot"><span class="sy-pf__term">лендинг · видео-hero</span></div></div>
-          </div>
-          <div class="sy-pf sy-pf--preview sy-rev" data-cat="food" data-d="2">
-            <div class="sy-pf__shot">
-              <span class="sy-pf__tag">Ресторан</span><span class="sy-pf__speed">⚡ 97</span>
-              <div class="sy-pf__frame"><iframe src="/raboty/restoran/" loading="lazy" tabindex="-1" title="SALT ресторан" scrolling="no"></iframe></div>
+              <span class="sy-pf__tag">Тюнинг-ателье</span>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-idtuning.jpg?v=20260720d);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
-            <div class="sy-pf__b"><div class="sy-pf__name">SALT · ресторан</div><div class="sy-pf__task">Кино-подача авторской кухни: меню, онлайн-бронь столов, атмосфера. Заявки в Telegram.</div><div class="sy-pf__foot"><span class="sy-pf__term">лендинг-меню</span></div></div>
+            <div class="sy-pf__b"><div class="sy-pf__name">IDTuning · тюнинг</div><div class="sy-pf__task">Тюнинг-ателье автомобилей премиум-сегмента: услуги, марки, запись. Москва.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
           </div>
-          <div class="sy-pf sy-pf--preview sy-rev" data-cat="beauty">
+          <div class="sy-pf sy-pf--preview sy-rev" data-cat="services" data-d="2">
             <div class="sy-pf__shot">
-              <span class="sy-pf__tag">Косметика</span><span class="sy-pf__speed">⚡ 96</span>
-              <div class="sy-pf__photo" style="background-image:url(/raboty/assets/work-cosmetic.jpg)"></div>
-              <div class="sy-pf__scrim"></div>
-              <div class="sy-pf__ui"><div class="sy-pf__uinav"><span class="sy-pf__brand">ÉCLAT</span><span class="sy-pf__ulinks">Уход · Купить</span></div><div class="sy-pf__uihero"><span class="sy-pf__eyebrow2" style="color:#e7b98a">[ Косметика ]</span><div class="sy-pf__uih">Уход,<br>который виден</div><span class="sy-pf__uibtn" style="background:#f8f6f1;color:#17130e;border:none">Смотреть уход</span></div></div>
-            </div>
-            <div class="sy-pf__b"><div class="sy-pf__name">ÉCLAT · косметика</div><div class="sy-pf__task">Светлый премиум-магазин: карточки товаров, состав, корзина и оплата онлайн.</div><div class="sy-pf__foot"><span class="sy-pf__term">магазин · фото-hero</span></div></div>
-          </div>
-          <div class="sy-pf sy-pf--preview sy-rev" data-cat="food" data-d="1">
-            <div class="sy-pf__shot">
-              <span class="sy-pf__tag">Кофейня</span><span class="sy-pf__speed">⚡ 99</span>
-              <div class="sy-pf__frame"><iframe src="/raboty/coffee/" loading="lazy" tabindex="-1" title="ORA кофейня" scrolling="no"></iframe></div>
+              <span class="sy-pf__tag">Интерьер</span>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-milla.jpg?v=20260720d);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
-            <div class="sy-pf__b"><div class="sy-pf__name">ORA · кофейня и обжарка</div><div class="sy-pf__task">Тёплый сайт-визитка: меню напитков, обжарка зерна, адрес и часы. Заказ через Telegram.</div><div class="sy-pf__foot"><span class="sy-pf__term">сайт-визитка</span></div></div>
+            <div class="sy-pf__b"><div class="sy-pf__name">MILLA Design · интерьер</div><div class="sy-pf__task">Студия дизайна интерьера: разработка и реализация проекта под ключ. Самара.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
           </div>
-          <div class="sy-pf sy-pf--preview sy-rev" data-cat="shop" data-d="2">
+          <div class="sy-pf sy-pf--preview sy-rev" data-cat="food">
             <div class="sy-pf__shot">
-              <span class="sy-pf__tag">Магазин</span><span class="sy-pf__speed">⚡ 98</span>
-              <div class="sy-pf__video"><video src="/assets/hero-internet-magazin.mp4" autoplay muted loop playsinline preload="metadata"></video></div>
-              <div class="sy-pf__scrim"></div>
-              <div class="sy-pf__ui"><div class="sy-pf__uinav"><span class="sy-pf__brand">VOLT</span><span class="sy-pf__ulinks">Каталог · Корзина</span></div><div class="sy-pf__uihero"><span class="sy-pf__eyebrow2" style="color:#7dd3fc">[ Интернет-магазин ]</span><div class="sy-pf__uih">Покупки<br>без лишнего</div><span class="sy-pf__uibtn" style="background:rgba(125,211,252,.18);border:1px solid rgba(125,211,252,.5);color:#bae6fd">В каталог</span></div></div>
-            </div>
-            <div class="sy-pf__b"><div class="sy-pf__name">VOLT · интернет-магазин</div><div class="sy-pf__task">Каталог с фильтром, карточка товара, корзина и оплата онлайн. Заказы в CRM.</div><div class="sy-pf__foot"><span class="sy-pf__term">магазин · видео-hero</span></div></div>
-          </div>
-          <div class="sy-pf sy-pf--preview sy-rev" data-cat="med">
-            <div class="sy-pf__shot">
-              <span class="sy-pf__tag">Стоматология</span><span class="sy-pf__speed">⚡ 99</span>
-              <div class="sy-pf__frame"><iframe src="/raboty/klinika/" loading="lazy" tabindex="-1" title="Nordent стоматология" scrolling="no"></iframe></div>
+              <span class="sy-pf__tag">Ресторан</span>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-biensur.jpg?v=20260720d);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
-            <div class="sy-pf__b"><div class="sy-pf__name">Nordent · стоматология</div><div class="sy-pf__task">Сайт услуг без страха: направления, врачи, цены и онлайн-запись на приём. Заявки в CRM.</div><div class="sy-pf__foot"><span class="sy-pf__term">сайт услуг + запись</span></div></div>
+            <div class="sy-pf__b"><div class="sy-pf__name">Bien Sûr · ресторан</div><div class="sy-pf__task">Французское бистро: меню, бронь стола, события. Санкт-Петербург.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
           </div>
-          <a href="#zayavka" class="sy-pf sy-rev" data-cat="premium" data-d="1">
+          <div class="sy-pf sy-pf--preview sy-rev" data-cat="services" data-d="1">
             <div class="sy-pf__shot">
-              <span class="sy-pf__tag">Премиум · 3D</span><span class="sy-pf__speed">⚡ 99</span>
-              <div class="sy-pf__photo" style="background-image:url(/assets/keis-titov-site.jpg);background-position:top center"></div>
+              <span class="sy-pf__tag">Хаммамы</span>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-banidesign.jpg?v=20260720d);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
-            <div class="sy-pf__b"><div class="sy-pf__name">Titov Group · недвижимость</div><div class="sy-pf__task">Реальный премиум-лендинг с интерактивным 3D Москва-Сити под элитную недвижимость.</div><div class="sy-pf__foot"><span class="sy-pf__term">premium · 3D</span><span class="sy-pf__cta">Хочу так →</span></div></div>
-          </a>
+            <div class="sy-pf__b"><div class="sy-pf__name">Бани Дизайн · хаммамы</div><div class="sy-pf__task">Строительство хаммамов под ключ: услуги, портфолио, заявка.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
+          </div>
+          <div class="sy-pf sy-pf--preview sy-rev" data-cat="services" data-d="2">
+            <div class="sy-pf__shot">
+              <span class="sy-pf__tag">Автосервис</span>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-nemecia.jpg?v=20260720d);background-position:top center"></div>
+              <div class="sy-pf__frame-scrim"></div>
+            </div>
+            <div class="sy-pf__b"><div class="sy-pf__name">Немеция · автосервис</div><div class="sy-pf__task">Автокомплекс VAG, Mercedes-Benz и BMW: ремонт, запчасти, запись. Омск.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
+          </div>
         </div>
-        <p style="text-align:center;color:var(--sy-mut);font-size:14px;margin-top:34px" class="sy-rev">Dragon Brand и Titov Group — реальные проекты, открываются вживую. Остальное — превью работ под нишу. Ваш сайт собираем с нуля. И да, <a href="/" style="color:var(--sy-l)">этот сайт</a> мы тоже сделали сами.</p>
+        <p style="text-align:center;color:var(--sy-mut);font-size:14px;margin-top:34px" class="sy-rev">Dragon Brand открывается вживую. Остальные — реальные клиентские сайты, показываем скриншотами: чужой продакшн без спроса в открытый доступ не выкладываем. Ваш сайт собираем с нуля. И да, <a href="/" style="color:var(--sy-l)">этот сайт</a> мы тоже сделали сами.</p>
       </div>
     </section>
 
-    <!-- ═══════ MID CTA ═══════ -->
-    <section class="sy-section" style="padding-top:0">
-      <div class="sy-container">
-        <div class="sy-band sy-rev">
-          <h2>Покажем концепцию вашего сайта<br>ещё до оплаты</h2>
-          <p>Расскажите про нишу — за 15 минут покажем, как будет выглядеть, и назовём точную цену.</p>
-          <div class="sy-band__cta">
-            <a href="#zayavka" class="sy-btn sy-btn--main sy-btn--lg" data-mag>Показать концепцию</a>
-            <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener" class="sy-btn sy-btn--ghost sy-btn--lg">Написать в Telegram</a>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- ═══════ FEATURES ═══════ -->
-    <section class="sy-section" style="padding-top:0">
+    <section class="sy-section">
       <div class="sy-container">
-        <div class="sy-head">
+        <div class="sy-head sy-head--left">
           <h2 class="sy-h2 sy-rev">Почему <em>Uniqore</em></h2>
           <p class="sy-sub sy-rev" data-d="1">Не «сделаем красиво», а конкретные вещи, которые приносят заявки.</p>
         </div>
         <div class="sy-feat__grid">
-          <div class="sy-feat sy-rev"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9l-3.5 3.2.9 4.8L12 14.8 8.1 17l.9-4.8L5.5 9l4.6-1.4z"/></svg></div><div class="sy-feat__t">Индивидуальный дизайн</div><div class="sy-feat__d">Собираем под вашу нишу и бренд, а не подгоняем шаблон Tilda.</div></div>
-          <div class="sy-feat sy-rev" data-d="1"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></div><div class="sy-feat__t">SEO уже внутри</div><div class="sy-feat__d">Структура, скорость и мета — так, чтобы вас находили в поиске.</div></div>
+          <div class="sy-feat sy-rev"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></div><div class="sy-feat__t">SEO уже внутри</div><div class="sy-feat__d">Структура, скорость и мета — так, чтобы вас находили в поиске.</div></div>
           <div class="sy-feat sy-rev" data-d="2"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><div class="sy-feat__t">CRM-интеграция</div><div class="sy-feat__d">Заявки не теряются — сразу попадают в систему учёта и воронку.</div></div>
           <div class="sy-feat sy-rev" data-d="3"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 3.4 2.9 10.6c-1 .4-1 1.4 0 1.7l4.6 1.5 1.8 5.4c.3.9 1.2 1 1.8.3l2.5-2.6 4.7 3.5c.7.5 1.6.1 1.8-.8z"/></svg></div><div class="sy-feat__t">Telegram-уведомления</div><div class="sy-feat__d">Каждая заявка мгновенно приходит вам и команде в Telegram.</div></div>
-          <div class="sy-feat sy-rev"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div><div class="sy-feat__t">Высокая скорость</div><div class="sy-feat__d">PageSpeed 95+ — сайт грузится мгновенно и не теряет клиентов.</div></div>
           <div class="sy-feat sy-rev" data-d="1"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg></div><div class="sy-feat__t">Мобильная оптимизация</div><div class="sy-feat__d">80% трафика — телефоны. Делаем идеально именно под них.</div></div>
           <div class="sy-feat sy-rev" data-d="2"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="sy-feat__t">Поддержка после запуска</div><div class="sy-feat__d">Домен, хостинг и правки — не бросаем сайт после сдачи.</div></div>
-          <div class="sy-feat sy-rev" data-d="3"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div><div class="sy-feat__t">Без шаблонов</div><div class="sy-feat__d">Ваш сайт не будет похож на тысячи одинаковых — это ваше лицо.</div></div>
+          <div class="sy-feat sy-rev" data-d="3"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div><div class="sy-feat__t">Аналитика заявок</div><div class="sy-feat__d">Яндекс.Метрика и цели настроены — видно, откуда приходят клиенты.</div></div>
         </div>
       </div>
     </section>
 
     <!-- ═══════ CASES ═══════ -->
-    <section class="sy-section" style="padding-top:0">
+    <section class="sy-section">
       <div class="sy-container">
         <div class="sy-head">
           <h2 class="sy-h2 sy-rev">Было и <em>стало</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Потяните ползунок. Слева — типичный слабый сайт в нише, справа — наш. «После» открывается вживую.</p>
+          <p class="sy-sub sy-rev" data-d="1">Потяните ползунок. Слева — каким был сайт клиента, справа — что мы сделали под ключ.</p>
         </div>
         <div class="sy-slcwrap sy-rev">
           <div class="sy-slc" data-slc>
-            <div class="sy-slc__pane sy-slc__after"><iframe src="/raboty/restoran/" loading="lazy" tabindex="-1" title="SALT — после" scrolling="no"></iframe></div>
-            <div class="sy-slc__pane sy-slc__before"><img src="/assets/before-salt.jpg?v=9" alt="Ресторан SALT — типичный слабый сайт" loading="lazy"></div>
+            <div class="sy-slc__pane sy-slc__after"><img src="/keysy/cases/case-biensur.jpg?v=20260720s" alt="Ресторан Bien Sûr — сайт под ключ от Uniqore" loading="lazy"></div>
+            <div class="sy-slc__pane sy-slc__before"><img src="/assets/before-biensur.jpg?v=20260720s" alt="Ресторан Bien Sûr — старый сайт на конструкторе до Uniqore" loading="lazy"></div>
             <span class="sy-slc__lbl sy-slc__lbl--b">До</span>
             <span class="sy-slc__lbl sy-slc__lbl--a">После · Uniqore</span>
             <div class="sy-slc__handle"><span><svg viewBox="0 0 24 24" fill="none" stroke="#08130a" stroke-width="2.4"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></span></div>
           </div>
-          <div class="sy-slc__cap"><b>Ресторан «SALT».</b> Слева — обычный шаблонный сайт. Справа — наш под ключ. <a href="/raboty/restoran/" target="_blank" rel="noopener">Открыть вживую →</a></div>
+          <div class="sy-slc__cap"><b>Ресторан «Bien Sûr», СПб.</b> Было: конструктор, меню картинкой, на телефоне рассыпалось. Стало: бронь стола в 2 клика, меню и события — под рекламу. <a href="/keysy/" target="_blank" rel="noopener">Смотреть кейсы →</a></div>
         </div>
         <div class="sy-slcwrap sy-rev" data-d="1">
           <div class="sy-slc" data-slc>
-            <div class="sy-slc__pane sy-slc__after"><iframe src="/raboty/barbershop/" loading="lazy" tabindex="-1" title="KROB — после" scrolling="no"></iframe></div>
-            <div class="sy-slc__pane sy-slc__before"><img src="/assets/before-krob.jpg?v=9" alt="Барбершоп KROB — типичный слабый сайт" loading="lazy"></div>
+            <div class="sy-slc__pane sy-slc__after"><img src="/keysy/cases/case-nemecia.jpg?v=20260720s" alt="Автосервис Немеция — сайт под ключ от Uniqore" loading="lazy"></div>
+            <div class="sy-slc__pane sy-slc__before"><img src="/assets/before-nemecia.jpg?v=20260720s" alt="Автосервис Немеция — старый сайт из конструктора до Uniqore" loading="lazy"></div>
             <span class="sy-slc__lbl sy-slc__lbl--b">До</span>
             <span class="sy-slc__lbl sy-slc__lbl--a">После · Uniqore</span>
             <div class="sy-slc__handle"><span><svg viewBox="0 0 24 24" fill="none" stroke="#08130a" stroke-width="2.4"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></span></div>
           </div>
-          <div class="sy-slc__cap"><b>Барбершоп «KROB».</b> Слева — сайт на конструкторе. Справа — наш под ключ. <a href="/raboty/barbershop/" target="_blank" rel="noopener">Открыть вживую →</a></div>
+          <div class="sy-slc__cap"><b>Автосервис «Немеция», Омск.</b> Было: сайт-визитка без записи и цен. Стало: запись на ремонт, услуги по маркам (VAG, Mercedes, BMW), заявки в Telegram. <a href="/keysy/" target="_blank" rel="noopener">Смотреть кейсы →</a></div>
         </div>
         <div class="sy-ba2__meta sy-rev" data-d="1">
           <div class="sy-ba2__m"><b>3–5 дней</b><span>до запуска</span></div>
@@ -505,27 +671,12 @@
       </div>
     </section>
 
-    <!-- ═══════ PROCESS ═══════ -->
-    <section class="sy-section" style="padding-top:0">
-      <div class="sy-container">
-        <div class="sy-head">
-          <h2 class="sy-h2 sy-rev">Как мы работаем</h2>
-          <p class="sy-sub sy-rev" data-d="1">Прозрачный процесс без сюрпризов. Вы видите результат на каждом этапе.</p>
-        </div>
-        <div class="sy-tl">
-          <div class="sy-tl__i sy-rev"><div class="sy-tl__dot">1</div><div class="sy-tl__day">День 0</div><div class="sy-tl__t">Бриф и ТЗ</div><div class="sy-tl__d">Разбираем нишу и задачу, фиксируем объём, цену и срок письменно. Бесплатно.</div></div>
-          <div class="sy-tl__i sy-rev" data-d="1"><div class="sy-tl__dot">2</div><div class="sy-tl__day">День 1–2</div><div class="sy-tl__t">Дизайн-концепция</div><div class="sy-tl__d">Показываем макет первого экрана. Согласуем направление — только потом верстаем.</div></div>
-          <div class="sy-tl__i sy-rev" data-d="2"><div class="sy-tl__dot">3</div><div class="sy-tl__day">День 2–4</div><div class="sy-tl__t">Разработка</div><div class="sy-tl__d">Верстаем адаптив, подключаем SEO, формы, Telegram и CRM. Каждый день — апдейт.</div></div>
-          <div class="sy-tl__i sy-rev" data-d="3"><div class="sy-tl__dot">4</div><div class="sy-tl__day">День 3–5</div><div class="sy-tl__t">Запуск</div><div class="sy-tl__d">Публикуем, настраиваем домен и аналитику, передаём исходники. Сайт готов под рекламу.</div></div>
-        </div>
-      </div>
-    </section>
-
     <!-- ═══════ COMPARE ═══════ -->
-    <section class="sy-section" style="padding-top:0">
+    <section class="sy-section sy-section--band">
       <div class="sy-container">
         <div class="sy-head">
           <h2 class="sy-h2 sy-rev">Обычная студия <em>vs</em> Uniqore</h2>
+          <p class="sy-sub sy-rev" data-d="1">Разница видна там, где начинается платная реклама.</p>
         </div>
         <div class="sy-cmp sy-rev">
           <div class="sy-cmp__head"><div class="sy-cmp__h"></div><div class="sy-cmp__h sy-cmp__h--them">Обычная студия</div><div class="sy-cmp__h sy-cmp__h--us">Uniqore</div></div>
@@ -536,31 +687,29 @@
           <div class="sy-cmp__row"><div class="sy-cmp__c">Цена</div><div class="sy-cmp__c sy-cmp__no">Плавает</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Фиксирована</div></div>
           <div class="sy-cmp__row"><div class="sy-cmp__c">Исходники</div><div class="sy-cmp__c sy-cmp__no">Держат у себя</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Отдаём вам</div></div>
           <div class="sy-cmp__row"><div class="sy-cmp__c">Поддержка</div><div class="sy-cmp__c sy-cmp__no">Пропадают</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Ведём дальше</div></div>
+          <div class="sy-cmp__row"><div class="sy-cmp__c">Реклама</div><div class="sy-cmp__c sy-cmp__no">Льёт в пустоту</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Окупает Директ</div></div>
         </div>
       </div>
     </section>
 
-    <!-- ═══════ GUARANTEES ═══════ -->
-    <section class="sy-section" style="padding-top:0">
+
+    <!-- ═══════ BRAND SEAL (3D-лого, вращение по скроллу) ═══════ -->
+    <section class="sy-section sy-brandseal" id="brandseal">
       <div class="sy-container">
-        <div class="sy-head">
-          <h2 class="sy-h2 sy-rev">Вы ничем <em>не рискуете</em></h2>
-        </div>
-        <div class="sy-guar__grid">
-          <div class="sy-guar sy-rev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V5z"/><path d="M9 12l2 2 4-4"/></svg><span>Фиксированная цена</span></div>
-          <div class="sy-guar sy-rev" data-d="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M9 7h6M9 11h6"/></svg><span>Работа по договору</span></div>
-          <div class="sy-guar sy-rev" data-d="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>NDA по запросу</span></div>
-          <div class="sy-guar sy-rev" data-d="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg><span>Передаём исходники</span></div>
-          <div class="sy-guar sy-rev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Поэтапная сдача</span></div>
-          <div class="sy-guar sy-rev" data-d="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg><span>Без скрытых платежей</span></div>
-          <div class="sy-guar sy-rev" data-d="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Поддержка после сдачи</span></div>
-          <div class="sy-guar sy-rev" data-d="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Сдаём в срок</span></div>
+        <div class="sy-brandseal__in sy-rev">
+          <div class="sy-brandseal__viz">
+            <video class="sy-brandseal__v" src="/assets/dz/uniqore-3dlogo.mp4?v=1" poster="/assets/dz/uniqore-3dlogo.jpg?v=1" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+          </div>
+          <span class="sy-eyebrow"><span class="dot"></span>Почему именно Uniqore</span>
+          <h2 class="sy-h2">Находим то, что превращает клики в <em>клиентов</em></h2>
+          <p class="sy-sub">Не просто сайт — система под заявки. Дизайн, скорость, аналитика и CRM работают на одну цель.</p>
+          <a href="#zayavka" class="sy-btn sy-btn--main" data-mag>Получить бесплатный расчёт <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
     </section>
 
     <!-- ═══════ OBJECTIONS ═══════ -->
-    <section class="sy-section" style="padding-top:0" id="faq">
+    <section class="sy-section" id="faq">
       <div class="sy-container">
         <div class="sy-head">
           <h2 class="sy-h2 sy-rev">Частые <em>вопросы</em></h2>
@@ -576,12 +725,111 @@
       </div>
     </section>
 
+    <!-- ═══════ РЕАЛЬНАЯ КОМПАНИЯ ═══════ -->
+    <section class="sy-section sy-real" id="o-kompanii">
+      <div class="sy-container">
+        <div class="sy-head sy-head--center">
+          <span class="sy-eyebrow sy-rev"><span class="dot"></span>Не аноним из телеграма</span>
+          <h2 class="sy-h2 sy-rev" data-d="1">За сайтом — <em>реальная компания</em></h2>
+          <p class="sy-sub sy-rev" data-d="1">Офис в Москва-Сити, юрлицо в реестре ФНС, работа по договору. Не верьте на слово — проверьте сами.</p>
+        </div>
+        <div class="sy-real__grid">
+          <div class="sy-real__card sy-office2 sy-rev">
+            <img class="sy-office2__bg" src="/sayty/team/office_neva.webp?v=3" alt="Офис Uniqore — Neva Towers, Москва-Сити" loading="lazy" width="760" height="950">
+            <div class="sy-office2__body">
+              <span class="sy-real__tag">Наш офис</span>
+              <b class="sy-real__title">Neva Towers · Москва-Сити</b>
+              <span class="sy-real__row">1-й Красногвардейский проезд, 17</span>
+              <span class="sy-real__row sy-real__row--mut">м. Выставочная · Деловой центр</span>
+              <div class="sy-office2__links">
+                <a href="tel:+79616495107" class="sy-real__phone">+7 961 649-51-07</a>
+                <a href="https://yandex.ru/maps/?text=Neva%20Towers%201-й%20Красногвардейский%20проезд%2017" target="_blank" rel="noopener" class="sy-real__link">На Яндекс.Картах →</a>
+              </div>
+            </div>
+          </div>
+          <div class="sy-real__card sy-legal2 sy-rev" data-d="1">
+            <span class="sy-real__tag">Официально</span>
+            <b class="sy-real__title">Работаем по договору</b>
+            <ul class="sy-legal2__list">
+              <li>Договор с фиксированной ценой до старта</li>
+              <li>Оплата после того, как утвердите макет</li>
+              <li>Исходники сайта передаём вам</li>
+              <li>Поэтапная сдача — платите за результат</li>
+            </ul>
+            <div class="sy-legal__req">
+              <div><span>ОГРН</span><b>1257700498978</b></div>
+              <div><span>ИНН</span><b>9703230935</b></div>
+            </div>
+            <a href="https://egrul.nalog.ru/" target="_blank" rel="noopener" class="sy-real__link">Проверить в реестре ФНС →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ КОМАНДА ═══════ -->
+    <section class="sy-section sy-team" id="komanda">
+      <div class="sy-container">
+        <div class="sy-head sy-head--center">
+          <span class="sy-eyebrow sy-rev"><span class="dot"></span>Живые люди, а не бот в чате</span>
+          <h2 class="sy-h2 sy-rev" data-d="1">Команда, которая <em>сделает ваш сайт</em></h2>
+          <p class="sy-sub sy-rev" data-d="1">Не фрилансер на аутсорсе — своя команда: дизайн, разработка, маркетинг. Вот кто будет над вами работать.</p>
+        </div>
+        <div class="sy-team__grid">
+          <figure class="sy-tm sy-rev">
+            <img class="sy-tm__ph" src="/sayty/team/matvei.webp?v=3" alt="Матвей — основатель Uniqore" loading="lazy" width="520" height="640">
+            <span class="sy-tm__flag">Владелец</span>
+            <figcaption class="sy-tm__cap"><b>Матвей</b></figcaption>
+          </figure>
+          <figure class="sy-tm sy-rev" data-d="1">
+            <img class="sy-tm__ph" src="/sayty/team/ilya.webp?v=3" alt="Илья — сооснователь Uniqore" loading="lazy" width="520" height="640">
+            <span class="sy-tm__flag">Владелец</span>
+            <figcaption class="sy-tm__cap"><b>Илья</b></figcaption>
+          </figure>
+          <figure class="sy-tm sy-rev" data-d="2">
+            <img class="sy-tm__ph" src="/sayty/team/designer.webp?v=3" alt="Ведущий дизайнер Uniqore" loading="lazy" width="520" height="640">
+            <figcaption class="sy-tm__cap"><b>Ведущий дизайнер</b></figcaption>
+          </figure>
+          <figure class="sy-tm sy-rev" data-d="3">
+            <img class="sy-tm__ph" src="/sayty/team/marketing.webp?v=3" alt="Руководитель маркетинга Uniqore" loading="lazy" width="520" height="640">
+            <figcaption class="sy-tm__cap"><b>Руководитель маркетинга</b></figcaption>
+          </figure>
+          <figure class="sy-tm sy-rev">
+            <img class="sy-tm__ph" src="/sayty/team/dev_full.webp?v=3" alt="Full-stack разработчик Uniqore" loading="lazy" width="520" height="640">
+            <figcaption class="sy-tm__cap"><b>Full-stack разработчик</b></figcaption>
+          </figure>
+          <figure class="sy-tm sy-rev" data-d="1">
+            <img class="sy-tm__ph" src="/sayty/team/dev_back.webp?v=3" alt="Backend-разработчик Uniqore" loading="lazy" width="520" height="640">
+            <figcaption class="sy-tm__cap"><b>Backend-разработчик</b></figcaption>
+          </figure>
+          <figure class="sy-tm sy-rev" data-d="2">
+            <img class="sy-tm__ph" src="/sayty/team/dev_front.webp?v=3" alt="Frontend-разработчик Uniqore" loading="lazy" width="520" height="640">
+            <figcaption class="sy-tm__cap"><b>Frontend-разработчик</b></figcaption>
+          </figure>
+          <figure class="sy-tm sy-rev" data-d="3">
+            <img class="sy-tm__ph" src="/sayty/team/pm.webp?v=3" alt="Проджект-менеджер Uniqore" loading="lazy" width="520" height="640">
+            <figcaption class="sy-tm__cap"><b>Проджект-менеджер</b></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
     <!-- ═══════ FORM ═══════ -->
     <section class="sy-section sy-form-sec" id="zayavka">
       <div class="sy-container">
-        <div class="sy-head">
+        <div class="sy-emo sy-rev">
+          <div class="sy-emo__pain">
+            <span class="sy-emo__x">Сайт есть — а заявок нет</span>
+            <span class="sy-emo__x">Отдали студии — получили шаблон</span>
+          </div>
+          <p class="sy-emo__turn">Знакомо? Так быть не должно.</p>
+          <h3 class="sy-emo__head">Сайт, который <em>приводит клиентов</em> — а не просто «висит в интернете»</h3>
+          <p class="sy-emo__sub">Соберём структуру под заявки из рекламы, покажем концепцию первого экрана и назовём точную цену. Подходит или нет — решаете до оплаты.</p>
+          <div class="sy-emo__proof"><span>100+ запущенных проектов</span><i></i><span>Bien Sûr · Немеция · Lovi</span><i></i><span>Ответ за 15 минут</span></div>
+          <div class="sy-emo__scarcity"><span class="sy-emo__pulse"></span>Работаем небольшой командой и берём проекты порциями — так держим срок 3–5 дней.</div>
+          <div class="sy-emo__funnel" aria-hidden="true"></div>
+        </div>
+        <div class="sy-head sy-head--center">
           <h2 class="sy-h2 sy-rev">Получите расчёт <em>за 15 минут</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Расскажите про нишу — предложим формат, покажем концепцию и назовём точную цену. Оплата только после утверждения.</p>
         </div>
         <div class="sy-form-bonus sy-rev" data-d="1">
           <div class="sy-form-bonus__t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12M22 7H2v5h20zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Бесплатно после заявки:</div>
@@ -594,10 +842,24 @@
         </div>
         <div class="sy-form-wrap sy-rev" data-d="2">
           <form id="sy-form" novalidate>
-            <div class="sy-fg"><label for="sy-name">Ваше имя</label><input class="sy-in" type="text" id="sy-name" placeholder="Александр" required></div>
-            <div class="sy-fg"><label for="sy-contact">Телефон или Telegram</label><input class="sy-in" type="text" id="sy-contact" placeholder="@username или +7…" required></div>
-            <div class="sy-fg"><label for="sy-niche">Ниша бизнеса</label><input class="sy-in" type="text" id="sy-niche" placeholder="Кофейня, автосервис, магазин…"></div>
-            <button type="submit" class="sy-btn sy-btn--main sy-btn--lg sy-form__submit">Получить концепцию бесплатно</button>
+            <div class="sy-fg"><label for="sy-name">Ваше имя</label><input class="sy-in" type="text" id="sy-name" name="name" placeholder="Александр" autocomplete="name" required><div class="sy-err" id="syErrName"></div></div>
+            <div class="sy-fg"><label for="sy-contact">Телефон или Telegram</label><input class="sy-in" type="text" id="sy-contact" name="contact" placeholder="@username или +7…" autocomplete="tel" required><div class="sy-err" id="syErrContact"></div></div>
+            <div class="sy-fg"><label for="sy-niche">Ниша бизнеса</label><input class="sy-in" type="text" id="sy-niche" name="niche" placeholder="Кофейня, автосервис, магазин…"></div>
+            <div class="sy-form__trust sy-rev">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Фиксированная цена</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Работа по договору</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Передаём исходники</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Без скрытых платежей</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Поэтапная сдача</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Поддержка после сдачи</span>
+            </div>
+            <button type="submit" class="sy-btn sy-btn--main sy-btn--lg sy-form__submit">Получить бесплатный расчёт</button>
+            <label class="sy-consent">
+              <input type="checkbox" id="sy-consent" name="consent">
+              <span class="sy-consent__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+              <span class="sy-consent__txt">Отправляя заявку, я соглашаюсь с <a href="/politika-konfidencialnosti/" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой персональных данных.</span>
+            </label>
+            <div class="sy-err sy-err--center" id="syErrConsent"></div>
             <div class="sy-form__note"><span class="dot"></span>Заявка приходит нам в Telegram и в CRM. Ответим за 15 минут в рабочее время.</div>
             <div class="sy-trustrow">
               <span class="sy-trustrow__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>По договору</span>
@@ -615,7 +877,7 @@
               <div class="sy-form__step"><b>2</b>Разберём нишу и покажем концепцию</div>
               <div class="sy-form__step"><b>3</b>Зафиксируем цену и срок — до оплаты</div>
             </div>
-            <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener" class="sy-btn sy-btn--ghost" style="margin-top:22px">Или напишите нам прямо сейчас →</a>
+            <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener" class="sy-btn sy-btn--main" style="margin-top:22px">Написать сейчас — ответим быстрее →</a>
           </div>
         </div>
       </div>
@@ -628,14 +890,15 @@
       <div class="footer__brand">
         <a href="/" class="nav__logo footer__logo" aria-label="Uniqore">
           <svg class="nav__logo-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
-            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
+            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
           </svg>
           <span class="nav__logo-text">uniqore</span>
         </a>
         <p>Индивидуальные системы<br>автоматизации для бизнеса</p>
       </div>
       <div class="footer__links">
+        <a href="tel:+79616495107">+7 961 649-51-07</a>
         <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">Telegram — @UniqoreManager</a>
         <a href="#pricing">Цены</a>
         <a href="#portfolio">Работы</a>
@@ -644,12 +907,12 @@
         <a href="/politika-konfidencialnosti/">Политика конфиденциальности</a>
       </div>
     </div>
-    <div class="container footer__bottom"><span>© 2026 Uniqore. Все права защищены.</span></div>
+    <div class="container footer__bottom"><span>© 2026 Uniqore. Все права защищены.</span> <span style="opacity:.6">ОГРН 1257700498978 · ИНН 9703230935</span></div>
   </footer>
 
   <!-- sticky mobile CTA -->
   <div class="sy-sticky" id="sySticky">
-    <div class="sy-sticky__txt"><div class="sy-sticky__t">Сайт от $150 · за 3–5 дней</div><div class="sy-sticky__s">Расчёт бесплатно</div></div>
+    <div class="sy-sticky__txt"><div class="sy-sticky__t">Сайт от <span data-usd="150">$150</span></div><div class="sy-sticky__s">за 3–5 дней · бесплатный расчёт</div></div>
     <a href="#zayavka" class="sy-btn sy-btn--main">Получить расчёт</a>
   </div>
 
@@ -657,7 +920,8 @@
     (function(){var b=document.getElementById('burger'),m=document.getElementById('mobile-menu');if(b&&m){b.addEventListener('click',function(){m.classList.toggle('open');b.classList.toggle('open');});m.querySelectorAll('a').forEach(function(l){l.addEventListener('click',function(){m.classList.remove('open');b.classList.remove('open');});});}})();
     window.addEventListener('scroll',function(){var n=document.getElementById('nav');if(n)n.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
   </script>
-  <script src="../js/nav-dropdown.js?v=20260710r" defer></script>
-  <script src="/js/sayty.js?v=20260711H" defer></script>
+  <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
+  <script src="/js/sayty.js?v=20260724e" defer></script>
+  <script src="../js/currency.js?v=20260721a" defer></script>
 </body>
 </html>

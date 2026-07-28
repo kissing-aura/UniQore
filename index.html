@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="msvalidate.01" content="0A72042F95D14A2E758EE190C95DC2FE" />
-  <meta name="description" content="Uniqore — автоматизируем ваш бизнес за 4–6 дней. Сайты, CRM, Чат-боты, аналитика под ключ. Фиксированная цена от $1200. Индивидуально под ваш бизнес, без подписок Bitrix.">
+  <meta name="description" content="Uniqore — автоматизируем ваш бизнес за 4–6 дней. Сайты, CRM, Чат-боты, аналитика под ключ. От $1200 + $150/мес поддержка. Индивидуально под ваш бизнес.">
   <meta name="keywords" content="автоматизация бизнеса, CRM под ключ, чат-боты, Telegram бот, WhatsApp бот, складской учёт, аналитика бизнеса, уникор crm, уникор автоматизация">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="Uniqore — автоматизируем ваш бизнес за 4–6 дней">
   <meta property="og:description" content="Сайты, CRM, Чат-боты, аналитика. Под ключ. Индивидуально под ваш бизнес. От $1200.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
-  <meta property="og:image" content="https://uniqore.pro/assets/logo-full.jpg">
-  <meta property="og:image:width" content="400">
-  <meta property="og:image:height" content="120">
+  <meta property="og:image" content="https://uniqore.pro/assets/og-cover.jpg?v=20260712">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://uniqore.pro/">
   <meta property="og:site_name" content="Uniqore">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Uniqore — автоматизируем ваш бизнес за 4–6 дней">
   <meta name="twitter:description" content="CRM, Чат-боты, аналитика. Под ключ. Индивидуально под ваш бизнес. От $1200.">
-  <meta name="twitter:image" content="https://uniqore.pro/assets/logo-full.jpg">
+  <meta name="twitter:image" content="https://uniqore.pro/assets/og-cover.jpg?v=20260712">
   <meta name="theme-color" content="#0A0A0A">
   <link rel="canonical" href="https://uniqore.pro/">
   <link rel="icon" href="favicon.ico" sizes="any">
@@ -41,13 +41,29 @@
 
   <!-- Yandex.Metrika counter (id 110585817, created by Матвей in the Yandex Metrika UI screenshot shown this session) -->
   <script type="text/javascript">
+    window.UQ_MID = /(^|\.)uniqore\.ru$/.test(location.hostname) ? 111003646 : 110585817;
     (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
     m[i].l=1*new Date();
     for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=110585817', 'ym');
+    (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id='+window.UQ_MID, 'ym');
 
-    ym(110585817, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    ym(window.UQ_MID, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    /* Сквозная аналитика: ClientID Метрики + первый источник визита — уходят с заявкой в CRM,
+       чтобы потом связать продажу с рекламным кликом (офлайн-конверсии). */
+    try { ym(window.UQ_MID, 'getClientID', function (id) { window.UQ_CID = id; }); } catch (_) {}
+    try {
+      var uqP = new URLSearchParams(location.search), uqK = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid','gclid'], uqF = {}, uqAny = false;
+      uqK.forEach(function (k) { var v = uqP.get(k) || ''; uqF[k] = v; if (v) uqAny = true; });
+      if (uqAny && !sessionStorage.getItem('uq_attr')) sessionStorage.setItem('uq_attr', JSON.stringify(uqF));
+    } catch (_) {}
+    /* Микроконверсии: клик по телефону → цель call, по Telegram → telegram (в тот же счётчик UQ_MID). */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
+      var h = a.getAttribute('href') || '';
+      if (h.indexOf('tel:') === 0) { try { if (window.ym) ym(window.UQ_MID, 'reachGoal', 'call'); } catch (_) {} try { if (window.gtag) gtag('event', 'contact_phone'); } catch (_) {} }
+      else if (/t\.me\//i.test(h)) { try { if (window.ym) ym(window.UQ_MID, 'reachGoal', 'telegram'); } catch (_) {} try { if (window.gtag) gtag('event', 'contact_telegram'); } catch (_) {} }
+    }, true);
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/110585817" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
@@ -122,20 +138,10 @@
   </script>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/reset.css?v=20260711e">
-  <link rel="stylesheet" href="css/variables.css?v=20260711e">
-  <link rel="stylesheet" href="css/typography.css?v=20260711e">
-  <link rel="stylesheet" href="css/layout.css?v=20260711e">
-  <link rel="stylesheet" href="css/components.css?v=20260711e">
-  <link rel="stylesheet" href="css/sections.css?v=20260711e">
-  <link rel="stylesheet" href="css/animations.css?v=20260711e">
-  <link rel="stylesheet" href="css/mobile.css?v=20260711e">
-  <link rel="stylesheet" href="css/nav-pages.css?v=20260711e">
-  <link rel="stylesheet" href="css/enhance.css?v=20260711e">
-  <link rel="stylesheet" href="css/redesign.css?v=20260711x">
-  <link rel="stylesheet" href="css/hero-premium.css?v=20260711B">
-  <link rel="stylesheet" href="css/dash.css?v=20260711A">
-  <link rel="stylesheet" href="css/mockups.css?v=20260711A">
+  <!-- CSS: 13 файлов объединены в один bundle.css — 1 render-blocking запрос вместо 13.
+       Критично для нестабильного канала (РФ): одного зависшего CSS хватало на чёрный экран.
+       Bundle пересобирать при правке любого исходника (см. css/*.css). -->
+  <link rel="stylesheet" href="css/bundle.css?v=20260725b">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -171,6 +177,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet"></noscript>
+
+  <!-- Переключатель валют: главная НЕ грузит premium.css (у неё своя hero-premium),
+       поэтому стили .cur-switch дублируем здесь inline. Синхронизировать с premium.css. -->
+  <style>
+    .cur-switch{display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 2px;border:1px solid rgba(205,255,79,.34);border-radius:999px;background:rgba(205,255,79,.05);box-shadow:0 0 28px -8px rgba(205,255,79,.45)}
+    .cur-switch::before{content:"Цены в";align-self:center;padding:0 9px 0 10px;font-family:var(--font-mono,monospace);font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--color-text-secondary,#9aa6be);white-space:nowrap}
+    .cur-switch__btn{appearance:none;border:0;background:none;color:rgba(255,255,255,.74);font-family:var(--font-mono,monospace);font-size:13.5px;font-weight:700;letter-spacing:.02em;padding:7px 15px;border-radius:999px;cursor:pointer;transition:background .2s ease,color .2s ease}
+    .cur-switch__btn:hover{color:#fff;background:rgba(255,255,255,.07)}
+    .cur-switch__btn.is-active{background:var(--color-accent,#CDFF4F);color:#0A0A0A}
+    .cur-switch--center{display:flex;width:-moz-fit-content;width:fit-content;margin-left:auto;margin-right:auto;margin-bottom:30px}
+    .byn-sign{height:.82em;width:auto;vertical-align:-.09em;display:inline-block}
+    .cur-switch__btn .byn-sign{height:1.02em;vertical-align:-.16em}
+  </style>
+  <!-- mobile-refactor.css теперь в bundle.css (последним, override) -->
 </head>
 <body>
   <a class="skip-link" href="#main">К содержимому</a>
@@ -184,8 +204,8 @@
     <div class="container nav__inner">
       <a href="/" class="nav__logo" aria-label="Uniqore">
         <svg class="nav__logo-mark" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
-          <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
+          <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
         </svg>
         <span class="nav__logo-text">uniqore</span>
       </a>
@@ -221,6 +241,7 @@
         <li><a href="/blog/">Блог</a></li>
         <li><a href="/o-nas/">О нас</a></li>
       </ul>
+      <a href="tel:+79616495107" class="nav__tel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>+7 961 649-51-07</a>
       <a href="https://t.me/UniqoreManager" class="nav__tg" target="_blank" rel="noopener" aria-label="Написать в Telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21.5 3.4 2.9 10.6c-1 .4-1 1.4 0 1.7l4.6 1.5 1.8 5.4c.3.9 1.2 1 1.8.3l2.5-2.6 4.7 3.5c.7.5 1.6.1 1.8-.8l3-14.5c.2-1-.7-1.8-1.6-1.7ZM8.7 13.5l9-5.7c.3-.2.6.2.3.5l-7.4 6.8-.3 3-1.6-4.6Z" fill="currentColor"/></svg></a>
       <a href="#contact" class="btn btn--accent nav__cta">Обсудить проект</a>
       <button class="nav__burger" id="burger" aria-label="Меню">
@@ -233,6 +254,7 @@
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobile-menu">
     <ul>
+      <li><a href="tel:+79616495107">📞 +7 961 649-51-07</a></li>
       <li><a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">✈️ Telegram — @UniqoreManager</a></li>
       <li><a href="/#uslugi">Услуги</a></li>
       <li><a href="/vozmozhnosti/">Возможности</a></li>
@@ -285,8 +307,8 @@
             </h1>
             <p class="hero__subtitle">Сайты, реклама, CRM и автоматизация — от отдельной услуги до полной системы под ключ. Одна команда закрывает всю цифровую сторону.</p>
             <div class="hero__actions">
-              <a href="#uslugi" class="btn btn--accent btn--lg">Наши услуги</a>
-              <a href="#contact" class="btn btn--ghost btn--lg">Обсудить проект →</a>
+              <a href="#contact" class="btn btn--accent btn--lg">Получить разбор за 24 часа</a>
+              <a href="#uslugi" class="btn btn--ghost btn--lg">Наши услуги →</a>
             </div>
             <div class="hero__assurance" data-reveal data-reveal-delay="3">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -370,6 +392,10 @@
               </div>
               <div class="hero__frame-glow"></div>
             </div>
+            <!-- floating-карточки — оживляют мокап (как на /sayty/) -->
+            <div class="hero__fcard hero__fcard--a"><span class="hero__fcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><div>Заявки растут<small>из рекламы</small></div></div>
+            <div class="hero__fcard hero__fcard--b"><span class="hero__fcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><div>Всё в одной системе<small>сайт · CRM · реклама</small></div></div>
+            <div class="hero__fcard hero__fcard--c"><span class="hero__fcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div>4–6 дней<small>до запуска</small></div></div>
 
           </div>
 
@@ -388,7 +414,7 @@
           </div>
           <div class="hero__metric-sep"></div>
           <div class="hero__metric">
-            <span class="hero__metric-num">от $150</span>
+            <span class="hero__metric-num">от 11 700 ₽</span>
             <span class="hero__metric-label">старт с любой услуги</span>
           </div>
           <div class="hero__metric-sep"></div>
@@ -413,6 +439,11 @@
           <div class="section-label">Услуги</div>
           <h2 class="section-title">Одна команда —<br><em>весь цифровой отдел</em></h2>
           <p class="services3__sub">От отдельной задачи до полной системы под ключ. Начните с того, что горит сейчас — остальное подключим, когда будете готовы.</p>
+          <div class="cur-switch cur-switch--center" role="group" aria-label="Валюта" style="margin-top:22px">
+            <button type="button" class="cur-switch__btn is-active" data-cur="USD" aria-pressed="true">$</button>
+            <button type="button" class="cur-switch__btn" data-cur="RUB" aria-pressed="false">₽</button>
+            <button type="button" class="cur-switch__btn" data-cur="BYN" aria-pressed="false"><svg class="byn-sign" viewBox="76 30 548 644" fill="currentColor" role="img" aria-label="белорусских рублей" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,700) scale(0.1,-0.1)"><path d="M1758 4520 l-3 -2105 -462 -3 -463 -2 0 -305 0 -305 452 -2 452 -3 13 -25 c10 -19 13 -182 13 -733 l0 -708 1313 4 c1470 4 1447 3 1737 79 41 11 91 23 111 28 66 17 263 101 354 151 151 84 301 198 420 321 210 214 349 465 426 764 41 161 52 251 56 469 5 237 -14 388 -74 595 -19 65 -88 232 -113 275 -10 17 -28 48 -40 70 -135 245 -403 488 -701 636 -222 111 -445 173 -744 209 -147 18 -235 20 -1087 20 -829 0 -928 2 -942 16 -14 14 -16 119 -16 1010 0 619 4 1002 10 1013 9 18 70 18 1392 16 761 -2 1447 -1 1526 2 l142 6 0 306 0 306 -1885 0 -1885 0 -2 -2105z m2562 -1190 c242 -28 382 -66 555 -152 131 -66 195 -109 280 -190 123 -116 232 -288 283 -448 70 -218 67 -534 -8 -760 -117 -350 -394 -628 -760 -760 -46 -17 -140 -42 -209 -55 l-125 -25 -922 0 c-828 0 -924 2 -938 16 -14 14 -16 63 -14 427 l3 412 809 3 809 2 -7 46 c-3 26 -6 163 -6 305 l0 259 -789 0 c-704 0 -791 2 -805 16 -14 14 -16 69 -16 458 0 243 3 446 7 449 10 11 1758 8 1853 -3z"/></g></svg></button>
+          </div>
         </div>
         <div class="services3__grid">
 
@@ -421,7 +452,7 @@
               <span class="svc-card__icon" aria-hidden="true">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 8h18" stroke="currentColor" stroke-width="1.6"/><circle cx="5.6" cy="6" r=".7" fill="currentColor"/></svg>
               </span>
-              <span class="svc-card__price">от $150</span>
+              <span class="svc-card__price" data-usd="150" data-prefix="от ">от $150</span>
             </div>
             <h3 class="svc-card__title">Сайты под ключ</h3>
             <p class="svc-card__desc">Лендинг или многостраничник, который продаёт. Дизайн под вашу нишу — не шаблон.</p>
@@ -438,7 +469,7 @@
               <span class="svc-card__icon" aria-hidden="true">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 19V5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4 15l4-4 3 3 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 4h3v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
-              <span class="svc-card__price">от $200/мес</span>
+              <span class="svc-card__price">от <span data-usd="200">$200</span>/мес</span>
             </div>
             <h3 class="svc-card__title">AI-таргетолог</h3>
             <p class="svc-card__desc">Реклама без слитого бюджета. AI настраивает Директ — вы жмёте «старт», лиды падают в CRM.</p>
@@ -458,10 +489,10 @@
                   <span class="svc-card__icon" aria-hidden="true">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4.5-8 4.5-8-4.5L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 12l8 4.5 8-4.5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 16.5l8 4.5 8-4.5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                   </span>
-                  <span class="svc-card__price svc-card__price--flag">$1200 <span>+ $150/мес</span></span>
+                  <span class="svc-card__price svc-card__price--flag"><span data-usd="1200">$1200</span> <span>+ <span data-usd="150">$150</span>/мес</span></span>
                 </div>
                 <h3 class="svc-card__title">Система под ключ</h3>
-                <p class="svc-card__desc">Весь цифровой отдел за цену одного месяца штатного маркетолога. Всё, что нужно бизнесу — одной командой, одной ценой.</p>
+                <p class="svc-card__desc">Сайт + CRM + боты + реклама + склад — включая сайт под ключ, без доплат сверху. Весь цифровой отдел за цену одного месяца штатного маркетолога.</p>
                 <span class="svc-card__cta">Собрать систему →</span>
               </div>
               <div class="svc-card__flag-modules" aria-hidden="true">
@@ -479,13 +510,27 @@
       <div class="morph-pin">
         <canvas id="morph-canvas" aria-hidden="true"></canvas>
         <div class="morph-poster" aria-hidden="true">
-          <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
-            <g stroke="#CDFF4F" stroke-width="1" opacity=".45" fill="none">
-              <rect x="24" y="18" width="100" height="30" rx="4"/><rect x="150" y="18" width="100" height="30" rx="4"/><rect x="276" y="18" width="100" height="30" rx="4"/>
-              <line x1="40" y1="120" x2="40" y2="96"/><line x1="90" y1="120" x2="90" y2="82"/><line x1="140" y1="120" x2="140" y2="90"/><line x1="190" y1="120" x2="190" y2="70"/><line x1="240" y1="120" x2="240" y2="80"/><line x1="290" y1="120" x2="290" y2="62"/><line x1="340" y1="120" x2="340" y2="74"/>
-              <line x1="24" y1="121" x2="376" y2="121"/>
-              <line x1="24" y1="146" x2="376" y2="146"/><line x1="24" y1="166" x2="376" y2="166"/><line x1="24" y1="186" x2="376" y2="186"/><line x1="24" y1="206" x2="376" y2="206"/>
-            </g>
+          <!-- Чистый мини-дашборд: смысл секции «всё в одной системе». Показывается на мобилке/без-WebGL. -->
+          <svg viewBox="0 0 400 262" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <rect x="6" y="6" width="388" height="250" rx="18" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.09)"/>
+            <circle cx="28" cy="30" r="4.5" fill="#CDFF4F"/><circle cx="43" cy="30" r="4.5" fill="rgba(255,255,255,.22)"/><circle cx="58" cy="30" r="4.5" fill="rgba(255,255,255,.22)"/>
+            <rect x="150" y="24" width="100" height="12" rx="6" fill="rgba(255,255,255,.10)"/>
+            <rect x="330" y="25" width="22" height="9" rx="4.5" fill="rgba(205,255,79,.35)"/><circle cx="364" cy="30" r="4" fill="#CDFF4F"/>
+            <line x1="6" y1="52" x2="394" y2="52" stroke="rgba(255,255,255,.07)"/>
+            <rect x="22" y="66" width="110" height="50" rx="11" fill="rgba(205,255,79,.07)" stroke="rgba(205,255,79,.28)"/>
+            <rect x="34" y="78" width="52" height="14" rx="7" fill="#CDFF4F"/><rect x="34" y="99" width="70" height="7" rx="3.5" fill="rgba(255,255,255,.20)"/>
+            <rect x="145" y="66" width="110" height="50" rx="11" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)"/>
+            <rect x="157" y="78" width="46" height="14" rx="7" fill="rgba(255,255,255,.55)"/><rect x="157" y="99" width="66" height="7" rx="3.5" fill="rgba(255,255,255,.16)"/>
+            <rect x="268" y="66" width="110" height="50" rx="11" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)"/>
+            <rect x="280" y="78" width="40" height="14" rx="7" fill="rgba(255,255,255,.55)"/><rect x="280" y="99" width="60" height="7" rx="3.5" fill="rgba(255,255,255,.16)"/>
+            <path d="M22 176 L70 164 L118 170 L166 150 L214 156 L262 132 L310 140 L358 116 L358 190 L22 190 Z" fill="rgba(205,255,79,.10)"/>
+            <polyline points="22,176 70,164 118,170 166,150 214,156 262,132 310,140 358,116" stroke="#CDFF4F" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle cx="358" cy="116" r="4" fill="#CDFF4F"/>
+            <line x1="22" y1="190" x2="378" y2="190" stroke="rgba(255,255,255,.08)"/>
+            <circle cx="30" cy="212" r="7" fill="rgba(205,255,79,.25)"/><rect x="46" y="208" width="120" height="8" rx="4" fill="rgba(255,255,255,.20)"/>
+            <rect x="300" y="205" width="62" height="15" rx="7.5" fill="rgba(205,255,79,.16)" stroke="rgba(205,255,79,.35)"/>
+            <circle cx="30" cy="236" r="7" fill="rgba(255,255,255,.14)"/><rect x="46" y="232" width="150" height="8" rx="4" fill="rgba(255,255,255,.14)"/>
+            <rect x="300" y="229" width="62" height="15" rx="7.5" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
           </svg>
         </div>
         <div class="morph-cap">
@@ -577,37 +622,6 @@
 
     <!-- BEFORE / AFTER SECTION -->
 
-    <!-- NICHES SECTION -->
-    <section class="niches" id="niches">
-      <img src="assets/ai-dashboard.jpg" alt="" class="niches__bg-img" aria-hidden="true" loading="lazy">
-      <canvas id="particle-canvas" class="niches__particles" aria-hidden="true"></canvas>
-      <div class="container">
-        <div class="niches__inner">
-          <div class="niches__headline" data-reveal>
-            <h2 class="niches__big-text">Ваша ниша<br><em>уже у нас</em><br>в практике</h2>
-          </div>
-          <div class="niches__list" data-reveal data-reveal-delay="1">
-            <a class="niche-row" href="/crm-dlya-arendy/"><span class="niche-row__num">01</span><span class="niche-row__name">Посуточная аренда</span><span class="niche-row__tags">Календарь · Залоги · Авточаты</span></a>
-            <a class="niche-row" href="/crm-dlya-avtoservisa/"><span class="niche-row__num">02</span><span class="niche-row__name">Автосервис</span><span class="niche-row__tags">Трекинг ремонта · История авто · AI-диагностика</span></a>
-            <a class="niche-row" href="/crm-dlya-sklada/"><span class="niche-row__num">03</span><span class="niche-row__name">Склад и импорт</span><span class="niche-row__tags">Остатки 24/7 · OCR-накладные · GPS-трекинг</span></a>
-            <a class="niche-row" href="/crm-dlya-stomatologii/"><span class="niche-row__num">04</span><span class="niche-row__name">Медицина / стоматология</span><span class="niche-row__tags">История пациента · AI-диагностика · ДМС</span></a>
-            <a class="niche-row" href="/crm-dlya-internet-magazina/"><span class="niche-row__num">05</span><span class="niche-row__name">Интернет-магазин</span><span class="niche-row__tags">Заказы · Статусы · Аналитика</span></a>
-            <a class="niche-row" href="/crm-dlya-telegram-biznesa/"><span class="niche-row__num">06</span><span class="niche-row__name">Telegram-бизнес</span><span class="niche-row__tags">Магазин · Рассылки · Лояльность</span></a>
-            <a class="niche-row" href="/crm-dlya-fitnesa/"><span class="niche-row__num">07</span><span class="niche-row__name">Фитнес-клуб</span><span class="niche-row__tags">Абонементы · Расписание · Напоминания</span></a>
-            <a class="niche-row" href="/crm-dlya-restorana/"><span class="niche-row__num">08</span><span class="niche-row__name">Ресторан / кафе</span><span class="niche-row__tags">Заказы · Бронь · Лояльность</span></a>
-            <a class="niche-row" href="/crm-dlya-krasoty/"><span class="niche-row__num">09</span><span class="niche-row__name">Салон красоты</span><span class="niche-row__tags">Запись · Склад · Напоминания</span></a>
-            <a class="niche-row" href="/crm-dlya-yuristov/"><span class="niche-row__num">10</span><span class="niche-row__name">Юридическая компания</span><span class="niche-row__tags">Дела · Дедлайны · Документы</span></a>
-            <a class="niche-row" href="/crm-dlya-turagentstva/"><span class="niche-row__num">11</span><span class="niche-row__name">Турагентство</span><span class="niche-row__tags">Заявки · Брони · Напоминания</span></a>
-            <a class="niche-row" href="/crm-dlya-logistiki/"><span class="niche-row__num">12</span><span class="niche-row__name">Логистика и доставка</span><span class="niche-row__tags">Трекинг · Маршруты · Заявки</span></a>
-            <a class="niche-row" href="/crm-dlya-remonta-i-stroyki/"><span class="niche-row__num">13</span><span class="niche-row__name">Ремонт и стройка</span><span class="niche-row__tags">Объекты · Сметы · Бригады</span></a>
-            <a class="niche-row" href="/crm-dlya-klininga/"><span class="niche-row__num">14</span><span class="niche-row__name">Клининговая компания</span><span class="niche-row__tags">Заявки · Бригады · Абонементы</span></a>
-            <a class="niche-row" href="/crm-dlya-agentstva-nedvizhimosti/"><span class="niche-row__num">15</span><span class="niche-row__name">Агентство недвижимости</span><span class="niche-row__tags">Объекты · Клиенты · Показы</span></a>
-            <a class="niche-row" href="/crm-dlya-detskogo-centra/"><span class="niche-row__num">16</span><span class="niche-row__name">Детский центр</span><span class="niche-row__tags">Расписание · Оплаты · Напоминания</span></a>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- CASES SECTION -->
         <section class="cases" id="cases">
       <div class="container cases__header">
@@ -675,152 +689,12 @@
       </div>
     </section>
 
-    <!-- ATMOSPHERE BREAK -->
-    <div class="atm-img" aria-hidden="true">
-      <img src="assets/ai-nodes.jpg" alt="" class="atm-img__photo" loading="lazy">
-    </div>
-
-    <!-- MOCKUPS SECTION -->
-    <section class="mockups" id="mockups">
-      <div class="container">
-        <h2 class="section-title">Это ваша система.<br><em>Через 6 дней.</em></h2>
-        <div class="mockups__grid">
-
-          <!-- CRM Mockup -->
-          <div class="mockup-showcase">
-            <div class="mockup-showcase__label">CRM-система</div>
-            <div class="mockup-showcase__window">
-              <div class="mockup-showcase__bar">
-                <div class="mockup-dots"><span></span><span></span><span></span></div>
-                <span class="mockup-showcase__url">crm.yourbusiness.com</span>
-              </div>
-              <div class="mockup-showcase__body">
-                <div class="ms-sidebar">
-                  <div class="ms-sidebar__logo"></div>
-                  <div class="ms-sidebar__nav">
-                    <div class="ms-nav-item ms-nav-item--active"><span class="ms-nav-dot"></span>Клиенты</div>
-                    <div class="ms-nav-item">Сделки</div>
-                    <div class="ms-nav-item">Задачи</div>
-                    <div class="ms-nav-item">Аналитика</div>
-                  </div>
-                </div>
-                <div class="ms-content">
-                  <div class="ms-header">
-                    <div class="ms-title">Клиенты <span class="ms-count">248</span></div>
-                    <div class="ms-actions">
-                      <div class="ms-btn">Экспорт</div>
-                      <div class="ms-btn ms-btn--accent">+ Добавить</div>
-                    </div>
-                  </div>
-                  <div class="ms-stats">
-                    <div class="ms-stat"><div class="ms-stat__val">$38 400</div><div class="ms-stat__label">выручка</div><div class="ms-stat__delta">+18%</div></div>
-                    <div class="ms-stat"><div class="ms-stat__val">184</div><div class="ms-stat__label">заявок</div><div class="ms-stat__delta">+12%</div></div>
-                    <div class="ms-stat"><div class="ms-stat__val">67%</div><div class="ms-stat__label">конверсия</div><div class="ms-stat__delta">+4%</div></div>
-                  </div>
-                  <div class="ms-list">
-                    <div class="ms-row"><span class="ms-dot ms-dot--green"></span><div class="ms-row__name">ООО Торгсервис</div><div class="ms-row__stage">Оплата</div><div class="ms-badge ms-badge--done">Закрыт</div></div>
-                    <div class="ms-row"><span class="ms-dot ms-dot--yellow"></span><div class="ms-row__name">Ресторан «Мамин»</div><div class="ms-row__stage">Переговоры</div><div class="ms-badge ms-badge--wip">В работе</div></div>
-                    <div class="ms-row"><span class="ms-dot ms-dot--blue"></span><div class="ms-row__name">АО «Техстрой»</div><div class="ms-row__stage">Презентация</div><div class="ms-badge ms-badge--new">Новый</div></div>
-                    <div class="ms-row"><span class="ms-dot ms-dot--green"></span><div class="ms-row__name">ИП Смирнова А.</div><div class="ms-row__stage">Подписание</div><div class="ms-badge ms-badge--done">Закрыт</div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="mockup-showcase__caption">Все клиенты, сделки и история — в одном месте</div>
-          </div>
-
-          <!-- Telegram Mockup -->
-          <div class="mockup-showcase">
-            <div class="mockup-showcase__label">Чат-бот</div>
-            <div class="mockup-showcase__window mockup-showcase__window--mobile">
-              <div class="mockup-showcase__bar mockup-showcase__bar--mobile">
-                <div class="tg-header">
-                  <div class="tg-avatar"></div>
-                  <div><div class="tg-name">Uniqore CRM Bot</div><div class="tg-status">онлайн</div></div>
-                </div>
-              </div>
-              <div class="tg-chat">
-                <div class="tg-msg tg-msg--in">
-                  <div class="tg-bubble tg-bubble--in">Хочу забронировать квартиру на 15-17 июня</div>
-                  <div class="tg-time">14:23</div>
-                </div>
-                <div class="tg-msg tg-msg--out">
-                  <div class="tg-bubble tg-bubble--out">
-                    ✅ Квартира на проспекте Победителей свободна.<br><br>
-                    <strong>15–17 июня · 2 ночи</strong><br>
-                    Стоимость: ₽5 400<br><br>
-                    Подтвердить бронь?
-                  </div>
-                  <div class="tg-time tg-time--out">14:23</div>
-                </div>
-                <div class="tg-btns">
-                  <div class="tg-btn tg-btn--yes">✓ Подтвердить</div>
-                  <div class="tg-btn">Другие даты</div>
-                </div>
-                <div class="tg-msg tg-msg--in">
-                  <div class="tg-bubble tg-bubble--in">Подтверждаю!</div>
-                  <div class="tg-time">14:24</div>
-                </div>
-                <div class="tg-msg tg-msg--out">
-                  <div class="tg-bubble tg-bubble--out">
-                    🎉 Бронь подтверждена!<br>
-                    Код входа: <strong>4712</strong><br>
-                    Адрес отправлен в геопозиции ↓
-                  </div>
-                  <div class="tg-time tg-time--out">14:24</div>
-                </div>
-              </div>
-            </div>
-            <div class="mockup-showcase__caption">Клиент бронирует, платит и получает ключи — всё в Telegram</div>
-          </div>
-
-          <!-- Analytics Mockup -->
-          <div class="mockup-showcase">
-            <div class="mockup-showcase__label">Аналитика</div>
-            <div class="mockup-showcase__window">
-              <div class="mockup-showcase__bar">
-                <div class="mockup-dots"><span></span><span></span><span></span></div>
-                <span class="mockup-showcase__url">analytics.yourbusiness.com</span>
-              </div>
-              <div class="ms-analytics">
-                <div class="ms-analytics__header">
-                  <div class="ms-analytics__title">Отчёт · Июнь 2026</div>
-                  <div class="ms-badge ms-badge--live"><span class="ms-live-dot"></span>Live</div>
-                </div>
-                <div class="ms-kpis">
-                  <div class="ms-kpi ms-kpi--accent"><div class="ms-kpi__val">$32 400</div><div class="ms-kpi__label">Выручка</div><div class="ms-kpi__trend">↑ 14%</div></div>
-                  <div class="ms-kpi"><div class="ms-kpi__val">187</div><div class="ms-kpi__label">Заявок</div><div class="ms-kpi__trend">↑ 18%</div></div>
-                  <div class="ms-kpi"><div class="ms-kpi__val">54%</div><div class="ms-kpi__label">Конверсия</div><div class="ms-kpi__trend">↑ 6%</div></div>
-                </div>
-                <div class="ms-chart">
-                  <div class="ms-chart__label">Доход по неделям</div>
-                  <div class="ms-bars">
-                    <div class="ms-bar" style="--bh:28%"><div class="ms-bar__val">$8K</div></div>
-                    <div class="ms-bar" style="--bh:40%"><div class="ms-bar__val">$11K</div></div>
-                    <div class="ms-bar" style="--bh:34%"><div class="ms-bar__val">$9K</div></div>
-                    <div class="ms-bar ms-bar--hi" style="--bh:82%"><div class="ms-bar__val">$32K</div></div>
-                  </div>
-                </div>
-                <div class="ms-top">
-                  <div class="ms-top__label">Топ менеджеров</div>
-                  <div class="ms-top__row"><span class="ms-top__rank">1</span><span class="ms-top__name">Иванова А.</span><div class="ms-top__bar" style="--pw:88%"></div><span class="ms-top__num">$12K</span></div>
-                  <div class="ms-top__row"><span class="ms-top__rank">2</span><span class="ms-top__name">Петров Д.</span><div class="ms-top__bar" style="--pw:65%"></div><span class="ms-top__num">$9K</span></div>
-                  <div class="ms-top__row"><span class="ms-top__rank">3</span><span class="ms-top__name">Смирнов В.</span><div class="ms-top__bar" style="--pw:45%"></div><span class="ms-top__num">$6K</span></div>
-                </div>
-              </div>
-            </div>
-            <div class="mockup-showcase__caption">Утром видите цифры — вечером принимаете решения</div>
-          </div>
-
-        </div>
-      </div>
-    </section>
     <section class="mirror-section" id="mirror">
       <div class="container">
         <h2 class="section-title">Сколько вы теряете<br><em>без системы?</em></h2>
         <p class="mirror-section__sub">Две кнопки — и увидите цифру. Считаем по вашей нише.</p>
             <div class="mirror">
-              <div class="mirror__q">Сколько у тебя клиентов в месяц?</div>
+              <div class="mirror__q">Сколько у вас клиентов в месяц?</div>
               <div class="mirror__opts" data-grp="clients">
                 <button type="button" data-v="100">~100</button>
                 <button type="button" data-v="300">~300</button>
@@ -835,7 +709,7 @@
                 <button type="button" data-v="12000">₽10 000+</button>
               </div>
               <div class="mirror__result">
-                <div class="mirror__loss">Ты теряешь ~<span class="mirror__num">0</span> ₽/мес</div>
+                <div class="mirror__loss">Вы теряете ~<span class="mirror__num">0</span> ₽/мес</div>
                 <div class="mirror__sub">на потерянных заявках и неответах. Мы это ловим — клиент не уходит.</div>
                 <a href="#contact" id="calcCta" class="btn btn--accent btn--lg mirror__cta">Показать, как вернуть эти деньги →</a>
               </div>
@@ -846,9 +720,7 @@
     <!-- HOW IT WORKS -->
     <section class="process process--media" id="process">
       <div class="process__media" aria-hidden="true">
-        <video class="process__media-el" autoplay muted loop playsinline preload="auto" poster="assets/hero-process.jpg">
-          <source src="assets/hero-process.mp4?v=20260709a" type="video/mp4">
-        </video>
+        <video class="process__media-el" muted loop playsinline preload="none" poster="assets/hero-process.jpg" data-src="assets/hero-process.mp4?v=20260709a"></video>
       </div>
       <div class="process__scrim" aria-hidden="true"></div>
       <div class="container">
@@ -899,33 +771,6 @@
 
     <!-- TEAM SECTION -->
 
-    <!-- PRICING SECTION -->
-        <section class="pricing" id="pricing">
-      <div class="container">
-        <div class="section-label" style="text-align:center;margin:0 auto">Цены</div>
-        <h2 class="section-title" style="text-align:center">Прозрачно —<br><em>от $150 до системы</em></h2>
-        <div class="price-teaser">
-          <a class="price-teaser__card" href="/sayty/" data-reveal>
-            <span class="price-teaser__name">Сайты под ключ</span>
-            <span class="price-teaser__val">от $150</span>
-            <span class="price-teaser__go">Подробнее →</span>
-          </a>
-          <a class="price-teaser__card price-teaser__card--flag" href="/sistema/" data-reveal data-reveal-delay="1">
-            <span class="price-teaser__badge">Всё включено</span>
-            <span class="price-teaser__name">Система под ключ</span>
-            <span class="price-teaser__val">$1200<small> + $150/мес</small></span>
-            <span class="price-teaser__go">Подробнее →</span>
-          </a>
-          <a class="price-teaser__card" href="/ai-targetolog/" data-reveal data-reveal-delay="2">
-            <span class="price-teaser__name">AI-таргетолог</span>
-            <span class="price-teaser__val">от $200<small>/мес</small></span>
-            <span class="price-teaser__go">Подробнее →</span>
-          </a>
-        </div>
-        <p class="price-teaser__note">Точная цена фиксируется в договоре до старта. Без скрытых платежей и подписок Bitrix.</p>
-      </div>
-    </section>
-
     <!-- FAQ SECTION -->
     <section class="faq" id="faq">
       <div class="container">
@@ -968,6 +813,45 @@
               <div class="faq-item__a" id="faq-a-7" hidden><p>До оплаты мы бесплатно разбираем ваш бизнес и фиксируем точный объём и результат в ТЗ — вы заранее знаете, что получите, за сколько и в какой срок. Объём, цену и сроки фиксируем письменно в ТЗ до старта. Работаем по этапам: не приняли этап — дальше не платите. Вы платите за конкретный прописанный результат, а не за «попробуем».</p></div>
             </div>
 
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-8">
+                <span>Кому принадлежит код и данные?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-8" hidden><p>Вам. Система разворачивается на ваших серверах, код ваш с первого дня — независимо от того, продолжаем мы сотрудничество или нет.</p></div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-9">
+                <span>У меня уже есть сайт или CRM — нужно всё переделывать?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-9" hidden><p>Не обязательно. Можем подключить новые модули к существующей системе или предложить миграцию — решаем на бесплатном аудите, без давления.</p></div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-10">
+                <span>Насколько безопасны мои данные?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-10" hidden><p>Разворачиваем систему на защищённой инфраструктуре, доступ есть только у вашей команды. NDA подписываем по запросу до начала работ.</p></div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-11">
+                <span>Чем это лучше найма сотрудника в штат?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-11" hidden><p>Штатный специалист — это зарплата каждый месяц и один человек, который может заболеть, уйти или не справиться со всем сразу. У нас команда с разделением ролей (стратег, разработчики, менеджер) и фикс-цена без обязательств по зарплате.</p></div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-item__q" aria-expanded="false" aria-controls="faq-a-12">
+                <span>Мой бизнес маленький — подойдёт ли мне это?</span>
+                <span class="faq-item__icon" aria-hidden="true">+</span>
+              </button>
+              <div class="faq-item__a" id="faq-a-12" hidden><p>Да. Можно начать с одной услуги — сайт от 11 700 ₽ или AI-таргетолог от 15 600 ₽/мес — и расширяться по мере роста, не обязательно сразу вся система.</p></div>
+            </div>
 
           </div>
         </div>
@@ -1006,7 +890,7 @@
                 <span class="contact__fact-icon">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </span>
-                Работаем в Telegram и WhatsApp
+                Работаем в Telegram
               </div>
             </div>
           </div>
@@ -1076,7 +960,7 @@
                 <input type="text" id="name" name="name" placeholder="Александр" required>
               </div>
               <div class="form-group">
-                <label for="contact-input">Telegram, WhatsApp или телефон</label>
+                <label for="contact-input">Telegram или телефон</label>
                 <input type="text" id="contact-input" name="contact" placeholder="@username или +375..." required>
               </div>
               <button type="submit" class="btn btn--accent btn--lg btn--full">Получить разбор за 24 часа</button>
@@ -1108,8 +992,8 @@
       <div class="footer__brand">
         <a href="/" class="nav__logo footer__logo" aria-label="Uniqore">
           <svg class="nav__logo-mark" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-            <circle cx="14" cy="14" r="9" stroke="#F5C518" stroke-width="2.6"/>
-            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
+            <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
           </svg>
           <span class="nav__logo-text">uniqore</span>
         </a>
@@ -1117,20 +1001,19 @@
         <p style="margin-top:10px; font-size:12px; color:var(--color-text-muted);">Uniqore (в рус. транслитерации — Уникор)</p>
       </div>
       <div class="footer__links">
+        <a href="tel:+79616495107">+7 961 649-51-07</a>
         <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">Telegram — @UniqoreManager</a>
         <a href="/vozmozhnosti/">Услуги</a>
-        <a href="#niches">Ниши</a>
         <a href="#cases">Кейсы</a>
         <a href="#process">Процесс</a>
-        <a href="#pricing">Цены</a>
-        <a href="#pricing">Цены и гарантии</a>
+        <a href="/tseny/">Цены и гарантии</a>
         <a href="#faq">FAQ</a>
         <a href="/blog/">Блог</a>
         <a href="#contact">Контакт</a>
       </div>
     </div>
     <div class="container footer__bottom">
-      <span>© 2026 Uniqore. Все права защищены.</span>
+      <span>© 2026 Uniqore. Все права защищены.</span> <span style="opacity:.6">ОГРН 1257700498978 · ИНН 9703230935</span>
       <a href="/politika-konfidencialnosti/" style="color:inherit;opacity:.7">Политика конфиденциальности</a>
     </div>
   </footer>
@@ -1142,17 +1025,17 @@
   <!-- JS -->
   <script src="js/animations.js?v=20260711h" defer></script>
   <script src="js/particles.js?v=20260711e" defer></script>
-  <script src="js/form.js?v=20260711e" defer></script>
+  <script src="js/form.js?v=20260725c" defer></script>
   <script src="js/quiz.js?v=20260711A" defer></script>
   <script src="js/main.js?v=20260711B" defer></script>
   <script src="js/calc.js?v=20260711A" defer></script>
   <script src="js/dash.js?v=20260711A" defer></script>
   <script src="js/premium.js?v=20260711e" defer></script>
   <script src="js/bgloop.js?v=20260711e" defer></script>
-  <script src="js/nav-dropdown.js?v=20260711e" defer></script>
+  <script src="js/nav-dropdown.js?v=20260720a" defer></script>
   <script src="js/cookie.js?v=20260711A" defer></script>
-  <script src="js/enhance.js?v=20260711t" defer></script>
-  <script src="js/contact-net.js?v=20260711z" defer></script>
+  <script src="js/enhance.js?v=20260720b" defer></script>
+  <script src="js/contact-net.js?v=20260716a" defer></script>
   <!-- effects3d.js отключён: дублировал premium.js (тилт/магнит/счётчики) и вызывал конфликт transform. premium.js — единственный источник. -->
 
   <script>
@@ -1179,5 +1062,28 @@
     }
   </script>
   <script src="js/hero3d.js?v=20260711e" defer></script>
+  <script src="js/currency.js?v=20260721a" defer></script>
+
+  <!-- Видео «Процесс» (263КБ) — lazy: источник подставляется и запускается только
+       когда секция подходит к экрану. Экономит вес на старте, особенно на мобилке.
+       До этого виден постер. -->
+  <script>
+    (function(){
+      var v = document.querySelector('.process__media-el');
+      if (!v || !v.dataset.src) return;
+      function load(){
+        if (v.dataset.loaded) return; v.dataset.loaded = '1';
+        var s = document.createElement('source');
+        s.src = v.dataset.src; s.type = 'video/mp4';
+        v.appendChild(s); v.load();
+        var p = v.play(); if (p && p.catch) p.catch(function(){});
+      }
+      if (!('IntersectionObserver' in window)) { load(); return; }
+      var io = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if (e.isIntersecting) { load(); io.disconnect(); } });
+      }, { rootMargin: '500px 0px' });
+      io.observe(v);
+    })();
+  </script>
 </body>
 </html>

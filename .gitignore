@@ -2,6 +2,7 @@
 node_modules/
 assets/*.mp4
 !assets/hero-bg.mp4
+!assets/reel-lovi.mp4
 .agents/
 .claude/
 skills-lock.json

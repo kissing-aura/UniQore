@@ -127,7 +127,7 @@ body {
   50%       { box-shadow: 0 0 52px rgba(205, 255, 79,0.5), 0 4px 24px rgba(0,0,0,0.28); }
 }
 .hero .btn--accent {
-  animation: hero-cta-pulse 3s ease-in-out infinite;
+  animation: hero-cta-pulse 2.4s cubic-bezier(.22,1,.36,1) .9s 1 both;
 }
 .hero .btn--accent:hover {
   animation: none;
