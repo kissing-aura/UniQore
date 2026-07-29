@@ -79,13 +79,19 @@
       .nav__cta { display: none; }
     }
   </style>
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962"></script>
+  <!-- Google Analytics 4 — подключается ТОЛЬКО после явного «Принять» в баннере cookie -->
   <script>
+    /* выбор пользователя: 'accept' | 'essential' | null (ещё не решил) */
+    window.UQ_CONSENT = (function(){ try { return localStorage.getItem('uq_cookie_v1'); } catch (e) { return null; } })();
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-RJ67F53962');
+    if (window.UQ_CONSENT === 'accept') {
+      var uqGa = document.createElement('script');
+      uqGa.async = true; uqGa.src = 'https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962';
+      document.head.appendChild(uqGa);
+      gtag('js', new Date());
+      gtag('config', 'G-RJ67F53962');
+    }
   </script>
   <!-- Yandex.Metrika counter (id 110585817 / .ru 111003646) -->
   <script type="text/javascript">
@@ -96,7 +102,9 @@
     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
     (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id='+window.UQ_MID, 'ym');
 
-    ym(window.UQ_MID, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    /* Счётчик визитов, источники и цели работают ВСЕГДА — на них считается реклама.
+       Вебвизор (запись действий) и карта кликов — только после явного «Принять». */
+    ym(window.UQ_MID, 'init', {ssr:true, webvisor:window.UQ_CONSENT==='accept', clickmap:window.UQ_CONSENT==='accept', ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
       var h = a.getAttribute('href') || '';
@@ -271,5 +279,6 @@
     (function(){var b=document.getElementById('burger'),m=document.getElementById('mobile-menu');if(b&&m){b.addEventListener('click',function(){m.classList.toggle('open');b.classList.toggle('open');});m.querySelectorAll('a').forEach(function(l){l.addEventListener('click',function(){m.classList.remove('open');b.classList.remove('open');});});}})();
   </script>
   <script src="../../js/nav-dropdown.js?v=20260720a" defer></script>
+  <script src="/js/cookie.js?v=20260728a" defer></script>
 </body>
 </html>

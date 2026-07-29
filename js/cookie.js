@@ -37,8 +37,9 @@
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-label', 'Уведомление о cookie');
   box.innerHTML = ''
-    + '<p class="uq-cookie__text">Мы используем cookie и системы аналитики, чтобы сайт работал '
-    + 'корректно и становился удобнее. Подробнее — в '
+    + '<p class="uq-cookie__text">Базовая статистика посещений нужна, чтобы сайт работал и мы видели, '
+    + 'откуда приходят клиенты. Нажмёте «Принять» — дополнительно включим запись действий на странице '
+    + 'и Google Analytics, чтобы улучшать интерфейс. «Только необходимые» — этого не будет. Подробнее — в '
     + '<a href="' + POLICY + '">политике конфиденциальности</a>.</p>'
     + '<div class="uq-cookie__row">'
     + '<button class="uq-cookie__btn uq-cookie__btn--main" data-uq="accept">Принять</button>'
@@ -56,6 +57,18 @@
 
   function close(choice) {
     try { localStorage.setItem(KEY, choice); } catch (e) {}
+    window.UQ_CONSENT = choice;
+    /* Согласились — включаем то, что до этого не грузили.
+       GA4 стартует сразу; Вебвизор Метрики подхватится со следующей страницы:
+       счётчик уже инициализирован, повторный init он игнорирует. */
+    if (choice === 'accept' && !document.querySelector('script[src*="googletagmanager.com/gtag"]')) {
+      try {
+        var s = document.createElement('script');
+        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962';
+        document.head.appendChild(s);
+        if (typeof gtag === 'function') { gtag('js', new Date()); gtag('config', 'G-RJ67F53962'); }
+      } catch (e) {}
+    }
     box.classList.remove('is-in');
     setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 550);
   }
