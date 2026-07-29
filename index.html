@@ -141,7 +141,7 @@
   <!-- CSS: 13 файлов объединены в один bundle.css — 1 render-blocking запрос вместо 13.
        Критично для нестабильного канала (РФ): одного зависшего CSS хватало на чёрный экран.
        Bundle пересобирать при правке любого исходника (см. css/*.css). -->
-  <link rel="stylesheet" href="css/bundle.css?v=20260728c">
+  <link rel="stylesheet" href="css/bundle.css?v=20260728d">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -1027,7 +1027,7 @@
   <script src="js/particles.js?v=20260711e" defer></script>
   <script src="js/form.js?v=20260725c" defer></script>
   <script src="js/quiz.js?v=20260711A" defer></script>
-  <script src="js/main.js?v=20260711B" defer></script>
+  <script src="js/main.js?v=20260728d" defer></script>
   <script src="js/calc.js?v=20260711A" defer></script>
   <script src="js/dash.js?v=20260711A" defer></script>
   <script src="js/premium.js?v=20260711e" defer></script>
@@ -1036,7 +1036,7 @@
   <script src="js/cookie.js?v=20260711A" defer></script>
   <script src="js/enhance.js?v=20260720b" defer></script>
   <script src="js/contact-net.js?v=20260716a" defer></script>
-  <script src="js/cursor.js?v=20260728a" defer></script>
+  <!-- cursor.js НЕ подключаем: курсор уже реализован внутри main.js — два скрипта дрались за один элемент -->
   <!-- effects3d.js отключён: дублировал premium.js (тилт/магнит/счётчики) и вызывал конфликт transform. premium.js — единственный источник. -->
 
   <script>
