@@ -87,7 +87,7 @@
     for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
     (window,document,'script','https://mc.yandex.ru/metrika/tag.js?id='+window.UQ_MID,'ym');
-    ym(window.UQ_MID,'init',{ssr:true,webvisor:window.UQ_CONSENT==='accept',clickmap:window.UQ_CONSENT==='accept',ecommerce:"dataLayer",accurateTrackBounce:true,trackLinks:true});
+    ym(window.UQ_MID,'init',{ssr:true,webvisor:window.UQ_CONSENT!=='essential',clickmap:window.UQ_CONSENT!=='essential',ecommerce:"dataLayer",accurateTrackBounce:true,trackLinks:true});
     /* Сквозная аналитика: ClientID Метрики + первый источник визита — уходят с заявкой в CRM,
        чтобы потом связать продажу с рекламным кликом (офлайн-конверсии). */
     try { ym(window.UQ_MID, 'getClientID', function (id) { window.UQ_CID = id; }); } catch (_) {}
@@ -934,6 +934,6 @@
   <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
   <script src="/js/sayty.js?v=20260724e" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
-  <script src="/js/cookie.js?v=20260728a" defer></script>
+  <script src="/js/cookie.js?v=20260728b" defer></script>
 </body>
 </html>
