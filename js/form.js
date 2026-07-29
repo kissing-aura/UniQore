@@ -17,6 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Escape HTML for Telegram HTML-mode messages
   function tgEsc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
+  // fetch без таймаута может висеть на слабой сети минуты — кнопка "Отправляем..." тогда не
+  // отпускается никогда, лид молча теряется (найдено в вебвизоре 29.07.2026).
+  const LEAD_TIMEOUT_MS = 8000;
+  function fetchWithTimeout(url, opts) {
+    const ctrl = ('AbortController' in window) ? new AbortController() : null;
+    if (ctrl) opts.signal = ctrl.signal;
+    const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, LEAD_TIMEOUT_MS);
+    return fetch(url, opts).finally(() => clearTimeout(timer));
+  }
+
   // Rate limit: 1 submission per 30 seconds
   let lastSubmit = 0;
 
@@ -69,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `🔗 Лид добавлен в CRM автоматически`,
     ].filter(s => s !== null && s !== undefined && s !== false).join('\n');
     try {
-      const res = await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+      const res = await fetchWithTimeout(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -87,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // (visible from any device) and forwarded to Telegram server-side.
   async function postLeadToAPI(data) {
     try {
-      const res = await fetch('/api/leads', {
+      const res = await fetchWithTimeout('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // Шлём data целиком: кроме полей формы там атрибуция (utm/yclid/ClientID),
@@ -108,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Возвращает Promise<bool> — успел ли лид сохраниться в CRM через мост.
   // Это надёжный канал (Supabase), поэтому его успех ТОЖЕ считается успехом отправки.
   function pushToCommandV2(data) {
-    return fetch(CMD_BRIDGE_URL, {
+    return fetchWithTimeout(CMD_BRIDGE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -189,12 +199,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     lastSubmit = Date.now();
-    // Два независимых канала. Успех = сохранилось ХОТЯ БЫ в одном (раньше статус
-    // висел только на хрупком сервере 206 → при его падении показывалось ложное
-    // «Не отправилось», хотя лид уже лежал в CRM через мост).
+    // Два независимых канала, оба СТАРТУЮТ И ЖДУТСЯ параллельно — раньше await шёл по очереди
+    // (сначала API, потом мост), и если API зависал на слабой сети, до проверки моста дело не
+    // доходило вообще, хотя он мог давно ответить. Успех = сохранилось ХОТЯ БЫ в одном.
     const bridgePromise = pushToCommandV2(formData);
-    const savedToApi = await postLeadToAPI(formData);
-    const savedToBridge = await bridgePromise;
+    const apiPromise = postLeadToAPI(formData);
+    // Жёсткий предохранитель: даже если оба fetch зависнут мимо AbortController (древний
+    // браузер) — кнопка отпускается сама и не остаётся мёртвой навсегда.
+    const hardDeadline = new Promise(resolve => setTimeout(() => resolve([false, false]), LEAD_TIMEOUT_MS + 3000));
+    const [savedToApi, savedToBridge] = await Promise.race([Promise.all([apiPromise, bridgePromise]), hardDeadline]);
     // Клиентский Telegram-фолбэк — только если оба основных канала не сработали.
     const savedToTelegram = (savedToApi || savedToBridge) ? false : await sendToTelegram(formData);
     const saved = savedToApi || savedToBridge || savedToTelegram;

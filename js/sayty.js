@@ -288,12 +288,22 @@
     var CMD_BRIDGE_URL = 'https://wbxuwxvdovchtsodznfp.supabase.co/functions/v1/site-lead-bridge';
     var CMD_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndieHV3eHZkb3ZjaHRzb2R6bmZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NjY1MTAsImV4cCI6MjA5ODI0MjUxMH0.w1_aryP6pMM3Baj_H76tV5LGV8JiBG2Gd67r6Gw3Jq8';
     var CMD_BRIDGE_SECRET = '2dd950726e4ea4428b3af52c5950ef9c43b7afa58370a277';
+    // fetch без таймаута может висеть на слабой сети минуты — кнопка "Отправляем…" тогда не
+    // отпускается никогда, ветка ошибки не срабатывает, лид молча теряется (найдено в вебвизоре).
+    var LEAD_TIMEOUT_MS = 8000;
+    function fetchWithTimeout(url, opts) {
+      var ctrl = ('AbortController' in window) ? new AbortController() : null;
+      if (ctrl) opts.signal = ctrl.signal;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, LEAD_TIMEOUT_MS);
+      return fetch(url, opts).then(function (r) { clearTimeout(timer); return r.ok; })
+        .catch(function () { clearTimeout(timer); return false; });
+    }
     function pushToCommandV2(data) {
-      return fetch(CMD_BRIDGE_URL, {
+      return fetchWithTimeout(CMD_BRIDGE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', apikey: CMD_ANON_KEY, Authorization: 'Bearer ' + CMD_ANON_KEY, 'x-bridge-secret': CMD_BRIDGE_SECRET },
         body: JSON.stringify(data)
-      }).then(function (r) { return r.ok; }).catch(function () { return false; });
+      });
     }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -323,9 +333,11 @@
         website: ''
       }, getTrafficSource());
       var bridgePromise = pushToCommandV2(data);
-      var apiPromise = fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-        .then(function (r) { return r.ok; }).catch(function () { return false; });
-      Promise.all([apiPromise, bridgePromise]).then(function (results) {
+      var apiPromise = fetchWithTimeout('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      // жёсткий предохранитель: даже если оба fetch зависнут мимо AbortController (древний браузер,
+      // системный DNS-таймаут дольше нашего) — кнопка отпускается сама и не остаётся мёртвой навсегда.
+      var hardDeadline = new Promise(function (resolve) { setTimeout(function () { resolve([false, false]); }, LEAD_TIMEOUT_MS + 3000); });
+      Promise.race([Promise.all([apiPromise, bridgePromise]), hardDeadline]).then(function (results) {
         var saved = results[0] || results[1];
         if (saved) {
           // Конверсия засчитывается на РЕАЛЬНУЮ отправку (не на клик) — цель для Директа/Ads.
