@@ -56,7 +56,7 @@
 
     /* Счётчик визитов, источники и цели работают ВСЕГДА — на них считается реклама.
        Вебвизор (запись действий) и карта кликов — только после явного «Принять». */
-    ym(window.UQ_MID, 'init', {ssr:true, webvisor:window.UQ_CONSENT==='accept', clickmap:window.UQ_CONSENT==='accept', ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    ym(window.UQ_MID, 'init', {ssr:true, webvisor:window.UQ_CONSENT!=='essential', clickmap:window.UQ_CONSENT!=='essential', ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
     /* Сквозная аналитика: ClientID Метрики + первый источник визита — уходят с заявкой в CRM,
        чтобы потом связать продажу с рекламным кликом (офлайн-конверсии). */
     try { ym(window.UQ_MID, 'getClientID', function (id) { window.UQ_CID = id; }); } catch (_) {}
@@ -1041,7 +1041,7 @@
   <script src="js/premium.js?v=20260711e" defer></script>
   <script src="js/bgloop.js?v=20260711e" defer></script>
   <script src="js/nav-dropdown.js?v=20260720a" defer></script>
-  <script src="js/cookie.js?v=20260728a" defer></script>
+  <script src="js/cookie.js?v=20260728b" defer></script>
   <script src="js/enhance.js?v=20260720b" defer></script>
   <script src="js/contact-net.js?v=20260716a" defer></script>
   <!-- cursor.js НЕ подключаем: курсор уже реализован внутри main.js — два скрипта дрались за один элемент -->
