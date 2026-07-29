@@ -189,13 +189,19 @@
     .ph-metric span { display: block; font-size: 12px; color: var(--color-text-muted); margin-top: 6px; }
     @media (max-width: 560px) { .ph-metrics { gap: 14px 0; } .ph-metric { padding: 4px 18px; } .ph-metric b { font-size: 19px; } }
   </style>
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962"></script>
+  <!-- Google Analytics 4 — подключается ТОЛЬКО после явного «Принять» в баннере cookie -->
   <script>
+    /* выбор пользователя: 'accept' | 'essential' | null (ещё не решил) */
+    window.UQ_CONSENT = (function(){ try { return localStorage.getItem('uq_cookie_v1'); } catch (e) { return null; } })();
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-RJ67F53962');
+    if (window.UQ_CONSENT === 'accept') {
+      var uqGa = document.createElement('script');
+      uqGa.async = true; uqGa.src = 'https://www.googletagmanager.com/gtag/js?id=G-RJ67F53962';
+      document.head.appendChild(uqGa);
+      gtag('js', new Date());
+      gtag('config', 'G-RJ67F53962');
+    }
   </script>
   <!-- Yandex.Metrika counter (id 110585817, created by site owner in Yandex Metrika UI) -->
   <script type="text/javascript">
@@ -206,7 +212,9 @@
     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
     (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id='+window.UQ_MID, 'ym');
 
-    ym(window.UQ_MID, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    /* Счётчик визитов, источники и цели работают ВСЕГДА — на них считается реклама.
+       Вебвизор (запись действий) и карта кликов — только после явного «Принять». */
+    ym(window.UQ_MID, 'init', {ssr:true, webvisor:window.UQ_CONSENT==='accept', clickmap:window.UQ_CONSENT==='accept', ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
     /* Сквозная аналитика: ClientID Метрики + первый источник визита — уходят с заявкой в CRM,
        чтобы потом связать продажу с рекламным кликом (офлайн-конверсии). */
     try { ym(window.UQ_MID, 'getClientID', function (id) { window.UQ_CID = id; }); } catch (_) {}
@@ -636,5 +644,6 @@
   <script src="../js/contact-net.js?v=20260716a" defer></script>
   <script src="../js/form.js?v=20260725c" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
+  <script src="/js/cookie.js?v=20260728a" defer></script>
 </body>
 </html>
