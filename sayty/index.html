@@ -234,7 +234,7 @@
                 </div>
               </div>
               <div class="sy-fcard sy-fcard--a" data-i="0"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><div>Заявки растут<small>из рекламы</small></div></div>
-              <div class="sy-fcard sy-fcard--b" data-i="1"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></span><div>PageSpeed 98<small>Google</small></div></div>
+              <div class="sy-fcard sy-fcard--b" data-i="1"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></span><div>PageSpeed 95+<small>Google</small></div></div>
               <div class="sy-fcard sy-fcard--c" data-i="2"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg></span><div>Mobile First<small>идеально на телефоне</small></div></div>
               <div class="sy-fcard sy-fcard--d" data-i="3"><span class="sy-fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><div>3–5 дней<small>до запуска</small></div></div>
             </div>
@@ -255,7 +255,7 @@
         <div class="sy-trust__chips">
           <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Работаем по договору</span>
           <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Фиксированная цена</span>
-          <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Собираем с нуля</span>
+          <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Под вашу нишу</span>
           <span class="sy-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>Передаём исходники</span>
         </div>
         <a href="#portfolio" class="sy-trust__names sy-rev">Среди наших работ&nbsp;— <b>Bien&nbsp;Sûr</b> · <b>Немеция</b> · <b>Dragon&nbsp;Brand</b> · <b>Lovi</b> · <b>IDTuning</b> · <b>MILLA</b> <span class="sy-trust__names-go">смотреть&nbsp;→</span></a>
@@ -421,7 +421,7 @@
                 <span class="q-tot" data-t="crm" data-d="on" data-usd="750" data-prefix="от ">от $750</span>
               </span>
             </div>
-            <div class="q-meta"><span>Запуск 3–5 дней</span><span id="qMeta">базовый дизайн</span></div>
+            <div class="q-meta"><span id="qDays">Запуск 3–5 дней</span><span id="qMeta">базовый дизайн</span></div>
             <a href="#zayavka" class="sy-btn sy-btn--main q-cta" id="qCta" data-mag>Оставить заявку</a>
             <p class="q-nudge" id="qNudge">Точную цену фиксируем в договоре — без скрытых доплат.</p>
           </div>
@@ -537,6 +537,8 @@
       var bases=cfg.querySelectorAll('.q-base'), dess=cfg.querySelectorAll('.q-des'), tots=cfg.querySelectorAll('.q-tot');
       var desLine=document.getElementById('qDesLine'), name=document.getElementById('qTierName');
       var meta=document.getElementById('qMeta'), cta=document.getElementById('qCta'), nudge=document.getElementById('qNudge');
+      var days=document.getElementById('qDays');
+      var DAYS={landing:'Запуск 3–5 дней',multi:'Запуск 3–5 дней',crm:'Запуск 5–7 дней'};
       var totalWrap=document.getElementById('qTotalWrap');
       function show(list,fn){ list.forEach(function(s){ s.style.display=fn(s)?'':'none'; }); }
       function upd(pop){
@@ -547,6 +549,7 @@
         show(tots,function(s){return s.dataset.t===state.t && s.dataset.d===(state.d?'on':'off');});
         if(desLine) desLine.style.display=state.d?'':'none';
         if(name) name.textContent=NAMES[state.t];
+        if(days) days.textContent=DAYS[state.t];
         if(meta) meta.textContent=state.d?'с дизайн-командой':'базовый дизайн';
         if(cta) cta.textContent=state.d?'Оставить заявку с дизайном':'Оставить заявку';
         if(nudge){ nudge.textContent=state.d?'Уникальный вид под бренд — вы не сливаетесь с конкурентами.':'Точную цену фиксируем в договоре — без скрытых доплат.'; nudge.classList.toggle('is-good',state.d); }
@@ -564,7 +567,7 @@
       <div class="sy-container">
         <div class="sy-head">
           <h2 class="sy-h2 sy-rev">Работы, которые <em>работают</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Реальные клиентские сайты — каждый собран под нишу и бренд с нуля, не шаблон.</p>
+          <p class="sy-sub sy-rev" data-d="1">Реальные клиентские сайты — под нишу и бренд, не шаблон. Живьём открывается Dragon Brand, остальные показываем скриншотами.</p>
         </div>
         <div class="sy-filter sy-rev" data-d="1">
           <button class="sy-filter__b is-on" data-f="all">Все</button>
@@ -622,7 +625,7 @@
             <div class="sy-pf__b"><div class="sy-pf__name">Немеция · автосервис</div><div class="sy-pf__task">Автокомплекс VAG, Mercedes-Benz и BMW: ремонт, запчасти, запись. Омск.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
           </div>
         </div>
-        <p style="text-align:center;color:var(--sy-mut);font-size:14px;margin-top:34px" class="sy-rev">Dragon Brand открывается вживую. Остальные — реальные клиентские сайты, показываем скриншотами: чужой продакшн без спроса в открытый доступ не выкладываем. Ваш сайт собираем с нуля. И да, <a href="/" style="color:var(--sy-l)">этот сайт</a> мы тоже сделали сами.</p>
+        <p style="text-align:center;color:var(--sy-mut);font-size:14px;margin-top:34px" class="sy-rev">Dragon Brand открывается вживую. Остальные — реальные клиентские сайты, показываем скриншотами: чужой продакшн без спроса в открытый доступ не выкладываем. Ваш сайт собираем под вашу нишу и бренд. И да, <a href="/" style="color:var(--sy-l)">этот сайт</a> мы тоже сделали сами.</p>
       </div>
     </section>
 
@@ -742,7 +745,7 @@
         <div class="sy-head sy-head--center">
           <span class="sy-eyebrow sy-rev"><span class="dot"></span>Не аноним из телеграма</span>
           <h2 class="sy-h2 sy-rev" data-d="1">За сайтом — <em>реальная компания</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Офис в Москва-Сити, юрлицо в реестре ФНС, работа по договору. Не верьте на слово — проверьте сами.</p>
+          <p class="sy-sub sy-rev" data-d="1">Офис в Москва-Сити, работаем по договору с юрлицом — не переводом на карту.</p>
         </div>
         <div class="sy-real__grid">
           <div class="sy-real__card sy-office2 sy-rev">
@@ -771,7 +774,6 @@
               <div><span>ОГРН</span><b>1257700498978</b></div>
               <div><span>ИНН</span><b>9703230935</b></div>
             </div>
-            <a href="https://egrul.nalog.ru/" target="_blank" rel="noopener" class="sy-real__link">Проверить в реестре ФНС →</a>
           </div>
         </div>
       </div>
@@ -788,12 +790,12 @@
         <div class="sy-team__grid">
           <figure class="sy-tm sy-rev">
             <img class="sy-tm__ph" src="/sayty/team/matvei.webp?v=3" alt="Матвей — основатель Uniqore" loading="lazy" width="520" height="640">
-            <span class="sy-tm__flag">Владелец</span>
+            <span class="sy-tm__flag">Основатель</span>
             <figcaption class="sy-tm__cap"><b>Матвей</b></figcaption>
           </figure>
           <figure class="sy-tm sy-rev" data-d="1">
             <img class="sy-tm__ph" src="/sayty/team/ilya.webp?v=3" alt="Илья — сооснователь Uniqore" loading="lazy" width="520" height="640">
-            <span class="sy-tm__flag">Владелец</span>
+            <span class="sy-tm__flag">Сооснователь</span>
             <figcaption class="sy-tm__cap"><b>Илья</b></figcaption>
           </figure>
           <figure class="sy-tm sy-rev" data-d="2">

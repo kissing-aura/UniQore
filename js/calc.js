@@ -12,6 +12,7 @@
   var lossNumEl = calc.querySelector('.mirror__num');
   var resultBox = calc.querySelector('.mirror__result');
   var ctaEl = calc.querySelector('.mirror__cta');
+  var formulaEl = calc.querySelector('#mirrorFormula');
 
   function animateLoss(to) {
     if (!lossNumEl) return;
@@ -26,10 +27,12 @@
 
   function recalc() {
     if (state.clients && state.check) {
-      var loss = state.clients * state.check * 0.18; // ~18% теряется без системы
+      var revenue = state.clients * state.check;
+      var loss = revenue * 0.18; // ~18% теряется без системы
       if (resultBox) resultBox.classList.add('is-open');
       animateLoss(loss);
       if (ctaEl) ctaEl.textContent = 'Вернуть эти ' + fmtLoss(loss) + ' ₽/мес →';
+      if (formulaEl) formulaEl.textContent = 'Считаем так: ' + state.clients + ' клиентов × ' + fmtLoss(state.check) + ' ₽ = ' + fmtLoss(revenue) + ' ₽ выручки в месяц. По нашим внедрениям без системы теряется ~18% заявок — не перезвонили, забыли, потерялась в переписке. Цифра приблизительная — на разборе посчитаем по вашим данным.';
     }
   }
 
