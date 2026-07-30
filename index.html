@@ -181,11 +181,10 @@
     })();
   </script>
 
-  <!-- Fonts: async load to not block first paint -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=optional" rel="stylesheet"></noscript>
+  <!-- Fonts: self-hosted (волна 3, аудит 30.07) — ноль внешних хостов, font-display:swap на всех начертаниях -->
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/geist-400.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/unbounded-700-cyrillic.woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css?v=20260731a">
 
   <!-- Переключатель валют: главная НЕ грузит premium.css (у неё своя hero-premium),
        поэтому стили .cur-switch дублируем здесь inline. Синхронизировать с premium.css. -->
@@ -203,10 +202,6 @@
 </head>
 <body>
   <a class="skip-link" href="#main">К содержимому</a>
-
-  <!-- CUSTOM CURSOR -->
-  <div class="cursor" id="cursor" aria-hidden="true"></div>
-  <div class="cursor-follower" id="cursor-follower" aria-hidden="true"></div>
 
   <!-- NAVIGATION -->
   <nav class="nav" id="nav">
@@ -1058,32 +1053,8 @@
   <script src="js/cookie.js?v=20260730a" defer></script>
   <script src="js/enhance.js?v=20260720b" defer></script>
   <script src="js/contact-net.js?v=20260716a" defer></script>
-  <!-- cursor.js НЕ подключаем: курсор уже реализован внутри main.js — два скрипта дрались за один элемент -->
   <!-- effects3d.js отключён: дублировал premium.js (тилт/магнит/счётчики) и вызывал конфликт transform. premium.js — единственный источник. -->
 
-  <script>
-    /* Принудительный сброс залипшего кэша у ВСЕХ посетителей: убиваем любой
-       service worker и чистим кэши. Один раз перезагружаемся, если SW был —
-       чтобы подтянуть свежие CSS/JS. SW больше НЕ регистрируем (сайт всегда свежий). */
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function (regs) {
-        var had = regs.length > 0 || !!navigator.serviceWorker.controller;
-        Promise.all(regs.map(function (r) { return r.unregister(); })).then(function () {
-          var done = function () {
-            if (had && !sessionStorage.getItem('__swFlushed')) {
-              sessionStorage.setItem('__swFlushed', '1');
-              location.reload();
-            }
-          };
-          if (window.caches) {
-            caches.keys().then(function (ks) {
-              return Promise.all(ks.map(function (k) { return caches.delete(k); }));
-            }).then(done, done);
-          } else { done(); }
-        });
-      }).catch(function () {});
-    }
-  </script>
   <script src="js/hero3d.js?v=20260711e" defer></script>
   <script src="js/currency.js?v=20260721a" defer></script>
 

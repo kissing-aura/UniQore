@@ -1,6 +1,8 @@
 /* sayty.css — конверсионная страница «Сайты под ключ» под горячий трафик Директа.
    Бренд: тёмная тема + лайм #CDFF4F, дорогой минимализм. Scoped: .sy* */
-:root{--sy-l:#CDFF4F;--sy-l2:#a7e33f;--sy-mint:#31e0b0;--sy-bg:#0A0E1A;--sy-surf:rgba(255,255,255,.025);--sy-line:rgba(255,255,255,.08);--sy-txt:#E7EAF0;--sy-mut:#8792a3;--sy-mut2:#7a8699;--sy-txt-soft:#c2ccd9;--sy-fs-h1:clamp(36px,5vw,60px);--sy-fs-h2:clamp(28px,3.6vw,46px);--sy-fs-lead:clamp(17px,1.5vw,20px);--sy-fs-sub:clamp(16px,1.4vw,19px);--sy-section-y:clamp(80px,10vw,150px);--sy-head-mb:clamp(44px,6vw,76px);--sy-measure:52ch}
+:root{--sy-l:#CDFF4F;--sy-l2:#a7e33f;--sy-mint:#31e0b0;--sy-bg:#0A0E1A;--sy-surf:rgba(255,255,255,.025);--sy-line:rgba(255,255,255,.08);--sy-txt:#E7EAF0;--sy-mut:#8792a3;--sy-mut2:#7a8699;--sy-txt-soft:#c2ccd9;--sy-fs-h1:clamp(36px,5vw,60px);--sy-fs-h2:clamp(28px,3.6vw,46px);--sy-fs-lead:clamp(17px,1.5vw,20px);--sy-fs-sub:clamp(16px,1.4vw,19px);--sy-section-y:clamp(80px,10vw,150px);--sy-head-mb:clamp(44px,6vw,76px);--sy-measure:52ch;
+/* волна 3 (аудит 30.07): переопределяем шрифт ТОЛЬКО на /sayty/ — bundle-page.css общий для 76 страниц, туда Geist не льём */
+--font-body:'Geist',sans-serif;--font-display:var(--font-body)}
 
 /* спрятать старый page-hero целиком — у нас свой */
 .sy{color:var(--sy-txt)}

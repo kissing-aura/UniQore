@@ -9,7 +9,7 @@ ul { list-style: none; }
 button { cursor: pointer; border: none; background: none; }
 
 @media print {
-  .nav, .cursor, .cursor-follower, .hero__glow, .marquee-wrap { display: none; }
+  .nav, .hero__glow, .marquee-wrap { display: none; }
   body { background: white; color: black; }
 }
 
@@ -29,9 +29,9 @@ button { cursor: pointer; border: none; background: none; }
   --color-success:        #22C55E;
   --color-white:          #FFFFFF;
 
-  /* Typography */
-  --font-display: 'Manrope', 'Inter', sans-serif;
-  --font-body:    'Inter', sans-serif;
+  /* Typography — Geist (self-hosted, OFL) заменяет Inter в теле, Manrope убран (волна 3, аудит 30.07) */
+  --font-body:    'Geist', sans-serif;
+  --font-display: var(--font-body);
   --font-mono:    'JetBrains Mono', monospace;
 
   /* Layout */
@@ -3565,51 +3565,6 @@ body {
   .case-card:nth-child(even) { transition-delay: 0.09s; }
 }
 
-/* ── Custom cursor ── */
-/* Логика движения живёт в main.js: он ставит transform (уже с центровкой,
-   translate(mx - половина)) и управляет opacity инлайном. Здесь только внешний вид.
-   Отдельного cursor.js НЕ подключать — будет драка двух скриптов за один элемент. */
-.cursor {
-  position: fixed;
-  top: 0; left: 0;
-  width: 8px; height: 8px;
-  background: var(--color-accent);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  will-change: transform;
-  box-shadow: 0 0 10px rgba(205, 255, 79, 0.5);
-  /* NO transition on transform — JS handles smoothness */
-  transition: width 0.15s ease, height 0.15s ease, opacity 0.15s ease;
-}
-.cursor-follower {
-  position: fixed;
-  top: 0; left: 0;
-  width: 32px; height: 32px;
-  border: 1px solid rgba(205, 255, 79, 0.4);
-  background: rgba(205, 255, 79, 0.04);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9998;
-  will-change: transform;
-  /* only transition size/color — NOT transform/left/top */
-  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease,
-              background-color 0.2s ease, opacity 0.2s ease;
-}
-.cursor--hover { width: 20px; height: 20px; }
-.cursor-follower--hover {
-  width: 52px; height: 52px;
-  border-color: rgba(205, 255, 79, 0.75);
-  background: rgba(205, 255, 79, 0.10);
-}
-
-/* Системный курсор прячем только когда кастомный реально запустился:
-   класс uq-cur-on вешает main.js после успешной инициализации (desktop + pointer:fine).
-   Без JS класса не будет — и обычный курсор останется на месте. */
-html.uq-cur-on, html.uq-cur-on body,
-html.uq-cur-on a, html.uq-cur-on button, html.uq-cur-on [role="button"],
-html.uq-cur-on label, html.uq-cur-on summary, html.uq-cur-on select,
-html.uq-cur-on input[type="submit"], html.uq-cur-on input[type="button"] { cursor: none; }
 /* ── Aurora glow animation ── */
 @keyframes aurora-drift-1 {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -3721,8 +3676,6 @@ a:focus-visible {
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   [data-reveal]         { opacity: 1; transform: none; transition: none; }
-  .cursor,
-  .cursor-follower      { display: none; }
   .marquee              { animation: none; }
   body                  { opacity: 1; transition: none; }
   .word-reveal          { opacity: 1 !important; transform: none !important; transition: none !important; }
@@ -4073,9 +4026,6 @@ section + section {
 
   /* Footer */
   .footer__inner { flex-direction: column; gap: 32px; }
-
-  /* Cursor off on touch */
-  .cursor, .cursor-follower { display: none; }
 }
 
 /* ── Small mobile: up to 480px ── */

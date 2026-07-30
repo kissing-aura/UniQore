@@ -13,9 +13,9 @@
   --color-success:        #22C55E;
   --color-white:          #FFFFFF;
 
-  /* Typography */
-  --font-display: 'Manrope', 'Inter', sans-serif;
-  --font-body:    'Inter', sans-serif;
+  /* Typography — Geist (self-hosted, OFL) заменяет Inter в теле, Manrope убран (волна 3, аудит 30.07) */
+  --font-body:    'Geist', sans-serif;
+  --font-display: var(--font-body);
   --font-mono:    'JetBrains Mono', monospace;
 
   /* Layout */

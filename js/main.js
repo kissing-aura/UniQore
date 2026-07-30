@@ -16,63 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ── Custom cursor tracking ──
-  const cursor = document.getElementById('cursor');
-  const follower = document.getElementById('cursor-follower');
-  if (cursor && follower && !('ontouchstart' in window) && window.matchMedia('(pointer: fine)').matches) {
-    // кастомный курсор реально стартовал → только теперь прячем системный (CSS: html.uq-cur-on)
-    document.documentElement.classList.add('uq-cur-on');
-    // Half-sizes for centering via transform
-    const CH = 4;   // cursor half = 8/2
-    const FH = 16;  // follower half = 32/2
-    let mx = -999, my = -999, fx = -999, fy = -999;
-    let started = false;
-    let raf = 0;
-
-    document.addEventListener('mousemove', (e) => {
-      mx = e.clientX;
-      my = e.clientY;
-      // Transform only — GPU composited, zero CSS transition lag
-      cursor.style.transform = `translate(${mx - CH}px, ${my - CH}px)`;
-      if (!started) {
-        fx = mx; fy = my;
-        started = true;
-        cursor.style.opacity = '1';
-        follower.style.opacity = '1';
-      }
-      if (!raf) raf = requestAnimationFrame(lerpFollower);
-    }, { passive: true });
-
-    cursor.style.opacity = '0';
-    follower.style.opacity = '0';
-
-    // кольцо догоняет курсор; rAF ОСТАНАВЛИВАЕТСЯ, когда догнало —
-    // иначе цикл крутится вечно и жрёт кадры даже при неподвижной мыши
-    function lerpFollower() {
-      raf = 0;
-      fx += (mx - fx) * 0.11;
-      fy += (my - fy) * 0.11;
-      follower.style.transform = `translate(${fx - FH}px, ${fy - FH}px)`;
-      if (Math.abs(mx - fx) > 0.3 || Math.abs(my - fy) > 0.3) {
-        raf = requestAnimationFrame(lerpFollower);
-      } else {
-        fx = mx; fy = my;
-        follower.style.transform = `translate(${fx - FH}px, ${fy - FH}px)`;
-      }
-    }
-
-    document.querySelectorAll('a, button, [role="button"], .stack-tag, .niche-card__tags span').forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        cursor.classList.add('cursor--hover');
-        follower.classList.add('cursor-follower--hover');
-      });
-      el.addEventListener('mouseleave', () => {
-        cursor.classList.remove('cursor--hover');
-        follower.classList.remove('cursor-follower--hover');
-      });
-    });
-  }
-
   // ── tsParticles parallax on scroll ──
   const particlesEl = document.getElementById('hero-particles');
   if (particlesEl) {

@@ -60,11 +60,10 @@
   .sy-brandseal__v{width:100%;height:100%;object-fit:cover;display:block}
   .dz__grid video,.dz__logos video{width:100%;height:100%;display:block}
   main video{max-width:100%}</style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Шрифты грузим НЕ render-blocking: страница рисуется сразу в системном фолбэке, гугл-шрифты подменяются по готовности (display=swap). Защита от тормозов Google Fonts у РФ-трафика. -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
+  <!-- Шрифты: self-hosted (волна 3, аудит 30.07) — ноль внешних хостов (был риск для РФ-канала), font-display:swap на всех начертаниях -->
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-400.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/unbounded-700-cyrillic.woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20260731a">
 
   <!-- Google Analytics 4 — подключается ТОЛЬКО после явного «Принять» в баннере cookie -->
   <script>
@@ -106,7 +105,7 @@
     <div class="container nav__inner">
       <a href="/" class="nav__logo" aria-label="Uniqore">
         <span class="nav__logo-mark nav__logo-3d">
-          <video class="nav__logo-vid" src="/assets/dz/uniqore-3dlogo-nav.mp4?v=1" muted playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>
+          <video class="nav__logo-vid" src="/assets/dz/uniqore-3dlogo-nav.mp4?v=1" muted playsinline preload="none" disablepictureinpicture aria-hidden="true"></video>
           <svg class="nav__logo-svg" width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
             <circle cx="14" cy="14" r="9" stroke="#CDFF4F" stroke-width="2.6"/>
             <line x1="20.7" y1="20.7" x2="27" y2="27" stroke="#CDFF4F" stroke-width="2.6" stroke-linecap="round"/>
@@ -281,7 +280,7 @@
           <div class="sy-pf sy-pf--preview sy-rev" data-cat="services" data-d="1">
             <div class="sy-pf__shot">
               <span class="sy-pf__tag">Тюнинг-ателье</span>
-              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-idtuning.jpg?v=20260720d);background-position:top center"></div>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-idtuning.webp?v=20260731a);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
             <div class="sy-pf__b"><div class="sy-pf__name">IDTuning · тюнинг</div><div class="sy-pf__task">Тюнинг-ателье автомобилей премиум-сегмента: услуги, марки, запись. Москва.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
@@ -289,7 +288,7 @@
           <div class="sy-pf sy-pf--preview sy-rev" data-cat="services" data-d="2">
             <div class="sy-pf__shot">
               <span class="sy-pf__tag">Интерьер</span>
-              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-milla.jpg?v=20260720d);background-position:top center"></div>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-milla.webp?v=20260731a);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
             <div class="sy-pf__b"><div class="sy-pf__name">MILLA Design · интерьер</div><div class="sy-pf__task">Студия дизайна интерьера: разработка и реализация проекта под ключ. Самара.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
@@ -297,7 +296,7 @@
           <div class="sy-pf sy-pf--preview sy-rev" data-cat="food">
             <div class="sy-pf__shot">
               <span class="sy-pf__tag">Ресторан</span>
-              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-biensur.jpg?v=20260720d);background-position:top center"></div>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-biensur.webp?v=20260731a);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
             <div class="sy-pf__b"><div class="sy-pf__name">Bien Sûr · ресторан</div><div class="sy-pf__task">Французское бистро: меню, бронь стола, события. Санкт-Петербург.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
@@ -305,7 +304,7 @@
           <div class="sy-pf sy-pf--preview sy-rev" data-cat="services" data-d="1">
             <div class="sy-pf__shot">
               <span class="sy-pf__tag">Хаммамы</span>
-              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-banidesign.jpg?v=20260720d);background-position:top center"></div>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-banidesign.webp?v=20260731a);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
             <div class="sy-pf__b"><div class="sy-pf__name">Бани Дизайн · хаммамы</div><div class="sy-pf__task">Строительство хаммамов под ключ: услуги, портфолио, заявка.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
@@ -313,7 +312,7 @@
           <div class="sy-pf sy-pf--preview sy-rev" data-cat="services" data-d="2">
             <div class="sy-pf__shot">
               <span class="sy-pf__tag">Автосервис</span>
-              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-nemecia.jpg?v=20260720d);background-position:top center"></div>
+              <div class="sy-pf__photo" style="background-image:url(/keysy/cases/case-nemecia.webp?v=20260731a);background-position:top center"></div>
               <div class="sy-pf__frame-scrim"></div>
             </div>
             <div class="sy-pf__b"><div class="sy-pf__name">Немеция · автосервис</div><div class="sy-pf__task">Автокомплекс VAG, Mercedes-Benz и BMW: ремонт, запчасти, запись. Омск.</div><div class="sy-pf__foot"><span class="sy-pf__term">клиентский сайт</span></div></div>
@@ -670,7 +669,7 @@
         </div>
         <div class="sy-slcwrap sy-rev">
           <div class="sy-slc" data-slc>
-            <div class="sy-slc__pane sy-slc__after"><img src="/keysy/cases/case-biensur.jpg?v=20260720s" alt="Ресторан Bien Sûr — сайт под ключ от Uniqore" loading="lazy"></div>
+            <div class="sy-slc__pane sy-slc__after"><img src="/keysy/cases/case-biensur.webp?v=20260731a" alt="Ресторан Bien Sûr — сайт под ключ от Uniqore" loading="lazy"></div>
             <div class="sy-slc__pane sy-slc__before"><img src="/assets/before-biensur.jpg?v=20260720s" alt="Ресторан Bien Sûr — старый сайт на конструкторе до Uniqore" loading="lazy"></div>
             <span class="sy-slc__lbl sy-slc__lbl--b">До</span>
             <span class="sy-slc__lbl sy-slc__lbl--a">После · Uniqore</span>
@@ -680,7 +679,7 @@
         </div>
         <div class="sy-slcwrap sy-rev" data-d="1">
           <div class="sy-slc" data-slc>
-            <div class="sy-slc__pane sy-slc__after"><img src="/keysy/cases/case-nemecia.jpg?v=20260720s" alt="Автосервис Немеция — сайт под ключ от Uniqore" loading="lazy"></div>
+            <div class="sy-slc__pane sy-slc__after"><img src="/keysy/cases/case-nemecia.webp?v=20260731a" alt="Автосервис Немеция — сайт под ключ от Uniqore" loading="lazy"></div>
             <div class="sy-slc__pane sy-slc__before"><img src="/assets/before-nemecia.jpg?v=20260720s" alt="Автосервис Немеция — старый сайт из конструктора до Uniqore" loading="lazy"></div>
             <span class="sy-slc__lbl sy-slc__lbl--b">До</span>
             <span class="sy-slc__lbl sy-slc__lbl--a">После · Uniqore</span>

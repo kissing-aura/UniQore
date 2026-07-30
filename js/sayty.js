@@ -545,6 +545,7 @@
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   var desktop = window.matchMedia && window.matchMedia('(min-width:761px) and (hover:hover)').matches;
   if (!desktop || reduce) return; // мобилка: показан SVG, видео не грузим/не крутим
+  try { nv.load(); } catch (e) {} // preload="none": грузим только тут, только на десктопе, где видео реально нужно
   try { nv.pause(); } catch (e) {}
   var raf = 0, dur = 0, cur = 0, target = 0;
   function computeTarget() {
