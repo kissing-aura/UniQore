@@ -348,6 +348,9 @@ const refresh = () => showView(VIEW);
 const SEARCHABLE = { team: '.team-card', docs: '.doc-row', automation: '.auto-rule', activity: '.tl-item', notifications: '.notif', integrations: '.intg-card' };
 function addSectionSearch(type) {
   const sel = SEARCHABLE[type], body = document.getElementById('viewBody'); if (!sel || !body) return;
+  // подвкладки перерисовывают #viewBody напрямую и стирают строку поиска — при
+  // повторном вызове просто ставим её заново, но не плодим дубли
+  if (body.querySelector('#secSearch')) return;
   const bar = document.createElement('div'); bar.className = 'toolbar';
   bar.innerHTML = `<input class="t-input t-input--search" id="secSearch" placeholder="Поиск в разделе...">`;
   body.insertBefore(bar, body.firstChild);
@@ -367,7 +370,9 @@ function subnav(n, onPick) {
   const views = n.views || [{ key: 'all', label: 'Все', filter: {} }];
   if (!SUBVIEW[n.key]) SUBVIEW[n.key] = views[0].key;
   const html = `<div class="subnav">` + views.map(v => `<div class="subnav__item ${SUBVIEW[n.key] === v.key ? 'active' : ''}" data-sv="${v.key}">${esc(v.label)}</div>`).join('') + `</div>`;
-  setTimeout(() => document.querySelectorAll('.subnav__item').forEach(el => el.addEventListener('click', () => { SUBVIEW[n.key] = el.dataset.sv; onPick(); })), 0);
+  // после перерисовки из подвкладки возвращаем строку поиска: onPick() перетирает
+  // #viewBody целиком, и «Поиск в разделе…» исчезал до ухода в другой раздел
+  setTimeout(() => document.querySelectorAll('.subnav__item').forEach(el => el.addEventListener('click', () => { SUBVIEW[n.key] = el.dataset.sv; onPick(); try { addSectionSearch(n.type); } catch (e) {} })), 0);
   return { html, current: views.find(v => v.key === SUBVIEW[n.key]) || views[0] };
 }
 
@@ -1371,9 +1376,18 @@ function runAutom(trigger, ctx) {
   // развилка: берём только включённые правила нужного триггера, чьи условия выполнены
   const rules = DB.autom().filter(a => a.enabled && a.trigger === trigger && automMatch(a, ctx));
   if (!rules.length) return 0;
-  rules.forEach(rule => (rule.actions || []).forEach(ac => { try { automExecAction(rule, ac, ctx); } catch (e) {} }));
+  // считаем упавшие действия: раньше ошибка глоталась молча, а тост всё равно
+  // рапортовал «Сработал сценарий» — пользователь верил, что автоматизация отработала
+  let failed = 0;
+  rules.forEach(rule => (rule.actions || []).forEach(ac => {
+    try { automExecAction(rule, ac, ctx); }
+    catch (e) { failed++; console.warn('[Uniqore] Действие «' + ac + '» в сценарии «' + (rule.name || '') + '» не выполнено:', e.message); }
+  }));
   const names = rules.map(r => r.name || 'Сценарий');
-  try { toast('Сработал сценарий: ' + names.join(', '), 'ok'); } catch {}
+  try {
+    if (failed) toast('Сценарий выполнен частично: ' + names.join(', ') + ' — шагов не прошло: ' + failed, 'warn');
+    else toast('Сработал сценарий: ' + names.join(', '), 'ok');
+  } catch {}
   updateBadges();
   return rules.length;
 }
@@ -1690,7 +1704,14 @@ function uaAnswer(qRaw) {
   if (/что (ты )?умеешь|помощь|команды|help/.test(q)) return 'Умею: оценить объект по параметрам, посчитать воронку лидов, назвать топ-агента, показать комиссию и прибыль месяца, сводку по сделкам. Просто спроси, например: «сколько стоит 2-комнатная в Северном Парке?»';
 
   const complexNames = [...new Set(objects.map(o => o.complex))];
-  const mentioned = complexNames.find(c => q.includes(c.toLowerCase()));
+  // сравниваем по корням: агент сам предлагает спросить «сколько стоит 2-комнатная
+  // в Северном Парке?», а точное вхождение «северный парк» в такой фразе не находилось —
+  // на собственный пример вопроса он отвечал обезличенным «по всей базе…»
+  const uaStem = w => w.length > 5 ? w.slice(0, -2) : (w.length > 3 ? w.slice(0, -1) : w);
+  const mentioned = complexNames.find(c => {
+    const words = c.toLowerCase().replace(/[«»"']/g, '').split(/\s+/).filter(w => w.length > 2);
+    return words.length && words.every(w => q.includes(uaStem(w)));
+  });
   if (/цен|стоит|стоимост|м2|м²|за метр/.test(q)) {
     const pool = mentioned ? objects.filter(o => o.complex === mentioned && o.dealType === 'sale') : objects.filter(o => o.dealType === 'sale');
     if (!pool.length) return 'По продаже пока маловато данных для оценки — загляни в «ИИ-оценка», там можно посчитать по параметрам вручную.';
@@ -1772,3 +1793,16 @@ function mountUniAgent() {
 showRecipeErrors(validateRecipe());
 renderShell(); showView(VIEW);
 mountUniAgent();
+
+/* Перерисовка при смене размера окна. Графики рисуются в canvas по ширине на момент
+   отрисовки, поэтому после поворота телефона или изменения окна они растягивались
+   битмапом: подписи и столбцы плыли до перехода в другой раздел. */
+(() => {
+  let t, lastW = innerWidth;
+  addEventListener('resize', () => {
+    if (Math.abs(innerWidth - lastW) < 40) return;   // мелкие дёрганья (адресная строка на телефоне) игнорируем
+    lastW = innerWidth;
+    clearTimeout(t);
+    t = setTimeout(() => { try { showView(VIEW); } catch (e) {} }, 250);
+  });
+})();

@@ -471,13 +471,13 @@ input[placeholder*="Поиск"]:focus,input[placeholder*="поиск"]:focus{
 .btn-add:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(193,18,31,.55),inset 0 1px 0 rgba(255,255,255,.22)}
 
 /* Notification bell */
-[onclick="showNotifs()"]{
+[onclick="toggleNotif()"]{
   background:linear-gradient(180deg,rgba(25,25,35,.9),rgba(10,10,16,.9))!important;
   border:1px solid var(--gold-dark)!important;
   color:var(--gold)!important;
   transition:.3s;
 }
-[onclick="showNotifs()"]:hover{border-color:var(--gold);box-shadow:0 0 16px var(--gold-glow);transform:scale(1.05)}
+[onclick="toggleNotif()"]:hover{border-color:var(--gold);box-shadow:0 0 16px var(--gold-glow);transform:scale(1.05)}
 
 /* Source dots */
 .source-dot{
@@ -555,7 +555,7 @@ input[placeholder*="Поиск"]:focus,input[placeholder*="поиск"]:focus{
 }
 /* iOS touch fix — disable :hover effects on touch devices so first tap fires click */
 @media(hover:none){
-  .sb-item:hover,.card:hover,.kpi-card:hover,.btn-primary:hover,.btn-add:hover,tbody tr:hover,.status:hover,.order-card:hover,.alert-banner:hover,.kanban-card:hover,[onclick="showNotifs()"]:hover,.kanban-col:hover,.table-wrap:hover{
+  .sb-item:hover,.card:hover,.kpi-card:hover,.btn-primary:hover,.btn-add:hover,tbody tr:hover,.status:hover,.order-card:hover,.alert-banner:hover,.kanban-card:hover,[onclick="toggleNotif()"]:hover,.kanban-col:hover,.table-wrap:hover{
     transform:none!important;background:initial;box-shadow:none!important;border-color:var(--border)!important;
   }
   .sb-item:hover::before,.kpi-card:hover::after{display:none}

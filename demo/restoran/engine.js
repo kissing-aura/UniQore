@@ -356,6 +356,9 @@ const refresh = () => showView(VIEW);
 const SEARCHABLE = { team: '.team-card', docs: '.doc-row', automation: '.auto-rule', activity: '.tl-item', notifications: '.notif', integrations: '.intg-card' };
 function addSectionSearch(type) {
   const sel = SEARCHABLE[type], body = document.getElementById('viewBody'); if (!sel || !body) return;
+  // подвкладки перерисовывают #viewBody напрямую и стирают строку поиска — при
+  // повторном вызове просто ставим её заново, но не плодим дубли
+  if (body.querySelector('#secSearch')) return;
   const bar = document.createElement('div'); bar.className = 'toolbar';
   bar.innerHTML = `<input class="t-input t-input--search" id="secSearch" placeholder="Поиск в разделе...">`;
   body.insertBefore(bar, body.firstChild);
@@ -375,7 +378,9 @@ function subnav(n, onPick) {
   const views = n.views || [{ key: 'all', label: 'Все', filter: {} }];
   if (!SUBVIEW[n.key]) SUBVIEW[n.key] = views[0].key;
   const html = `<div class="subnav">` + views.map(v => `<div class="subnav__item ${SUBVIEW[n.key] === v.key ? 'active' : ''}" data-sv="${v.key}">${esc(v.label)}</div>`).join('') + `</div>`;
-  setTimeout(() => document.querySelectorAll('.subnav__item').forEach(el => el.addEventListener('click', () => { SUBVIEW[n.key] = el.dataset.sv; onPick(); })), 0);
+  // после перерисовки из подвкладки возвращаем строку поиска: onPick() перетирает
+  // #viewBody целиком, и «Поиск в разделе…» исчезал до ухода в другой раздел
+  setTimeout(() => document.querySelectorAll('.subnav__item').forEach(el => el.addEventListener('click', () => { SUBVIEW[n.key] = el.dataset.sv; onPick(); try { addSectionSearch(n.type); } catch (e) {} })), 0);
   return { html, current: views.find(v => v.key === SUBVIEW[n.key]) || views[0] };
 }
 
@@ -1340,9 +1345,18 @@ function runAutom(trigger, ctx) {
   // развилка: берём только включённые правила нужного триггера, чьи условия выполнены
   const rules = DB.autom().filter(a => a.enabled && a.trigger === trigger && automMatch(a, ctx));
   if (!rules.length) return 0;
-  rules.forEach(rule => (rule.actions || []).forEach(ac => { try { automExecAction(rule, ac, ctx); } catch (e) {} }));
+  // считаем упавшие действия: раньше ошибка глоталась молча, а тост всё равно
+  // рапортовал «Сработал сценарий» — пользователь верил, что автоматизация отработала
+  let failed = 0;
+  rules.forEach(rule => (rule.actions || []).forEach(ac => {
+    try { automExecAction(rule, ac, ctx); }
+    catch (e) { failed++; console.warn('[Uniqore] Действие «' + ac + '» в сценарии «' + (rule.name || '') + '» не выполнено:', e.message); }
+  }));
   const names = rules.map(r => r.name || 'Сценарий');
-  try { toast('Сработал сценарий: ' + names.join(', '), 'ok'); } catch {}
+  try {
+    if (failed) toast('Сценарий выполнен частично: ' + names.join(', ') + ' — шагов не прошло: ' + failed, 'warn');
+    else toast('Сработал сценарий: ' + names.join(', '), 'ok');
+  } catch {}
   updateBadges();
   return rules.length;
 }
@@ -1649,3 +1663,16 @@ function showRecipeErrors(errs) {
 (() => { const sv = localStorage.getItem(K('theme')); if (sv && window.THEMES[sv]) { window.applyTheme(sv); document.body.classList.remove('nav-topbar', 'nav-sidebar'); document.body.classList.add('nav-' + NAVLAYOUT); } })();
 showRecipeErrors(validateRecipe());
 renderShell(); showView(VIEW);
+
+/* Перерисовка при смене размера окна. Графики рисуются в canvas по ширине на момент
+   отрисовки, поэтому после поворота телефона или изменения окна они растягивались
+   битмапом: подписи и столбцы плыли до перехода в другой раздел. */
+(() => {
+  let t, lastW = innerWidth;
+  addEventListener('resize', () => {
+    if (Math.abs(innerWidth - lastW) < 40) return;   // мелкие дёрганья (адресная строка на телефоне) игнорируем
+    lastW = innerWidth;
+    clearTimeout(t);
+    t = setTimeout(() => { try { showView(VIEW); } catch (e) {} }, 250);
+  });
+})();
