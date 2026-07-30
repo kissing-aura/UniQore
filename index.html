@@ -198,6 +198,46 @@
     .byn-sign{height:.82em;width:auto;vertical-align:-.09em;display:inline-block}
     .cur-switch__btn .byn-sign{height:1.02em;vertical-align:-.16em}
   </style>
+
+  <!-- Волна 4: блоки «Что входит в цену» и «Работаем по договору».
+       Главная не грузит premium.css, а держать стили здесь inline дешевле, чем
+       пересобирать bundle.css и бампать ?v= на всех 52 страницах. -->
+  <style>
+    .inout,.legalx{padding:40px 0}
+    .inout__head{max-width:660px;margin:0 0 34px}
+    .inout__sub{margin:14px 0 0;font-size:16px;line-height:1.6;color:var(--color-text-muted,#949BA8)}
+    .inout__grid,.legalx__grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .inout__col,.legalx__card{border:1px solid var(--color-border,#1E2536);border-radius:18px;padding:28px 26px}
+    .inout__col--yes{border-color:rgba(205,255,79,.22)}
+    .inout__cap{display:flex;align-items:center;gap:9px;font-family:var(--font-mono,monospace);font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px}
+    .inout__col--yes .inout__cap{color:var(--color-accent,#CDFF4F)}
+    .inout__col--no .inout__cap{color:var(--color-text-muted,#949BA8)}
+    .inout__list,.legalx__list{list-style:none;margin:0;padding:0;display:grid;gap:13px}
+    .inout__list li,.legalx__list li{display:grid;grid-template-columns:17px 1fr;gap:11px;align-items:start;font-size:15px;line-height:1.5}
+    .inout__col--yes .inout__list li,.legalx__list li{color:#fff}
+    .inout__col--no .inout__list li{color:var(--color-text-muted,#949BA8)}
+    .inout__list li s{color:var(--color-text-muted,#949BA8);text-decoration:none}
+    .inout__ic{margin-top:2px;flex-shrink:0}
+    .inout__note{margin:24px auto 0;max-width:780px;font-size:15px;line-height:1.65;color:var(--color-text-muted,#949BA8);border-left:2px solid rgba(205,255,79,.45);padding-left:15px}
+    .inout__note b{color:#fff;font-weight:650}
+    .legalx__tag{display:inline-block;font-family:var(--font-mono,monospace);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--color-accent,#CDFF4F);margin-bottom:12px}
+    .legalx__title{display:block;font-size:19px;font-weight:700;margin-bottom:14px}
+    .legalx__row{display:block;font-size:15px;line-height:1.6;color:var(--color-text-muted,#949BA8)}
+    .legalx__links{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:18px}
+    .legalx__phone{font-size:18px;font-weight:700;color:#fff;text-decoration:none}
+    .legalx__phone:hover{color:var(--color-accent,#CDFF4F)}
+    .legalx__link{font-size:14.5px;color:var(--color-accent,#CDFF4F);text-decoration:none}
+    .legalx__link:hover{text-decoration:underline}
+    .legalx__list{margin-bottom:20px}
+    .legalx__req{display:flex;gap:28px;flex-wrap:wrap;border-top:1px solid var(--color-border,#1E2536);padding-top:16px}
+    .legalx__req div{display:grid;gap:3px}
+    .legalx__req span{font-family:var(--font-mono,monospace);font-size:10.5px;letter-spacing:.06em;color:var(--color-text-muted,#949BA8)}
+    .legalx__req b{font-size:15px;font-variant-numeric:tabular-nums}
+    @media(max-width:760px){
+      .inout__grid,.legalx__grid{grid-template-columns:1fr}
+      .inout__col,.legalx__card{padding:24px 20px}
+    }
+  </style>
   <!-- mobile-refactor.css теперь в bundle.css (последним, override) -->
 </head>
 <body>
@@ -588,6 +628,51 @@
       </div>
     </section>
 
+    <!-- Границы работ: что входит в цену, что оплачивается отдельно.
+         Состав выверен — менять только по согласованию. -->
+    <section class="inout" id="granicy">
+      <div class="container">
+        <div class="inout__head" data-reveal>
+          <h2 class="section-title">Что входит в цену,<br>а что нет</h2>
+          <p class="inout__sub">Границы работ мы проговариваем до оплаты и фиксируем в договоре — чтобы «а это отдельно» не всплыло в середине проекта.</p>
+        </div>
+
+        <div class="inout__grid">
+          <div class="inout__col inout__col--yes" data-reveal>
+            <div class="inout__cap">
+              <svg class="inout__ic" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Входит в цену
+            </div>
+            <ul class="inout__list">
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Дизайн под вашу нишу</b> — собираем с нуля, не подставляем шаблон</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Структура и тексты</b> — пишем мы, вы читаете и правите под себя</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Мобильная версия</b> — собираем и проверяем на телефоне отдельно, а не «ужимаем десктоп»</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Хостинг и SSL</b> — держим на своём VPS, отдельно платить не нужно</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Аналитика и приём заявок</b> — Метрика, форма, уведомления в Telegram или CRM</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Текущие правки после запуска</b> — входят в подписку</span></li>
+            </ul>
+          </div>
+
+          <div class="inout__col inout__col--no" data-reveal data-reveal-delay="1">
+            <div class="inout__cap">
+              <svg class="inout__ic" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+              Не входит — оплачивается отдельно
+            </div>
+            <ul class="inout__list">
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><b>Домен</b> — сам адрес сайта оплачивается отдельно от разработки</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><b>Фотографии и изображения</b> — берём ваши. Если их нет, подберём стоковые — но ваши собственные обычно работают лучше</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><b>Профессиональная фото- и видеосъёмка</b> — делаем, но считаем отдельной строкой</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><b>Рекламный бюджет</b> — платите площадке напрямую, кабинет остаётся ваш</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><b>Наполнение каталога позициями</b> — если товаров сотни, это отдельная работа</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><b>Новые модули сверх ТЗ</b> — то, что вы захотите добавить уже после согласования</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="inout__note" data-reveal><b>Важно:</b> если мы сами что-то недооценили при составлении ТЗ — доделываем за свой счёт. Отдельно считается только то, что вы решите добавить сверх согласованного.</p>
+      </div>
+    </section>
+
     <!-- MORPH SIGNATURE — «Хаос → Система» (js/morph3d.js; мобилка/слабый GPU → постер) -->
     <section class="morph-stage" id="morph" aria-label="Хаос бизнеса собирается в систему">
       <div class="morph-pin">
@@ -878,6 +963,44 @@
     <!-- STACK SECTION -->
 
     <!-- CONTACT SECTION -->
+    <!-- Офис и реквизиты. Формулировки выверены — правки согласовывать. -->
+    <section class="legalx" id="o-kompanii">
+      <div class="container">
+        <div class="inout__head" data-reveal>
+          <h2 class="section-title">За сайтом —<br>реальная компания</h2>
+          <p class="inout__sub">Офис в Москва-Сити, работа по договору с юрлицом — а не перевод на карту незнакомому человеку.</p>
+        </div>
+
+        <div class="legalx__grid">
+          <div class="legalx__card" data-reveal>
+            <span class="legalx__tag">Наш офис</span>
+            <b class="legalx__title">Neva Towers · Москва-Сити</b>
+            <span class="legalx__row">1-й Красногвардейский проезд, 17</span>
+            <span class="legalx__row">м. Выставочная · Деловой центр</span>
+            <div class="legalx__links">
+              <a href="tel:+79616495107" class="legalx__phone">+7 961 649-51-07</a>
+              <a href="https://yandex.ru/maps/?text=Neva%20Towers%201-й%20Красногвардейский%20проезд%2017" target="_blank" rel="noopener" class="legalx__link">На Яндекс.Картах →</a>
+            </div>
+          </div>
+
+          <div class="legalx__card" data-reveal data-reveal-delay="1">
+            <span class="legalx__tag">Официально</span>
+            <b class="legalx__title">Работаем по договору</b>
+            <ul class="legalx__list">
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Цена зафиксирована в договоре до старта</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Поэтапная сдача — не приняли этап, дальше не платите</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Исходники передаём вам</span></li>
+              <li><svg class="inout__ic" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="var(--color-accent,#CDFF4F)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Оплата на расчётный счёт, с закрывающими документами</span></li>
+            </ul>
+            <div class="legalx__req">
+              <div><span>ОГРН</span><b>1257700498978</b></div>
+              <div><span>ИНН</span><b>9703230935</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="contact" id="contact">
       <canvas class="contact__net" aria-hidden="true"></canvas>
       <div class="container">
