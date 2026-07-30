@@ -305,6 +305,61 @@
         body: JSON.stringify(data)
       });
     }
+    // ── черновик контакта: человек может ввести телефон и уйти, не дожав форму (нашли на
+    // зависании формы 30.07.2026). Вебвизор Яндекса маскирует такие поля в записи сеанса —
+    // это защита самого Яндекса, со стороны сайта не отключается, и мы обещаем посетителям
+    // "обезличенную статистику" в cookie-баннере, так что и не должны. Вместо этого сохраняем
+    // РЕАЛЬНО введённый контакт напрямую в CRM — только когда похоже на настоящий номер/tg,
+    // с fetch(keepalive) чтобы пережить закрытие вкладки, без блокировки UI и без ожидания ответа.
+    var draftFormEl = form;
+    var draftSent = false, formSubmittedOk = false, lastDraftContact = '', draftTimer = null;
+    function trySendDraft() {
+      if (formSubmittedOk || draftSent) return;
+      // без согласия на обработку персональных данных черновик не шлём — форма не просто
+      // так требует чекбокс, обходить его молча нельзя (поймано классификатором безопасности).
+      var consentEl = draftFormEl.querySelector('#sy-consent');
+      if (consentEl && !consentEl.checked) return;
+      var contactEl = draftFormEl.querySelector('#sy-contact');
+      var v = (contactEl && contactEl.value || '').trim();
+      if (!v || !validContact(v) || v === lastDraftContact) return;
+      lastDraftContact = v;
+      var nameEl = draftFormEl.querySelector('#sy-name');
+      var payload = Object.assign({
+        name: (nameEl && nameEl.value || '').trim() || 'Не указано',
+        contact: v,
+        business: (draftFormEl.querySelector('#sy-niche') || {}).value || '',
+        task: '[черновик — форму не отправили]',
+        website: '', draft: true
+      }, getTrafficSource());
+      try {
+        fetch(CMD_BRIDGE_URL, {
+          method: 'POST', keepalive: true,
+          headers: { 'Content-Type': 'application/json', apikey: CMD_ANON_KEY, Authorization: 'Bearer ' + CMD_ANON_KEY, 'x-bridge-secret': CMD_BRIDGE_SECRET },
+          body: JSON.stringify(payload)
+        }).catch(function () {});
+      } catch (e) {}
+    }
+    (function () {
+      var contactEl = form.querySelector('#sy-contact');
+      var consentEl = form.querySelector('#sy-consent');
+      if (!contactEl) return;
+      contactEl.addEventListener('input', function () {
+        clearTimeout(draftTimer);
+        draftTimer = setTimeout(trySendDraft, 2500);
+      });
+      // согласие поставили ПОСЛЕ того как уже напечатали номер — тоже даёт право попробовать черновик
+      // + с этого момента Вебвизор перестаёт маскировать поле (ym-record-keys, официальный атрибут
+      // Яндекса — до согласия поле остаётся замаскировано как обычно, ничего не меняем заранее)
+      if (consentEl) {
+        consentEl.addEventListener('change', function () {
+          if (consentEl.checked) { trySendDraft(); contactEl.classList.add('ym-record-keys'); }
+          else contactEl.classList.remove('ym-record-keys');
+        });
+        if (consentEl.checked) contactEl.classList.add('ym-record-keys');
+      }
+      document.addEventListener('visibilitychange', function () { if (document.hidden) trySendDraft(); });
+      window.addEventListener('pagehide', trySendDraft);
+    })();
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var now = Date.now();
@@ -340,6 +395,7 @@
       Promise.race([Promise.all([apiPromise, bridgePromise]), hardDeadline]).then(function (results) {
         var saved = results[0] || results[1];
         if (saved) {
+          formSubmittedOk = true; clearTimeout(draftTimer);   // реальная заявка ушла — черновик больше не нужен
           // Конверсия засчитывается на РЕАЛЬНУЮ отправку (не на клик) — цель для Директа/Ads.
           // В Метрике нужно создать JS-цель с идентификатором «lead».
           try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'lead'); } catch (e) {}
