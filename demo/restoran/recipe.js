@@ -132,14 +132,17 @@
   // ── Финансы (8 месяцев) ──
   const finance = [];
   for (let m = 7; m >= 0; m--) {
-    const baseRev = 18000000 + (7 - m) * 900000 + ((m * 5) % 3) * 1600000;
+    // масштаб сведён с операционными данными: 24 заказа в день при среднем чеке ~1 000 ₽
+    // дают ~720 000 ₽ в месяц. Раньше в финансах стояло 18-25 млн — это 900 заказов в день,
+    // и рядом с «24 заказа» и «выручка за день 12 340 ₽» читалось как «CRM врёт»
+    const baseRev = 600000 + (7 - m) * 30000 + ((m * 5) % 3) * 55000;
     finance.push({ id: 'rfi_rev' + m,  type: 'income',  amount: baseRev,                    category: 'Доставка',     date: monthAgo(m) });
     finance.push({ id: 'rfi_hall' + m, type: 'income',  amount: Math.round(baseRev * 0.18), category: 'Зал (самовынос)', date: monthAgo(m) });
     finance.push({ id: 'rfi_cogs' + m, type: 'expense', amount: Math.round(baseRev * 0.42), category: 'Продукты',     date: monthAgo(m) });
-    finance.push({ id: 'rfi_sal' + m,  type: 'expense', amount: 2100000,                    category: 'Зарплаты',     date: monthAgo(m) });
-    finance.push({ id: 'rfi_kur' + m,  type: 'expense', amount: 900000 + (m % 4) * 120000,  category: 'Курьеры',      date: monthAgo(m) });
-    finance.push({ id: 'rfi_ads' + m,  type: 'expense', amount: 525000 + (m % 3) * 150000,  category: 'Реклама',      date: monthAgo(m) });
-    if (m % 3 === 0) finance.push({ id: 'rfi_rent' + m, type: 'expense', amount: 1350000, category: 'Аренда', date: monthAgo(m) });
+    finance.push({ id: 'rfi_sal' + m,  type: 'expense', amount: 180000,                     category: 'Зарплаты',     date: monthAgo(m) });
+    finance.push({ id: 'rfi_kur' + m,  type: 'expense', amount: 90000 + (m % 4) * 8000,     category: 'Курьеры',      date: monthAgo(m) });
+    finance.push({ id: 'rfi_ads' + m,  type: 'expense', amount: 45000 + (m % 3) * 12000,    category: 'Реклама',      date: monthAgo(m) });
+    if (m % 3 === 0) finance.push({ id: 'rfi_rent' + m, type: 'expense', amount: 90000, category: 'Аренда', date: monthAgo(m) });
   }
 
   window.RECIPE = {
