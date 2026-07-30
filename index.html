@@ -146,10 +146,11 @@
   </script>
 
   <!-- CSS -->
-  <!-- CSS: 13 файлов объединены в один bundle.css — 1 render-blocking запрос вместо 13.
+  <!-- CSS: 14 файлов объединены в один bundle.css — 1 render-blocking запрос вместо 14.
        Критично для нестабильного канала (РФ): одного зависшего CSS хватало на чёрный экран.
-       Bundle пересобирать при правке любого исходника (см. css/*.css). -->
-  <link rel="stylesheet" href="css/bundle.css?v=20260728e">
+       Bundle пересобирать при правке любого исходника (см. css/*.css).
+       Порядок хвоста: … dash.css → mobile-refactor.css → wave2.css (последним). -->
+  <link rel="stylesheet" href="css/bundle.css?v=20260731a">
 
   <!-- GSAP: load after first scroll to not block initial render -->
   <script>
@@ -305,23 +306,29 @@
 
           <!-- Левая колонка: заголовок + CTA -->
           <div class="hero__left">
-            <div class="hero__eyebrow">
-              <span class="dot dot--green"></span>
-              Технологический партнёр бизнеса
-            </div>
             <h1 class="hero__title">
-              Наводим <em>порядок</em><br>
-              в вашем бизнесе
+              CRM и сайты, собранные<br>
+              <em>под ваш бизнес</em>
             </h1>
-            <p class="hero__subtitle">Сайты, реклама, CRM и автоматизация — от отдельной услуги до полной системы под ключ. Одна команда закрывает всю цифровую сторону.</p>
+            <p class="hero__subtitle">Сайт, CRM, чат-боты и реклама — под процессы вашей ниши. Запуск за 4–6 дней.</p>
+            <div class="hero__pricebar">
+              <span class="hero__price"><span data-usd="150" data-prefix="от ">от $150</span></span>
+              <span class="hero__price-note">Старт с любой услуги. Объём и цену фиксируем в договоре до старта.</span>
+            </div>
+            <div class="hero__assurance hero__assurance--lead" data-reveal data-reveal-delay="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Работаем по этапам: <strong>не приняли этап — дальше не платите.</strong></span>
+            </div>
             <div class="hero__actions">
-              <a href="#contact" class="btn btn--accent btn--lg">Получить разбор в течение суток</a>
-              <a href="#uslugi" class="btn btn--ghost btn--lg">Наши услуги →</a>
+              <a href="#cases" class="btn btn--accent btn--lg">Посмотреть, как это выглядит</a>
+              <a href="#contact" class="btn btn--ghost btn--lg">Рассчитать стоимость</a>
             </div>
-            <div class="hero__assurance" data-reveal data-reveal-delay="3">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Объём и цену фиксируем письменно до старта. Работаем по этапам: <strong>не приняли этап — дальше не платите.</strong></span>
-            </div>
+
+            <!-- Мобильный визуал: реальный скриншот живой CRM клиента (на десктопе виден мокап справа) -->
+            <a class="hero__proofshot" href="/demo/dragon/" target="_blank" rel="noopener">
+              <img src="assets/demo/dragon.webp?v=1" width="760" height="475" alt="Дашборд CRM Dragon Brand: заявки, выручка, склад" loading="eager" fetchpriority="high" decoding="async">
+              <span class="hero__proofshot-cap"><b>Dragon Brand</b> — живая CRM, собранная нами. Открыть и потыкать →</span>
+            </a>
           </div>
 
           <!-- Правая колонка: видео в premium frame -->
@@ -417,18 +424,18 @@
           </div>
           <div class="hero__metric-sep"></div>
           <div class="hero__metric">
-            <span class="hero__metric-num">100%</span>
-            <span class="hero__metric-label">под ваш бизнес</span>
+            <span class="hero__metric-num">6</span>
+            <span class="hero__metric-label">живых демо — можно потыкать</span>
           </div>
           <div class="hero__metric-sep"></div>
           <div class="hero__metric">
-            <span class="hero__metric-num">от 11 700 ₽</span>
-            <span class="hero__metric-label">старт с любой услуги</span>
+            <span class="hero__metric-num">6</span>
+            <span class="hero__metric-label">сайтов клиентов в портфолио</span>
           </div>
           <div class="hero__metric-sep"></div>
           <div class="hero__metric">
-            <span class="hero__metric-num">24/7</span>
-            <span class="hero__metric-label">система без остановок</span>
+            <span class="hero__metric-num">0 ₽</span>
+            <span class="hero__metric-label">предоплата — платите по этапам</span>
           </div>
         </div>
 
@@ -438,6 +445,79 @@
       <div class="hero__glow hero__glow--1"></div>
       <div class="hero__glow hero__glow--2"></div>
 
+    </section>
+
+    <!-- CASES SECTION -->
+        <section class="cases" id="cases">
+      <div class="container cases__header">
+        <div class="section-label">Живые демо</div>
+        <h2 class="section-title">Шесть систем,<br>которые <em>можно открыть</em></h2>
+        <p class="demo-sub">На карточке — скриншот. По клику открывается сама система: ходите по разделам, создавайте заявки, смотрите отчёты. Ровно то, что получите вы.</p>
+      </div>
+      <div class="container">
+        <div class="demo-grid">
+          <a class="demo-card" href="/demo/dragon/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__shot"><img src="assets/demo/dragon.webp?v=1" width="760" height="475" alt="Дашборд CRM Dragon Brand: заявки, выручка, склад по размерам" loading="lazy" decoding="async"></div>
+            <div class="demo-card__top"><span class="demo-card__tag">Бренд одежды</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Dragon Brand</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Заказы из Instagram, Telegram и сайта врассыпную — статусы теряются, размеры путаются.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Все каналы в одной CRM: заказы, склад по размерам, статусы доставки, программа лояльности.</p>
+            </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/restoran/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__shot"><img src="assets/demo/restoran.webp?v=1" width="760" height="475" alt="CRM доставки «Вкусно»: заказы, живая кухня, ИИ-аналитик" loading="lazy" decoding="async"></div>
+            <div class="demo-card__top"><span class="demo-card__tag">Доставка еды</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Вкусно</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Заказы по телефону и в чатах, курьеры без трекинга, кухня не успевает.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Приём заказов, экран кухни, трекинг курьера и аналитика продаж — в одном окне.</p>
+            </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/nedvizhka/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__shot"><img src="assets/demo/nedvizhka.webp?v=1" width="760" height="475" alt="CRM «Квартал»: воронка лидов, каталог объектов, ИИ-оценка" loading="lazy" decoding="async"></div>
+            <div class="demo-card__top"><span class="demo-card__tag">Недвижимость</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Квартал</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Объекты и показы в блокнотах и Excel, брони и залоги теряются между менеджерами.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>База объектов, календарь показов, сделки, документы и залоги под контролем 24/7.</p>
+            </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/klinika/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__shot"><img src="assets/demo/klinika.webp?v=1" width="760" height="475" alt="CRM «Денталис»: ИИ-разбор снимка и план лечения" loading="lazy" decoding="async"></div>
+            <div class="demo-card__top"><span class="demo-card__tag">Стоматология</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Денталис</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Бумажные карты пациентов, ручные реестры ДМС, 4+ часа в день на документы.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Карта пациента, расписание, автоматические реестры ДМС и вся история лечения.</p>
+            </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/command/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__shot"><img src="assets/demo/command.webp?v=1" width="760" height="475" alt="Uniqore Command: финансовое здоровье, отделы, проекты" loading="lazy" decoding="async"></div>
+            <div class="demo-card__top"><span class="demo-card__tag">Управление бизнесом</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Uniqore Command</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Бизнес живёт в десяти таблицах — не видно ни финансов, ни загрузки команды.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Командный центр: финздоровье, отделы, проекты, задачи и аналитика в одном месте.</p>
+            </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+          <a class="demo-card" href="/demo/stomatology/" target="_blank" rel="noopener" data-reveal>
+            <div class="demo-card__shot"><img src="assets/demo/stomatology.webp?v=1" width="760" height="475" alt="DENTALIS: приём с AI-ассистентом — карта заполняется голосом" loading="lazy" decoding="async"></div>
+            <div class="demo-card__top"><span class="demo-card__tag">AI-ассистент</span><span class="demo-card__live">● live</span></div>
+            <h3 class="demo-card__title">Денталис · AI-ассистент врача</h3>
+            <div class="demo-card__pp">
+              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Врач тратит треть приёма на заполнение карты вручную — или пишет её вечером по памяти.</p>
+              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Врач говорит — ИИ сам ведёт карту пациента и собирает план лечения в реальном времени.</p>
+            </div>
+            <span class="demo-card__cta">Открыть демо →</span>
+          </a>
+        </div>
+      </div>
     </section>
 
     <!-- УСЛУГИ — три двери (репозиционирование v3) -->
@@ -629,73 +709,6 @@
     <!-- SERVICES SECTION -->
 
     <!-- BEFORE / AFTER SECTION -->
-
-    <!-- CASES SECTION -->
-        <section class="cases" id="cases">
-      <div class="container cases__header">
-        <div class="section-label">Живые демо</div>
-        <h2 class="section-title">Не картинки —<br><em>потрогайте систему</em></h2>
-        <p class="demo-sub">Это не скриншоты. Откройте и покликайте реальную рабочую систему под нишу — ровно то, что получите вы.</p>
-      </div>
-      <div class="container">
-        <div class="demo-grid">
-          <a class="demo-card" href="/demo/dragon/" target="_blank" rel="noopener" data-reveal>
-            <div class="demo-card__top"><span class="demo-card__tag">Бренд одежды</span><span class="demo-card__live">● live</span></div>
-            <h3 class="demo-card__title">Dragon Brand</h3>
-            <div class="demo-card__pp">
-              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Заказы из Instagram, Telegram и сайта врассыпную — статусы теряются, размеры путаются.</p>
-              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Все каналы в одной CRM: заказы, склад по размерам, статусы доставки, программа лояльности.</p>
-            </div>
-            <span class="demo-card__cta">Открыть демо →</span>
-          </a>
-          <a class="demo-card" href="/demo/restoran/" target="_blank" rel="noopener" data-reveal>
-            <div class="demo-card__top"><span class="demo-card__tag">Доставка еды</span><span class="demo-card__live">● live</span></div>
-            <h3 class="demo-card__title">Вкусно</h3>
-            <div class="demo-card__pp">
-              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Заказы по телефону и в чатах, курьеры без трекинга, кухня не успевает.</p>
-              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Приём заказов, экран кухни, трекинг курьера и аналитика продаж — в одном окне.</p>
-            </div>
-            <span class="demo-card__cta">Открыть демо →</span>
-          </a>
-          <a class="demo-card" href="/demo/nedvizhka/" target="_blank" rel="noopener" data-reveal>
-            <div class="demo-card__top"><span class="demo-card__tag">Недвижимость</span><span class="demo-card__live">● live</span></div>
-            <h3 class="demo-card__title">Квартал</h3>
-            <div class="demo-card__pp">
-              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Объекты и показы в блокнотах и Excel, брони и залоги теряются между менеджерами.</p>
-              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>База объектов, календарь показов, сделки, документы и залоги под контролем 24/7.</p>
-            </div>
-            <span class="demo-card__cta">Открыть демо →</span>
-          </a>
-          <a class="demo-card" href="/demo/klinika/" target="_blank" rel="noopener" data-reveal>
-            <div class="demo-card__top"><span class="demo-card__tag">Стоматология</span><span class="demo-card__live">● live</span></div>
-            <h3 class="demo-card__title">Денталис</h3>
-            <div class="demo-card__pp">
-              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Бумажные карты пациентов, ручные реестры ДМС, 4+ часа в день на документы.</p>
-              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Карта пациента, расписание, автоматические реестры ДМС и вся история лечения.</p>
-            </div>
-            <span class="demo-card__cta">Открыть демо →</span>
-          </a>
-          <a class="demo-card" href="/demo/command/" target="_blank" rel="noopener" data-reveal>
-            <div class="demo-card__top"><span class="demo-card__tag">Управление бизнесом</span><span class="demo-card__live">● live</span></div>
-            <h3 class="demo-card__title">Uniqore Command</h3>
-            <div class="demo-card__pp">
-              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Бизнес живёт в десяти таблицах — не видно ни финансов, ни загрузки команды.</p>
-              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Командный центр: финздоровье, отделы, проекты, задачи и аналитика в одном месте.</p>
-            </div>
-            <span class="demo-card__cta">Открыть демо →</span>
-          </a>
-          <a class="demo-card" href="/demo/stomatology/" target="_blank" rel="noopener" data-reveal>
-            <div class="demo-card__top"><span class="demo-card__tag">AI-ассистент</span><span class="demo-card__live">● live</span></div>
-            <h3 class="demo-card__title">Денталис · AI-ассистент врача</h3>
-            <div class="demo-card__pp">
-              <p><span class="demo-card__lbl demo-card__lbl--was">Было</span>Врач тратит треть приёма на заполнение карты вручную — или пишет её вечером по памяти.</p>
-              <p><span class="demo-card__lbl demo-card__lbl--did">Стало</span>Врач говорит — ИИ сам ведёт карту пациента и собирает план лечения в реальном времени.</p>
-            </div>
-            <span class="demo-card__cta">Открыть демо →</span>
-          </a>
-        </div>
-      </div>
-    </section>
 
     <section class="mirror-section" id="mirror">
       <div class="container">
@@ -962,8 +975,8 @@
             </div>
 
             <div class="quiz__step" data-step="4">
-              <div class="quiz__q">Куда прислать разбор?</div>
-              <div class="quiz__reward"><span>🎁</span><span>Разбор ваших потерь + план автоматизации под нишу — в течение суток, бесплатно и без обязательств.</span></div>
+              <div class="quiz__q">Куда прислать смету и разбор?</div>
+              <div class="quiz__reward"><span>🎁</span><span>Смета, разбор ваших потерь и план автоматизации под нишу — в течение суток, бесплатно и без обязательств.</span></div>
               <div class="form-group">
                 <label for="name">Ваше имя</label>
                 <input type="text" id="name" name="name" placeholder="Александр" required>
@@ -972,7 +985,7 @@
                 <label for="contact-input">Telegram или телефон</label>
                 <input type="text" id="contact-input" name="contact" placeholder="@username или +375..." required>
               </div>
-              <button type="submit" class="btn btn--accent btn--lg btn--full">Получить разбор в течение суток</button>
+              <button type="submit" class="btn btn--accent btn--lg btn--full">Получить смету и разбор — за сутки</button>
             </div>
 
             <input type="hidden" id="business" name="business">

@@ -930,3 +930,19 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-err{max-height:0;overflow:hidden;opacity:0;color:#ff8a8a;font-size:12px;line-height:1.4;transition:max-height .2s,opacity .2s,margin .2s}
 .sy-err.show{max-height:44px;opacity:1;margin:6px 0 2px}
 .sy-err--center{text-align:center}
+
+/* ── Волна 2 аудита 30.07: первый экран мобилки ─────────────────────────────
+   Мокап должен попадать в первый экран (844px): режем верхний отступ и
+   поджимаем ритм, порядок в разметке — H1 → лид → цена → CTA → мокап. */
+.sy-hero__pricebar{align-items:flex-start}
+.sy-pricepill__note{max-width:44ch}
+@media(max-width:760px){
+  .sy-hero{padding-top:74px}
+  .sy-hero__h1{margin-top:10px}
+  .sy-hero__lead{margin-top:14px;font-size:16px;line-height:1.5}
+  .sy-hero__pricebar{margin-top:16px;flex-direction:column;gap:7px}
+  .sy-pricepill__note{font-size:12.5px;line-height:1.4;max-width:100%}
+  .sy-hero__cta{margin-top:18px;gap:10px}
+  .sy-hero__mviz{margin:22px auto 34px;max-width:228px}
+  .sy-hero__benefits{margin-top:26px}
+}

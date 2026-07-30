@@ -1,0 +1,54 @@
+/* Волна 2 аудита 30.07.2026 — первый экран и порядок блоков.
+   Файл идёт в bundle.css последним (после mobile-refactor.css). */
+
+/* ── HERO главной: цена, ассуранс и мобильный визуал-доказательство ── */
+.hero__left { gap: 24px; }
+
+.hero__pricebar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.hero__price {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(24px, 2.6vw, 32px);
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--color-accent);
+  white-space: nowrap;
+  text-shadow: 0 0 34px rgba(205, 255, 79, .26);
+}
+.hero__price-note { font-size: 13px; line-height: 1.42; color: var(--color-text-secondary); max-width: 32ch; }
+.hero__assurance--lead { margin-top: 0; font-size: 13.5px; }
+
+/* Реальный скриншот живой CRM вместо нарисованного дашборда.
+   dash.css возвращал мокап на мобилку (@media 900px, display:block !important) —
+   он занимал 919px и показывал выдуманные цифры. Меняем на скриншот живого демо. */
+.hero__proofshot { display: none; }
+@media (max-width: 960px) {
+  .hero__split .hero__right { display: none !important; }
+  .hero__proofshot {
+    display: block; position: relative; margin-top: 2px;
+    border: 1px solid rgba(255, 255, 255, .12); border-radius: 16px; overflow: hidden;
+    background: #0d121c; text-decoration: none;
+    box-shadow: 0 26px 54px -26px rgba(0, 0, 0, .85), 0 0 0 1px rgba(205, 255, 79, .06);
+  }
+  .hero__proofshot img { width: 100%; height: auto; display: block; }
+  .hero__proofshot-cap {
+    display: block; padding: 11px 14px; font-size: 12.5px; line-height: 1.45;
+    color: var(--color-text-secondary); border-top: 1px solid rgba(255, 255, 255, .08);
+  }
+  .hero__proofshot-cap b { color: #fff; font-weight: 700; }
+}
+
+/* ── Демо-карточки: скриншот вместо голого текста ── */
+.demo-card__shot {
+  margin: -26px -26px 3px; background: #0d121c; overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+.demo-card__shot img {
+  width: 100%; height: auto; display: block;
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+}
+.demo-card:hover .demo-card__shot img { transform: scale(1.035); }
+@media (prefers-reduced-motion: reduce) {
+  .demo-card__shot img { transition: none; }
+  .demo-card:hover .demo-card__shot img { transform: none; }
+}
