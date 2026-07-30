@@ -51,7 +51,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260727c">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260724e">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260730a">
   <style>/* критический размер видео инлайном — держит вёрстку даже при устаревшем кэше внешнего CSS (защита от «гигант-лого») */
   .nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
   .nav__logo-vid{width:100%;height:100%;object-fit:cover;display:none}
@@ -865,12 +865,7 @@
               <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Поддержка после сдачи</span>
             </div>
             <button type="submit" class="sy-btn sy-btn--main sy-btn--lg sy-form__submit">Получить бесплатный расчёт</button>
-            <label class="sy-consent">
-              <input type="checkbox" id="sy-consent" name="consent">
-              <span class="sy-consent__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
-              <span class="sy-consent__txt">Отправляя заявку, я соглашаюсь с <a href="/politika-konfidencialnosti/" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой персональных данных.</span>
-            </label>
-            <div class="sy-err sy-err--center" id="syErrConsent"></div>
+            <div class="sy-form__consent-note">Заполняя форму, вы соглашаетесь с <a href="/politika-konfidencialnosti/" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой персональных данных.</div>
             <div class="sy-form__note"><span class="dot"></span>Заявка приходит нам в Telegram и в CRM. Ответим за 15 минут в рабочее время.</div>
             <div class="sy-trustrow">
               <span class="sy-trustrow__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>По договору</span>
@@ -932,7 +927,7 @@
     window.addEventListener('scroll',function(){var n=document.getElementById('nav');if(n)n.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
   </script>
   <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
-  <script src="/js/sayty.js?v=20260730b" defer></script>
+  <script src="/js/sayty.js?v=20260730c" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
   <script src="/js/cookie.js?v=20260730a" defer></script>
 </body>

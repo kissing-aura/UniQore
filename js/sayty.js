@@ -306,19 +306,16 @@
       });
     }
     // ── черновик контакта: человек может ввести телефон и уйти, не дожав форму (нашли на
-    // зависании формы 30.07.2026). Вебвизор Яндекса маскирует такие поля в записи сеанса —
-    // это защита самого Яндекса, со стороны сайта не отключается, и мы обещаем посетителям
-    // "обезличенную статистику" в cookie-баннере, так что и не должны. Вместо этого сохраняем
-    // РЕАЛЬНО введённый контакт напрямую в CRM — только когда похоже на настоящий номер/tg,
-    // с fetch(keepalive) чтобы пережить закрытие вкладки, без блокировки UI и без ожидания ответа.
+    // зависании формы 30.07.2026). Согласие на обработку ПДн теперь не чекбокс, а пассивная
+    // формулировка под кнопкой ("заполняя форму, вы соглашаетесь...", 152-ФЗ допускает такую
+    // форму conduct-based согласия, как и на главной форме сайта) — оно действует с момента,
+    // когда человек видит форму, поэтому черновик не ждёт отдельного клика. Вебвизор Яндекса
+    // маскирует поле по умолчанию; ym-record-keys снимает маскировку — ставим сразу, раз согласие
+    // уже действует. fetch(keepalive) переживает закрытие вкладки, не блокирует UI, не ждёт ответа.
     var draftFormEl = form;
     var draftSent = false, formSubmittedOk = false, lastDraftContact = '', draftTimer = null;
     function trySendDraft() {
       if (formSubmittedOk || draftSent) return;
-      // без согласия на обработку персональных данных черновик не шлём — форма не просто
-      // так требует чекбокс, обходить его молча нельзя (поймано классификатором безопасности).
-      var consentEl = draftFormEl.querySelector('#sy-consent');
-      if (consentEl && !consentEl.checked) return;
       var contactEl = draftFormEl.querySelector('#sy-contact');
       var v = (contactEl && contactEl.value || '').trim();
       if (!v || !validContact(v) || v === lastDraftContact) return;
@@ -341,22 +338,12 @@
     }
     (function () {
       var contactEl = form.querySelector('#sy-contact');
-      var consentEl = form.querySelector('#sy-consent');
       if (!contactEl) return;
+      contactEl.classList.add('ym-record-keys');   // согласие действует с показа формы — маскировку снимаем сразу
       contactEl.addEventListener('input', function () {
         clearTimeout(draftTimer);
         draftTimer = setTimeout(trySendDraft, 2500);
       });
-      // согласие поставили ПОСЛЕ того как уже напечатали номер — тоже даёт право попробовать черновик
-      // + с этого момента Вебвизор перестаёт маскировать поле (ym-record-keys, официальный атрибут
-      // Яндекса — до согласия поле остаётся замаскировано как обычно, ничего не меняем заранее)
-      if (consentEl) {
-        consentEl.addEventListener('change', function () {
-          if (consentEl.checked) { trySendDraft(); contactEl.classList.add('ym-record-keys'); }
-          else contactEl.classList.remove('ym-record-keys');
-        });
-        if (consentEl.checked) contactEl.classList.add('ym-record-keys');
-      }
       document.addEventListener('visibilitychange', function () { if (document.hidden) trySendDraft(); });
       window.addEventListener('pagehide', trySendDraft);
     })();
@@ -366,15 +353,12 @@
       if (now - last < 20000) return;
       var name = form.querySelector('#sy-name');
       var contact = form.querySelector('#sy-contact');
-      var consent = form.querySelector('#sy-consent');
       var ok = true;
       if (!name.value.trim()) { setErr(name, 'syErrName', 'Как к вам обращаться?'); ok = false; }
       else setErr(name, 'syErrName', '');
       if (!contact.value.trim()) { setErr(contact, 'syErrContact', 'Оставьте телефон или Telegram'); ok = false; }
       else if (!validContact(contact.value)) { setErr(contact, 'syErrContact', 'Проверьте: +7 900 000-00-00 или @username'); ok = false; }
       else setErr(contact, 'syErrContact', '');
-      if (consent && !consent.checked) { setErr(null, 'syErrConsent', 'Нужно согласие на обработку данных'); ok = false; }
-      else setErr(null, 'syErrConsent', '');
       if (!ok) return;
       last = now;
       if (errorRevertTimer) { clearTimeout(errorRevertTimer); errorRevertTimer = null; }
@@ -423,8 +407,6 @@
         if (f.id === 'sy-contact') setErr(null, 'syErrContact', '');
       });
     });
-    var consentEl = form.querySelector('#sy-consent');
-    if (consentEl) consentEl.addEventListener('change', function () { if (consentEl.checked) setErr(null, 'syErrConsent', ''); });
   }
 
   // ── Before/After compare sliders ──

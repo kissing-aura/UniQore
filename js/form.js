@@ -130,6 +130,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }).then(r => r.ok).catch(() => false);
   }
 
+  // ── черновик контакта: человек может ввести телефон и уйти, не дожав форму (нашли на
+  // зависании формы 30.07.2026). Согласие на обработку ПДн здесь — пассивная формулировка под
+  // кнопкой ("заполняя форму, вы соглашаетесь...", 152-ФЗ допускает conduct-based согласие),
+  // оно действует с момента, когда человек видит форму, поэтому черновик не ждёт отдельного
+  // клика. fetch(keepalive) переживает закрытие вкладки, не блокирует UI, не ждёт ответа.
+  let formSubmittedOk = false, draftSent = false, lastDraftContact = '', draftTimer = null;
+  function contactLooksValid(v) {
+    v = (v || '').trim();
+    const digits = (v.match(/\d/g) || []).length;
+    return v.includes('@') || digits >= 10;
+  }
+  function trySendDraft() {
+    if (formSubmittedOk || draftSent) return;
+    const contactEl = form.querySelector('#contact-input');
+    const v = (contactEl?.value || '').trim();
+    if (!v || !contactLooksValid(v) || v === lastDraftContact) return;
+    lastDraftContact = v;
+    const payload = {
+      name: form.querySelector('#name')?.value?.trim() || 'Не указано',
+      business: form.querySelector('#business')?.value?.trim() || '',
+      contact: v,
+      task: '[черновик — форму не отправили]',
+      website: '',
+    };
+    try {
+      fetch(CMD_BRIDGE_URL, {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json', apikey: CMD_ANON_KEY, Authorization: `Bearer ${CMD_ANON_KEY}`, 'x-bridge-secret': CMD_BRIDGE_SECRET },
+        body: JSON.stringify({ ...payload, draft: true }),
+      }).catch(() => {});
+    } catch (e) {}
+  }
+  (() => {
+    const contactEl = form.querySelector('#contact-input');
+    if (!contactEl) return;
+    contactEl.classList.add('ym-record-keys');   // согласие действует с показа формы — маскировку снимаем сразу
+    contactEl.addEventListener('input', () => { clearTimeout(draftTimer); draftTimer = setTimeout(trySendDraft, 2500); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) trySendDraft(); });
+    window.addEventListener('pagehide', trySendDraft);
+  })();
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
@@ -223,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (saved) {
+      formSubmittedOk = true; clearTimeout(draftTimer);   // реальная заявка ушла — черновик больше не нужен
       // Конверсия засчитывается на РЕАЛЬНУЮ доставку лида (не на клик по кнопке).
       // Счётчик берём из UQ_MID: uniqore.ru → 111003646 (РФ-реклама), .pro → 110585817.
       try { if (window.ym) ym(window.UQ_MID || 110585817, 'reachGoal', 'lead'); } catch (e) {}
