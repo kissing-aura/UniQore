@@ -359,7 +359,7 @@
     const all = scoped ? S.leads.filter(l=>l.managerId && scoped.includes(l.managerId)) : S.leads.filter(l=>l.managerId);
     let rows = all.filter(l=> (leadFilter.status==='all'||l.status===leadFilter.status) && (!leadFilter.q || (l.business+l.phone+l.niche).toLowerCase().includes(leadFilter.q.toLowerCase())));
     const chips = [['all','Все',all.length],...Object.keys(UQ.STATUS).map(k=>[k,UQ.STATUS[k].label,all.filter(l=>l.status===k).length])];
-    return `${topbar('Лиды','Все обработанные и назначенные номера · '+all.length, `<button class="btn btn--sm" data-toast="Экспорт доступен только владельцу (RLS)">${ic('doc')} Экспорт</button>`)}
+    return `${topbar('Лиды','Все обработанные и назначенные номера · '+all.length, `<button class="btn btn--sm" data-toast="Выгрузка базы в CSV — по правам владельца">${ic('doc')} Экспорт</button>`)}
       <div class="card card--pad">
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
           ${chips.map(([k,l,c])=>`<button class="chip ${leadFilter.status===k?'on':''}" data-lfilter="${k}">${l} <small>${c}</small></button>`).join('')}
@@ -424,7 +424,7 @@
     const paid = ps.filter(p=>p.status==='paid');
     const total = pending.reduce((a,p)=>a+p.amount,0);
     return `${topbar(isHead?'Выплаты команды':'Выплаты','$'+UQ.CUT+' за сделку · '+pending.length+' в очереди')}
-      <div class="kpirow" style="grid-template-columns:repeat(${isHead?2:3},1fr)">
+      <div class="kpirow kpirow--fixed" style="--kpi-cols:${isHead?2:3}">
         <div class="card kpi kpi--hero"><div class="eyebrow">К выплате</div><div class="kpi__val">${usd(total)}</div><div class="kpi__sub">${pending.reduce((a,p)=>a+p.deals,0)} сделок</div></div>
         <div class="card kpi"><div class="eyebrow">Выплачено · месяц</div><div class="kpi__val">${usd(paid.reduce((a,p)=>a+p.amount,0)+(isHead?0:7400))}</div><div class="kpi__sub">без задержек</div></div>
         ${isHead?'':`<div class="card kpi"><div class="eyebrow">Маржа Uniqore</div><div class="kpi__val">${usd(UQ.adminStats().net)}</div><div class="kpi__sub">${usd(UQ.NET)} с каждой сделки</div></div>`}
@@ -867,7 +867,16 @@
   }
 
   function vProgress(){
-    const daily=UQ.daily(), tasks=UQ.tasks(), streak=UQ.streak(), log=UQ.doneLog();
+    // менеджеру — только его карточки: раздел лежит в его меню, а канбан и журнал
+    // показывали задачи владельца («свести выплаты», «собеседовать менеджеров»)
+    // и чужие имена целиком
+    const meName=S.session.role==='manager'?(UQ.manager(S.session.managerId)||{}).name:null;
+    // у задач автор в поле owner, у журнала «Сделали» — в who; общие записи («Отдел») оставляем
+    const mine=t=>{ if(!meName) return true; const o=((t.owner||t.who)||'').trim();
+      if(!o || o==='Отдел') return true;
+      const first=meName.split(' ')[0];
+      return o===meName || meName.startsWith(o) || o.startsWith(first); };
+    const daily=UQ.daily(), tasks=UQ.tasks().filter(mine), streak=UQ.streak(), log=UQ.doneLog().filter(mine);
     const done=daily.filter(d=>d.done).length, total=daily.length, pct=total?Math.round(done/total*100):0;
     const next=daily.find(d=>d.frog&&!d.done)||daily.find(d=>!d.done);
     return `${topbar('Фокус дня','Доводим день до 100% по методу Ivy Lee', `<span class="pill pill--acc" style="align-self:center">${done}/${total} задач</span>`)}
@@ -950,8 +959,12 @@
 
   /* ════════════════════════ GOALS · OKR ═════════════════════════════════ */
   function vGoals(){
-    const g=UQ.goals();
-    const overall=Math.round(g.krs.reduce((a,k)=>a+Math.min(k.current/k.target,1),0)/g.krs.length*100);
+    const g0=UQ.goals();
+    // менеджеру не показываем денежные KR: «Выручка недели $67 200 / $84 000» —
+    // это деньги компании, а раздел лежит в его меню
+    const isMgr=S.session.role==='manager';
+    const g={...g0, krs:(g0.krs||[]).filter(k=>!(isMgr && k.money))};
+    const overall=g.krs.length?Math.round(g.krs.reduce((a,k)=>a+Math.min(k.current/k.target,1),0)/g.krs.length*100):0;
     return `${topbar('Цели недели','OKR · одна цель, измеримые результаты')}
       <div class="two">
         <div class="card okr">

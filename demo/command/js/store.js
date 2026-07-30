@@ -219,7 +219,13 @@
     // цели недели (OKR)
     const goals = {
       objective:'Запустить отдел продаж на полную мощность',
-      period:'Эта неделя · 30 июн – 6 июл',
+      // период считаем от текущей недели: строка была захардкожена и с июля
+      // висела рядом с настоящей датой в топбаре
+      period:(()=>{ const d=new Date(), wd=(d.getDay()+6)%7;
+        const mon=new Date(d); mon.setDate(d.getDate()-wd);
+        const sun=new Date(mon); sun.setDate(mon.getDate()+6);
+        const f=x=>x.toLocaleDateString('ru-RU',{day:'numeric',month:'short'}).replace('.','');
+        return 'Эта неделя · '+f(mon)+' – '+f(sun); })(),
       krs:[
         {label:'Закрытых сделок',current:56,target:70,unit:'',good:false},
         {label:'Конверсия звонок→сделка',current:9,target:12,unit:'%',good:false},
@@ -367,7 +373,7 @@
       {id:uid('n'),priority:'high',type:'client',title:'Клиника — риск ухода',text:'Не платит абонплату 14 дней',at:iso(today0()+13*36e5),read:false,pinned:false},
       {id:uid('n'),priority:'high',type:'sales',title:'4 сделки без активности',text:'Более 3 дней в пайплайне',at:iso(today0()+11*36e5),read:false,pinned:false},
       {id:uid('n'),priority:'high',type:'project',title:'CRM Agency — дедлайн прошёл',text:'Проект на этапе Research',at:iso(daysAgo(1)+16*36e5),read:false,pinned:false},
-      {id:uid('n'),priority:'normal',type:'sales',title:'Данила закрыл 4 сделки',text:'Лимит вырос до 80/день',at:iso(daysAgo(1)+12*36e5),read:true,pinned:false},
+      {id:uid('n'),priority:'normal',type:'sales',title:'Роман Д. закрыл 4 сделки',text:'Лимит вырос до 80/день',at:iso(daysAgo(1)+12*36e5),read:true,pinned:false},
       {id:uid('n'),priority:'normal',type:'hr',title:'2 кандидата на собеседование',text:'Завтра в 15:00',at:iso(daysAgo(1)+10*36e5),read:true,pinned:false},
       {id:uid('n'),priority:'normal',type:'finance',title:'Оплата от Магазина',text:'+$1 200 на Тинькофф',at:iso(daysAgo(2)+9*36e5),read:true,pinned:false},
     ];

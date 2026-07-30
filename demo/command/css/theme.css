@@ -969,3 +969,8 @@ svg.ic{width:16px;height:16px;flex:none;vertical-align:-2px}
 .uq-badge__sym{width:15px;height:auto;display:block;flex-shrink:0}
 .uq-badge__word{font-family:var(--font-head);font-weight:600;font-size:13px;letter-spacing:-.02em;color:#111}
 @media(max-width:900px){.uq-badge{top:auto;bottom:12px;right:12px}}
+
+/* KPI-строка с заданным числом колонок: раньше стояло инлайновым style, который
+   перебивал мобильный медиазапрос — на 375px три колонки по 95px обрезали «$2,600» */
+.kpirow--fixed{grid-template-columns:repeat(var(--kpi-cols,3),1fr)}
+@media(max-width:560px){.kpirow--fixed{grid-template-columns:1fr}}
