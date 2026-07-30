@@ -178,3 +178,17 @@
 .aiscan-scope .as-lock__box p { font-size: 14px; line-height: 1.6; color: var(--stx2); margin-bottom: 26px; }
 .aiscan-scope .as-lock__act { display: flex; gap: 12px; justify-content: center; }
 .aiscan-scope .as-lock__act .as-btn { width: auto; padding: 13px 22px; text-decoration: none; }
+
+/* ── телефон: выноски рядом со снимком физически не помещаются (текст уезжал
+   за экран и растягивал блок по горизонтали). Оставляем прицелы на зубах,
+   расшифровка идёт списком находок под снимком — он и так весь на экране. ── */
+@media (max-width: 700px) {
+  .aiscan-scope .as-tag { display: none; }
+  .aiscan-scope .as-ring { width: 40px; height: 40px; }
+  .aiscan-scope .as-theatre { min-height: 260px; }
+  .aiscan-scope .as-arch { width: 96%; }
+  /* три шага в ряд и четыре статы в ряд не влезают — блок вылезал за экран */
+  .aiscan-scope .as-steps { flex-direction: column; align-items: stretch; }
+  .aiscan-scope .as-step__arw { display: none; }
+  .aiscan-scope .as-stats { grid-template-columns: 1fr 1fr; }
+}

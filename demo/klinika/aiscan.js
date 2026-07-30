@@ -6,13 +6,16 @@ window.UQ_AISCAN = (function () {
   'use strict';
   var NS = 'http://www.w3.org/2000/svg';
   var PATIENT = 'Николай Орлов', IMGID = 'OPG-2481-07', N = 32, DUR = 3400;
+  var VB_W = 900, VB_H = 460;                        // кадр снимка: пропорция как у реальной ОПТГ
   var FIND = [
     { type: 'Кариес',        sev: 'high', col: '#ff4d5e', conf: 96, ic: '✕', pill: 'Срочно',   tooth: '2.6', note: 'Дистальная поверхность · средняя глубина, ближе к пульпе', plan: 'Лечение кариеса + световая пломба' },
     { type: 'Износ пломбы',  sev: 'med',  col: '#ffb020', conf: 83, ic: '⚑', pill: 'Замена',   tooth: '4.6', note: 'Нарушено краевое прилегание · риск вторичного кариеса',    plan: 'Замена реставрации' },
     { type: 'Трещина эмали', sev: 'med',  col: '#ffb020', conf: 88, ic: '⚠', pill: 'Контроль', tooth: '3.5', note: 'Вертикальная микротрещина · динамическое наблюдение',       plan: 'Наблюдение + реминерализация' },
     { type: 'Норма',         sev: 'ok',   col: '#31e0b0', conf: 99, ic: '✓', pill: 'Здоров',   tooth: '2.1', note: 'Патологий не выявлено · костная ткань в норме',            plan: '—' },
   ];
-  var DEMO_I = [2, 29, 13, 18];
+  // индексы зубов под находки — по нумерации FDI (лево на снимке = право пациента):
+  // верхний ряд 0..15 = 1.8→1.1, 2.1→2.8 · нижний 31..16 = 4.8→4.1, 3.1→3.8
+  var DEMO_I = [13, 29, 19, 8];                      // 2.6 · 4.6 · 3.5 · 2.1
   var STEPS = [
     ['Снимок пациента', 'панорама или прицельный'],
     ['Нейросеть анализирует', 'neural-dent · 1.2 сек'],
@@ -20,7 +23,7 @@ window.UQ_AISCAN = (function () {
   ];
   var STATS = [['340K', 'снимков обучения'], ['14', 'типов патологий'], ['94%', 'средняя точность'], ['−15 мин', 'на приём']];
   var VERDICT = 'Найдено 3 патологии, 1 зуб в норме. Приоритет — кариес 2.6 (срочно). План лечения сформирован: ориентировочно 3 визита.';
-  var S = { timers: [], intervals: [], raf: null, parts: [], teeth: [], reticles: [] };
+  var S = { timers: [], intervals: [], raf: null, parts: [], teeth: [], reticles: [], ro: null };
 
   function esc(s){ return ('' + s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
 
@@ -41,13 +44,13 @@ window.UQ_AISCAN = (function () {
           '<div class="as-tid">' + IMGID + '</div>' +
           '<span class="as-cn tl"></span><span class="as-cn tr"></span><span class="as-cn bl"></span><span class="as-cn br"></span>' +
           '<div class="as-vp"><div class="as-arch">' +
-            '<svg viewBox="0 0 900 460" aria-label="Панорамный снимок зубов"><defs>' +
+            '<svg viewBox="0 0 ' + VB_W + ' ' + VB_H + '" aria-label="Панорамный снимок зубов"><defs>' +
               '<radialGradient id="asTooth" cx="50%" cy="35%" r="75%"><stop offset="0" stop-color="#dfeaff"/><stop offset=".6" stop-color="#a9c2e6"/><stop offset="1" stop-color="#5f7ba6"/></radialGradient>' +
               '<radialGradient id="asRed" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#ffd0d5"/><stop offset=".55" stop-color="#ff6b78"/><stop offset="1" stop-color="#c31f30"/></radialGradient>' +
               '<radialGradient id="asAmb" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#ffe6bd"/><stop offset=".55" stop-color="#ffb84d"/><stop offset="1" stop-color="#c67d0a"/></radialGradient>' +
               '<radialGradient id="asMint" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#cafff0"/><stop offset=".55" stop-color="#4fe6bc"/><stop offset="1" stop-color="#1f9d7e"/></radialGradient>' +
             '</defs><g class="as-jaw"></g></svg>' +
-            '<canvas class="as-fx" width="900" height="460"></canvas>' +
+            '<canvas class="as-fx" width="' + VB_W + '" height="' + VB_H + '"></canvas>' +
           '</div></div>' +
           '<div class="as-heat"></div>' +
           '<div class="as-beam"></div>' +
@@ -102,20 +105,25 @@ window.UQ_AISCAN = (function () {
 
   function toothPath() { return 'M-15,-16 C-15,-26 15,-26 15,-16 C17,-6 12,2 10,8 C9,16 6,22 4,22 C2,22 2,14 0,14 C-2,14 -2,22 -4,22 C-6,22 -9,16 -10,8 C-12,2 -17,-6 -15,-16 Z'; }
 
+  /* Раскладка как на ортопантомограмме: два ряда в сомкнутом прикусе, каждый —
+     пологая дуга (моляры по краям выше резцов). Раньше ряды стояли в разных
+     половинах кадра с дырой посередине — читалось как смайлик, а не как снимок. */
   function buildArch(scope) {
     var jaw = scope.querySelector('.as-jaw'); jaw.innerHTML = '';
-    var teeth = [], cx = 450, N2 = N / 2;
+    var teeth = [], cx = VB_W / 2, N2 = N / 2;
+    var SPAN = 740, depth = 75, SC = 1.85;              // ширина ряда · подъём краёв · размер зуба
     for (var row = 0; row < 2; row++) {
-      var upper = row === 0, cy = upper ? 250 : 210, R = 170, spread = 118, dir = upper ? -1 : 1;
+      var upper = row === 0, apex = upper ? 212 : 323;     // линии смыкания: между ними зазор прикуса
       for (var k = 0; k < N2; k++) {
-        var t = N2 > 1 ? k / (N2 - 1) : .5;
-        var a = (-spread / 2 + spread * t) * Math.PI / 180;
-        var x = cx + R * Math.sin(a), y = cy - dir * R * Math.cos(a);
-        var rot = (a * 180 / Math.PI) + (upper ? 0 : 180);
+        var t = N2 > 1 ? k / (N2 - 1) : .5, u = (t - .5) * 2;
+        // шаг по ширине равномерный — по углу зубы наезжали друг на друга у моляров
+        var x = cx + u * SPAN / 2;
+        var y = apex - depth * u * u;                    // парабола: моляры выше резцов
+        var rot = u * 26 + (upper ? 0 : 180);
         var idx = upper ? k : (N - 1 - k);
         var g = document.createElementNS(NS, 'g');
         g.setAttribute('class', 'as-tooth');
-        g.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ') rotate(' + rot.toFixed(1) + ')');
+        g.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ') rotate(' + rot.toFixed(1) + ') scale(' + SC + ')');
         var p = document.createElementNS(NS, 'path');
         p.setAttribute('d', toothPath()); p.setAttribute('fill', 'url(#asTooth)');
         g.appendChild(p); jaw.appendChild(g);
@@ -139,7 +147,7 @@ window.UQ_AISCAN = (function () {
 
   function burst(scope, sx, sy, col) {
     var cv = scope.querySelector('.as-fx'), ctx = cv.getContext('2d');
-    var px = sx / 900 * cv.width, py = sy / 460 * cv.height;
+    var px = sx / VB_W * cv.width, py = sy / VB_H * cv.height;
     for (var i = 0; i < 24; i++) { var an = Math.random() * 6.28, sp = 1 + Math.random() * 3.2; S.parts.push({ x: px, y: py, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp, life: 1, col: col }); }
     if (!S.raf) loop(scope, ctx, cv);
   }
@@ -153,7 +161,7 @@ window.UQ_AISCAN = (function () {
 
   function addReticle(scope, f, idx) {
     var tooth = S.teeth[DEMO_I[idx]], pt = toPx(scope, tooth.x, tooth.y);
-    var el = document.createElement('div'); el.className = 'as-r' + (tooth.x < 450 ? ' left' : '');
+    var el = document.createElement('div'); el.className = 'as-r' + (tooth.x < VB_W / 2 ? ' left' : '');
     el.style.color = f.col; el.style.left = pt.x + 'px'; el.style.top = pt.y + 'px';
     el.innerHTML = '<div class="as-ring"><div class="as-spin"></div></div><div class="as-tag"><b>' + esc(f.type) + '</b><span>Зуб ' + esc(f.tooth) + ' · <span class="c" data-c>0</span>%</span></div>';
     scope.querySelector('.as-ret').appendChild(el);
@@ -163,6 +171,19 @@ window.UQ_AISCAN = (function () {
     S.intervals.push(iv);
     S.reticles[idx] = el;
   }
+
+  /* Позиция прицела считается в пикселях сцены — а сцена растёт, пока панель находок
+     наполняется (грид тянет театр по высоте, снимок центрируется ниже). Без пересчёта
+     ранние прицелы оставались висеть в пустоте на ~190px выше своих зубов. */
+  function layoutReticles(scope) {
+    S.reticles.forEach(function (el, idx) {
+      var tooth = el && S.teeth[DEMO_I[idx]]; if (!tooth) return;
+      var pt = toPx(scope, tooth.x, tooth.y);
+      el.style.left = pt.x + 'px'; el.style.top = pt.y + 'px';
+    });
+    if (scope.querySelector('.as-heat').classList.contains('on')) buildHeat(scope);
+  }
+
   function addFinding(scope, f, idx) {
     var box = scope.querySelector('.as-find');
     var row = document.createElement('div'); row.className = 'as-f'; row.style.color = f.col; row.setAttribute('data-fi', idx); row.title = 'Показать на снимке';
@@ -172,6 +193,9 @@ window.UQ_AISCAN = (function () {
     // не автоскроллим когда демо встроено в iframe (карточка на /keysy/) —
     // иначе превью «едет вниз» само по себе (фидбек Матвея 20.07)
     if (window.self === window.top) box.scrollTop = box.scrollHeight;
+    // именно здесь сцена и вырастает: панель стала выше → снимок съехал вниз.
+    // пересчитываем сразу, не надеясь на ResizeObserver (в вебвью он приходит не всегда)
+    later(function () { layoutReticles(scope); }, 40);
   }
 
   // приколюха: клик по находке → пульс на зубе
@@ -215,9 +239,9 @@ window.UQ_AISCAN = (function () {
     scope.querySelector('.as-rlbl').textContent = 'Анализ…';
     scope.querySelector('.as-status').classList.add('on');
     var beam = scope.querySelector('.as-beam'); beam.classList.add('run');
-    S.teeth.forEach(function (t) { var tm = Math.max(0, Math.min(1, t.x / 900)) * DUR; later(function () { t.g.classList.add('lit'); later(function () { t.g.classList.remove('lit'); }, 340); }, tm); });
+    S.teeth.forEach(function (t) { var tm = Math.max(0, Math.min(1, t.x / VB_W)) * DUR; later(function () { t.g.classList.add('lit'); later(function () { t.g.classList.remove('lit'); }, 340); }, tm); });
     FIND.forEach(function (f, idx) {
-      var tm = Math.max(0.05, Math.min(1, S.teeth[DEMO_I[idx]].x / 900)) * DUR;
+      var tm = Math.max(0.05, Math.min(1, S.teeth[DEMO_I[idx]].x / VB_W)) * DUR;
       later(function () {
         var tooth = S.teeth[DEMO_I[idx]], pt = toPx(scope, tooth.x, tooth.y);
         tooth.g.setAttribute('class', 'as-tooth f-' + f.sev);
@@ -245,6 +269,8 @@ window.UQ_AISCAN = (function () {
     scope.querySelector('.as-rlbl').textContent = 'Готово';
     scope.querySelector('[data-as-replay]').style.display = 'flex';
     var hb = scope.querySelector('[data-as-heat]'); hb.hidden = false;
+    // заключение и кнопка тоже добавляют высоты — выравниваем прицелы по финальной сцене
+    later(function () { layoutReticles(scope); buildHeat(scope); }, 60);
     buildHeat(scope);
   }
 
@@ -253,6 +279,13 @@ window.UQ_AISCAN = (function () {
     scope.style.setProperty('--as-dur', DUR + 'ms');
     clearAll();
     S.teeth = buildArch(scope);
+    // сцена меняет размер (наполняется панель находок, крутится экран) → держим прицелы на зубах.
+    // ссылку на наблюдатель храним в S: без неё сборщик мусора убивает его молча.
+    if ('ResizeObserver' in window && !S.ro) {
+      S.ro = new ResizeObserver(function () { layoutReticles(scope); });
+      S.ro.observe(scope.querySelector('.as-theatre'));
+    }
+    window.addEventListener('resize', function () { layoutReticles(scope); });
     scope.querySelector('[data-as-run]').onclick = function () { run(scope); };
     scope.querySelector('[data-as-replay]').onclick = function () {
       scope.querySelector('.as-sub').textContent = 'Готов к запуску · демо-снимок';

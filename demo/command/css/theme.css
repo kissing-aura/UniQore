@@ -841,7 +841,10 @@ svg.ic{width:16px;height:16px;flex:none;vertical-align:-2px}
 
 /* ── responsive ─────────────────────────────────────────────────────────── */
 @media(max-width:1080px){
-  .app{grid-template-columns:1fr}
+  /* z-index:1 у .app создавал stacking-контекст: меню (z-index:70) запиралось внутри него
+     и оказывалось ПОД скримом (z-index:65 на уровне body) — клики по разделам съедала
+     подложка, меню просто закрывалось без перехода. z-index:auto держит их в одном слое. */
+  .app{grid-template-columns:1fr;z-index:auto}
   .side{position:fixed;inset:0 auto 0 0;width:250px;z-index:70;transform:translateX(-100%);transition:.25s;box-shadow:var(--shadow)}
   .side.open{transform:none}
   .side-scrim{position:fixed;inset:0;z-index:65;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s}
