@@ -94,7 +94,7 @@
 
 /* мобильный hero-визуал: лёгкий СТАТИЧНЫЙ телефон-мокап (без анимаций/backdrop-filter, RF-safe) */
 .sy-hero__mviz{display:none}
-@media(max-width:760px){.sy-hero__mviz{display:block;position:relative;width:100%;max-width:248px;margin:36px auto 6px}}
+@media(max-width:760px){.sy-hero__mviz{display:block;position:relative;width:100%;max-width:248px;margin:36px auto 40px}}
 .sy-mviz__phone{position:relative;border-radius:34px;padding:8px;background:linear-gradient(155deg,#242b35,#0a0e14);border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 60px -26px rgba(0,0,0,.9),0 0 52px -22px rgba(205,255,79,.32)}
 .sy-mviz__notch{position:absolute;top:15px;left:50%;transform:translateX(-50%);width:32%;height:10px;border-radius:99px;background:#000;z-index:2}
 .sy-mviz__screen{border-radius:27px;overflow:hidden;background:radial-gradient(120% 46% at 50% 0,rgba(205,255,79,.09),transparent 60%),#0b1119;padding:28px 13px 14px}
@@ -106,7 +106,7 @@
 .sy-mviz__row:first-of-type{margin-top:14px}
 .sy-mviz__row b{font-size:10px;color:#fff;font-weight:700}
 .sy-mviz__row span{font-size:9.5px;color:#9aa6bd}
-.sy-mviz__stat{position:absolute;right:-8px;bottom:20px;background:linear-gradient(180deg,rgba(26,33,49,.97),rgba(12,16,25,.98));border:1px solid rgba(205,255,79,.3);border-radius:13px;padding:9px 13px;box-shadow:0 16px 32px -14px rgba(0,0,0,.85)}
+.sy-mviz__stat{position:absolute;right:-8px;bottom:-30px;background:linear-gradient(180deg,rgba(26,33,49,.97),rgba(12,16,25,.98));border:1px solid rgba(205,255,79,.3);border-radius:13px;padding:9px 13px;box-shadow:0 16px 32px -14px rgba(0,0,0,.85)}
 .sy-mviz__stat b{display:block;font-family:'Unbounded',sans-serif;font-weight:800;font-size:15px;color:var(--sy-l);line-height:1}
 .sy-mviz__stat span{display:block;font-size:9px;color:#9aa6bd;margin-top:3px}
 
