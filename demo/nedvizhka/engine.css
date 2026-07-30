@@ -90,7 +90,10 @@ body.card-hard .kpi{border-width:1.5px}
 
 /* ── Dashboard grid ── */
 .dash-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--gap)}
-@media(max-width:1000px){.dash-grid{grid-template-columns:1fr}}
+/* minmax(0,1fr), не 1fr: 1fr = minmax(auto,1fr), а auto берёт min-content колонки.
+   Строка с white-space:nowrap («Профгигиена + фторирование — Ирина Белова») растягивала
+   трек до 514px, и на 375px страница уезжала вбок целиком. */
+@media(max-width:1000px){.dash-grid{grid-template-columns:minmax(0,1fr)}.dash-grid>*{min-width:0}}
 .bcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
 body.card-soft .bcard{box-shadow:var(--shadow);border-color:transparent}
 body.card-hard .bcard{border-width:1.5px}

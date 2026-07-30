@@ -288,13 +288,15 @@
       subscriptions:[ {name:'Claude / API', amount:120, next:daysAgo(-4)}, {name:'DigitalOcean', amount:48, next:daysAgo(-9)}, {name:'Домены (5)', amount:12, next:daysAgo(-1)}, {name:'Figma', amount:15, next:daysAgo(-18)} ],
       taxes:{ rate:6, base:220000, amount:13200, due:daysAgo(-12) },
       receivables:[ {client:'Медлайн · Клиника', amount:900, days:14}, {client:'Бургер «Классик»', amount:600, days:5}, {client:'Аренда Норд-Сити', amount:1300, days:2} ],
+      // категории и счета названы ТОЧНО как строки P&L и счета выше: delOperation/addOperation
+      // ищут их по имени, и при расхождении удаление операции молча не меняло ни одну цифру
       operations:[
-        {id:uid('o'),date:iso(today0()+9*36e5),type:'income',cat:'Оплата CRM',amount:1200,acc:'Тинькофф',note:'Магазин кроссовок'},
-        {id:uid('o'),date:iso(today0()+7*36e5),type:'expense',cat:'Выплата',amount:300,acc:'USDT',note:'Максим Орлов'},
-        {id:uid('o'),date:iso(daysAgo(1)+15*36e5),type:'income',cat:'Оплата CRM',amount:1200,acc:'Тинькофф',note:'Бургер Классик'},
-        {id:uid('o'),date:iso(daysAgo(1)+11*36e5),type:'expense',cat:'Подписка',amount:120,acc:'Тинькофф',note:'Claude API'},
-        {id:uid('o'),date:iso(daysAgo(2)+18*36e5),type:'income',cat:'Абонплата',amount:120,acc:'Тинькофф',note:'Гринвуд'},
-        {id:uid('o'),date:iso(daysAgo(2)+10*36e5),type:'expense',cat:'Зарплата',amount:1400,acc:'Тинькофф',note:'Влад — сборка'},
+        {id:uid('o'),date:iso(today0()+9*36e5),type:'income',cat:'Продажи CRM',amount:1200,acc:'Тинькофф Бизнес',note:'Магазин кроссовок'},
+        {id:uid('o'),date:iso(today0()+7*36e5),type:'expense',cat:'Выплаты менеджерам',amount:300,acc:'USDT кошелёк',note:'Максим Орлов'},
+        {id:uid('o'),date:iso(daysAgo(1)+15*36e5),type:'income',cat:'Продажи CRM',amount:1200,acc:'Тинькофф Бизнес',note:'Бургер Классик'},
+        {id:uid('o'),date:iso(daysAgo(1)+11*36e5),type:'expense',cat:'Инструменты / API',amount:120,acc:'Тинькофф Бизнес',note:'Claude API'},
+        {id:uid('o'),date:iso(daysAgo(2)+18*36e5),type:'income',cat:'Поддержка (MRR)',amount:120,acc:'Тинькофф Бизнес',note:'Гринвуд'},
+        {id:uid('o'),date:iso(daysAgo(2)+10*36e5),type:'expense',cat:'Зарплаты команды',amount:1400,acc:'Тинькофф Бизнес',note:'Влад — сборка'},
       ],
     };
 
@@ -349,9 +351,19 @@
       ],
     };
 
+    // считаем из тех же payouts, что и «Требует внимания» с AI-аналитиком:
+    // раньше здесь стоял хардкод «$2 300 ждут 7 менеджеров», а рядом на дашборде
+    // из данных выходило $2 600 и 8 человек — владелец видел два разных числа
+    const pendingPayoutsText = () => {
+      const list = (payouts||[]).filter(p => p.status === 'pending');   // локальная переменная сида: S тут ещё не создан
+      const sum = list.reduce((a, p) => a + (Number(p.amount) || 0), 0);
+      const n = list.length;
+      const word = n % 10 === 1 && n % 100 !== 11 ? 'менеджера' : 'менеджеров';
+      return '$' + sum.toLocaleString('ru-RU') + ' ждут ' + n + ' ' + word;
+    };
     // ── УВЕДОМЛЕНИЯ (центр событий) ─────────────────────────────────────
     const notifications = [
-      {id:uid('n'),priority:'critical',type:'finance',title:'Пора провести выплаты',text:'$2 300 ждут 7 менеджеров',at:iso(today0()+17*36e5),read:false,pinned:true},
+      {id:uid('n'),priority:'critical',type:'finance',title:'Пора провести выплаты',text:pendingPayoutsText(),at:iso(today0()+17*36e5),read:false,pinned:true},
       {id:uid('n'),priority:'high',type:'client',title:'Клиника — риск ухода',text:'Не платит абонплату 14 дней',at:iso(today0()+13*36e5),read:false,pinned:false},
       {id:uid('n'),priority:'high',type:'sales',title:'4 сделки без активности',text:'Более 3 дней в пайплайне',at:iso(today0()+11*36e5),read:false,pinned:false},
       {id:uid('n'),priority:'high',type:'project',title:'CRM Agency — дедлайн прошёл',text:'Проект на этапе Research',at:iso(daysAgo(1)+16*36e5),read:false,pinned:false},

@@ -703,8 +703,14 @@ function viewGoals(n) {
   const fact = factF ? recs.filter(r => matchFilter(r, g.factWhere)).reduce((s, r) => s + (Number(val(r, factF)) || 0), 0) : (g.fact || 0);
   const plan = g.plan || Math.round(g.target * 0.9), pct = g.target ? Math.round(fact / g.target * 100) : 0;
   const team = DB.team().map(m => ({ m, k: teamKpi(m) }));
-  const maxRev = Math.max(1, ...team.map(x => x.k.revenue), Math.round((g.target || 0) / Math.max(team.length, 1)));
-  const rows = team.sort((a, b) => b.k.revenue - a.k.revenue).map(({ m, k }) => { const tgt = k.target || Math.round(maxRev * .8); const p = Math.round(k.revenue / Math.max(tgt, 1) * 100); return `<div class="goal-row"><div class="goal-row__name">${esc(m.name)} <span class="list-item__meta">${esc(roleName(m.role))}</span></div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${Math.min(100, Math.max(2, k.revenue / maxRev * 100))}%;background:${p >= 100 ? 'var(--good)' : p > 0 ? 'var(--acc)' : 'var(--border2)'}"></div></div><div class="goal-row__v num">${moneyShort(k.revenue)} ₽ <span style="color:${p >= 100 ? 'var(--good)' : 'var(--text3)'}">${p}%</span></div></div>`; }).join('') || '<div class="empty-hint">Добавь сотрудников в разделе «Команда» — здесь появится их план/факт</div>';
+  // Number()||0: один сотрудник без revenue отравлял Math.max значением NaN,
+  // и тогда NaN% получали ВСЕ, а полоски прогресса не рисовались вообще
+  const maxRev = Math.max(1, ...team.map(x => Number(x.k.revenue) || 0), Math.round((g.target || 0) / Math.max(team.length, 1)));
+  // администратор, маркетолог, медсестра и бухгалтер выручки не приносят по роли —
+  // им показываем прочерк, а не «0 ₽ NaN%»; личная цель — доля общей на человека с выручкой
+  const withRev = team.filter(x => Number(x.k.revenue) > 0).length || 1;
+  const perHead = Math.max(1, Math.round((g.target || maxRev) / withRev));
+  const rows = team.sort((a, b) => (b.k.revenue || 0) - (a.k.revenue || 0)).map(({ m, k }) => { const tgt = k.target || perHead; const hasRev = Number.isFinite(Number(k.revenue)); const p = hasRev ? Math.round(Number(k.revenue) / Math.max(tgt, 1) * 100) : null; return `<div class="goal-row"><div class="goal-row__name">${esc(m.name)} <span class="list-item__meta">${esc(roleName(m.role))}</span></div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${Math.min(100, Math.max(2, k.revenue / maxRev * 100))}%;background:${p >= 100 ? 'var(--good)' : p > 0 ? 'var(--acc)' : 'var(--border2)'}"></div></div><div class="goal-row__v num">${hasRev ? moneyShort(k.revenue) + ' ₽ <span style="color:' + (p >= 100 ? 'var(--good)' : 'var(--text3)') + '">' + p + '%</span>' : '<span style="color:var(--text3)">—</span>'}</div></div>`; }).join('') || '<div class="empty-hint">Добавь сотрудников в разделе «Команда» — здесь появится их план/факт</div>';
   document.getElementById('viewBody').innerHTML = `
     <div class="kpi-row">
       <div class="kpi"><div class="kpi__label">Цель</div><div class="kpi__val num" data-cu="${g.target}" data-money="1">${fmtMoney(g.target)}</div><div class="kpi__sub">${esc(g.period || 'на месяц')}</div></div>
@@ -1033,14 +1039,18 @@ function attentionCards() {
   const pays = DB.pays(), tasks = DB.tasks();
   const ovPay = pays.filter(p => p.status === 'overdue'), ovSum = ovPay.reduce((s, p) => s + (+p.amount || 0), 0);
   const ovTasks = tasks.filter(t => !t.done && t.due && daysTo(t.due) < 0);
+  // подписи берём из рецепта: движок общий, и в стоматологии карточка «Скоро освобождаются»
+  // с «Зависшими сделками» читалась как текст из чужой ниши
+  const LEX = R.lexicon || {};
+  const hasDeals = ENTITIES.some(e => e.key === 'deal');   // счётчик stuck считается только по сделкам
   let expiring = 0, stuck = 0;
   ENTITIES.forEach(e => { const df = e.fields.find(f => f.type === 'date'); DB.recs(e.key).forEach(r => { if (df && r[df.key] && daysTo(r[df.key]) >= 0 && daysTo(r[df.key]) <= 14 && r.stage !== 'lost') expiring++; if ((e.key === 'deal') && ['new', 'nego'].includes(r.stage) && daysTo(r.createdAt) < -14) stuck++; }); });
   const card = (label, val, sub, sev, view) => `<div class="att-card att-card--${sev}" ${view ? `data-go="${view}"` : ''}><div class="att-card__v num">${val}</div><div class="att-card__l">${esc(label)}</div><div class="att-card__s">${esc(sub)}</div></div>`;
   const html = `<div class="att-row">
     ${card('Просрочено оплат', ovPay.length, ovSum ? fmtMoney(ovSum) : 'нет', ovPay.length ? 'bad' : 'ok', 'pay')}
     ${card('Просрочено задач', ovTasks.length, ovTasks.length ? 'требуют внимания' : 'всё в срок', ovTasks.length ? 'bad' : 'ok', 'tasks')}
-    ${card('Скоро освобождаются', expiring, 'в ближайшие 14 дней', expiring ? 'warn' : 'ok', 'objects')}
-    ${card('Зависшие сделки', stuck, '>14 дней без движения', stuck ? 'warn' : 'ok', 'deals')}</div>`;
+    ${card(LEX.upcomingMany || 'Скоро освобождаются', expiring, 'в ближайшие 14 дней', expiring ? 'warn' : 'ok', 'objects')}
+    ${hasDeals ? card(LEX.stuckMany || 'Зависшие сделки', stuck, '>14 дней без движения', stuck ? 'warn' : 'ok', 'deals') : ''}</div>`;
   return html;
 }
 
@@ -1066,7 +1076,7 @@ function viewNotifications() {
   const items = [];
   DB.pays().filter(p => p.status === 'overdue').forEach(p => items.push({ sev: 'bad', t: 'Просрочен платёж', s: p.title + ' · ' + fmtMoney(p.amount), go: 'payments' }));
   DB.tasks().filter(t => !t.done && t.due && daysTo(t.due) < 0).forEach(t => items.push({ sev: 'bad', t: 'Просрочена задача', s: t.title + ' · ' + timeAgo(t.due), go: 'calendar' }));
-  ENTITIES.forEach(e => { const df = e.fields.find(f => f.type === 'date'); DB.recs(e.key).forEach(r => { if (df && r[df.key] && daysTo(r[df.key]) >= 0 && daysTo(r[df.key]) <= 7 && r.stage !== 'lost') items.push({ sev: 'warn', t: 'Скоро освобождается', s: primary(r, e) + ' · ' + timeAgo(r[df.key]), go: 'records', ent: e.key, id: r.id }); }); });
+  ENTITIES.forEach(e => { const df = e.fields.find(f => f.type === 'date'); DB.recs(e.key).forEach(r => { if (df && r[df.key] && daysTo(r[df.key]) >= 0 && daysTo(r[df.key]) <= 7 && r.stage !== 'lost') items.push({ sev: 'warn', t: (R.lexicon && R.lexicon.upcomingOne) || 'Скоро освобождается', s: primary(r, e) + ' · ' + timeAgo(r[df.key]), go: 'records', ent: e.key, id: r.id }); }); });
   DB.log().slice(0, 12).forEach(l => items.push({ sev: l.sev || 'good', t: 'Сценарий: ' + l.rule, s: l.detail + (l.target ? ' · ' + l.target : '') + (l.queued ? ' · в очереди (Pro)' : ''), go: 'automation' }));
   items.forEach(x => x.k = (x.t + '|' + x.s).slice(0, 90));
   items.sort((a, b) => (read.has(a.k) - read.has(b.k)));

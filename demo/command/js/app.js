@@ -61,7 +61,10 @@
   const av = (name,color,cls='') => `<span class="avatar ${cls}" style="background:linear-gradient(150deg,${color},${shade(color)})">${esc(initials(name))}</span>`;
   const shade = h => h; // gradient end kept same-ish; simple
   const ago = ts => { const d=(Date.now()-new Date(ts))/1000; if(d<60)return 'только что'; if(d<3600)return Math.floor(d/60)+' мин'; if(d<86400)return Math.floor(d/3600)+' ч'; return Math.floor(d/86400)+' дн'; };
-  const pill = (label,kind='') => `<span class="pill ${kind?'pill--'+kind:''}">${label}</span>`;
+  // esc обязателен: сюда попадают введённые пользователем город, отдел и ниша
+  // (форма менеджера, найм, импорт CSV) — вставленная разметка ломала вёрстку CRM.
+  // Проверено, что pill() нигде не вызывается с уже экранированным значением
+  const pill = (label,kind='') => `<span class="pill ${kind?'pill--'+kind:''}">${esc(label)}</span>`;
   const statusPill = st => { const s=UQ.STATUS[st]; if(!s) return pill('Новый'); return `<span class="pill pill--${s.pill||''}"><span class="dotx"></span>${s.label}</span>`; };
   function toast(msg){ let t=$('#toast'); if(!t){ t=document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t);} t.innerHTML=ic('check')+esc(msg); requestAnimationFrame(()=>t.classList.add('show')); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
 
@@ -250,9 +253,16 @@
     const changed=UQ.whatChanged();
     const best=UQ.bestEmployee();
     const deps=UQ.departments();
+    // резерв берём с самого счёта: хардкод $15 000 расходился с «Резервный фонд $33 000» в Финансах
+    const resAcc = UQ.accounts().find(a => /резерв/i.test(a.name));
+    const reserve = resAcc ? (resAcc.balance || 0) : 0;
+    // рост считаем по последним двум месяцам графика, который стоит прямо под этим KPI:
+    // хардкод +19% противоречил ему (Июн 194 000 → Июл 220 000 = +13%)
+    const mm = (UQ.finance().months || []); const m1 = mm[mm.length-2], m2 = mm[mm.length-1];
+    const growth = (m1 && m2 && m1.rev) ? Math.round((m2.rev - m1.rev) / m1.rev * 100) : 0;
     const kpis=[
-      {lbl:'Деньги на счетах',val:usd(fh.cash),sub:`${UQ.accounts().length} счёта · резерв ${usd(15000)}`,hero:true},
-      {lbl:'Чистая прибыль · месяц',val:usd(fh.netProfit),sub:`<span class="delta delta--up">${ic('trend')} +19%</span> маржа ${fh.margin.toFixed(0)}%`},
+      {lbl:'Деньги на счетах',val:usd(fh.cash),sub:`${UQ.accounts().length} счёта · резерв ${usd(reserve)}`,hero:true},
+      {lbl:'Чистая прибыль · месяц',val:usd(fh.netProfit),sub:`<span class="delta delta--up">${ic('trend')} ${growth>=0?'+':''}${growth}%</span> маржа ${fh.margin.toFixed(0)}%`},
       {lbl:'Ожидаемая прибыль',val:usd(fh.expected),sub:'из пайплайна (взвешенно)'},
       {lbl:'Прогноз месяца',val:usd(fh.forecast),sub:'при текущем темпе'},
     ];
@@ -693,7 +703,7 @@
     return `${topbar('Финансы','P&L · ДДС · счета · CRM-фабрика Uniqore', `<button class="btn btn--primary btn--sm" data-addop>${ic('plus')} Операция</button>`)}
       <div class="kpirow">
         <div class="card kpi kpi--hero"><div class="eyebrow">Деньги на счетах</div><div class="kpi__val">${usd(fh.cash)}</div><div class="kpi__sub">${accs.length} счёта</div></div>
-        <div class="card kpi"><div class="eyebrow">Выручка · месяц</div><div class="kpi__val">${usd(f.income)}</div><div class="kpi__sub"><span class="delta delta--up">${ic('trend')} +19%</span></div></div>
+        <div class="card kpi"><div class="eyebrow">Выручка · месяц</div><div class="kpi__val">${usd(f.income)}</div><div class="kpi__sub"><span class="delta delta--up">${ic('trend')} ${growth>=0?'+':''}${growth}%</span></div></div>
         <div class="card kpi"><div class="eyebrow">Прибыль</div><div class="kpi__val" style="color:var(--good)">${usd(f.profit)}</div><div class="kpi__sub">маржа ${f.margin.toFixed(0)}%</div></div>
         <div class="card kpi"><div class="eyebrow">Налоги · УСН ${tax.rate}%</div><div class="kpi__val">${usd(tax.amount)}</div><div class="kpi__sub">к уплате</div></div>
       </div>
@@ -784,6 +794,10 @@
     const lb=UQ.leaderboard();
     const funnel=UQ.DSTAGES.map((s,i)=>({label:s.label,n:UQ.deals().filter(d=>UQ.DSTAGES.findIndex(x=>x.id===d.stage)>=i).length,color:s.color}));
     const maxF=Math.max(...funnel.map(f=>f.n),1);
+    // ROMI считаем из тех же каналов, что и раздел «Маркетинг»: там выходило 771%,
+    // а здесь стоял хардкод 420% — одна метрика с двумя значениями на соседних страницах
+    const mkt=UQ.marketing(); const mSpend=mkt.reduce((a,c)=>a+c.spend,0), mRev=mkt.reduce((a,c)=>a+c.revenue,0);
+    const romi=mSpend?Math.round((mRev-mSpend)/mSpend*100):0;
     const reasons={}; UQ.s.leads.forEach(l=>{ if(l.status==='refused'&&l.reason) reasons[l.reason]=(reasons[l.reason]||0)+1; });
     const rz=Object.entries(reasons).sort((a,b)=>b[1]-a[1]).slice(0,6); const maxR=Math.max(...rz.map(r=>r[1]),1);
     return `${topbar('Аналитика','Воронка, юнит-экономика, причины отказов')}
@@ -791,7 +805,7 @@
         <div class="card kpi kpi--hero"><div class="eyebrow">LTV</div><div class="kpi__val">$1 560</div><div class="kpi__sub">чек + поддержка</div></div>
         <div class="card kpi"><div class="eyebrow">CAC</div><div class="kpi__val">$96</div><div class="kpi__sub">на привлечение</div></div>
         <div class="card kpi"><div class="eyebrow">LTV / CAC</div><div class="kpi__val">16x</div><div class="kpi__sub"><span class="delta delta--up">здорово</span> норма >3</div></div>
-        <div class="card kpi"><div class="eyebrow">ROMI</div><div class="kpi__val">420%</div><div class="kpi__sub">возврат на маркетинг</div></div>
+        <div class="card kpi"><div class="eyebrow">ROMI</div><div class="kpi__val">${romi}%</div><div class="kpi__sub">возврат на маркетинг</div></div>
       </div>
       <div class="two" style="margin-top:var(--gap)">
         <div class="card card--pad">
@@ -1546,7 +1560,15 @@
       if(role==='head'){ const h=UQ.heads()[0]; if(h) S.session.managerId=h.id; }
       else if(role==='manager' && S.session.managerId==='h1'){ S.session.managerId='m1'; }
       view=DEFAULT_VIEW[role]; UQ.save(); route(view); }
-    else if(d.logout!==undefined){ if(UQ.signOut) UQ.signOut(); }
+    // UQ.signOut в демке не существует — кнопка была полным no-op, хотя рядом написано
+    // «Выход вернёт на экран входа». В демо роль выбирается переключателем, поэтому
+    // выход = сброс демо-сессии и чистый старт
+    else if(d.logout!==undefined){
+      if(UQ.signOut){ UQ.signOut(); return; }
+      toast('Выходим из демо-аккаунта…');
+      try{ localStorage.removeItem('uqcmd_v5'); }catch(e){}
+      setTimeout(()=>location.reload(), 600);
+    }
     else if(d.burger!==undefined){ $('#side').classList.contains('open') ? closeSide() : openSide(); }
     else if(d.sideclose!==undefined){ closeSide(); }
     else if(d.lead){ openCall(d.lead); }
