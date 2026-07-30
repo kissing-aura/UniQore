@@ -86,8 +86,10 @@
 
   // ── Платежи (история 6 мес) ──
   const payments = [];
-  for (let m = 6; m >= 0; m--) {
-    const base = 9000000 + m * 450000 + ((m * 3) % 2) * 660000;
+  // тот же горизонт и тот же масштаб, что у finance: раньше платежи шли за 7 месяцев
+  // против 6 у выручки, и «Оплачено счетов» (81,5 млн) превышало саму выручку (71,7 млн)
+  for (let m = 5; m >= 0; m--) {
+    const base = Math.round((9000000 + (5 - m) * 450000) * 0.82);   // часть выручки проходит через счета
     payments.push({ id: 'pp' + m, title: 'Поступления за ' + new Date(Date.now() - m * 30 * 86400000).toLocaleDateString('ru-RU', { month: 'long' }), kind: 'Оплата услуг', amount: base, status: 'paid', due: monthAgo(m) });
     if (m > 0 && m % 2 === 0) payments.push({ id: 'ins' + m, title: 'Оплата в рассрочку', kind: 'Рассрочка', amount: Math.round(base * 0.22), status: 'paid', due: monthAgo(m) });
   }
@@ -122,7 +124,7 @@
   // ── Финансы (6 мес) ──
   const finance = [];
   for (let m = 5; m >= 0; m--) {
-    const rev = 9000000 + m * 450000;
+    const rev = 9000000 + (5 - m) * 450000;   // m — месяцев назад: рост идёт к текущему месяцу, а не в прошлое
     finance.push({ id: 'fi' + m, type: 'income', amount: rev, category: 'Услуги стоматологии', date: monthAgo(m) });
     finance.push({ id: 'fins' + m, type: 'income', amount: Math.round(rev * 0.18), category: 'Рассрочка / кредит', date: monthAgo(m) });
     finance.push({ id: 'fz' + m, type: 'expense', amount: 4000000 + (m % 3) * 220000, category: 'Зарплаты врачей', date: monthAgo(m) });
@@ -349,7 +351,9 @@
         { label: 'Завершено приёмов',    kind: 'count',   entity: 'appointment', where: { stage: 'paid' }, good: true, sub: 'оплачены' },
         { label: 'Просрочено задач',     kind: 'overdue', source: 'tasks', bad: true, sub: 'требуют внимания' },
       ]},
-      { kind: 'line', title: 'Выручка по месяцам', source: 'payments', status: 'paid', value: 'amount', dateField: 'due', months: 6, money: true, wide: true },
+      // тот же источник, что и KPI «Выручка (6 мес)» прямо над графиком: раньше
+      // график считал по счетам и показывал третье число на одном экране
+      { kind: 'line', title: 'Выручка по месяцам', source: 'finance', ftype: 'income', months: 6, money: true, wide: true },
       { kind: 'donut', title: 'Записи по видам услуг',    entity: 'appointment', groupBy: 'service' },
       { kind: 'donut', title: 'Пациенты по источнику',    entity: 'patient',     groupBy: 'source' },
       { kind: 'donut', title: 'Пациенты по способу оплаты', entity: 'patient',   groupBy: 'payMethod' },

@@ -1038,8 +1038,12 @@ function openMember(id) {
 function defaultAnalytics() { return [{ kind: 'bars', title: 'По статусам', groupBy: 'stage' }, { kind: 'donut', title: 'Распределение', groupBy: 'stage' }]; }
 function lineData(w, recs, pays) {
   const months = monthsBack(w.months || 8), idx = {}; months.forEach((m, i) => idx[m.key] = i);
-  const src = w.source === 'payments' ? pays : recs, dkey = w.dateField || (w.source === 'payments' ? 'due' : 'createdAt'), ent = entById(w.entity), vf = w.value && w.source !== 'payments' ? fieldByKey(w.value, ent) : null;
-  src.forEach(it => { if (w.status && it.status !== w.status) return; const dv = it[dkey]; if (!dv) return; const d = new Date(dv), k = d.getFullYear() + '-' + d.getMonth(); if (k in idx) months[idx[k]].y += (w.agg === 'count') ? 1 : (w.source === 'payments' ? (Number(it[w.value || 'amount']) || 0) : (vf ? Number(val(it, vf)) || 0 : 1)); });
+  // source:'finance' — чтобы график можно было построить по тому же источнику, что и KPI
+  // выручки рядом (иначе на одном экране выходили два разных числа)
+  const isFin = w.source === 'finance';
+  const finRows = isFin ? DB.fin().filter(f => !w.ftype || f.type === w.ftype) : null;
+  const src = isFin ? finRows : (w.source === 'payments' ? pays : recs), dkey = w.dateField || (isFin ? 'date' : w.source === 'payments' ? 'due' : 'createdAt'), ent = entById(w.entity), vf = w.value && w.source !== 'payments' ? fieldByKey(w.value, ent) : null;
+  src.forEach(it => { if (w.status && it.status !== w.status) return; const dv = it[dkey]; if (!dv) return; const d = new Date(dv), k = d.getFullYear() + '-' + d.getMonth(); if (k in idx) months[idx[k]].y += (w.agg === 'count') ? 1 : ((isFin || w.source === 'payments') ? (Number(it[w.value || 'amount']) || 0) : (vf ? Number(val(it, vf)) || 0 : 1)); });
   return months;
 }
 function analyticsWidget(w, wi, draws) {
