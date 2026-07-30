@@ -199,8 +199,10 @@ body.card-hard .seg__item{border-radius:0}
 /* ─────────────────────────────────────────────────────────────
    10. CHART-TIP — премиум-тултип для графиков (абсолютный)
    ───────────────────────────────────────────────────────────── */
+/* fixed, не absolute: координаты берутся из e.clientX/clientY (вьюпорт), а тултип висит
+   на body — на проскролленной странице подсказка улетала на сотни пикселей вверх */
 .chart-tip{
-  position:absolute;z-index:400;pointer-events:none;
+  position:fixed;z-index:400;pointer-events:none;
   background:var(--surface3);border:1px solid var(--border2);border-radius:var(--radius-sm);
   box-shadow:var(--uq-hair),0 6px 22px rgba(0,0,0,.25);
   padding:7px 10px;font-size:11.5px;line-height:1.5;color:var(--text);

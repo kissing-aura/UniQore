@@ -5,7 +5,9 @@
 (() => {
   const dt = o => new Date(Date.now() + o * 86400000).toISOString();
   const ds = o => new Date(Date.now() + o * 86400000).toISOString().slice(0, 10);
-  const monthAgo = m => { const d = new Date(); d.setMonth(d.getMonth() - m); d.setDate(10 + (m % 3) * 6); return d.toISOString(); };
+  // setDate(1) ДО setMonth: иначе 29-31 числа месяц переползает через короткий февраль
+  // (30 июля минус 5 месяцев давало 2 марта) — февраль выпадал из графика, март задваивался
+  const monthAgo = m => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - m); d.setDate(10 + (m % 3) * 6); return d.toISOString(); };
 
   const COMPLEXES = ['Северный Парк', 'Английский Квартал', 'Ривер Хаус', 'Сколково Парк', 'Флотилия', 'Хамовники Grand', 'Ботанический Сад'];
   const METRO = { 'Северный Парк': 'Водный стадион', 'Английский Квартал': 'Фрунзенская', 'Ривер Хаус': 'Кутузовская', 'Сколково Парк': 'Раменки', 'Флотилия': 'Мнёвники', 'Хамовники Grand': 'Спортивная', 'Ботанический Сад': 'Ботанический сад' };

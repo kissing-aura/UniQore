@@ -110,3 +110,12 @@
 @media (prefers-reduced-motion:reduce){
   .kanban,.table-wrap,.topbar{scroll-behavior:auto}
 }
+
+/* Календарь на телефоне: шапка (заголовок месяца + стрелки + переключатель День/Неделя/
+   Месяц/Год/Список) — один flex-ряд шириной ~670px. При 375px переключатель уезжал
+   за экран целиком, а body{overflow-x:hidden} его срезал — режим было не сменить. */
+@media (max-width: 700px) {
+  .cal-head { flex-wrap: wrap; row-gap: 10px; }
+  .cal-head .seg { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cal-head .seg::-webkit-scrollbar { height: 0 }
+}

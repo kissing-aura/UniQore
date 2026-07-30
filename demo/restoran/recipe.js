@@ -5,7 +5,9 @@
 (() => {
   const ds = o => new Date(Date.now() + o * 86400000).toISOString().slice(0, 10);
   const dt = o => new Date(Date.now() + o * 86400000).toISOString();
-  const monthAgo = m => { const d = new Date(); d.setMonth(d.getMonth() - m); d.setDate(8); return d.toISOString().slice(0, 10); };
+  // setDate(1) ДО setMonth: иначе 29-31 числа месяц переползает через короткий февраль
+  // (30 июля минус 5 месяцев давало 2 марта) — февраль выпадал из графика, март задваивался
+  const monthAgo = m => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - m); d.setDate(8); return d.toISOString().slice(0, 10); };
 
   // ── Меню — блюда (20 позиций) ──
   const MENU = [
@@ -293,7 +295,7 @@
         { label: 'Прибыль (8 мес)', kind: 'profit', source: 'finance', months: 8, good: true, sub: 'доход − расход' },
         { label: 'Получено',        kind: 'sum', source: 'payments', status: 'paid', sub: 'счета' },
         { label: 'Ожидаем',         kind: 'sum', source: 'payments', status: 'sent', sub: 'в обработке' },
-        { label: 'Средний чек',     kind: 'avg', entity: 'order', field: 'amount', where: { stage: 'delivered' }, sub: 'на заказ' },
+        { label: 'Средний чек',     kind: 'avg', entity: 'order', field: 'amount', where: { stageIn: ['new', 'cooking', 'courier', 'delivered'] }, sub: 'на заказ' },
         { label: 'Заказов всего',   kind: 'count', entity: 'order', where: {}, sub: 'в базе' },
         { label: 'Клиентов',        kind: 'count', entity: 'client', where: {}, sub: 'в базе' },
         { label: 'Просрочено задач', kind: 'overdue', source: 'tasks', bad: true, sub: 'требуют внимания' },
@@ -346,10 +348,10 @@
       ],
       automation: [
         { id: 'ra1', name: 'Новый заказ → сигнал на кухню + задача оператору',  trigger: 'created',   actions: ['task', 'notify', 'telegram'], enabled: true },
-        { id: 'ra2', name: 'Заказ готов → назначить курьера + уведомление',      trigger: 'stage',     actions: ['assign', 'notify', 'sms'],    enabled: true },
-        { id: 'ra3', name: 'Заказ доставлен → запрос отзыва клиенту',            trigger: 'delivered', actions: ['sms', 'email'],               enabled: true },
-        { id: 'ra4', name: 'Клиент VIP → приоритет обработки + скидка',          trigger: 'vip',       actions: ['tag', 'notify', 'discount'],  enabled: false },
-        { id: 'ra5', name: 'Заказ отменён → аналитика + уведомление владельцу',  trigger: 'cancelled', actions: ['notify', 'telegram'],         enabled: true },
+        { id: 'ra2', name: 'Заказ готов → назначить курьера + уведомление',      trigger: 'stage',     actions: ['assign', 'notify', 'telegram'], enabled: true },
+        { id: 'ra3', name: 'Заказ доставлен → запрос отзыва клиенту',            trigger: 'stage',     actions: ['email', 'task'],              enabled: true },
+        { id: 'ra4', name: 'Клиент VIP → приоритет обработки + скидка',          trigger: 'created',   actions: ['setField', 'notify'],         enabled: false },
+        { id: 'ra5', name: 'Заказ отменён → аналитика + уведомление владельцу',  trigger: 'stage',     actions: ['notify', 'telegram'],         enabled: true },
       ],
       knowledge: [
         { id: 'rk1', cat: 'Скрипт',    title: 'Приём заказа по телефону',      body: 'Поздороваться → уточнить адрес → принять заказ → назвать время доставки (30-45 мин) → подтвердить стоимость → занести в CRM.' },

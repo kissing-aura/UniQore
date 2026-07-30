@@ -889,6 +889,11 @@ table{width:100%;border-collapse:collapse;min-width:600px}
 <div id="sync-status"></div>
 
 <script>
+/* Экранирование пользовательского ввода. Без него комментарий вида
+   <img src=x onerror="..."> исполнялся в браузере всех, кто открывал заявку.
+   esc — для текста внутри тегов, escA — для значений атрибутов (там ещё кавычки). */
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const escA=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 const SB_URL='demo://local'
 const SB_KEY='demo'
 const USERS=[
@@ -1277,7 +1282,9 @@ async function renderDashboard(){
   const prof=todayD.reduce((s,o)=>s+(o.price-o.cost),0)
   const newOrd=orders.filter(o=>o.status==='🆕 Новая')
   const allDone=orders.filter(o=>DONE_ST.includes(o.status))
-  const margin=allDone.length?Math.round(allDone.reduce((s,o)=>s+(o.price-o.cost),0)/allDone.reduce((s,o)=>s+o.price,0)*100):0
+  // маржа считается по СЕГОДНЯШНИМ заказам: она подписана под «Выручка сегодня», рядом
+  // стоит «Прибыль сегодня» — если брать её за всё время, числа на экране не сходятся
+  const margin=rev?Math.round(prof/rev*100):0
   const low=PRODUCTS.filter(p=>(stock[p.id]||0)<=p.minStock)
   updateNewBadgeCount(newOrd.length)
   const days=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));const ds=d.toLocaleDateString('ru-RU');const dd=orders.filter(o=>o.date===ds&&DONE_ST.includes(o.status));return{label:d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'}),rev:dd.reduce((s,o)=>s+o.price,0),prof:dd.reduce((s,o)=>s+(o.price-o.cost),0)}})
@@ -1417,7 +1424,7 @@ async function renderDashboard(){
         </div>
       </div>
       ${orders.length>0?`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:13px;font-weight:700">Последние заявки</div><span style="font-size:12px;color:var(--brand);cursor:pointer" onclick="navigate('orders')">Все →</span></div>
-        ${orders.slice(0,5).map(o=>`<div class="order-card" onclick="openDetail('${o.id}')"><div class="order-card-top"><div class="order-card-name">${o.name}</div><div class="order-card-price">${o.price} BYN</div></div><div class="order-card-product">${o.product} · ${o.color}${o.size!=='One Size'?' · '+o.size:''}</div><div class="order-card-bottom"><div class="order-card-meta">${o.date} · ${o.source}</div><span class="status ${sClass(o.status)}">${o.status}</span></div></div>`).join('')}
+        ${orders.slice(0,5).map(o=>`<div class="order-card" onclick="openDetail('${o.id}')"><div class="order-card-top"><div class="order-card-name">${esc(o.name)}</div><div class="order-card-price">${o.price} BYN</div></div><div class="order-card-product">${o.product} · ${o.color}${o.size!=='One Size'?' · '+o.size:''}</div><div class="order-card-bottom"><div class="order-card-meta">${o.date} · ${o.source}</div><span class="status ${sClass(o.status)}">${o.status}</span></div></div>`).join('')}
       </div>`:''}</div>`
   updateNotifBadge()
 }
@@ -1455,7 +1462,7 @@ function _renderOrdersUI(){
 }
 function renderOrderCards(orders){
   return orders.map(o=>`<div class="order-card" onclick="openDetail('${o.id}')">
-    <div class="order-card-top"><div><div class="order-card-name">${o.name}</div><div style="font-size:11px;color:var(--text3)">${o.id}</div></div><div class="order-card-price">${o.price} BYN</div></div>
+    <div class="order-card-top"><div><div class="order-card-name">${esc(o.name)}</div><div style="font-size:11px;color:var(--text3)">${o.id}</div></div><div class="order-card-price">${o.price} BYN</div></div>
     <div class="order-card-product">${o.product} · ${o.color}${o.size!=='One Size'?' · '+o.size:''} · ${o.delivery||'—'}</div>
     <div class="order-card-bottom"><div class="order-card-meta">${o.date} · ${o.source}</div><span class="status ${sClass(o.status)}">${o.status}</span></div>
   </div>`).join('')
@@ -1465,7 +1472,7 @@ function renderTable(orders){
     ${orders.map(o=>`<tr onclick="openDetail('${o.id}')">
       <td style="font-size:11px;font-weight:700;color:var(--text3)">${o.id}</td>
       <td style="font-size:12px;color:var(--text3);white-space:nowrap">${o.date}</td>
-      <td><div style="font-weight:600">${o.name}</div><div style="font-size:11px;color:var(--text3)">${o.city} · ${o.phone}</div></td>
+      <td><div style="font-weight:600">${esc(o.name)}</div><div style="font-size:11px;color:var(--text3)">${esc(o.city)} · ${esc(o.phone)}</div></td>
       <td><div style="font-size:12.5px">${o.product}</div><div style="font-size:11px;color:var(--text3)">${o.color}${o.size!=='One Size'?' · '+o.size:''}</div></td>
       <td style="font-size:12px">${o.source}</td><td style="font-size:12px">${o.delivery||'—'}</td>
       <td><span class="status ${sClass(o.status)}">${o.status}</span></td>
@@ -1475,7 +1482,7 @@ function renderTable(orders){
   </tbody></table></div>`
 }
 function renderKanban(orders){
-  return`<div class="kanban">${STATUSES.map(st=>{const cols=orders.filter(o=>o.status===st);return`<div class="kanban-col"><div class="kanban-header"><span class="kanban-title">${st}</span><span class="kanban-count">${cols.length}</span></div>${cols.length===0?'<div style="text-align:center;padding:12px 0;font-size:11px;color:var(--text3)">Пусто</div>':''}${cols.map(o=>`<div class="kanban-card" onclick="openDetail('${o.id}')"><div class="kc-name">${o.name}</div><div class="kc-prod">${o.product} · ${o.color}</div><div class="kc-bottom"><span class="kc-price">${o.price} BYN</span><span style="font-size:10px;color:var(--text3)">${o.source}</span></div></div>`).join('')}</div>`}).join('')}</div>`
+  return`<div class="kanban">${STATUSES.map(st=>{const cols=orders.filter(o=>o.status===st);return`<div class="kanban-col"><div class="kanban-header"><span class="kanban-title">${st}</span><span class="kanban-count">${cols.length}</span></div>${cols.length===0?'<div style="text-align:center;padding:12px 0;font-size:11px;color:var(--text3)">Пусто</div>':''}${cols.map(o=>`<div class="kanban-card" onclick="openDetail('${o.id}')"><div class="kc-name">${esc(o.name)}</div><div class="kc-prod">${o.product} · ${o.color}</div><div class="kc-bottom"><span class="kc-price">${o.price} BYN</span><span style="font-size:10px;color:var(--text3)">${o.source}</span></div></div>`).join('')}</div>`}).join('')}</div>`
 }
 
 // ── DETAIL PANEL ──────────────────────────────────────
@@ -1497,7 +1504,7 @@ function renderDetailContent(o,editing){
   const profit=o.price-o.cost
   const isOwner=CU?.role==='owner'
   const isMgr=CU?.role==='manager'||isOwner
-  document.getElementById('dp-title').textContent=`${o.id} · ${o.name}`
+  document.getElementById('dp-title').textContent=`${o.id} · ${esc(o.name)}`
   const row=(key,val,editKey,type='text',opts=null)=>{
     if(editing&&editKey&&isMgr){
       if(opts)return`<div class="detail-row"><span class="dk">${key}</span><select class="dv-select" id="de-${editKey}">${opts.map(op=>`<option value="${op}" ${val===op?'selected':''}>${op}</option>`).join('')}</select></div>`
@@ -1523,7 +1530,7 @@ function renderDetailContent(o,editing){
     ${!editing?`
     <div class="detail-section"><div class="ds-title">Действия</div>
       <div class="action-btns">
-        <div class="action-btn" onclick="window.open('tel:${o.phone}')">📞 Звонок</div>
+        <div class="action-btn" onclick="window.open('tel:${esc(o.phone)}')">📞 Звонок</div>
         ${o.tg?`<div class="action-btn" onclick="window.open('https://t.me/${o.tg.replace('@','')}','_blank')">✈️ TG</div>`:''}
         <div class="action-btn ab-green" onclick="printOrder('${o.id}')">🖨️ Накладная</div>
       </div>
@@ -1532,14 +1539,14 @@ function renderDetailContent(o,editing){
       <div class="status-btns">${STATUSES.map(s=>`<button class="status-btn ${o.status===s?'active':''}" onclick="changeStatus('${o.id}','${s}')">${s}</button>`).join('')}</div>
     </div>
     <div class="detail-section"><div class="ds-title">Трек-номер</div>
-      <div class="tracking-row"><input class="tracking-input" id="track-inp" placeholder="BY000000000" value="${o.tracking||''}"><button class="btn-save-sm" onclick="saveTracking('${o.id}')">Сохранить</button></div>
-      ${o.tracking?`<div style="font-size:12px;color:var(--blue);margin-top:6px;cursor:pointer" onclick="window.open('https://www.belpost.by/parcels/search?number=${o.tracking}','_blank')">🔗 Отследить →</div>`:''}
+      <div class="tracking-row"><input class="tracking-input" id="track-inp" placeholder="BY000000000" value="${escA(o.tracking||'')}"><button class="btn-save-sm" onclick="saveTracking('${o.id}')">Сохранить</button></div>
+      ${o.tracking?`<div style="font-size:12px;color:var(--blue);margin-top:6px;cursor:pointer" onclick="window.open('https://www.belpost.by/parcels/search?number=${esc(o.tracking)}','_blank')">🔗 Отследить →</div>`:''}
     </div>
     <div class="detail-section"><div class="ds-title">История статусов</div>
       <div class="timeline">${(o.timeline||[]).map((t,i,arr)=>`<div class="tl-item ${i===arr.length-1?'tl-active':'tl-done'}"><div class="tl-text">${t.status}</div><div class="tl-time">${t.time} · ${t.by||'Система'}</div></div>`).join('')}</div>
     </div>
     <div class="detail-section"><div class="ds-title">Комментарии</div>
-      ${(o.comments||[]).map(c=>`<div class="comment-item"><div class="comment-author">${c.author}</div><div class="comment-text">${c.text}</div><div class="comment-time">${c.time}</div></div>`).join('')}
+      ${(o.comments||[]).map(c=>`<div class="comment-item"><div class="comment-author">${esc(c.author)}</div><div class="comment-text">${esc(c.text)}</div><div class="comment-time">${c.time}</div></div>`).join('')}
       <div class="comment-box"><textarea class="comment-input" id="comment-inp" rows="2" placeholder="Добавить комментарий..."></textarea><button class="btn-send" onclick="addComment('${o.id}')">→</button></div>
     </div>`:''}
   `
@@ -1581,13 +1588,13 @@ async function changeStatus(id,status){
     if(cur>0){await setStock(o.productId,cur-1);await addNotif('Склад обновлён',`${o.product} ${o.color} — остаток: ${cur-1} шт.`)}
   }
   const ok=await updateOrder(o)
-  if(ok){await addNotif('Статус изменён',`${o.name} → ${status}`,id);renderDetailContent(o,false);if(document.getElementById('page-orders').style.display!=='none')_renderOrdersUI()}
+  if(ok){await addNotif('Статус изменён',`${esc(o.name)} → ${status}`,id);renderDetailContent(o,false);if(document.getElementById('page-orders').style.display!=='none')_renderOrdersUI()}
 }
 async function saveTracking(id){
   const o=cachedOrders.find(x=>x.id===id);if(!o)return
   o.tracking=document.getElementById('track-inp')?.value?.trim()||''
   const ok=await updateOrder(o)
-  if(ok){if(o.tracking)await addNotif('Трек добавлен',`${o.name} · ${o.tracking}`,id);renderDetailContent(o,false)}
+  if(ok){if(o.tracking)await addNotif('Трек добавлен',`${esc(o.name)} · ${esc(o.tracking)}`,id);renderDetailContent(o,false)}
 }
 async function addComment(id){
   const text=document.getElementById('comment-inp')?.value?.trim();if(!text)return
@@ -1604,9 +1611,9 @@ function printOrder(id){
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${o.id}</title><style>body{font-family:monospace;padding:20px;max-width:420px}h2{border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:14px}.r{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #ccc}.l{color:#666}.v{font-weight:bold}</style></head><body>
   <h2>🐉 Dragon Brand — Накладная</h2>
   <div class="r"><span class="l">Номер</span><span class="v">${o.id}</span></div><div class="r"><span class="l">Дата</span><span class="v">${o.date}</span></div>
-  <div class="r"><span class="l">Клиент</span><span class="v">${o.name}</span></div><div class="r"><span class="l">Телефон</span><span class="v">${o.phone}</span></div>
-  <div class="r"><span class="l">Город</span><span class="v">${o.city||'—'}</span></div><div class="r"><span class="l">Товар</span><span class="v">${o.product} · ${o.color} · ${o.size}</span></div>
-  <div class="r"><span class="l">Доставка</span><span class="v">${o.delivery||'—'}</span></div><div class="r"><span class="l">Трек</span><span class="v">${o.tracking||'—'}</span></div>
+  <div class="r"><span class="l">Клиент</span><span class="v">${esc(o.name)}</span></div><div class="r"><span class="l">Телефон</span><span class="v">${esc(o.phone)}</span></div>
+  <div class="r"><span class="l">Город</span><span class="v">${esc(o.city||'—')}</span></div><div class="r"><span class="l">Товар</span><span class="v">${o.product} · ${o.color} · ${o.size}</span></div>
+  <div class="r"><span class="l">Доставка</span><span class="v">${o.delivery||'—'}</span></div><div class="r"><span class="l">Трек</span><span class="v">${esc(o.tracking||'—')}</span></div>
   <div class="r"><span class="l">Сумма</span><span class="v">${o.price} BYN</span></div>
   <br><p style="font-size:11px;color:#999">Dragon Brand · ${new Date().toLocaleString('ru-RU')}</p>
   <script>window.print()<\/script></body></html>`)
@@ -1636,7 +1643,7 @@ async function renderCustomers(){
       ${customers.length===0?`<div class="empty-state"><div class="icon">👥</div><p>Клиентов пока нет</p><div class="hint">Клиенты появятся после первых заявок</div></div>`:''}
       ${customers.map(c=>`<div class="customer-card" onclick="openDetail('${c.orders[0].id}')">
         <div class="customer-avatar">${c.name[0]}</div>
-        <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700">${c.name}</div><div style="font-size:12px;color:var(--text3)">${c.phone}${c.city?' · '+c.city:''}${c.tg?' · '+c.tg:''}</div></div>
+        <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700">${esc(c.name)}</div><div style="font-size:12px;color:var(--text3)">${esc(c.phone)}${c.city?' · '+c.city:''}${c.tg?' · '+c.tg:''}</div></div>
         <div style="text-align:right;flex-shrink:0"><div style="font-size:13px;font-weight:700">${c.orders.length} ${c.orders.length===1?'заказ':c.orders.length<5?'заказа':'заказов'}</div><div style="font-size:12px;color:var(--green)">${c.spent} BYN</div></div>
       </div>`).join('')}
     </div>`
@@ -1731,7 +1738,9 @@ function inPrevPeriodISO(iso,period){
 function _renderFinanceUI(orders,expenses){
   const period=finPeriod
   const periodOrders=orders.filter(o=>inPeriod(o.date,period))
-  const periodExp=expenses.filter(e=>inPeriodISO(e.created_at||new Date().toISOString(),period))
+  // фильтруем по e.date — той дате, которую видно в строке расхода. По created_at расход,
+  // выставленный задним числом, показывал «15 апреля», а в сумму попадал за сегодня
+  const periodExp=expenses.filter(e=>inPeriodISO(e.date||e.created_at||new Date().toISOString(),period))
   const done=periodOrders.filter(o=>DONE_ST.includes(o.status))
   const revenue=done.reduce((s,o)=>s+o.price,0)
   const cogs=done.reduce((s,o)=>s+o.cost,0)
@@ -1878,16 +1887,16 @@ function _renderFinanceUI(orders,expenses){
           <input id="ee-amount-${e.id}" type="number" class="form-input" style="padding:6px 8px;font-size:12px;width:90px" value="${e.amount}" min="0" step="0.01">
           <input id="ee-date-${e.id}" type="date" class="form-input" style="padding:6px 8px;font-size:12px;width:140px" value="${(e.date||new Date(e.created_at).toISOString().split('T')[0])}">
           <input id="ee-note-${e.id}" type="text" class="form-input" style="padding:6px 8px;font-size:12px;flex:1;min-width:120px" value="${(e.note||'').replace(/"/g,'&quot;')}" placeholder="Комментарий">
-          <button onclick="saveExpenseEdit(${e.id})" class="btn-add" style="padding:6px 12px;font-size:12px">✓ OK</button>
+          <button onclick="saveExpenseEdit('${e.id}')" class="btn-add" style="padding:6px 12px;font-size:12px">✓ OK</button>
           <button onclick="editingExpenseId=null;renderFinance()" style="background:var(--surface);border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer">Отмена</button>
         </div>`:`<div class="fin-row" style="gap:8px">
           <div style="flex:1">
             <div style="font-size:13px;font-weight:600">${e.category}</div>
-            ${e.note?`<div style="font-size:11px;color:var(--text3)">${e.note}</div>`:''}
+            ${e.note?`<div style="font-size:11px;color:var(--text3)">${esc(e.note)}</div>`:''}
             <div style="font-size:11px;color:var(--text3)">${e.date||new Date(e.created_at).toLocaleDateString('ru-RU')}</div>
           </div>
           <div style="font-size:14px;font-weight:700;color:var(--red);flex-shrink:0">−${Math.round(Number(e.amount))} BYN</div>
-          ${CU?.role==='owner'?`<button onclick="editingExpenseId=${e.id};renderFinance()" title="Редактировать" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;flex-shrink:0">✏️</button><button onclick="removeExpense(${e.id})" title="Удалить" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0">✕</button>`:''}
+          ${CU?.role==='owner'?`<button onclick="editingExpenseId='${e.id}';renderFinance()" title="Редактировать" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;flex-shrink:0">✏️</button><button onclick="removeExpense('${e.id}')" title="Удалить" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0">✕</button>`:''}
         </div>`).join('')}
       </div>
     </div>`
@@ -2273,7 +2282,7 @@ function closeNotif(){notifOpen=false;document.getElementById('notif-panel').cla
 async function renderNotifs(){
   const list=document.getElementById('notif-list');if(!list)return
   const n=await getNotifs()
-  list.innerHTML=n.length?n.map(x=>`<div class="notif-item ${x.read?'':'unread'}" onclick="${x.order_id?`openDetail('${x.order_id}');closeNotif()`:''}" style="${x.order_id?'cursor:pointer':''}"><div class="notif-item-title">${x.title}</div><div class="notif-item-body">${x.body}</div><div class="notif-item-time">${x.time}</div></div>`).join(''):'<div style="padding:48px 20px;text-align:center;color:var(--text3);font-size:13px">Нет уведомлений</div>'
+  list.innerHTML=n.length?n.map(x=>`<div class="notif-item ${x.read?'':'unread'}" onclick="${x.order_id?`openDetail('${x.order_id}');closeNotif()`:''}" style="${x.order_id?'cursor:pointer':''}"><div class="notif-item-title">${esc(x.title)}</div><div class="notif-item-body">${esc(x.body)}</div><div class="notif-item-time">${x.time}</div></div>`).join(''):'<div style="padding:48px 20px;text-align:center;color:var(--text3);font-size:13px">Нет уведомлений</div>'
 }
 
 // ── NEW ORDER ─────────────────────────────────────────
@@ -2348,16 +2357,19 @@ async function submitNewOrder(){
   const today=new Date().toLocaleDateString('ru-RU')
   const now=new Date();const ts=today+' '+now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
   const common={name,phone,tg:document.getElementById('f-tg')?.value?.trim()||'',city:document.getElementById('f-city')?.value?.trim()||'',source:document.getElementById('f-source')?.value||'TikTok',delivery:document.getElementById('f-delivery')?.value||'',status:'🆕 Новая',date:today,tracking:'',comments:[],manager:CU?.name||'Менеджер',comment:document.getElementById('f-comment')?.value?.trim()||'',fromSite:false,timeline:[{status:'🆕 Новая',time:ts,by:CU?.name||'Менеджер'}]}
-  let allOk=true
+  let allOk=true,firstOrderId=''
   for(const p of items){
     const o={...common,id:`ORD-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,productId:p.id,product:p.name,color:p.color,size:p.size,price:p.price,cost:p.cost}
+    if(!firstOrderId)firstOrderId=o.id
     const ok=await insertOrder(o)
     if(!ok){allOk=false;break}
   }
   if(!allOk)return
   const desc=items.map(p=>p.color+(p.size!=='One Size'?' '+p.size:'')).join(', ')
   sendNtfy(name+' — '+desc)
-  await addNotif('Новая заявка',`${name} · ${desc}`,items[0]?.id||'')
+  // ссылку в уведомлении вешаем на созданную ЗАЯВКУ, а не на товар из формы:
+  // раньше сюда уходил items[0].id (напр. cap-blk-wht) и клик открывал пустую панель
+  await addNotif('Новая заявка',`${name} · ${desc}`,firstOrderId)
   closeModal()
   cachedOrders=await getOrders()
   navigate('orders')
