@@ -102,7 +102,16 @@ const ROLE_METRICS = R.roleMetrics || {
 };
 const roleMetricsFor = role => ROLE_METRICS[role] || ROLE_METRICS.default || [];
 // авто-показатели сотрудника из данных (recipe.teamAuto): выручка/сделки считаются сами, не вручную
-function teamKpi(m) { const base = m.kpi || {}; if (!R.teamAuto) return base; const ta = R.teamAuto; const won = DB.recs(ta.entity).filter(d => d[ta.by] === m.name && d.stage === (ta.won || 'won')); return { ...base, deals: won.length, revenue: won.reduce((s, d) => s + (Number(d[ta.amount || 'amount']) || 0), 0) }; }
+function teamKpi(m) {
+  const base = m.kpi || {};
+  if (!R.teamAuto) return base;
+  const ta = R.teamAuto;
+  const won = DB.recs(ta.entity).filter(d => d[ta.by] === m.name && d.stage === (ta.won || 'won'));
+  // если по человеку записей нет — он просто не в этой роли (управляющий, повар, маркетолог),
+  // и его собственные KPI из рецепта затирать нулями нельзя: половина команды показывала 0 ₽ / 0%
+  if (!won.length) return base;
+  return { ...base, deals: won.length, revenue: won.reduce((s, d) => s + (Number(d[ta.amount || 'amount']) || 0), 0) };
+}
 
 /* ── utils ── */
 const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -815,7 +824,10 @@ function openDetail(ek, id) {
   document.getElementById('dClose').onclick = closeMount; document.getElementById('ov').onclick = e => { if (e.target.id === 'ov') closeMount(); };
   document.getElementById('dEdit').onclick = () => { closeMount(); openForm(ek, id); };
   document.getElementById('dDel').onclick = () => { if (confirm('Удалить ' + ent.one + '?')) { DB.saveRecs(ek, DB.recs(ek).filter(r => r.id !== id)); closeMount(); refresh(); } };
-  document.querySelectorAll('.stage-step').forEach(el => el.onclick = () => { const recs = DB.recs(ek), r = recs.find(x => x.id === id); if (r.stage !== el.dataset.stage) { r.activity = r.activity || []; r.activity.push({ text: 'Статус → ' + stageById(el.dataset.stage, ent).label, date: new Date().toISOString() }); r.stage = el.dataset.stage; r.updatedAt = new Date().toISOString(); DB.saveRecs(ek, recs); runAutom('stage', { ent, rec: r }); } openDetail(ek, id); });
+  document.querySelectorAll('.stage-step').forEach(el => el.onclick = () => { const recs = DB.recs(ek), r = recs.find(x => x.id === id); if (r.stage !== el.dataset.stage) { r.activity = r.activity || []; r.activity.push({ text: 'Статус → ' + stageById(el.dataset.stage, ent).label, date: new Date().toISOString() }); r.stage = el.dataset.stage; r.updatedAt = new Date().toISOString(); DB.saveRecs(ek, recs); runAutom('stage', { ent, rec: r });
+    // перерисовываем экран под панелью: без этого карточка уезжала в другую колонку
+    // только формально — доска и счётчики обновлялись лишь после ухода в другой раздел
+    try { showView(VIEW); } catch (e) {} } openDetail(ek, id); });
 }
 
 /* ── Record form ── */
@@ -923,8 +935,14 @@ function viewGoals(n) {
   const fact = factF ? recs.filter(r => matchFilter(r, g.factWhere)).reduce((s, r) => s + (Number(val(r, factF)) || 0), 0) : (g.fact || 0);
   const plan = g.plan || Math.round(g.target * 0.9), pct = g.target ? Math.round(fact / g.target * 100) : 0;
   const team = DB.team().map(m => ({ m, k: teamKpi(m) }));
-  const maxRev = Math.max(1, ...team.map(x => x.k.revenue), Math.round((g.target || 0) / Math.max(team.length, 1)));
-  const rows = team.sort((a, b) => b.k.revenue - a.k.revenue).map(({ m, k }) => { const tgt = k.target || Math.round(maxRev * .8); const p = Math.round(k.revenue / Math.max(tgt, 1) * 100); return `<div class="goal-row"><div class="goal-row__name">${esc(m.name)} <span class="list-item__meta">${esc(roleName(m.role))}</span></div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${Math.min(100, Math.max(2, k.revenue / maxRev * 100))}%;background:${p >= 100 ? 'var(--good)' : p > 0 ? 'var(--acc)' : 'var(--border2)'}"></div></div><div class="goal-row__v num">${moneyShort(k.revenue)} ₽ <span style="color:${p >= 100 ? 'var(--good)' : 'var(--text3)'}">${p}%</span></div></div>`; }).join('') || '<div class="empty-hint">Добавь сотрудников в разделе «Команда» — здесь появится их план/факт</div>';
+  // Number()||0 обязателен: один сотрудник без revenue отравлял Math.max значением NaN,
+  // и тогда процент выполнения превращался в NaN% у ВСЕХ остальных
+  const maxRev = Math.max(1, ...team.map(x => Number(x.k.revenue) || 0), Math.round((g.target || 0) / Math.max(team.length, 1)));
+  // личная цель тем, у кого её нет в рецепте: доля общей цели на человека с выручкой.
+  // От 80% максимума по команде сотрудник с малой выручкой висел на 1%
+  const withRev = team.filter(x => Number(x.k.revenue) > 0).length || 1;
+  const perHead = Math.max(1, Math.round((g.target || maxRev) / withRev));
+  const rows = team.sort((a, b) => (b.k.revenue || 0) - (a.k.revenue || 0)).map(({ m, k }) => { const tgt = k.target || perHead; const hasRev = Number.isFinite(Number(k.revenue)); const p = hasRev ? Math.round(Number(k.revenue) / Math.max(tgt, 1) * 100) : null; return `<div class="goal-row"><div class="goal-row__name">${esc(m.name)} <span class="list-item__meta">${esc(roleName(m.role))}</span></div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${Math.min(100, Math.max(2, k.revenue / maxRev * 100))}%;background:${p >= 100 ? 'var(--good)' : p > 0 ? 'var(--acc)' : 'var(--border2)'}"></div></div><div class="goal-row__v num">${hasRev ? moneyShort(k.revenue) + ' ₽ <span style="color:' + (p >= 100 ? 'var(--good)' : 'var(--text3)') + '">' + p + '%</span>' : '<span style="color:var(--text3)">—</span>'}</div></div>`; }).join('') || '<div class="empty-hint">Добавь сотрудников в разделе «Команда» — здесь появится их план/факт</div>';
   document.getElementById('viewBody').innerHTML = `
     <div class="kpi-row">
       <div class="kpi"><div class="kpi__label">Цель</div><div class="kpi__val num" data-cu="${g.target}" data-money="1">${fmtMoney(g.target)}</div><div class="kpi__sub">${esc(g.period || 'на месяц')}</div></div>

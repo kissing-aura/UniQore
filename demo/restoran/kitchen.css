@@ -18,7 +18,7 @@
 @keyframes kbLive { 50% { transform: scale(1.2) rotate(-6deg); } }
 .kb-col__body { display: flex; flex-direction: column; gap: 11px; min-height: 44px; }
 
-.kb-ticket { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--kc); border-radius: 12px; padding: 12px 13px; box-shadow: var(--shadow-sm); transition: transform .15s, box-shadow .25s; }
+.kb-ticket { cursor: pointer; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--kc); border-radius: 12px; padding: 12px 13px; box-shadow: var(--shadow-sm); transition: transform .15s, box-shadow .25s; }
 .kb-ticket:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 .kb-ticket__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
 .kb-ticket__top b { font-family: var(--font-num); font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: .02em; }

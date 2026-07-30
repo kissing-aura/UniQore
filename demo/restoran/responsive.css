@@ -126,3 +126,13 @@
   .cal-head .seg { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .cal-head .seg::-webkit-scrollbar { height: 0 }
 }
+
+/* Шапка раздела на телефоне: «Рабочий стол» + название + поиск + главная кнопка
+   («+ Заказ», «+ Клиент», …) стояли одним рядом и не помещались — кнопка уезжала
+   за правый край на 40-140px, а body{overflow-x:hidden} её срезал. Не нажать. */
+@media (max-width: 700px) {
+  .page-head { flex-wrap: wrap; row-gap: 10px; padding-right: 0 !important; }
+  .page-head .page-title { flex: 1 1 auto; min-width: 0; }
+  .page-head .ph-actions { flex: 1 1 100%; justify-content: flex-end; flex-wrap: wrap; }
+  .page-head .ph-actions > * { max-width: 100%; }
+}

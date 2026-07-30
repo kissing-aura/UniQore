@@ -147,7 +147,10 @@
       var matched = null;
       for (var fi = 0; fi < fields.length; fi++) {
         var f = fields[fi];
-        if (f.type === 'computed') continue;
+        // gallery тоже пропускаем: экспорт пишет её как КОЛИЧЕСТВО фото («3»),
+        // и при импорте это число вставало на место массива — карточка потом
+        // падала на a.map() и не открывалась вообще
+        if (f.type === 'computed' || f.type === 'gallery') continue;
         var lbl = (f.label || '').toLowerCase();
         var key = (f.key || '').toLowerCase();
         if (lbl === lower || key === lower) { matched = { key: f.key, type: f.type }; break; }

@@ -286,7 +286,9 @@
       { key: 'vip',        label: 'VIP клиентов',       kind: 'count',    entity: 'client', where: { stage: 'vip' }, sub: 'в базе' },
     ],
 
-    goals: { entity: 'order', factField: 'amount', factWhere: { stage: 'delivered' }, target: 1000000, plan: 800000, period: 'на месяц' },
+    // цель дневная: факт считается по доставленным заказам, а заказы в базе — за сегодня.
+    // С месячной целью в 1 000 000 ₽ демка показывала выполнение на 1% — как будто бизнес стоит
+    goals: { entity: 'order', factField: 'amount', factWhere: { stage: 'delivered' }, target: 15000, plan: 12000, period: 'на день' },
     teamAuto: { entity: 'order', by: 'courier', won: 'delivered', amount: 'amount' },
 
     analytics: [
