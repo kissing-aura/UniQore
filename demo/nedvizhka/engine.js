@@ -601,13 +601,14 @@ function viewOverview() {
   const byComplex = new Map(); objects.forEach(o => byComplex.set(o.complex, (byComplex.get(o.complex) || 0) + 1));
   const topComplex = [...byComplex.entries()].sort((a, b) => b[1] - a[1])[0];
   const staleLeads = leads.filter(l => ['contacted', 'qualified', 'viewing'].includes(l.stage) && daysSince(l.createdAt) > 5).length;
-  const closedThisMonth = deals.filter(d => d.stage === 'won').length;
+  // у сделки нет даты закрытия, поэтому это счётчик за всё время, а не за месяц
+  const closedTotal = deals.filter(d => d.stage === 'won').length;
   const insights = [
     topAgents[0] ? { level: 'good', icon: 'target', text: `Лучший агент — ${esc(topAgents[0].name)}: ${topAgents[0].deals} закрытых сделок, рейтинг ★${topAgents[0].rating}.` } : null,
     { level: trend >= 0 ? 'good' : 'warn', icon: 'chart', text: `Комиссия месяца ${fmtMoney(mtdIncome)} — ${trend >= 0 ? '+' : ''}${trend}% к прошлому месяцу.` },
     staleLeads ? { level: 'warn', icon: 'bolt', text: `${staleLeads} лид${staleLeads === 1 ? '' : 'а'} без движения больше 5 дней — стоит дожать, иначе уйдут к конкурентам.` } : null,
     topComplex ? { level: 'info', icon: 'building', text: `ЖК «${esc(topComplex[0])}» — самый крупный кластер каталога, ${topComplex[1]} объектов.` } : null,
-    { level: 'good', icon: 'deal', text: `Закрыто сделок за месяц: ${closedThisMonth}. Средний срок объекта в продаже — ${avgDays} дней.` },
+    { level: 'good', icon: 'deal', text: `Закрыто сделок: ${closedTotal}. Средний срок объекта в продаже — ${avgDays} дней.` },
   ].filter(Boolean);
   const insightsHtml = insights.map(i => `<div class="ai-ins ai-ins--${i.level}"><span class="ai-ins__ic">${icon(i.icon)}</span><span>${i.text}</span></div>`).join('');
 
@@ -647,7 +648,9 @@ function estimateObject({ complex, rooms, area, floor, floorsTotal, renovation, 
   const floorMult = floor <= 2 ? 0.97 : (floorsTotal && floor === floorsTotal) ? 1.03 : 1.0;
   const base = avgPerM2 * area * (VAL_RENOV_MULT[renovation] || 1) * floorMult;
   const round = v => Math.round(v / 1000) * 1000;
-  const comps = objects.filter(o => o.complex === complex).slice(0, 3);
+  // тот же тип сделки, что и в оценке: без него под оценкой аренды (152 000 ₽/мес)
+  // показывались сравнимые объекты продажи за 37 000 000 ₽
+  const comps = objects.filter(o => o.complex === complex && o.dealType === dealType).slice(0, 3);
   return { estimate: round(base), low: round(base * 0.94), high: round(base * 1.06), sample: pool.length, comps, avgPerM2: Math.round(avgPerM2) };
 }
 function viewValuation(n) {
@@ -1692,7 +1695,7 @@ function uaAnswer(qRaw) {
   if (/сделк|пайплайн/.test(q)) {
     const open = deals.filter(d => !['won', 'lost'].includes(d.stage));
     const val = open.reduce((a, d) => a + (Number(d.amount) || 0), 0);
-    return `В работе ${open.length} сделок на сумму ${fmtMoney(val)}. Закрыто в этом месяце: ${deals.filter(d => d.stage === 'won').length}.`;
+    return `В работе ${open.length} сделок на сумму ${fmtMoney(val)}. Закрыто всего: ${deals.filter(d => d.stage === 'won').length}.`;
   }
 
   if (/агент|кто лучш|топ/.test(q)) {
