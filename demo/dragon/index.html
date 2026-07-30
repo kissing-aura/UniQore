@@ -1223,6 +1223,10 @@ async function startApp(){
   const isOwner=CU.role==='owner'
   document.getElementById('nav-section-admin').style.display=isOwner?'block':'none'
   document.getElementById('nav-admin-items').style.display=isOwner?'block':'none'
+  // кладовщик не должен видеть деньги компании: раздел «Финансы» не входил в
+  // админ-секцию, и со склада была видна вся выручка, прибыль и расходы
+  const navFin=document.getElementById('nav-finance')
+  if(navFin)navFin.style.display=CU.role==='warehouse'?'none':'flex'
   if(CU.role!=='warehouse')document.getElementById('mob-add-btn').style.display='flex'
   await loadProducts()
   updateNotifBadge()
@@ -1710,6 +1714,9 @@ function inPeriodISO(isoStr,period){
 }
 
 async function renderFinance(){
+  // не только прячем пункт меню, но и закрываем саму страницу — иначе прямой переход
+  // (ссылка, история, hash) всё равно показал бы кладовщику выручку и прибыль
+  if(CU?.role==='warehouse'){document.getElementById('page-finance').innerHTML='<div class="empty-state"><div class="icon">🔒</div><p>Раздел доступен владельцу и менеджеру</p></div>';return}
   document.getElementById('page-finance').innerHTML=headerHTML('Финансы','')+loading()
   const [orders,expenses]=await Promise.all([getOrders(),getExpenses()])
   _renderFinanceUI(orders,expenses)
