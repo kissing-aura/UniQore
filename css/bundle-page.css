@@ -30,8 +30,8 @@ button { cursor: pointer; border: none; background: none; }
   --color-white:          #FFFFFF;
 
   /* Typography */
-  --font-display: 'Manrope', 'Inter', sans-serif;
-  --font-body:    'Inter', sans-serif;
+  --font-body:    'Geist', sans-serif;          /* приёмка 31.07: Inter → Geist, как на главной */
+  --font-display: var(--font-body);             /* Manrope убран — один шрифт на все внутренние */
   --font-mono:    'JetBrains Mono', monospace;
 
   /* Layout */
