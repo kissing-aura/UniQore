@@ -5575,3 +5575,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   .svc-card:hover::after,.demo-card:hover::after{opacity:.5;transform:scale(1)}
 }
 @media(prefers-reduced-motion:reduce){.section-title em::before,.section-title em::after{animation:none;opacity:.9}}
+
+/* ── Волна 5-6 · мобильные фиксы (фаза 4 QA @390) ── */
+@media (max-width: 640px){
+  /* nav: убрать backdrop-filter на мобилке (правило + перф-джанк при скролле);
+     фон был rgba(10,10,10,.85) — поднимаем до почти непрозрачного, читаемость держим */
+  .nav.scrolled{ backdrop-filter:none !important; -webkit-backdrop-filter:none !important; background:rgba(10,10,10,.94) !important; }
+  /* CRM-точка в форме не мигает на мобилке (правило «ноль бесконечных анимаций» + AI-tell «мигающий status-dot») */
+  .form__crm-dot{ animation:none !important; opacity:1; }
+  /* акцент-слово заголовка может переноситься — RETICLE nowrap заставлял «можно открыть» выезжать за 390px */
+  .section-title em{ white-space:normal; }
+}
