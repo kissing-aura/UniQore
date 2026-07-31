@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Страница не найдена — Uniqore</title>
+<meta name="robots" content="noindex, follow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<style>
+  /* Страница самодостаточна: если основной CSS не догрузится (медленный
+     канал в РФ), человек всё равно увидит нормальный экран, а не голый nginx. */
+  :root{--l:#CDFF4F;--bg:#0A0E1A;--txt:#E7EAF0;--mut:#8792a3;--line:rgba(255,255,255,.09)}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;display:flex;flex-direction:column}
+  a{color:inherit}
+  .wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px}
+  .card{width:100%;max-width:560px}
+  .logo{display:inline-flex;align-items:center;gap:9px;text-decoration:none;margin-bottom:44px}
+  .logo svg{width:22px;height:22px;color:var(--l)}
+  .logo b{font-size:19px;font-weight:600;letter-spacing:-.02em}
+  .code{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--l);margin:0 0 14px}
+  h1{font-family:'Unbounded','Geist',sans-serif;font-weight:800;letter-spacing:-.03em;line-height:1.05;
+    font-size:clamp(27px,6.4vw,44px);margin:0 0 16px}
+  p{color:var(--mut);font-size:16px;line-height:1.6;margin:0 0 30px;max-width:44ch}
+  .links{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;
+    text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--line);transition:.18s}
+  .btn--main{background:var(--l);color:#0A0E1A;border-color:var(--l)}
+  .btn--main:hover{filter:brightness(1.07)}
+  .btn--ghost:hover{border-color:rgba(205,255,79,.4);background:rgba(255,255,255,.03)}
+  .also{border-top:1px solid var(--line);padding-top:24px}
+  .also span{display:block;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:13px}
+  .also ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 22px}
+  .also a{color:var(--txt);text-decoration:none;font-size:15px;border-bottom:1px solid transparent;padding-bottom:2px}
+  .also a:hover{border-bottom-color:var(--l);color:var(--l)}
+  @media(max-width:520px){.links{flex-direction:column}.btn{justify-content:center}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <a class="logo" href="/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+        <b>uniqore</b>
+      </a>
+
+      <p class="code">Ошибка 404</p>
+      <h1>Такой страницы нет</h1>
+      <p>Возможно, адрес набран с опечаткой или страницу переместили. Всё рабочее — по ссылкам ниже.</p>
+
+      <div class="links">
+        <a class="btn btn--main" href="/">На главную</a>
+        <a class="btn btn--ghost" href="/#cases">Посмотреть живые демо</a>
+      </div>
+
+      <div class="also">
+        <span>Куда обычно идут</span>
+        <ul>
+          <li><a href="/sayty/">Сайты под ключ</a></li>
+          <li><a href="/tseny/">Цены</a></li>
+          <li><a href="/keysy/">Кейсы</a></li>
+          <li><a href="/blog/">Блог</a></li>
+          <li><a href="/o-nas/">О нас</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -13,6 +13,19 @@
   'use strict';
   var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (mqReduce || window.innerWidth < 900) return;
+
+  /* Гейт по каналу и железу (приёмка 31.07).
+     three.min.js весит 163 КБ gzip — больше, чем весь остальной код страницы
+     (CSS 45 + JS 35 КБ). Гейт по ширине и WebGL был, по скорости канала — нет:
+     на медленном интернете декоративные частицы соревновались за полосу
+     с контентом. Для РФ-канала это прямой риск. */
+  var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (conn) {
+    if (conn.saveData) return;
+    if (/^(slow-2g|2g|3g)$/.test(conn.effectiveType || '')) return;
+  }
+  if (navigator.deviceMemory && navigator.deviceMemory < 4) return;
+
   try {
     var tc = document.createElement('canvas');
     if (!(tc.getContext('webgl') || tc.getContext('experimental-webgl'))) return;
