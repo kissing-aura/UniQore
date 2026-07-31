@@ -5586,3 +5586,28 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   /* акцент-слово заголовка может переноситься — RETICLE nowrap заставлял «можно открыть» выезжать за 390px */
   .section-title em{ white-space:normal; }
 }
+
+/* ==== ПОЗИЦИОНИРОВАНИЕ ГЛАВНОЙ — новый H1 + ритм первого экрана (31.07, решение Матвея) ==== */
+/* 2.4 Цены услуг — основной шрифт (Geist), а не JetBrains Mono: моно читается как код и удешевляет.
+       Моно остаётся на технических лейблах/чипах/подписях. */
+.svc-card__price { font-family: var(--font-body); letter-spacing: -0.01em; }
+
+@media (max-width: 640px) {
+  /* 2.1 Одна выключка — левая. Заголовок #uslugi и переключатель валют были центрированы,
+         а контент под ними — слева; глаз перестраивался на каждом блоке. */
+  .services3__head { text-align: left; }
+
+  /* 2.2 Секционные заголовки — меньше кегль, влезают в 2 строки
+         (было ~37px и до 5 строк у «весь цифровой отдел»). */
+  .section-title { font-size: clamp(24px, 6.6vw, 30px); margin-bottom: 26px; }
+
+  /* 2.3 Ритм первого экрана: сгруппировать воздух. Было — равномерный gap 20px между всеми
+         элементами. Стало — внутри группы плотно, между группами воздух. */
+  .hero__left { gap: 0; }
+  .hero__left > .hero__title { margin: 0 0 10px; }         /* H1 + подзаголовок — плотно */
+  .hero__left > .hero__subtitle { margin: 0 0 22px; }      /* → воздух между группами */
+  .hero__left > .hero__pricebar { margin: 0 0 9px; }       /* цена + ассуранс — плотной парой */
+  .hero__left > .hero__assurance { margin: 0 0 20px; }     /* → воздух перед кнопками */
+  .hero__left > .hero__actions { margin: 0 0 24px; }
+  .hero__left > .hero__proofshot { margin: 0; }
+}
