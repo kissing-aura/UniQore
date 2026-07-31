@@ -1,33 +1,42 @@
 <!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Первый экран /sayty/ — два варианта</title>
+<title>Первый экран /sayty/ — концепты</title>
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
 <style>
 :root{--l:#CDFF4F;--bg:#0A0E1A;--txt:#E7EAF0;--mut:#8792a3;--line:rgba(255,255,255,.1)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--txt);font-family:'Geist',system-ui,sans-serif;padding:26px 18px 60px;-webkit-font-smoothing:antialiased}
-h1{font-family:'Unbounded','Geist',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:8px}
-.sub{color:var(--mut);font-size:14.5px;line-height:1.55;margin-bottom:26px;max-width:52ch}
-a.card{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
-a.card b{display:block;font-size:17px;font-weight:600;margin-bottom:6px}
-a.card b i{font-style:normal;color:var(--l)}
-a.card p{font-size:13.5px;color:var(--mut);line-height:1.55}
-a.card span{display:inline-block;margin-top:12px;font-size:13px;color:var(--l);border-bottom:1px solid rgba(205,255,79,.35)}
-.now{border-color:rgba(255,255,255,.06);opacity:.75}
+h1{font-family:'Unbounded','Geist',sans-serif;font-size:23px;font-weight:800;letter-spacing:-.03em;margin-bottom:7px}
+.sub{color:var(--mut);font-size:14px;line-height:1.55;margin-bottom:24px;max-width:52ch}
+.grp{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mut);margin:26px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+a.c{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:11px}
+a.c.win{border-color:rgba(205,255,79,.45)}
+a.c b{display:block;font-size:16px;font-weight:600;margin-bottom:5px}
+a.c b i{font-style:normal;color:var(--l)}
+a.c .sc{float:right;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mut)}
+a.c p{font-size:13px;color:var(--mut);line-height:1.55}
+a.c span{display:inline-block;margin-top:10px;font-size:12.5px;color:var(--l)}
 </style></head><body>
 <h1>Первый экран /sayty/</h1>
-<p class="sub">Два направления. Открой каждое — они свёрстаны ровно под этот экран, красная пунктирная линия показывает, где проходит сгиб на iPhone.</p>
-<a class="card" href="/proto/hero-final.html" style="border-color:rgba(205,255,79,.45)"><b>⭐ <i>ФИНАЛ</i> — то, что предлагаю внедрять</b>
-<p>Лента живых работ + три строки цен, где подсвечено то, что реально покупают: многостраничник с дизайном 32 760 ₽. Гарантия год. Одна кнопка. Всё влезло в экран, следующий блок выглядывает.</p>
+<p class="sub">Четыре направления собрали независимые агенты, каждое оценило жюри из трёх: арт-директор, охотник за AI-slop, конверсионщик. Финал — победитель плюс привитые находки остальных. Красная линия на макетах — реальный сгиб Safari (659px), не высота экрана.</p>
+
+<div class="grp">Итог</div>
+<a class="c win" href="/proto/concept-final.html"><b><i>★ ФИНАЛ</i> — синтез<span class="sc"></span></b>
+<p>Скриншот работы во всю ширину + оглавление из четырёх работ, которое его переключает + цена 32 800 ₽ с одной кнопкой. Всё решение укладывается в 646px — видно до первого скролла.</p>
 <span>Открыть →</span></a>
-<a class="card" href="/proto/hero-a.html"><b>Вариант <i>А</i> — доказательство первым</b>
-<p>Вместо мокапа — лента реальных сайтов, которые можно листать: Bien Sûr, Немеция, IDTuning. Под ней три цифры, потом одна кнопка. Сгиб режет вторую работу — видно, что там есть ещё.</p>
-<span>Открыть →</span></a>
-<a class="card" href="/proto/hero-b.html"><b>Вариант <i>Б</i> — человек выбирает себя сам</b>
-<p>Ниша меняется прямо в заголовке. Вместо картинки — три строки с ценой и сроком: лендинг, многостраничник, сайт+CRM. Человек сразу видит свой бюджет и жмёт по нему.</p>
-<span>Открыть →</span></a>
-<a class="card now" href="/sayty/"><b>Как сейчас</b>
-<p>Для сравнения — живая страница.</p>
-<span>Открыть →</span></a>
+
+<div class="grp">Концепты и оценки жюри</div>
+<a class="c" href="/proto/concept-redakcia.html"><b>Редакционный<span class="sc">7.0</span></b>
+<p>Разворот журнала о дизайне: титул-плакат, моно-подписи, жёсткая сетка. Портфолио как оглавление номера.</p><span>Открыть →</span></a>
+<a class="c" href="/proto/concept-dannye.html"><b>Данные и точность<span class="sc">7.0</span></b>
+<p>Приборная панель подрядчика: реестр работ, селектор цены со шкалой. Ни одного прилагательного.</p><span>Открыть →</span></a>
+<a class="c" href="/proto/concept-vitrina.html"><b>Витрина работы<span class="sc">6.67</span></b>
+<p>48% экрана отдано одной работе клиента во весь кадр, заголовок лежит поверх как подпись к экспонату.</p><span>Открыть →</span></a>
+<a class="c" href="/proto/concept-process.html"><b>Процесс на глазах<span class="sc">6.33</span></b>
+<p>Горизонталь кадра = ось времени: слева каркас-чертёж, справа живой сайт. Под кадром шкала 01/03/05 дней.</p><span>Открыть →</span></a>
+
+<div class="grp">Для сравнения</div>
+<a class="c" href="/sayty/"><b>Как сейчас живёт</b><p>Текущая страница.</p><span>Открыть →</span></a>
 </body></html>

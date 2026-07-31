@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — первый экран · РЕДАКЦИОННЫЙ</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════════
+ЛОГИКА ЭКРАНА. Холодный человек, iPhone 390×844, пришёл из Директа.
+Читает сверху вниз, решение принимает в двух точках: на работах и на цене.
+
+  1. y≈14   uniqore + «САЙТЫ И CRM» — кто. Полсекунды, без обещаний.
+  2. y≈70   моно-строка 20+ САЙТОВ · 30+ CRM · 50+ ПРОЕКТОВ — масштаб цифрами
+            ДО заголовка. Человек ещё не читал оффер, но уже знает: делали много.
+  3. y≈96   Титул. «Сайт, который не стыдно показать» — не «под ключ»,
+            не «за 3 дня» (этим торгуют все в Директе), а то, что владелец
+            малого бизнеса реально чувствует про свой текущий сайт.
+  4. y≈215  Лид в две строки: что мы + прямая инструкция вниз («ниже — работы»).
+            Лид не продаёт, он передаёт взгляд следующему блоку.
+  5. y≈290  РАБОТЫ 01/04 — раздел открывается как материал номера.
+  6. y≈287  ГЛАВНЫЙ КАДР. Открывается на «Немеции» — она за полсекунды читается
+            как живой сайт малого бизнеса (шапка, телефон, оффер), в отличие от
+            ресторанного фото. Настоящий скриншот, во всю ширину, без рамки,
+            без мокапа, нижний край растворён в фон. Это самая большая
+            площадь экрана — доказательство весит больше, чем оффер.
+  7. y≈460  РЕЕСТР из 4 строк — оглавление номера. Тап по строке меняет
+            кадр наверху. Человек трогает → задерживается → верит.
+            ЗДЕСЬ первая точка решения: «они правда это сделали».
+  8. y≈650  ЦЕНА. Подсвечен не самый дешёвый тариф, а самый частый —
+            32 800 ₽, многостраничник с дизайном, 5 дней. Ниже мелко —
+            вилка 11 700 / 39 000, чтобы цена читалась как прайс, а не крючок.
+            ВТОРАЯ точка решения: «попадаю в бюджет».
+  9. y≈760  Ровно одна кнопка. Больше кликабельных обещаний на экране нет.
+ 10. y≈820  Выходные данные в три колонки: гарантия год · оплата после
+            макета · без абонплаты. Снятие риска стоит ПОСЛЕ кнопки —
+            это не аргумент «за», это последнее возражение «против».
+ 11. y≈860  Из-за сгиба выглядывает следующая полоса — экран не заканчивается.
+
+ЧЕГО ЗДЕСЬ НЕТ СОЗНАТЕЛЬНО: мокапа телефона, карточек, чипа над заголовком,
+свечений, эмодзи, bento, fade-up на входе (убивает LCP на платном трафике).
+Акцентный лайм появляется ровно четыре раза и все четыре — мельче 11px,
+кроме единственной заливки кнопки.
+
+ТИПОГРАФИКА (замеры кириллицы в Unbounded): 32px / lh 1.04 / −0.025em,
+вес 300 — при 342px контейнера это 13 знаков в строке, переносы руками.
+Моно 10px капсом с положительным трекингом — только технические подписи.
+Промежуточных кеглей 18–28px на экране нет: 32 → 15 → 10.
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --txt:#E7EAF0;
+  --mut:#9aa4b2;
+  --mut2:#69727f;
+  --mut3:#5b6371;
+  --lime:#CDFF4F;
+  --line:rgba(231,234,240,.085);
+  --pad:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;
+  color:var(--txt);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ───────── вьюпорт-обёртка ───────── */
+.vp{
+  width:390px;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  min-height:1010px;
+  background:var(--bg);
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+.rule{height:1px;background:var(--line)}
+
+/* поля-маргиналии: две вертикальные линии по границам колонки.
+   не декор — это та же сетка, по которой сверстан весь экран */
+.rules{
+  position:absolute;left:var(--pad);right:var(--pad);top:0;bottom:0;
+  border-left:1px solid rgba(231,234,240,.055);
+  border-right:1px solid rgba(231,234,240,.055);
+  pointer-events:none;z-index:4;
+}
+
+.mono{
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;
+  text-transform:uppercase;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ───────── 1. шапка ───────── */
+.hd{height:46px;display:flex;align-items:center;justify-content:space-between}
+.logo{
+  font-family:'Unbounded','Geist',sans-serif;
+  font-weight:500;font-size:15.5px;letter-spacing:-.035em;color:var(--txt);
+}
+.hd .mono{font-size:9.5px;letter-spacing:.14em;color:var(--mut3)}
+
+/* ───────── 2–4. титул ───────── */
+.head{padding-top:16px;padding-bottom:14px}
+.meta{font-size:10px;letter-spacing:.13em;color:var(--mut2)}
+h1{
+  margin-top:12px;
+  font-family:'Unbounded','Geist',sans-serif;
+  font-weight:300;
+  font-size:32px;
+  line-height:1.02;
+  letter-spacing:-.025em;
+  color:var(--txt);
+}
+.lead{
+  margin-top:13px;
+  font-size:15px;line-height:1.5;
+  color:var(--mut);
+  max-width:322px;
+}
+.lead b{color:var(--txt);font-weight:500}
+
+/* ───────── 5. заголовок раздела ───────── */
+.sec{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding-top:7px;padding-bottom:8px;
+}
+.sec .mono{font-size:10px;letter-spacing:.15em;color:var(--mut2)}
+.sec .cnt{color:var(--mut3)}
+.sec .cnt em{font-style:normal;color:var(--lime)}
+
+/* ───────── 6. главный кадр ───────── */
+.frame{position:relative;height:172px;overflow:hidden;background:#12161f}
+.frame img{
+  display:block;width:100%;height:100%;
+  object-fit:cover;object-position:top center;
+  /* --z режет белые поля исходника (у Bien Sûr они 12.5% с каждой стороны) */
+  transform:scale(var(--z,1));transform-origin:top center;
+  /* единый грейд на всю медиатеку: пять чужих палитр становятся одной серией */
+  filter:saturate(.56) contrast(1.12) brightness(.93);
+}
+@keyframes wipe{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.frame img.swap{animation:wipe .46s cubic-bezier(.16,1,.3,1)}
+/* скрим не «затемнение», а растворение точно в цвет фона */
+.frame::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:84px;
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.62) 44%,#0A0E1A 100%);
+  pointer-events:none;
+}
+.cap{
+  position:absolute;left:var(--pad);right:var(--pad);bottom:9px;z-index:2;
+  display:flex;align-items:baseline;gap:7px;min-width:0;
+  font-size:9.5px;letter-spacing:.1em;color:#c6ccd8;
+}
+.cap i{font-style:normal;color:var(--lime);flex:0 0 auto}
+.cap span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ───────── 7. реестр работ ───────── */
+.idx{list-style:none}
+.row{
+  position:relative;display:flex;align-items:center;gap:11px;
+  height:42px;padding-left:var(--pad);padding-right:var(--pad);
+  border-bottom:1px solid var(--line);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:background .18s cubic-bezier(.16,1,.3,1);
+}
+.row:active{background:rgba(231,234,240,.035)}
+.row:focus-visible{outline:1px solid rgba(205,255,79,.5);outline-offset:-2px}
+.row .n{
+  flex:0 0 15px;font-family:'JetBrains Mono',monospace;font-weight:500;
+  font-size:10px;color:var(--mut3);font-variant-numeric:tabular-nums;
+  transition:color .2s;
+}
+.row .th{flex:0 0 50px;width:50px;height:32px;overflow:hidden;background:#141922}
+.row .th img{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:top center;
+  transform:scale(var(--z,1));transform-origin:top center;
+  filter:saturate(.4) contrast(1.05) brightness(.8);
+  transition:filter .25s;
+}
+.row .nm{
+  flex:1 1 auto;min-width:0;
+  font-size:14px;font-weight:500;letter-spacing:-.012em;color:var(--mut);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .2s;
+}
+.row .tag{
+  flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-weight:400;
+  font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut3);
+  white-space:nowrap;
+}
+.row.on .nm{color:var(--txt)}
+.row.on .n{color:var(--lime)}
+.row.on .th img{filter:saturate(.7) contrast(1.08) brightness(1.12)}
+.row.on::before{
+  content:'';position:absolute;left:0;top:-1px;bottom:-1px;width:2px;background:var(--lime);
+}
+
+/* ───────── 8. цена ───────── */
+.price{position:relative;padding-top:10px;padding-bottom:10px;padding-left:34px;padding-right:var(--pad)}
+.price::before{
+  content:'';position:absolute;left:var(--pad);top:12px;width:2px;height:56px;background:var(--lime);
+}
+.price .mono{font-size:9.5px;letter-spacing:.13em;color:var(--mut2)}
+.pr{display:flex;align-items:baseline;gap:12px;margin-top:5px;min-width:0}
+.num{
+  font-family:'JetBrains Mono',monospace;font-weight:500;
+  font-size:29px;letter-spacing:-.025em;color:var(--txt);
+  font-variant-numeric:tabular-nums;white-space:nowrap;flex:0 0 auto;
+}
+.what{
+  flex:1 1 auto;min-width:0;
+  font-size:11px;line-height:1.35;color:var(--mut2);letter-spacing:0;
+}
+.num .cur{font-size:.58em;letter-spacing:0;color:#aeb7c4;margin-left:7px}
+.alt{margin-top:7px;font-size:11.5px;color:var(--mut3);letter-spacing:-.005em}
+
+/* ───────── 9. единственное действие ───────── */
+.act{padding-left:var(--pad);padding-right:var(--pad)}
+.cta{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  height:50px;border-radius:999px;
+  background:var(--lime);color:#0A0E1A;
+  font-size:16px;font-weight:600;letter-spacing:-.015em;
+  text-decoration:none;
+  transition:transform .13s cubic-bezier(.16,1,.3,1);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.cta:active{transform:scale(.978)}
+.cta i{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:14px;opacity:.65}
+
+/* ───────── 10. выходные данные ───────── */
+.terms{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  margin-top:9px;border-top:1px solid var(--line);
+}
+.terms li{
+  list-style:none;padding:8px 6px 9px;
+  border-right:1px solid var(--line);
+  font-family:'JetBrains Mono',monospace;font-weight:400;
+  font-size:8.5px;letter-spacing:.07em;line-height:1.55;
+  text-transform:uppercase;text-align:center;color:#7c8593;
+}
+.terms li:last-child{border-right:0}
+
+/* ───────── 11. то, что выглядывает из-за сгиба ───────── */
+.next{padding-top:20px;padding-bottom:30px}
+.next .mono{font-size:9.5px;letter-spacing:.15em;color:var(--mut2)}
+.next h2{
+  margin-top:14px;
+  font-family:'Unbounded','Geist',sans-serif;font-weight:300;
+  font-size:26px;line-height:1.08;letter-spacing:-.025em;color:var(--txt);
+}
+
+/* ───────── зерно: снимает пластиковость тёмного фона ───────── */
+.grain{
+  position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ───────── маркер сгиба (только для прототипа) ───────── */
+.fold{
+  position:absolute;top:844px;left:0;right:0;
+  border-top:1px dashed rgba(255,80,80,.45);
+  z-index:70;pointer-events:none;
+}
+.fold::after{
+  content:'844 · СГИБ';position:absolute;right:5px;top:4px;
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;
+  color:rgba(255,90,90,.62);
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="vp">
+  <div class="rules" aria-hidden="true"></div>
+
+  <!-- 1 -->
+  <header class="hd pad">
+    <span class="logo">uniqore</span>
+    <span class="mono">Сайты&nbsp;и&nbsp;CRM</span>
+  </header>
+  <div class="rule"></div>
+
+  <!-- 2–4 -->
+  <section class="head pad">
+    <p class="mono meta">20+ сайтов · 30+ CRM · 50+ проектов</p>
+    <h1>Сайт, который<br>не стыдно<br>показать</h1>
+    <p class="lead">Делаем сайты и CRM <b>под нишу</b>, не по шаблону. Ниже — четыре последних.</p>
+  </section>
+
+  <!-- 5 -->
+  <div class="rule"></div>
+  <div class="sec pad">
+    <span class="mono">Работы</span>
+    <span class="mono cnt"><em id="cur">01</em> / 04</span>
+  </div>
+
+  <!-- 6 -->
+  <figure class="frame">
+    <img id="shot" fetchpriority="high" src="/keysy/cases/case-nemecia.webp" width="390" height="172" alt="Сайт автокомплекса «Немеция», Омск">
+    <figcaption class="cap mono"><i>01</i><span id="cap">Немеция — автокомплекс, Омск</span></figcaption>
+  </figure>
+
+  <!-- 7 -->
+  <ul class="idx" id="idx">
+    <li class="row on" tabindex="0" data-n="01" data-src="/keysy/cases/case-nemecia.webp" data-cap="Немеция — автокомплекс, Омск">
+      <span class="n">01</span>
+      <span class="th"><img src="/keysy/cases/case-nemecia.webp" width="50" height="32" alt=""></span>
+      <span class="nm">Немеция</span>
+      <span class="tag">Автокомплекс</span>
+    </li>
+    <li class="row" tabindex="0" style="--z:1.34" data-n="02" data-src="/keysy/cases/case-biensur.webp" data-cap="Bien Sûr — ресторан, Санкт-Петербург">
+      <span class="n">02</span>
+      <span class="th"><img src="/keysy/cases/case-biensur.webp" width="50" height="32" alt="" loading="lazy"></span>
+      <span class="nm">Bien Sûr</span>
+      <span class="tag">Ресторан</span>
+    </li>
+    <li class="row" tabindex="0" data-n="03" data-src="/keysy/cases/case-idtuning.webp" data-cap="IDTuning — тюнинг-ателье">
+      <span class="n">03</span>
+      <span class="th"><img src="/keysy/cases/case-idtuning.webp" width="50" height="32" alt="" loading="lazy"></span>
+      <span class="nm">IDTuning</span>
+      <span class="tag">Тюнинг-ателье</span>
+    </li>
+    <li class="row" tabindex="0" data-n="04" data-src="/keysy/cases/case-milla.webp" data-cap="MILLA — интерьеры">
+      <span class="n">04</span>
+      <span class="th"><img src="/keysy/cases/case-milla.webp" width="50" height="32" alt="" loading="lazy"></span>
+      <span class="nm">MILLA</span>
+      <span class="tag">Интерьеры</span>
+    </li>
+  </ul>
+
+  <!-- 8 -->
+  <section class="price">
+    <p class="mono">Чаще всего берут</p>
+    <div class="pr">
+      <span class="num">32&thinsp;800<span class="cur">₽</span></span>
+      <span class="what">многостраничник<br>с дизайном · 5 дней</span>
+    </div>
+    <p class="alt">Лендинг — 11 700 ₽ · Сайт с CRM — 39 000 ₽</p>
+  </section>
+
+  <!-- 9 -->
+  <div class="act">
+    <a class="cta" href="#zayavka">Получить смету и срок<i>&#8594;</i></a>
+  </div>
+
+  <!-- 10 -->
+  <ul class="terms">
+    <li>Гарантия<br>1 год</li>
+    <li>Оплата после<br>макета</li>
+    <li>Без<br>абонплаты</li>
+  </ul>
+
+  <!-- 11 -->
+  <div class="rule"></div>
+  <section class="next pad">
+    <p class="mono">Дальше · что входит в цену</p>
+    <h2>Дизайн, тексты,<br>вёрстка и хостинг</h2>
+  </section>
+
+  <div class="fold"></div>
+</div>
+
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(function(){
+  var idx  = document.getElementById('idx');
+  var shot = document.getElementById('shot');
+  var cap  = document.getElementById('cap');
+  var cur  = document.getElementById('cur');
+  if(!idx || !shot) return;
+
+  function show(row){
+    if(!row || row.classList.contains('on')) return;
+
+    var on = idx.querySelector('.row.on');
+    if(on) on.classList.remove('on');
+    row.classList.add('on');
+
+    // миниатюры — те же файлы, значит кадр уже в кэше и меняется мгновенно
+    shot.style.setProperty('--z', getComputedStyle(row).getPropertyValue('--z').trim() || '1');
+    shot.classList.remove('swap');
+    void shot.offsetWidth;              // рестарт анимации
+    shot.classList.add('swap');
+    shot.src = row.getAttribute('data-src');
+    cap.textContent = row.getAttribute('data-cap');
+    cur.textContent = row.getAttribute('data-n');
+    document.querySelector('.cap i').textContent = row.getAttribute('data-n');
+  }
+
+  idx.addEventListener('click', function(e){
+    show(e.target.closest ? e.target.closest('.row') : null);
+  });
+  idx.addEventListener('keydown', function(e){
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    show(e.target.closest ? e.target.closest('.row') : null);
+  });
+})();
+</script>
+</body>
+</html>

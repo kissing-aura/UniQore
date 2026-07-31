@@ -82,13 +82,21 @@ body{
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.14'/></svg>");
 }
 
+/* поля контентной колонки нарисованы — макет построен, а не набросан */
+.rules{
+  position:absolute; top:456px; bottom:0; left:10px; right:10px; z-index:0;
+  border-left:1px solid rgba(231,234,240,.055);
+  border-right:1px solid rgba(231,234,240,.055);
+  pointer-events:none;
+}
+
 /* маркер сгиба 844 */
 .fold{
   position:absolute; top:844px; left:0; right:0; z-index:60;
   border-top:1px dashed rgba(255,80,80,.45); pointer-events:none;
 }
 .fold b{
-  position:absolute; right:6px; top:4px; font:400 9px/1 'JetBrains Mono',monospace;
+  position:absolute; left:6px; top:-13px; font:400 9px/1 'JetBrains Mono',monospace;
   letter-spacing:.1em; color:rgba(255,80,80,.6);
 }
 
@@ -113,16 +121,19 @@ body{
   position:relative; height:404px; overflow:hidden;
   background:#0d1220; isolation:isolate;
 }
+/* у каждой работы свой кадр: --w это масштаб, --x горизонтальная точка входа.
+   Подобрано вручную по каждому скриншоту, чтобы не резать заголовок клиента. */
 .shot{
-  position:absolute; top:0; left:var(--x,-200px);
-  width:790px; height:448px; object-fit:cover; object-position:top left;
+  position:absolute; top:var(--y,0px); left:var(--x,-200px);
+  width:var(--w,1000px); height:calc(var(--w,1000px) * .5665);
+  object-fit:cover; object-position:top left;
   opacity:0; transition:opacity .55s var(--ease);
   /* единый грейд на пять чужих палитр — иначе это папка «Загрузки» */
-  filter:saturate(.62) contrast(1.1) brightness(.84);
+  filter:saturate(.58) contrast(1.06) brightness(.79);
   will-change:transform;
 }
 .shot.on{opacity:1; animation:drift 26s var(--ease) infinite alternate}
-@keyframes drift{from{transform:translate3d(0,0,0)} to{transform:translate3d(0,-43px,0)}}
+@keyframes drift{from{transform:translate3d(0,0,0)} to{transform:translate3d(0,var(--d,-34px),0)}}
 
 /* холодный сдвиг всей медиатеки в цвет бренда */
 .stage::before{
@@ -131,47 +142,44 @@ body{
 }
 /* скрим — кадр растворяется в фон, границы у картинки нет */
 .scrim{
-  position:absolute; left:0; right:0; bottom:0; height:210px; z-index:3;
-  background:linear-gradient(180deg,rgba(10,14,26,0) 0%,rgba(10,14,26,.72) 42%,#0A0E1A 92%);
+  position:absolute; left:0; right:0; bottom:0; height:258px; z-index:3;
+  background:linear-gradient(180deg,
+    rgba(10,14,26,0) 0%, rgba(10,14,26,.42) 22%, rgba(10,14,26,.82) 48%,
+    rgba(10,14,26,.97) 70%, #0A0E1A 86%);
   pointer-events:none;
 }
-/* верхний увод — чтобы шапка не тонула в светлом скриншоте */
+/* верхний увод — у клиентов бывает белое меню в самом верху кадра,
+   без него наша подпись на нём тонет */
 .stage::after{
-  content:''; position:absolute; left:0; right:0; top:0; height:74px; z-index:3;
-  background:linear-gradient(180deg,rgba(10,14,26,.85),rgba(10,14,26,0));
+  content:''; position:absolute; left:0; right:0; top:32px; height:104px; z-index:3;
+  background:linear-gradient(180deg,rgba(10,14,26,.78) 0%,rgba(10,14,26,.3) 46%,rgba(10,14,26,0) 100%);
   pointer-events:none;
 }
 
-/* счётчик — на сканлайнах, не на стекле */
-.count{
-  position:absolute; top:14px; left:var(--pad); z-index:6;
-  display:flex; align-items:center; gap:8px;
-  padding:5px 9px;
-  background:
-    repeating-linear-gradient(0deg,rgba(10,14,26,.92) 0 1px,rgba(10,14,26,.55) 1px 2px);
-  border:1px solid rgba(231,234,240,.13); border-radius:2px;
-  font:400 10px/1 'JetBrains Mono',monospace; letter-spacing:.12em; color:var(--txt);
-}
-.count i{font-style:normal; color:var(--mut2)}
-.count u{text-decoration:none; color:var(--lime)}
-
-/* «живой сайт» — маленькая техническая метка справа сверху */
-.live{
-  position:absolute; top:14px; right:var(--pad); z-index:6;
-  font:400 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.1em;
+/* подписная планка экспоната — сканлайны, не стекло: читается на любом кадре */
+.tag{
+  position:absolute; top:0; left:0; right:0; height:32px; z-index:6;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 var(--pad);
+  background:repeating-linear-gradient(0deg,
+    rgba(10,14,26,.95) 0 1px, rgba(10,14,26,.74) 1px 2px);
+  border-bottom:1px solid rgba(231,234,240,.11);
+  font:400 10px/1 'JetBrains Mono',monospace; letter-spacing:.13em;
   text-transform:uppercase; color:var(--mut);
-  display:flex; align-items:center; gap:6px;
 }
-.live s{
+.tag u{text-decoration:none; color:var(--lime)}
+.tag i{font-style:normal; color:var(--mut2)}
+.tag .lv{display:flex; align-items:center; gap:6px}
+.tag .lv s{
   width:5px; height:5px; border-radius:99px; background:var(--lime);
-  text-decoration:none; display:block; opacity:.9;
+  text-decoration:none; display:block;
 }
 
 /* заголовок лежит на работе */
 .over{position:absolute; left:var(--pad); right:var(--pad); bottom:16px; z-index:8}
 h1{
-  font-family:'Unbounded',sans-serif; font-weight:400; font-size:32px;
-  line-height:1.06; letter-spacing:-.038em; color:#fff;
+  font-family:'Unbounded',sans-serif; font-weight:400; font-size:30px;
+  line-height:1.08; letter-spacing:-.038em; color:#EFF3F9;
   margin-bottom:11px;
 }
 .plate{
@@ -191,7 +199,7 @@ h1{
   flex:1 1 0; min-width:0; height:44px; padding:0; border:0; cursor:pointer;
   background:#0d1220 no-repeat; background-size:cover; background-position:center top;
   border-radius:2px; position:relative; overflow:hidden;
-  filter:saturate(.35) brightness(.5); opacity:.75;
+  filter:saturate(.38) brightness(.66); opacity:.8;
   transition:filter .3s var(--ease),opacity .3s var(--ease);
   -webkit-tap-highlight-color:transparent; touch-action:manipulation;
   outline:1px solid var(--line); outline-offset:-1px;
@@ -255,7 +263,7 @@ h1{
 .risk span{color:var(--mut)}
 
 /* ─────────── ЧТО ВЫГЛЯДЫВАЕТ ИЗ-ПОД СГИБА ─────────── */
-.more{margin-top:26px; border-top:1px solid var(--line2)}
+.more{margin-top:14px; border-top:1px solid var(--line2)}
 .more .cap{padding:14px var(--pad) 0; margin-bottom:10px}
 .idx{list-style:none}
 .idx li{
@@ -294,16 +302,18 @@ h1{
 
   <!-- ЭКСПОНАТ -->
   <section class="stage" id="stage">
-    <img class="shot on" id="s0" src="/keysy/cases/case-biensur.webp"    alt="Сайт ресторана Bien Sûr"        width="790" height="448" style="--x:-200px" decoding="async">
-    <img class="shot"    id="s1" src="/keysy/cases/case-nemecia.webp"    alt="Сайт автокомплекса Немеция"     width="790" height="448" style="--x:-26px"  decoding="async" loading="lazy">
-    <img class="shot"    id="s2" src="/keysy/cases/case-idtuning.webp"   alt="Сайт тюнинг-ателье IDTuning"    width="790" height="448" style="--x:-180px" decoding="async" loading="lazy">
-    <img class="shot"    id="s3" src="/keysy/cases/case-milla.webp"      alt="Сайт студии интерьеров MILLA"   width="790" height="448" style="--x:-200px" decoding="async" loading="lazy">
-    <img class="shot"    id="s4" src="/keysy/cases/case-banidesign.webp" alt="Сайт компании Бани Дизайн"      width="790" height="448" style="--x:-81px"  decoding="async" loading="lazy">
+    <img class="shot on" src="/keysy/cases/case-biensur.webp"    alt="Сайт ресторана Bien Sûr"      width="2000" height="1133" style="--w:1100px;--x:-355px" decoding="async">
+    <img class="shot"    src="/keysy/cases/case-nemecia.webp"    alt="Сайт автокомплекса Немеция"   width="2000" height="1133" style="--w:1000px;--x:-85px;--y:-52px"  decoding="async" loading="lazy">
+    <img class="shot"    src="/keysy/cases/case-idtuning.webp"   alt="Сайт тюнинг-ателье IDTuning"  width="2000" height="1133" style="--w:1000px;--x:-205px;--y:-40px" decoding="async" loading="lazy">
+    <img class="shot"    src="/keysy/cases/case-milla.webp"      alt="Сайт студии интерьеров MILLA" width="2000" height="1133" style="--w:740px;--x:-174px;--d:-13px"  decoding="async" loading="lazy">
+    <img class="shot"    src="/keysy/cases/case-banidesign.webp" alt="Сайт компании Бани Дизайн"    width="2000" height="1133" style="--w:900px;--x:-401px"   decoding="async" loading="lazy">
 
     <div class="scrim"></div>
 
-    <div class="count"><u id="cnum">01</u><i>/ 05</i></div>
-    <div class="live"><s></s>работает сейчас</div>
+    <div class="tag">
+      <span><u id="cnum">01</u> <i>/ 05</i></span>
+      <span class="lv"><s></s>работает сейчас</span>
+    </div>
 
     <div class="over">
       <h1>Сайты, которые<br>уже работают</h1>
@@ -345,14 +355,15 @@ h1{
 
   <!-- выглядывает из-под сгиба -->
   <section class="more">
-    <div class="cap">ещё 15 сайтов в портфолио</div>
+    <div class="cap">что за этим стоит</div>
     <ul class="idx">
-      <li><i>06</i>Dragon Brand<em>стритвир</em></li>
-      <li><i>07</i>Титов Групп<em>недвижимость</em></li>
-      <li><i>08</i>Lovi<em>доставка</em></li>
+      <li><i>01</i>Сделанных сайтов<em>20+</em></li>
+      <li><i>02</i>CRM под нишу<em>30+</em></li>
+      <li><i>03</i>Проектов всего<em>50+</em></li>
     </ul>
   </section>
 
+  <div class="rules"></div>
   <div class="grain"></div>
   <div class="fold"><b>844 — СГИБ</b></div>
 </div>

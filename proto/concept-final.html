@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — первый экран · ФИНАЛ</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!-- Прототип первого экрана. Сгиб считаем по видимой высоте Safari (~659),
+     а не по высоте устройства (844) — обе линии отмечены на макете. -->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --txt:#E7EAF0;         /* 15:1 */
+  --mut:#97A1B0;         /* 7.4:1 — минимум для тела */
+  --dim:#8792A3;         /* 6.1:1 — минимум для моно-подписей */
+  --lime:#CDFF4F;
+  --line:rgba(231,234,240,.09);
+  --hair:rgba(231,234,240,.055);
+  --pad:20px;
+  --ease:cubic-bezier(.33,1,.4,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--txt);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.vp{
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:1010px;
+}
+.mono{
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;text-transform:uppercase;
+  font-variant-numeric:tabular-nums;
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+.rule{height:1px;background:var(--line);position:relative;z-index:1}
+
+/* вертикальные направляющие колонки — та же сетка, по которой всё сверстано.
+   z-index 0: живой кадр и панели рисуются поверх, по фотографии не царапают */
+.grid{
+  position:absolute;top:0;bottom:0;left:var(--pad);right:var(--pad);z-index:0;
+  border-left:1px solid rgba(231,234,240,.07);
+  border-right:1px solid rgba(231,234,240,.07);
+  pointer-events:none;
+}
+
+/* ───── 1. шапка ───── */
+.hd{
+  height:44px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);position:relative;z-index:1;
+}
+.logo{font-family:'Unbounded','Geist',sans-serif;font-weight:500;font-size:16px;letter-spacing:-.04em}
+.hd .mono{font-size:10.5px;letter-spacing:.15em;color:var(--dim)}
+
+/* ───── 2. титул ───── */
+.head{padding-top:18px;padding-bottom:11px;position:relative;z-index:1}
+h1{
+  font-family:'Unbounded','Geist',sans-serif;font-weight:300;
+  font-size:30px;line-height:1.04;letter-spacing:-.03em;color:var(--txt);
+}
+h1 span{display:block}
+h1 .a{color:var(--mut)}                      /* подводка тише, обещание громче */
+h1 .c{display:flex;align-items:center;min-width:0}
+h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(231,234,240,.16)}
+
+/* строка масштаба: цифры моно, слова Geist — читаемо, не шёпотом */
+.scale{
+  margin-top:14px;display:flex;align-items:baseline;justify-content:space-between;
+  gap:12px;min-width:0;font-size:13.5px;color:var(--dim);letter-spacing:-.005em;
+}
+.scale b{
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;
+  color:var(--txt);font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.scale .ix{flex:0 0 auto;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.scale .ix em{font-style:normal;color:var(--txt)}
+
+/* ───── 3. кадр работы ───── */
+.frame{
+  position:relative;z-index:1;height:180px;overflow:hidden;background:#11151f;
+}
+.frame img{
+  position:absolute;top:0;left:0;width:390px;height:auto;display:block;
+  /* мягкое сведение пяти чужих палитр в серию. Бренды клиентов не перекрашиваем:
+     единство даёт кадрирование и скрим, а не смена цвета */
+  filter:saturate(.74) contrast(1.07) brightness(.94);
+}
+@keyframes wipe{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.frame img.sw{animation:wipe .42s var(--ease)}
+/* верхний увод — гасит светлые шапки клиентских сайтов, не стирая их */
+.frame::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:46px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.5),rgba(10,14,26,0));
+}
+/* скрим не «затемняет», а растворяет низ кадра точно в цвет фона страницы */
+.frame::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:88px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.6) 40%,rgba(10,14,26,.97) 78%,#0A0E1A 100%);
+}
+.cap{
+  position:absolute;left:var(--pad);right:var(--pad);bottom:10px;z-index:3;
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0;
+  font-size:10.5px;letter-spacing:.13em;color:#b9c1cd;
+}
+.cap span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cap .no{flex:0 0 auto;color:var(--dim)}
+.cap .no em{font-style:normal;color:#e2e7ef}
+
+/* ───── 4. оглавление работ 2×2 ───── */
+.idx{
+  display:grid;grid-template-columns:1fr 1fr;position:relative;z-index:1;
+  border-bottom:1px solid var(--line);
+}
+.cell{
+  display:flex;align-items:center;gap:10px;min-width:0;
+  height:44px;padding:0 12px 0 var(--pad);
+  background:none;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  color:inherit;text-align:left;font-family:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:background .2s linear;
+}
+.cell:nth-child(2n){border-right:0;padding-left:15px}
+.cell:nth-child(n+3){border-bottom:0}
+.cell:active{background:rgba(231,234,240,.05)}
+.cell:focus-visible{outline:1px solid rgba(205,255,79,.55);outline-offset:-2px}
+.cell u{
+  flex:0 0 auto;text-decoration:none;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:10.5px;
+  letter-spacing:.06em;color:var(--dim);font-variant-numeric:tabular-nums;
+  transition:color .2s linear;
+}
+.cell b{
+  flex:1 1 auto;min-width:0;font-weight:500;font-size:13.5px;letter-spacing:-.015em;
+  color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .2s linear;
+}
+.cell[aria-pressed="true"]{background:rgba(231,234,240,.05)}
+.cell[aria-pressed="true"] u{color:var(--lime)}
+.cell[aria-pressed="true"] b{color:var(--txt)}
+
+/* ───── 5. цена ───── */
+.price{
+  position:relative;z-index:1;
+  padding:10px var(--pad) 11px 18px;
+  border-left:2px solid var(--lime);
+  background:repeating-linear-gradient(0deg,rgba(205,255,79,.05) 0 1px,rgba(205,255,79,.018) 1px 3px);
+}
+.price .lbl{font-size:10.5px;letter-spacing:.14em;color:var(--lime)}
+.pr{display:flex;align-items:baseline;gap:14px;margin-top:7px;min-width:0}
+.num{
+  flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;
+  font-size:30px;line-height:1;letter-spacing:-.035em;color:var(--txt);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.num i{font-style:normal;font-size:.56em;color:#b9c1cd;margin-left:6px;letter-spacing:0}
+.pr .what{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.3;color:var(--mut)}
+.pr .what s{display:block;text-decoration:none;font-size:10.5px;letter-spacing:.1em;color:var(--dim);margin-top:3px;font-family:'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase}
+.alt{
+  position:relative;z-index:1;padding:9px var(--pad) 0;
+  font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
+}
+.alt b{color:var(--mut);font-weight:500}
+
+/* ───── 6. единственное действие ───── */
+.act{padding:10px var(--pad) 0;position:relative;z-index:55}
+.cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  height:54px;border-radius:2px;background:var(--lime);color:#080c16;
+  font-size:16px;font-weight:600;letter-spacing:-.015em;text-decoration:none;
+  transition:transform .12s var(--ease);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.cta:active{transform:scale(.982)}
+.cta svg{width:15px;height:15px;display:block}
+.risk{
+  padding:10px var(--pad) 14px;position:relative;z-index:1;
+  font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
+}
+.risk b{color:var(--mut);font-weight:500}
+
+/* ───── 7. то, что выглядывает из-за сгиба ───── */
+.next{position:relative;z-index:1}
+.next .k{padding:15px var(--pad) 11px;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.nrow{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;
+  height:44px;padding:0 var(--pad);border-top:1px solid var(--hair);
+  font-size:13.5px;color:var(--mut);letter-spacing:-.01em;
+}
+.nrow em{
+  flex:0 0 auto;font-style:normal;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+}
+
+/* ───── фактура: дизеринг вместо шума и стекла ───── */
+.dither{
+  position:absolute;inset:0;z-index:50;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(231,234,240,.03) 0 1px,transparent 1px 3px);
+}
+
+/* ───── маркеры сгиба (только прототип) ───── */
+.fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,80,80,.45)}
+.fold b{position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.88);font-family:'JetBrains Mono',monospace;font-weight:400;font-size:8px;letter-spacing:.1em;color:rgba(255,90,90,.7)}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.4)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.85)}
+.fold.dev{top:844px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="vp">
+  <div class="grid" aria-hidden="true"></div>
+
+  <!-- 1 -->
+  <header class="hd pad">
+    <span class="logo">uniqore</span>
+    <span class="mono">Сайты&nbsp;и&nbsp;CRM</span>
+  </header>
+
+  <!-- 2 -->
+  <section class="head pad">
+    <h1>
+      <span class="a">Сайт, который</span>
+      <span>не стыдно</span>
+      <span class="c">показать<i></i></span>
+    </h1>
+    <p class="scale"><span><b>20+</b> сделанных сайтов · <b>30+</b> CRM</span><span class="mono ix"><em id="cur">01</em>&#8202;/&#8202;04</span></p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 3 -->
+  <figure class="frame">
+    <img id="shot" fetchpriority="high" decoding="async"
+         src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+         alt="Первый экран сайта автокомплекса «Немеция», Омск">
+    <figcaption class="cap mono">
+      <span id="cap" aria-live="polite">Автокомплекс, Омск</span>
+      <span class="no">работа <em id="cur2">01</em> из 04</span>
+    </figcaption>
+  </figure>
+
+  <!-- 4 -->
+  <div class="idx" id="idx">
+    <button class="cell" type="button" aria-pressed="true"  data-i="0"><u>01</u><b>Немеция</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="1"><u>02</u><b>Bien Sûr</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="2"><u>03</u><b>IDTuning</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="3"><u>04</u><b>MILLA</b></button>
+  </div>
+
+  <!-- 5 -->
+  <section class="price">
+    <p class="mono lbl">Чаще всего берут</p>
+    <div class="pr">
+      <span class="num">32&thinsp;800<i>₽</i></span>
+      <span class="what">Многостраничный сайт, свой дизайн<s>срок 5 дней</s></span>
+    </div>
+  </section>
+  <p class="alt">Одна страница — <b>11 700 ₽</b> · сайт с CRM — <b>39 000 ₽</b></p>
+
+  <!-- 6 -->
+  <div class="act">
+    <a class="cta" href="#zayavka">Хочу такой сайт
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+  <p class="risk"><b>Гарантия год</b> · оплата после макета · без абонплаты</p>
+
+  <!-- 7 -->
+  <div class="rule"></div>
+  <section class="next">
+    <p class="k mono">Дальше · что входит в 32 800 ₽</p>
+    <div class="nrow"><span>Дизайн-макет всех страниц</span><em>входит</em></div>
+    <div class="nrow"><span>Тексты и структура</span><em>пишем мы</em></div>
+    <div class="nrow"><span>Исходники после сдачи</span><em>отдаём</em></div>
+  </section>
+
+  <div class="dither" aria-hidden="true"></div>
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · устройство</b></div>
+</div>
+
+<script>
+(function(){
+  /* кроп подобран под каждый скриншот руками: у Bien Sûr в исходник впечены
+     белые поля по 12,2% с каждой стороны — их надо срезать, остальные три
+     сняты в край и режутся общим множителем посреди заголовка клиента */
+  var D = [
+    {s:'/keysy/cases/case-nemecia.webp', w:390, x:0,   m:'Автокомплекс, Омск',      a:'Первый экран сайта автокомплекса «Немеция», Омск'},
+    {s:'/keysy/cases/case-biensur.webp', w:516, x:-63, m:'Ресторан, Санкт-Петербург',a:'Первый экран сайта ресторана Bien Sûr, Санкт-Петербург'},
+    {s:'/keysy/cases/case-idtuning.webp',w:390, x:0,   m:'Тюнинг-ателье',            a:'Первый экран сайта тюнинг-ателье IDTuning'},
+    {s:'/keysy/cases/case-milla.webp',   w:390, x:0,   m:'Интерьеры',                a:'Первый экран сайта студии интерьеров MILLA'}
+  ];
+  var idx  = document.getElementById('idx'),
+      shot = document.getElementById('shot'),
+      cap  = document.getElementById('cap'),
+      cur  = document.getElementById('cur'),
+      cur2 = document.getElementById('cur2'),
+      cells= idx.querySelectorAll('.cell'),
+      now  = 0;
+
+  function paint(i){
+    var d = D[i], n = '0' + (i+1);
+    shot.src = d.s;
+    shot.alt = d.a;
+    shot.style.width = d.w + 'px';
+    shot.style.left  = d.x + 'px';
+    shot.classList.remove('sw'); void shot.offsetWidth; shot.classList.add('sw');
+    cap.textContent = d.m;
+    cur.textContent = n; cur2.textContent = n;
+    for (var k=0;k<cells.length;k++) cells[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+    now = i;
+  }
+
+  function show(i){
+    if (i===now || !D[i]) return;
+    /* декодируем ДО подмены: иначе шторка проявляет старый кадр */
+    var pre = new Image(); pre.src = D[i].s;
+    var go = function(){ paint(i); };
+    if (pre.decode) pre.decode().then(go).catch(go);
+    else if (pre.complete) go();
+    else { pre.onload = go; pre.onerror = go; }
+  }
+
+  idx.addEventListener('click', function(e){
+    var c = e.target.closest && e.target.closest('.cell');
+    if (c) show(+c.getAttribute('data-i'));
+  });
+
+  /* свайп по кадру — тот же переключатель. Вертикальный guard обязателен:
+     без него обычная прокрутка большим пальцем перелистывает работы */
+  var fr = document.querySelector('.frame'), x0=0, y0=0;
+  fr.addEventListener('touchstart', function(e){ x0=e.touches[0].clientX; y0=e.touches[0].clientY; }, {passive:true});
+  fr.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - x0,
+        dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+    show((now + (dx<0 ? 1 : 3)) % 4);
+  }, {passive:true});
+
+  /* остальные кадры тянем только после загрузки — первый экран весит один снимок */
+  window.addEventListener('load', function(){
+    setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 600);
+  });
+})();
+</script>
+</body>
+</html>

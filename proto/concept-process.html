@@ -1,0 +1,343 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Uniqore /sayty/ — концепт «Процесс на глазах»</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+==================================================================================
+  ЛОГИКА ЭКРАНА  (порядок считывания — сверху вниз, каждый шаг снимает одно возражение)
+==================================================================================
+
+  0.0 сек  ХЕДЕР. «uniqore · САЙТЫ ДЛЯ БИЗНЕСА» — кто это вообще. Моно 10px, без плашки.
+
+  0.5 сек  H1 «Пять дней / от брифа / до запуска». Плакат в три строки.
+           Не «сайты под ключ», не «команда профессионалов» — сразу единица измерения
+           сделки: время. Пять, а не три — потому что подсвеченный товар
+           (многостраничник 32 800 ₽) делается пять дней, и врать про три нельзя.
+           Конкуренты в Директе обещают «от 3 дней»; точное «пять» + расписанные дни
+           читается достовернее круглого обещания.
+
+  1.5 сек  ЛИД. «Собираем сайты для малого бизнеса. Каждый день видно, что сделано.»
+           Закрывает «что продают» и вводит обещание процесса.
+
+  2–6 сек  РИС. 1 — ГЛАВНЫЙ ПРИЁМ. Один настоящий скриншот клиентского сайта, и
+           горизонталь кадра = ось времени. Левые 26% кадра — каркас (чертёж поверх
+           почти погашенной картинки), середина 30% — макет (ч/б, на сетке), правые
+           44% — живой сайт в цвете. Ни одного мокапа устройства, ни одной карточки:
+           процесс и доказательство — это один объект. Под кадром измерительная шкала
+           во всю ширину экрана с засечками 01 / 03 / 05, и лаймовая линия прогресса
+           дорисовывается сама за 1 сек. Один проход светового скана слева направо
+           объясняет, как читать кадр, и больше не повторяется.
+           Здесь человек понимает: работа предсказуема, её видно, она кончается сайтом.
+
+  6–9 сек  ЦЕНА как таблица из трёх строк, а не «пакеты-карточки». Лендинг 11 700 сверху,
+           Сайт+CRM 39 000 снизу — они существуют, чтобы 32 800 читалось как середина,
+           а не как «дёшево = шаблон». Средняя строка вынесена в край экрана лаймовой
+           полосой и подписана «ЧАЩЕ ВСЕГО БЕРУТ». Срок стоит рядом с ценой — второй раз,
+           уже в контексте денег.
+
+  9–11 сек ТОЧКА РЕШЕНИЯ. Одна кнопка: «Получить план по дням» — просит не деньги и не
+           «консультацию», а ровно то, что экран только что показал. Прямо под ней 4 снятия
+           риска моно-сеткой: гарантия год · оплата после макета · без абонплаты ·
+           исходники отдаём. Доказательство и цена стоят ДО кнопки, гарантии — вплотную
+           после, чтобы палец не ушёл искать подтверждение ниже.
+
+  сгиб 844 Ниже линии — реестр «20+ САЙТОВ ПРОШЛИ ТОТ ЖЕ ПУТЬ»: строки с миниатюрами
+           настоящих работ. Первая строка обрезана сгибом наполовину — это единственный
+           стимул скроллить дальше, и он обещает ещё доказательств, а не «преимущества».
+
+  ЧТО ДЕРЖИТ ЛИСТ ВМЕСТЕ
+  — два кегля и точка: Unbounded 38 / Geist 14.5 / моно 9.5–11. Промежуточных 20–28px нет.
+  — ноль box-shadow. Слои разделены волосяными линиями 1px с альфой .06–.10 и скримом.
+  — радиусы: 0 везде, 2px только у кнопки. Одинакового скругления «на всём» нет.
+  — лайм = технический слой (ось времени, засечки, метка «чаще всего») + одно действие.
+    На кегле 20–48px акцентом не крашено ничего.
+  — все три картинки под одним грейдом saturate/contrast — пять чужих палитр
+    выглядят одной серией работ.
+  — движения ровно два: разовый скан кадра и рост линии прогресса. Первый экран
+    не гаснет и не выезжает — LCP не отодвигается. Всё под prefers-reduced-motion.
+-->
+
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+
+:root{
+  --bg:#0A0E1A;
+  --ink:#E7EAF0;
+  --mut:#8792a3;
+  --dim:rgba(135,146,163,.66);
+  --lime:#CDFF4F;
+  --line:rgba(231,234,240,.10);
+  --hair:rgba(231,234,240,.055);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+body{
+  background:#05070d;
+  color:var(--ink);
+  font-family:'Geist',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+.vp{
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--bg);min-height:1000px;overflow:hidden;isolation:isolate;
+}
+
+/* ── зерно поверх всего: убирает пластик с тёмной заливки ── */
+.grain{
+  position:absolute;inset:0;z-index:40;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:140px 140px;
+}
+
+/* ── линия сгиба 844 ── */
+.fold{position:absolute;left:0;right:0;top:844px;border-top:1px dashed rgba(255,80,80,.45);z-index:60;pointer-events:none}
+.fold b{position:absolute;right:6px;top:-14px;font:500 8.5px/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.1em;color:rgba(255,80,80,.62)}
+
+/* ── моно ── */
+.m{font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',monospace;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+
+/* ── шапка ── */
+.hd{position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:6px;font-family:'Unbounded',sans-serif;font-weight:600;font-size:13px;letter-spacing:.005em}
+.logo i{display:block;width:4px;height:4px;background:var(--lime)}
+.hd .m{font-size:9.5px;color:var(--dim)}
+
+/* ── сцена: две вертикальные направляющие колонки ── */
+.stage{position:relative}
+.gl,.gr{position:absolute;top:0;bottom:0;width:1px;background:var(--hair);z-index:1}
+.gl{left:20px}.gr{left:369px}
+
+/* ── герой ── */
+.hero{position:relative;z-index:6;padding:30px 20px 18px}
+h1{margin:0;font-family:'Unbounded',sans-serif;font-weight:300;font-size:38px;line-height:1.04;letter-spacing:-.032em;color:var(--ink)}
+.lede{margin:14px 0 0;max-width:322px;font-size:14.5px;line-height:1.45;color:var(--mut)}
+.lede b{color:var(--ink);font-weight:500}
+
+/* ── процесс ── */
+.proc{position:relative;z-index:6;padding:14px 20px 14px;border-top:1px solid var(--line)}
+.figrow{display:flex;justify-content:space-between;gap:12px;font-size:9.5px;color:var(--mut)}
+.figrow span{min-width:0}
+.figrow .r{color:var(--dim)}
+
+.frame{position:relative;margin-top:12px;height:160px;overflow:hidden;background:#0c1120}
+.z{position:absolute;inset:0;overflow:hidden}
+.z img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}
+.za{clip-path:inset(0 74% 0 0)}
+.zb{clip-path:inset(0 44% 0 26%)}
+.zc{clip-path:inset(0 0 0 56%)}
+.za img{opacity:.07;filter:grayscale(1)}
+.zb img{opacity:.5;filter:grayscale(1) contrast(1.2) brightness(.82)}
+.zc img{filter:saturate(.85) contrast(1.08) brightness(.96)}
+
+/* день 01 — чертёжная сетка + каркас */
+.za::after{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(205,255,79,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(205,255,79,.075) 1px,transparent 1px);
+  background-size:13px 13px}
+.wire{position:absolute;inset:0;z-index:2}
+.wire i{position:absolute;display:block;border:1px solid rgba(205,255,79,.32)}
+.wire .bar{border:0;background:rgba(205,255,79,.26)}
+.wire .bar.d{background:rgba(205,255,79,.15)}
+.wire .ph{background-image:
+  linear-gradient(to top right,transparent calc(50% - .5px),rgba(205,255,79,.22) calc(50% - .5px),rgba(205,255,79,.22) calc(50% + .5px),transparent calc(50% + .5px)),
+  linear-gradient(to top left,transparent calc(50% - .5px),rgba(205,255,79,.22) calc(50% - .5px),rgba(205,255,79,.22) calc(50% + .5px),transparent calc(50% + .5px))}
+
+/* день 03 — макет на сетке */
+.zb::after{content:"";position:absolute;inset:0;
+  background-image:repeating-linear-gradient(0deg,rgba(205,255,79,.10) 0 1px,transparent 1px 21px),linear-gradient(90deg,rgba(205,255,79,.055),rgba(205,255,79,0))}
+
+/* швы между состояниями */
+.seam{position:absolute;top:0;bottom:0;width:1px;z-index:4;
+  background:linear-gradient(rgba(205,255,79,.06),rgba(205,255,79,.5) 35%,rgba(205,255,79,.5) 65%,rgba(205,255,79,.06))}
+.s1{left:26%}.s2{left:56%}
+
+/* кадр растворяется в фоне — рамки нет */
+.frame::after{content:"";position:absolute;left:0;right:0;bottom:0;height:54px;z-index:5;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0),rgba(10,14,26,.9) 74%,var(--bg))}
+
+/* разовый скан слева направо */
+.scan{position:absolute;top:0;bottom:0;left:0;width:64px;z-index:6;pointer-events:none;
+  background:linear-gradient(90deg,rgba(205,255,79,0),rgba(205,255,79,.10));
+  border-right:1px solid rgba(205,255,79,.55);
+  transform:translateX(-70px);opacity:0;
+  animation:scan 1.3s var(--ease) .25s 1 both}
+@keyframes scan{0%{transform:translateX(-70px);opacity:0}14%{opacity:1}88%{opacity:1}100%{transform:translateX(352px);opacity:0}}
+
+/* шкала дней — во всю ширину экрана */
+.ruler{position:relative;height:13px;margin:0 -20px;border-top:1px solid var(--line)}
+.ruler::before{content:"";position:absolute;left:0;right:0;top:1px;height:4px;
+  background-image:repeating-linear-gradient(90deg,rgba(231,234,240,.15) 0 1px,transparent 1px 8px)}
+.prog{position:absolute;left:20px;top:-1px;width:350px;height:1px;background:var(--lime);
+  transform-origin:left center;animation:grow 1.05s var(--ease) .3s both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.tk{position:absolute;top:0;width:1px;height:9px;background:rgba(231,234,240,.42)}
+.tk.on{height:12px;background:var(--lime)}
+
+.days{display:flex;margin-top:9px}
+.day{min-width:0;padding-right:8px}
+.d1{width:91px}.d2{width:105px}.d3{width:154px}
+.day .m{display:block;font-size:9.5px;color:var(--ink)}
+.day .m b{font-weight:700;color:var(--mut)}
+.day .m b.on{color:var(--lime)}
+.day em{display:block;margin-top:3px;font-style:normal;font-size:11px;line-height:1.25;color:var(--dim)}
+.dot{display:inline-block;width:4px;height:4px;background:var(--lime);vertical-align:middle;margin-left:5px;animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.28}}
+
+/* ── цена ── */
+.offer{position:relative;z-index:6;padding:0 20px;border-top:1px solid var(--line)}
+.tr{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.tn{font-size:13.5px;color:var(--mut)}
+.tv{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:400;font-size:11.5px;color:var(--dim);letter-spacing:.01em;white-space:nowrap}
+
+.pick{align-items:flex-start;margin:0 -20px;padding:11px 20px 12px 18px;background:rgba(205,255,79,.05);border-left:2px solid var(--lime)}
+.pn{font-family:'Unbounded',sans-serif;font-weight:400;font-size:15px;letter-spacing:-.02em;color:var(--ink)}
+.pt{margin-top:6px;font-size:9px;color:var(--lime);letter-spacing:.08em}
+.pr{text-align:right;flex:0 0 auto}
+.pp{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:25px;line-height:1;letter-spacing:-.02em;color:var(--ink);white-space:nowrap}
+.ps{margin-top:7px;font-size:9px;color:var(--dim);letter-spacing:.07em;white-space:nowrap}
+
+/* ── действие ── */
+.act{position:relative;z-index:6;padding:16px 20px 14px}
+.cta{display:flex;align-items:center;justify-content:space-between;height:54px;padding:0 18px 0 20px;
+  background:var(--lime);color:#0A0E1A;text-decoration:none;border-radius:2px;
+  font-family:'Unbounded',sans-serif;font-weight:500;font-size:15px;letter-spacing:-.015em;
+  transition:transform .12s var(--ease)}
+.cta i{font-family:'JetBrains Mono',ui-monospace,monospace;font-style:normal;font-size:16px}
+.cta:active{transform:scale(.985)}
+.guard{display:grid;grid-template-columns:auto auto;justify-content:space-between;gap:7px 16px;margin-top:13px;font-size:9px;color:var(--dim);letter-spacing:.07em}
+
+/* ── следующий блок (выглядывает из-под сгиба) ── */
+.next{position:relative;z-index:6;padding:10px 20px 26px;border-top:1px solid var(--line)}
+.nh{font-size:9.5px;color:var(--mut)}
+.nrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--hair)}
+.nrow img{flex:0 0 52px;width:52px;height:34px;object-fit:cover;object-position:50% 20%;display:block;filter:saturate(.55) contrast(1.12) brightness(.9)}
+.nt{min-width:0}
+.nn{font-family:'Unbounded',sans-serif;font-weight:400;font-size:12.5px;letter-spacing:-.015em;color:var(--ink)}
+.nm{margin-top:2px;font-size:10.5px;color:var(--dim)}
+.ni{margin-left:auto;font-size:9px;color:var(--dim);letter-spacing:.08em}
+
+@media (prefers-reduced-motion:reduce){
+  .scan{display:none}
+  .prog{animation:none}
+  .dot{animation:none}
+}
+</style>
+
+<div class="vp">
+  <div class="grain"></div>
+
+  <header class="hd">
+    <div class="logo">uniqore<i></i></div>
+    <div class="m">сайты для бизнеса</div>
+  </header>
+
+  <div class="stage">
+    <div class="gl"></div><div class="gr"></div>
+
+    <section class="hero">
+      <h1>Пять дней<br>от брифа<br>до запуска</h1>
+      <p class="lede">Собираем сайты для малого бизнеса. <b>Каждый день видно, что сделано.</b></p>
+    </section>
+
+    <section class="proc">
+      <div class="figrow m">
+        <span>рис. 1 · как собирался сайт</span>
+        <span class="r">немеция · омск</span>
+      </div>
+
+      <div class="frame">
+        <div class="z za">
+          <img src="/keysy/cases/case-nemecia.webp" alt="" width="2000" height="1134">
+          <div class="wire">
+            <i style="left:5%;top:8%;width:15%;height:7%"></i>
+            <i style="left:23%;top:8%;width:23%;height:7%"></i>
+            <i class="bar" style="left:5%;top:27%;width:40%;height:5%"></i>
+            <i class="bar" style="left:5%;top:36%;width:31%;height:4%"></i>
+            <i class="bar d" style="left:5%;top:44%;width:22%;height:3%"></i>
+            <i style="left:5%;top:55%;width:17%;height:9%"></i>
+            <i class="ph" style="left:5%;top:73%;width:19%;height:19%"></i>
+            <i class="ph" style="left:27%;top:73%;width:19%;height:19%"></i>
+          </div>
+        </div>
+        <div class="z zb">
+          <img src="/keysy/cases/case-nemecia.webp" alt="" width="2000" height="1134">
+        </div>
+        <div class="z zc">
+          <img src="/keysy/cases/case-nemecia.webp" alt="Сайт автокомплекса «Немеция», Омск" width="2000" height="1134">
+        </div>
+        <i class="seam s1"></i>
+        <i class="seam s2"></i>
+        <i class="scan"></i>
+      </div>
+
+      <div class="ruler">
+        <i class="prog"></i>
+        <i class="tk" style="left:20px"></i>
+        <i class="tk" style="left:111px"></i>
+        <i class="tk on" style="left:216px"></i>
+      </div>
+
+      <div class="days">
+        <div class="day d1"><span class="m"><b>01</b> каркас</span><em>бриф и схема</em></div>
+        <div class="day d2"><span class="m"><b>03</b> макет</span><em>утверждаете вы</em></div>
+        <div class="day d3"><span class="m"><b class="on">05</b> запуск</span><em>сайт в сети<span class="dot"></span></em></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="offer">
+    <div class="tr">
+      <span class="tn">Лендинг</span>
+      <span class="tv">11 700 ₽ · 3 дня</span>
+    </div>
+
+    <div class="tr pick">
+      <div>
+        <div class="pn">Многостраничник</div>
+        <div class="pt m">чаще всего берут</div>
+      </div>
+      <div class="pr">
+        <div class="pp">32 800 ₽</div>
+        <div class="ps m">с дизайном · 5 дней</div>
+      </div>
+    </div>
+
+    <div class="tr">
+      <span class="tn">Сайт + CRM</span>
+      <span class="tv">39 000 ₽ · 7 дней</span>
+    </div>
+  </section>
+
+  <div class="act">
+    <a class="cta" href="#brief">Получить план по дням<i>→</i></a>
+    <div class="guard m">
+      <span>гарантия год</span><span>оплата после макета</span>
+      <span>без абонплаты</span><span>исходники отдаём</span>
+    </div>
+  </div>
+
+  <section class="next">
+    <div class="nh m">20+ сайтов прошли тот же путь</div>
+    <div class="nrow">
+      <img src="/keysy/cases/case-biensur.webp" alt="Сайт ресторана Bien Sûr" loading="lazy" width="2000" height="1133">
+      <div class="nt"><div class="nn">Bien Sûr</div><div class="nm">ресторан, Санкт-Петербург</div></div>
+      <div class="ni m">01</div>
+    </div>
+    <div class="nrow">
+      <img src="/keysy/cases/case-idtuning.webp" alt="Сайт тюнинг-ателье IDTuning" loading="lazy" width="2000" height="1132">
+      <div class="nt"><div class="nn">IDTuning</div><div class="nm">тюнинг-ателье</div></div>
+      <div class="ni m">02</div>
+    </div>
+    <div class="nrow">
+      <img src="/keysy/cases/case-milla.webp" alt="Сайт студии интерьеров MILLA" loading="lazy" width="2000" height="1139">
+      <div class="nt"><div class="nn">MILLA</div><div class="nm">интерьеры</div></div>
+      <div class="ni m">03</div>
+    </div>
+  </section>
+
+  <div class="fold"><b>844 · сгиб</b></div>
+</div>
