@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Hero A — доказательство первым</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<style>
+/* ВАРИАНТ А — «Доказательство первым»
+   Digital Silk: пруф между лидом и CTA. Megagroup: цифры на кромке сгиба.
+   Сгиб режет реальную работу, а не выдуманный мокап. */
+:root{
+  --l:#CDFF4F;--bg:#0A0E1A;--txt:#E7EAF0;--mut:#8792a3;--line:rgba(255,255,255,.09);
+  --surf:rgba(255,255,255,.03);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Geist',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.vp{width:390px;min-height:844px;margin:0 auto;position:relative;overflow:hidden}
+/* сгиб */
+.fold{position:absolute;top:844px;left:0;right:0;border-top:1px dashed rgba(255,80,80,.5);z-index:99}
+.fold::after{content:'сгиб 844px';position:absolute;right:6px;top:3px;font-size:9px;color:rgba(255,80,80,.7);
+  font-family:'JetBrains Mono',monospace}
+
+.nav{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;letter-spacing:-.02em}
+.brand svg{width:19px;height:19px;color:var(--l)}
+.burger{width:22px;height:2px;background:var(--txt);position:relative}
+.burger::before,.burger::after{content:'';position:absolute;left:0;width:22px;height:2px;background:var(--txt)}
+.burger::before{top:-7px}.burger::after{top:7px}
+
+.pad{padding:26px 20px 0}
+
+h1{font-family:'Unbounded','Geist',sans-serif;font-weight:800;font-size:29px;line-height:1.06;
+  letter-spacing:-.035em;margin-bottom:12px}
+h1 b{color:var(--l);font-weight:800}
+.lead{font-size:15.5px;line-height:1.5;color:#aab3c0;margin-bottom:20px}
+
+/* ПРУФ-ПОЛОСА — до кнопки */
+.proof{margin-bottom:18px}
+.proof__lbl{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
+.proof__lbl span{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--mut)}
+.proof__lbl a{font-size:12.5px;color:var(--l);text-decoration:none;border-bottom:1px solid rgba(205,255,79,.3)}
+.strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;
+  margin:0 -20px;padding:0 20px 4px;-webkit-overflow-scrolling:touch}
+.strip::-webkit-scrollbar{display:none}
+.work{flex:0 0 224px;scroll-snap-align:start;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--surf)}
+.work__img{height:132px;background-size:cover;background-position:top center;position:relative}
+.work__live{position:absolute;top:8px;left:8px;background:rgba(10,14,26,.82);
+  border:1px solid rgba(205,255,79,.45);border-radius:5px;padding:3px 7px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--l)}
+.work__b{padding:10px 11px 12px}
+.work__n{font-weight:600;font-size:14px;margin-bottom:2px}
+.work__d{font-size:11.5px;color:var(--mut)}
+
+/* ЦИФРЫ — на кромке сгиба */
+.nums{display:flex;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  margin-bottom:20px}
+.num{flex:1;padding:13px 0;text-align:center;border-right:1px solid var(--line)}
+.num:last-child{border-right:0}
+.num b{display:block;font-family:'Unbounded','Geist',sans-serif;font-weight:700;font-size:19px;
+  letter-spacing:-.02em;margin-bottom:2px}
+.num span{font-size:10.5px;color:var(--mut);letter-spacing:.02em}
+
+/* ОДНА кнопка */
+.cta{display:block;background:var(--l);color:#0A0E1A;text-decoration:none;
+  padding:17px 20px;border-radius:13px;font-weight:700;font-size:16.5px;text-align:center;
+  margin-bottom:11px}
+.under{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--mut);margin-bottom:24px}
+.under i{font-style:normal;color:#c2ccd9}
+
+/* следующий блок выглядывает из-за сгиба */
+.next{border-top:1px solid var(--line);padding:22px 20px 40px}
+.next h2{font-family:'Unbounded','Geist',sans-serif;font-size:22px;font-weight:700;
+  letter-spacing:-.03em;margin-bottom:8px}
+.next p{font-size:14px;color:var(--mut);line-height:1.5}
+</style></head>
+<body>
+<div class="vp">
+  <div class="fold"></div>
+
+  <div class="nav">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+      uniqore
+    </div>
+    <div class="burger"></div>
+  </div>
+
+  <div class="pad">
+    <h1>Сайт, который<br>приводит заявки —<br><b>за 3–5 дней</b></h1>
+    <p class="lead">Собираем под вашу нишу: структура, тексты, дизайн. Не шаблон.</p>
+
+    <div class="proof">
+      <div class="proof__lbl">
+        <span>Сделали и работает</span>
+        <a href="#">все работы →</a>
+      </div>
+      <div class="strip">
+        <a class="work" href="#">
+          <div class="work__img" style="background-image:url(/keysy/cases/case-biensur.webp)">
+            <span class="work__live">● живой сайт</span>
+          </div>
+          <div class="work__b"><div class="work__n">Bien Sûr</div><div class="work__d">Ресторан, Санкт-Петербург</div></div>
+        </a>
+        <a class="work" href="#">
+          <div class="work__img" style="background-image:url(/keysy/cases/case-nemecia.webp)">
+            <span class="work__live">● живой сайт</span>
+          </div>
+          <div class="work__b"><div class="work__n">Немеция</div><div class="work__d">Автоподбор из Германии</div></div>
+        </a>
+        <a class="work" href="#">
+          <div class="work__img" style="background-image:url(/keysy/cases/case-idtuning.webp)">
+            <span class="work__live">● живой сайт</span>
+          </div>
+          <div class="work__b"><div class="work__n">IDTuning</div><div class="work__d">Тюнинг-ателье</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nums">
+      <div class="num"><b>20+</b><span>сайтов</span></div>
+      <div class="num"><b>3–5</b><span>дней</span></div>
+      <div class="num"><b>11 700 ₽</b><span>от</span></div>
+    </div>
+
+    <a class="cta" href="#">Получить расчёт за 15 минут</a>
+    <div class="under"><span>Оплата <i>после макета</i></span><span>Без ежемесячной платы</span></div>
+  </div>
+
+  <div class="next">
+    <h2>Что вы получаете</h2>
+    <p>Не просто страницу, а связку: сайт ведёт заявку в Telegram и CRM, реклама настроена…</p>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Hero B — самосегментация</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<style>
+/* ВАРИАНТ Б — «Человек выбирает себя сам»
+   Halo Lab: вместо картинки — выбор намерения. Webstacks: ниша внутри заголовка.
+   Megagroup: цены первой секцией. Квиз вместо кнопки (3 из 6 рекламодателей Директа). */
+:root{--l:#CDFF4F;--bg:#0A0E1A;--txt:#E7EAF0;--mut:#8792a3;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.vp{width:390px;min-height:844px;margin:0 auto;position:relative;overflow:hidden}
+.fold{position:absolute;top:844px;left:0;right:0;border-top:1px dashed rgba(255,80,80,.5);z-index:99}
+.fold::after{content:'сгиб 844px';position:absolute;right:6px;top:3px;font-size:9px;color:rgba(255,80,80,.7);font-family:'JetBrains Mono',monospace}
+
+.nav{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;letter-spacing:-.02em}
+.brand svg{width:19px;height:19px;color:var(--l)}
+.burger{width:22px;height:2px;background:var(--txt);position:relative}
+.burger::before,.burger::after{content:'';position:absolute;left:0;width:22px;height:2px;background:var(--txt)}
+.burger::before{top:-7px}.burger::after{top:7px}
+
+.pad{padding:24px 20px 0}
+h1{font-family:'Unbounded','Geist',sans-serif;font-weight:800;font-size:28px;line-height:1.08;
+  letter-spacing:-.035em;margin-bottom:11px}
+/* ниша подставляется — доказываем «под нишу» механикой, а не картинкой */
+.niche{color:var(--l);border-bottom:3px solid rgba(205,255,79,.35);padding-bottom:1px}
+.lead{font-size:15px;line-height:1.5;color:#aab3c0;margin-bottom:8px}
+.live{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--mut);margin-bottom:20px}
+.live b{color:#c2ccd9;font-weight:500}
+.live u{text-decoration:none;color:var(--l);border-bottom:1px solid rgba(205,255,79,.3)}
+
+/* ТРИ РЯДА ВЫБОРА — вместо мокапа */
+.pick{border-top:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:13px;padding:15px 2px;border-bottom:1px solid var(--line);
+  text-decoration:none;color:inherit}
+.row__n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut);width:16px;flex:0 0 16px}
+.row__m{flex:1;min-width:0;display:block}
+.row__t{display:block;font-weight:600;font-size:16.5px;letter-spacing:-.01em;margin-bottom:3px}
+.row__s{display:block;font-size:12.5px;color:var(--mut)}
+.row__p{text-align:right;flex:0 0 auto;display:block}
+.row__pv{display:block;font-family:'Unbounded','Geist',sans-serif;font-weight:700;font-size:15px;letter-spacing:-.02em}
+.row__pd{display:block;font-size:11px;color:var(--mut);margin-top:2px}
+.row__a{flex:0 0 auto;color:var(--mut);font-size:17px;line-height:1}
+
+.after{padding:20px 0 0}
+.cta{display:block;background:var(--l);color:#0A0E1A;text-decoration:none;padding:17px 20px;
+  border-radius:13px;font-weight:700;font-size:16.5px;text-align:center;margin-bottom:11px}
+.under{display:flex;gap:16px;justify-content:center;font-size:12px;color:var(--mut);margin-bottom:22px}
+.under i{font-style:normal;color:#c2ccd9}
+
+.next{border-top:1px solid var(--line);padding:20px 20px 40px;display:flex;gap:10px;overflow:hidden}
+.tile{flex:0 0 210px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.tile__i{height:118px;background-size:cover;background-position:top center}
+.tile__b{padding:9px 11px 11px}
+.tile__n{font-weight:600;font-size:13.5px}
+.tile__d{font-size:11px;color:var(--mut);margin-top:2px}
+.next-h{position:absolute;left:20px;font-family:'JetBrains Mono',monospace;font-size:10.5px;
+  letter-spacing:.11em;text-transform:uppercase;color:var(--mut);margin-top:-12px}
+</style></head>
+<body>
+<div class="vp">
+  <div class="fold"></div>
+
+  <div class="nav">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+      uniqore
+    </div>
+    <div class="burger"></div>
+  </div>
+
+  <div class="pad">
+    <h1>Сайт для<br><span class="niche" id="n">автосервиса</span><br>за 3–5 дней</h1>
+    <p class="lead">Собираем под процессы вашей ниши, а не по шаблону. Заявки идут в Telegram и CRM.</p>
+    <div class="live">
+      <b>Уже работают:</b>
+      <u>Bien&nbsp;Sûr</u> · <u>Немеция</u> · <u>Dragon</u>
+    </div>
+
+    <div class="pick">
+      <a class="row" href="#">
+        <span class="row__n">01</span>
+        <span class="row__m"><span class="row__t">Лендинг</span><span class="row__s">Одна страница под одну цель</span></span>
+        <span class="row__p"><span class="row__pv">11 700 ₽</span><span class="row__pd">3 дня</span></span>
+        <span class="row__a">→</span>
+      </a>
+      <a class="row" href="#">
+        <span class="row__n">02</span>
+        <span class="row__m"><span class="row__t">Многостраничный</span><span class="row__s">Услуги, каталог, блог</span></span>
+        <span class="row__p"><span class="row__pv">23 400 ₽</span><span class="row__pd">5 дней</span></span>
+        <span class="row__a">→</span>
+      </a>
+      <a class="row" href="#">
+        <span class="row__n">03</span>
+        <span class="row__m"><span class="row__t">Сайт + CRM</span><span class="row__s">Заявки сразу в систему</span></span>
+        <span class="row__p"><span class="row__pv">39 000 ₽</span><span class="row__pd">до 7 дней</span></span>
+        <span class="row__a">→</span>
+      </a>
+    </div>
+
+    <div class="after">
+      <a class="cta" href="#">Рассчитать мой сайт</a>
+      <div class="under"><span>Оплата <i>после макета</i></span><span>Без ежемесячной платы</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <div class="tile">
+      <div class="tile__i" style="background-image:url(/keysy/cases/case-biensur.webp)"></div>
+      <div class="tile__b"><div class="tile__n">Bien Sûr</div><div class="tile__d">Ресторан, СПб</div></div>
+    </div>
+    <div class="tile">
+      <div class="tile__i" style="background-image:url(/keysy/cases/case-nemecia.webp)"></div>
+      <div class="tile__b"><div class="tile__n">Немеция</div><div class="tile__d">Автоподбор</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ниша меняется — «под вашу нишу» доказывается механикой
+  var N=['автосервиса','кофейни','стоматологии','салона красоты','автошколы','ремонта'],i=0;
+  setInterval(function(){i=(i+1)%N.length;document.getElementById('n').textContent=N[i]},1600);
+</script>
+</body></html>
