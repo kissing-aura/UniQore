@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — концепт «Витрина работы»</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════════
+ЛОГИКА ЭКРАНА. Направление «витрина»: сначала вещь, потом слова.
+
+Человек пришёл с Директа, холодный, с телефона. Он не верит тексту — текст
+у всех одинаковый. Он верит увиденному. Поэтому порядок считывания перевёрнут
+относительно обычного лендинга: не «обещание → доказательство», а
+«доказательство → цена → действие».
+
+  0-52   ШАПКА. «uniqore · сайты и CRM». Единственное место, где мы называем
+         себя. 1 секунда, дальше не мешает.
+
+  52-456 ЭКСПОНАТ. 404px высоты — 48% экрана отдано ОДНОЙ реальной работе.
+         Скриншот показан крупно (масштаб 0.4 от исходника, кадр подобран
+         под каждую работу вручную — см. --x) и медленно едет вниз, как будто
+         страницу листают. Это снимает главное возражение «картинка = макет».
+         Сверху счётчик 01/05 на сканлайн-плашке. Снизу — скрим, растворяющий
+         кадр в цвет фона, и на нём заголовок. Заголовок ЛЕЖИТ НА РАБОТЕ,
+         а не над ней: «Сайты, которые уже работают» читается как подпись
+         к тому, что человек прямо сейчас видит.
+
+  456-520 ПЕРЕКЛЮЧАТЕЛЬ. Пять настоящих кадров, тап меняет экспонат.
+         Здесь человек делает первое микро-действие. Тапнул хотя бы раз —
+         значит вовлёкся, значит досмотрит. Это же и есть доказательство
+         количества: работ не одна.
+
+  520-700 ЦЕННИК. Момент решения. Строится как музейная табличка, а не как
+         карточка тарифа: что это → сколько стоит → за сколько сделаем.
+         Крупно и лаймом ровно одно число — 32 800 ₽, то, что берут чаще
+         всего. Ниже мелко якоря 11 700 / 39 000, чтобы 32 800 читалось
+         как середина, а не как «дёшево = плохо».
+
+  700-760 ОДНО ДЕЙСТВИЕ. «Хочу такой сайт» — формулировка привязана к
+         экспонату, а не абстрактная «оставить заявку».
+
+  760-800 СНЯТИЕ РИСКА. Стоит СРАЗУ под кнопкой, в момент колебания:
+         гарантия год · оплата после макета · без ежемесячной платы.
+
+  806+   Ниже сгиба выглядывает индекс остальных работ — обещание, что
+         экспонатов больше пяти. Это то, что заставляет скроллить дальше.
+
+АНТИ-SLOP: нет мокапа устройства (человек и так в телефоне), нет трёх
+одинаковых карточек, нет чипа над заголовком, нет свечений box-shadow —
+глубина сделана зерном, скримом и хайрлайнами. Лайм ровно в трёх местах:
+цена, кнопка, активный кадр. Радиусы разные и мелкие: 0 / 2 / 3px.
+Первый экран не анимируется на входе (не портим LCP) — движется только
+сам скриншот внутри рамки.
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A; --txt:#E7EAF0; --mut:#8792a3; --mut2:#6b7484;
+  --lime:#CDFF4F;
+  --line:rgba(231,234,240,.08);
+  --line2:rgba(231,234,240,.14);
+  --pad:20px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d; color:var(--txt);
+  font-family:'Geist',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.vp{
+  width:390px; margin:0 auto; position:relative;
+  background:var(--bg); overflow:hidden; min-height:1100px;
+}
+
+/* зерно — единственный способ убрать пластиковость тёмного фона */
+.grain{
+  position:absolute; inset:0; z-index:40; pointer-events:none; opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.14'/></svg>");
+}
+
+/* маркер сгиба 844 */
+.fold{
+  position:absolute; top:844px; left:0; right:0; z-index:60;
+  border-top:1px dashed rgba(255,80,80,.45); pointer-events:none;
+}
+.fold b{
+  position:absolute; right:6px; top:4px; font:400 9px/1 'JetBrains Mono',monospace;
+  letter-spacing:.1em; color:rgba(255,80,80,.6);
+}
+
+/* ─────────── ШАПКА ─────────── */
+.hd{
+  height:52px; padding:0 var(--pad); display:flex; align-items:center;
+  justify-content:space-between; position:relative; z-index:20;
+}
+.logo{display:flex; align-items:center; gap:7px}
+.logo svg{width:15px; height:15px; display:block; color:var(--txt)}
+.logo span{
+  font-family:'Unbounded',sans-serif; font-weight:500; font-size:15px;
+  letter-spacing:-.045em;
+}
+.hd .what{
+  font:400 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--mut2);
+}
+
+/* ─────────── ЭКСПОНАТ ─────────── */
+.stage{
+  position:relative; height:404px; overflow:hidden;
+  background:#0d1220; isolation:isolate;
+}
+.shot{
+  position:absolute; top:0; left:var(--x,-200px);
+  width:790px; height:448px; object-fit:cover; object-position:top left;
+  opacity:0; transition:opacity .55s var(--ease);
+  /* единый грейд на пять чужих палитр — иначе это папка «Загрузки» */
+  filter:saturate(.62) contrast(1.1) brightness(.84);
+  will-change:transform;
+}
+.shot.on{opacity:1; animation:drift 26s var(--ease) infinite alternate}
+@keyframes drift{from{transform:translate3d(0,0,0)} to{transform:translate3d(0,-43px,0)}}
+
+/* холодный сдвиг всей медиатеки в цвет бренда */
+.stage::before{
+  content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:#0A0E1A; mix-blend-mode:color; opacity:.34;
+}
+/* скрим — кадр растворяется в фон, границы у картинки нет */
+.scrim{
+  position:absolute; left:0; right:0; bottom:0; height:210px; z-index:3;
+  background:linear-gradient(180deg,rgba(10,14,26,0) 0%,rgba(10,14,26,.72) 42%,#0A0E1A 92%);
+  pointer-events:none;
+}
+/* верхний увод — чтобы шапка не тонула в светлом скриншоте */
+.stage::after{
+  content:''; position:absolute; left:0; right:0; top:0; height:74px; z-index:3;
+  background:linear-gradient(180deg,rgba(10,14,26,.85),rgba(10,14,26,0));
+  pointer-events:none;
+}
+
+/* счётчик — на сканлайнах, не на стекле */
+.count{
+  position:absolute; top:14px; left:var(--pad); z-index:6;
+  display:flex; align-items:center; gap:8px;
+  padding:5px 9px;
+  background:
+    repeating-linear-gradient(0deg,rgba(10,14,26,.92) 0 1px,rgba(10,14,26,.55) 1px 2px);
+  border:1px solid rgba(231,234,240,.13); border-radius:2px;
+  font:400 10px/1 'JetBrains Mono',monospace; letter-spacing:.12em; color:var(--txt);
+}
+.count i{font-style:normal; color:var(--mut2)}
+.count u{text-decoration:none; color:var(--lime)}
+
+/* «живой сайт» — маленькая техническая метка справа сверху */
+.live{
+  position:absolute; top:14px; right:var(--pad); z-index:6;
+  font:400 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--mut);
+  display:flex; align-items:center; gap:6px;
+}
+.live s{
+  width:5px; height:5px; border-radius:99px; background:var(--lime);
+  text-decoration:none; display:block; opacity:.9;
+}
+
+/* заголовок лежит на работе */
+.over{position:absolute; left:var(--pad); right:var(--pad); bottom:16px; z-index:8}
+h1{
+  font-family:'Unbounded',sans-serif; font-weight:400; font-size:32px;
+  line-height:1.06; letter-spacing:-.038em; color:#fff;
+  margin-bottom:11px;
+}
+.plate{
+  display:flex; align-items:center; gap:8px;
+  font:400 10px/1.35 'JetBrains Mono',monospace; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--mut);
+  border-top:1px solid var(--line2); padding-top:9px;
+}
+.plate b{color:var(--txt); font-weight:400}
+
+/* ─────────── ПЕРЕКЛЮЧАТЕЛЬ ЭКСПОНАТОВ ─────────── */
+.rail{
+  display:flex; gap:8px; padding:12px var(--pad) 0;
+  min-width:0;
+}
+.th{
+  flex:1 1 0; min-width:0; height:44px; padding:0; border:0; cursor:pointer;
+  background:#0d1220 no-repeat; background-size:cover; background-position:center top;
+  border-radius:2px; position:relative; overflow:hidden;
+  filter:saturate(.35) brightness(.5); opacity:.75;
+  transition:filter .3s var(--ease),opacity .3s var(--ease);
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  outline:1px solid var(--line); outline-offset:-1px;
+}
+.th.on{filter:saturate(.7) brightness(.92); opacity:1; outline:1px solid var(--lime)}
+.th:active{transform:scale(.97)}
+
+/* ─────────── ЦЕННИК ─────────── */
+.offer{padding:22px var(--pad) 0}
+.cap{
+  font:400 9.5px/1 'JetBrains Mono',monospace; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--mut2);
+  display:flex; align-items:center; gap:9px; margin-bottom:13px;
+}
+.cap::after{content:''; flex:1; height:1px; background:var(--line); min-width:0}
+
+.row{display:flex; align-items:flex-end; justify-content:space-between; gap:14px}
+.what2{
+  font-size:15px; line-height:1.35; letter-spacing:-.01em; color:var(--txt);
+  margin-bottom:6px;
+}
+.what2 em{font-style:normal; color:var(--mut)}
+.price{
+  font-family:'Unbounded',sans-serif; font-weight:500; font-size:38px;
+  line-height:.96; letter-spacing:-.05em; color:var(--lime);
+  white-space:nowrap;
+}
+.term{
+  text-align:right; flex:0 0 auto;
+  font:400 10px/1.5 'JetBrains Mono',monospace; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--mut2);
+}
+.term b{
+  display:block; font-family:'Geist',sans-serif; font-weight:500; font-size:17px;
+  letter-spacing:-.02em; text-transform:none; color:var(--txt); line-height:1.2;
+}
+.anchor{
+  margin-top:13px; padding-top:11px; border-top:1px solid var(--line);
+  font-size:12.5px; line-height:1.4; color:var(--mut2); letter-spacing:-.005em;
+}
+.anchor b{color:var(--mut); font-weight:400}
+
+/* ─────────── ДЕЙСТВИЕ ─────────── */
+.cta{
+  margin:18px var(--pad) 0; height:54px; border-radius:3px; border:0;
+  background:var(--lime); color:#06090f; width:calc(100% - var(--pad)*2);
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  font-family:'Geist',sans-serif; font-weight:600; font-size:16px;
+  letter-spacing:-.015em; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  transition:transform .12s var(--ease);
+}
+.cta:active{transform:scale(.985)}
+.cta svg{width:15px; height:15px; display:block}
+
+.risk{
+  padding:12px var(--pad) 0;
+  font:400 10px/1.65 'JetBrains Mono',monospace; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--mut2);
+}
+.risk span{color:var(--mut)}
+
+/* ─────────── ЧТО ВЫГЛЯДЫВАЕТ ИЗ-ПОД СГИБА ─────────── */
+.more{margin-top:26px; border-top:1px solid var(--line2)}
+.more .cap{padding:14px var(--pad) 0; margin-bottom:10px}
+.idx{list-style:none}
+.idx li{
+  display:flex; align-items:baseline; gap:10px; min-width:0;
+  padding:13px var(--pad); border-bottom:1px solid var(--line);
+  font-size:15px; letter-spacing:-.015em;
+}
+.idx i{
+  font:400 10px/1 'JetBrains Mono',monospace; color:var(--mut2);
+  font-style:normal; flex:0 0 auto;
+}
+.idx em{
+  font-style:normal; color:var(--mut2); font-size:12.5px; margin-left:auto;
+  flex:0 0 auto; white-space:nowrap;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .shot.on{animation:none}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="vp">
+
+  <header class="hd">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 21 21"/>
+      </svg>
+      <span>uniqore</span>
+    </div>
+    <div class="what">сайты и CRM</div>
+  </header>
+
+  <!-- ЭКСПОНАТ -->
+  <section class="stage" id="stage">
+    <img class="shot on" id="s0" src="/keysy/cases/case-biensur.webp"    alt="Сайт ресторана Bien Sûr"        width="790" height="448" style="--x:-200px" decoding="async">
+    <img class="shot"    id="s1" src="/keysy/cases/case-nemecia.webp"    alt="Сайт автокомплекса Немеция"     width="790" height="448" style="--x:-26px"  decoding="async" loading="lazy">
+    <img class="shot"    id="s2" src="/keysy/cases/case-idtuning.webp"   alt="Сайт тюнинг-ателье IDTuning"    width="790" height="448" style="--x:-180px" decoding="async" loading="lazy">
+    <img class="shot"    id="s3" src="/keysy/cases/case-milla.webp"      alt="Сайт студии интерьеров MILLA"   width="790" height="448" style="--x:-200px" decoding="async" loading="lazy">
+    <img class="shot"    id="s4" src="/keysy/cases/case-banidesign.webp" alt="Сайт компании Бани Дизайн"      width="790" height="448" style="--x:-81px"  decoding="async" loading="lazy">
+
+    <div class="scrim"></div>
+
+    <div class="count"><u id="cnum">01</u><i>/ 05</i></div>
+    <div class="live"><s></s>работает сейчас</div>
+
+    <div class="over">
+      <h1>Сайты, которые<br>уже работают</h1>
+      <div class="plate"><b id="cname">Bien Sûr</b><span id="cmeta">ресторан · Санкт-Петербург</span></div>
+    </div>
+  </section>
+
+  <!-- ПЕРЕКЛЮЧАТЕЛЬ -->
+  <div class="rail" id="rail">
+    <button class="th on" type="button" aria-label="Bien Sûr"   style="background-image:url(/keysy/cases/case-biensur.webp)"></button>
+    <button class="th"    type="button" aria-label="Немеция"    style="background-image:url(/keysy/cases/case-nemecia.webp)"></button>
+    <button class="th"    type="button" aria-label="IDTuning"   style="background-image:url(/keysy/cases/case-idtuning.webp)"></button>
+    <button class="th"    type="button" aria-label="MILLA"      style="background-image:url(/keysy/cases/case-milla.webp)"></button>
+    <button class="th"    type="button" aria-label="Бани Дизайн" style="background-image:url(/keysy/cases/case-banidesign.webp)"></button>
+  </div>
+
+  <!-- ЦЕННИК -->
+  <section class="offer">
+    <div class="cap">берут чаще всего</div>
+    <div class="row">
+      <div style="min-width:0">
+        <div class="what2">Многостраничник <em>с дизайном</em></div>
+        <div class="price">32&thinsp;800&nbsp;₽</div>
+      </div>
+      <div class="term">срок<b>5 дней</b></div>
+    </div>
+    <div class="anchor">Лендинг <b>11 700 ₽</b> · Сайт + CRM <b>39 000 ₽</b></div>
+  </section>
+
+  <button class="cta" type="button">
+    Хочу такой сайт
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+  </button>
+
+  <div class="risk">
+    Гарантия <span>год</span> · оплата после утверждения макета<br>
+    без ежемесячной платы · исходники отдаём
+  </div>
+
+  <!-- выглядывает из-под сгиба -->
+  <section class="more">
+    <div class="cap">ещё 15 сайтов в портфолио</div>
+    <ul class="idx">
+      <li><i>06</i>Dragon Brand<em>стритвир</em></li>
+      <li><i>07</i>Титов Групп<em>недвижимость</em></li>
+      <li><i>08</i>Lovi<em>доставка</em></li>
+    </ul>
+  </section>
+
+  <div class="grain"></div>
+  <div class="fold"><b>844 — СГИБ</b></div>
+</div>
+
+<script>
+(function(){
+  var DATA=[
+    ['Bien Sûr','ресторан · Санкт-Петербург'],
+    ['Немеция','автокомплекс · Омск'],
+    ['IDTuning','тюнинг-ателье · Москва'],
+    ['MILLA','дизайн интерьера · Самара'],
+    ['Бани Дизайн','бани и хаммамы']
+  ];
+  var shots=[].slice.call(document.querySelectorAll('.shot')),
+      ths=[].slice.call(document.querySelectorAll('.th')),
+      num=document.getElementById('cnum'),
+      nm=document.getElementById('cname'),
+      mt=document.getElementById('cmeta');
+
+  function go(i){
+    shots.forEach(function(s,k){s.classList.toggle('on',k===i)});
+    ths.forEach(function(t,k){t.classList.toggle('on',k===i)});
+    num.textContent='0'+(i+1);
+    nm.textContent=DATA[i][0];
+    mt.textContent=DATA[i][1];
+  }
+  ths.forEach(function(t,i){t.addEventListener('click',function(){go(i)})});
+
+  /* свайп по кадру — тот же переключатель, только жестом */
+  var stage=document.getElementById('stage'),x0=null,cur=0;
+  stage.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+  stage.addEventListener('touchend',function(e){
+    if(x0===null)return;
+    var d=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(d)<45)return;
+    cur=(cur+(d<0?1:4))%5; go(cur);
+  },{passive:true});
+  ths.forEach(function(t,i){t.addEventListener('click',function(){cur=i})});
+})();
+</script>
+</body></html>
