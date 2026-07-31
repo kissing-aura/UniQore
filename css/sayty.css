@@ -948,3 +948,25 @@ textarea.sy-in{resize:vertical;min-height:84px}
   .sy-hero__mviz{margin:22px auto 34px;max-width:228px}
   .sy-hero__benefits{margin-top:26px}
 }
+
+/* ============================================================
+   ВОЛНА 5-6 (аудит 30.07) — /sayty/: резка длины + слияние блоков.
+   Дописано в хвост sayty.css. Правишь → бампни ?v=.
+   ============================================================ */
+/* Слитый блок «реальная компания + команда»: подзаголовок команды внутри #o-kompanii */
+.sy-team__mid{ text-align:center; margin-top:clamp(46px,6vw,74px); }
+.sy-team__mid .sy-eyebrow{ margin-bottom:12px; }
+.sy-team__mid-h{ font-family:'Unbounded',sans-serif; font-weight:800; font-size:clamp(20px,3.2vw,28px); line-height:1.15; color:var(--sy-l); margin:0 0 6px; }
+/* Компактная таблица сравнения студия vs — теперь внутри блока цен */
+.sy-cmp--mini{ margin-top:26px; }
+
+@media (max-width:640px){
+  /* Портфолио: 2 колонки вместо 1 — все 6 работ, вдвое короче. Dragon (live, --wide) на всю ширину. */
+  .sy-pf__grid{ grid-template-columns:1fr 1fr; gap:11px; }
+  .sy-pf--wide{ grid-column:1 / -1; }
+  .sy-pf__name{ font-size:14.5px; }
+  /* Чуть плотнее крупные сетки */
+  .sy-get__grid{ gap:11px; }
+  .sy-price__grid{ gap:12px; }
+  .sy-team__grid{ gap:10px; }
+}

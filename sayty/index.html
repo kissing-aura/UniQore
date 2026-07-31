@@ -51,7 +51,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260727c">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260731b">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260731c">
   <style>/* критический размер видео инлайном — держит вёрстку даже при устаревшем кэше внешнего CSS (защита от «гигант-лого») */
   .nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
   .nav__logo-vid{width:100%;height:100%;object-fit:cover;display:none}
@@ -414,6 +414,12 @@
             <div class="sy-pcard__cta"><a href="#zayavka" class="sy-btn sy-btn--ghost">Получить расчёт</a></div>
           </div>
         </div>
+        <div class="sy-cmp sy-cmp--mini sy-rev" data-d="1">
+          <div class="sy-cmp__head"><div class="sy-cmp__h">Обычная студия vs&nbsp;Uniqore</div><div class="sy-cmp__h sy-cmp__h--them">Студия</div><div class="sy-cmp__h sy-cmp__h--us">Uniqore</div></div>
+          <div class="sy-cmp__row"><div class="sy-cmp__c">Срок</div><div class="sy-cmp__c sy-cmp__no">2–4 недели</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">3–5 дней</div></div>
+          <div class="sy-cmp__row"><div class="sy-cmp__c">Дизайн</div><div class="sy-cmp__c sy-cmp__no">Шаблон Tilda</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Под нишу</div></div>
+          <div class="sy-cmp__row"><div class="sy-cmp__c">Исходники и цена</div><div class="sy-cmp__c sy-cmp__no">Держат, плавает</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Отдаём, фикс</div></div>
+        </div>
       </div>
     </section>
 
@@ -642,24 +648,6 @@
 
 
 
-    <!-- ═══════ FEATURES ═══════ -->
-    <section class="sy-section">
-      <div class="sy-container">
-        <div class="sy-head sy-head--left">
-          <h2 class="sy-h2 sy-rev">Почему <em>Uniqore</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Не «сделаем красиво», а конкретные вещи, которые приносят заявки.</p>
-        </div>
-        <div class="sy-feat__grid">
-          <div class="sy-feat sy-rev"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></div><div class="sy-feat__t">SEO уже внутри</div><div class="sy-feat__d">Структура, скорость и мета — так, чтобы вас находили в поиске.</div></div>
-          <div class="sy-feat sy-rev" data-d="2"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><div class="sy-feat__t">CRM-интеграция</div><div class="sy-feat__d">Заявки не теряются — сразу попадают в систему учёта и воронку.</div></div>
-          <div class="sy-feat sy-rev" data-d="3"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 3.4 2.9 10.6c-1 .4-1 1.4 0 1.7l4.6 1.5 1.8 5.4c.3.9 1.2 1 1.8.3l2.5-2.6 4.7 3.5c.7.5 1.6.1 1.8-.8z"/></svg></div><div class="sy-feat__t">Telegram-уведомления</div><div class="sy-feat__d">Каждая заявка мгновенно приходит вам и команде в Telegram.</div></div>
-          <div class="sy-feat sy-rev" data-d="1"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg></div><div class="sy-feat__t">Мобильная оптимизация</div><div class="sy-feat__d">80% трафика — телефоны. Делаем идеально именно под них.</div></div>
-          <div class="sy-feat sy-rev" data-d="2"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="sy-feat__t">Поддержка после запуска</div><div class="sy-feat__d">Хостинг, аналитика и правки — не бросаем сайт после сдачи.</div></div>
-          <div class="sy-feat sy-rev" data-d="3"><div class="sy-feat__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div><div class="sy-feat__t">Аналитика заявок</div><div class="sy-feat__d">Яндекс.Метрика и цели настроены — видно, откуда приходят клиенты.</div></div>
-        </div>
-      </div>
-    </section>
-
     <!-- ═══════ CASES ═══════ -->
     <section class="sy-section">
       <div class="sy-container">
@@ -696,28 +684,6 @@
         <p style="text-align:center;color:var(--sy-mut2);font-size:12.5px;margin-top:20px" class="sy-rev">«После» — живые сайты, их можно открыть и потрогать. «До» — реконструкция типичного слабого сайта в нише.</p>
       </div>
     </section>
-
-    <!-- ═══════ COMPARE ═══════ -->
-    <section class="sy-section sy-section--band">
-      <div class="sy-container">
-        <div class="sy-head">
-          <h2 class="sy-h2 sy-rev">Обычная студия <em>vs</em> Uniqore</h2>
-          <p class="sy-sub sy-rev" data-d="1">Разница видна там, где начинается платная реклама.</p>
-        </div>
-        <div class="sy-cmp sy-rev">
-          <div class="sy-cmp__head"><div class="sy-cmp__h"></div><div class="sy-cmp__h sy-cmp__h--them">Обычная студия</div><div class="sy-cmp__h sy-cmp__h--us">Uniqore</div></div>
-          <div class="sy-cmp__row"><div class="sy-cmp__c">Дизайн</div><div class="sy-cmp__c sy-cmp__no">Шаблон Tilda</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Индивидуальный</div></div>
-          <div class="sy-cmp__row"><div class="sy-cmp__c">Срок</div><div class="sy-cmp__c sy-cmp__no">2–4 недели</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">3–5 дней</div></div>
-          <div class="sy-cmp__row"><div class="sy-cmp__c">SEO</div><div class="sy-cmp__c sy-cmp__no">За доплату</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Включено</div></div>
-          <div class="sy-cmp__row"><div class="sy-cmp__c">CRM и Telegram</div><div class="sy-cmp__c sy-cmp__no">Обычно нет</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Из коробки</div></div>
-          <div class="sy-cmp__row"><div class="sy-cmp__c">Цена</div><div class="sy-cmp__c sy-cmp__no">Плавает</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Фиксирована</div></div>
-          <div class="sy-cmp__row"><div class="sy-cmp__c">Исходники</div><div class="sy-cmp__c sy-cmp__no">Держат у себя</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Отдаём вам</div></div>
-          <div class="sy-cmp__row"><div class="sy-cmp__c">Поддержка</div><div class="sy-cmp__c sy-cmp__no">Пропадают</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Ведём дальше</div></div>
-          <div class="sy-cmp__row"><div class="sy-cmp__c">Реклама</div><div class="sy-cmp__c sy-cmp__no">Льёт в пустоту</div><div class="sy-cmp__c sy-cmp__c--us sy-cmp__yes">Окупает Директ</div></div>
-        </div>
-      </div>
-    </section>
-
 
     <!-- ═══════ BRAND SEAL (3D-лого, вращение по скроллу) ═══════ -->
     <section class="sy-section sy-brandseal" id="brandseal">
@@ -788,16 +754,10 @@
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- ═══════ КОМАНДА ═══════ -->
-    <section class="sy-section sy-team" id="komanda">
-      <div class="sy-container">
-        <div class="sy-head sy-head--center">
-          <span class="sy-eyebrow sy-rev"><span class="dot"></span>Живые люди, а не бот в чате</span>
-          <h2 class="sy-h2 sy-rev" data-d="1">Команда, которая <em>сделает ваш сайт</em></h2>
-          <p class="sy-sub sy-rev" data-d="1">Не фрилансер на аутсорсе — своя команда: дизайн, разработка, маркетинг. Вот кто будет над вами работать.</p>
+        <div class="sy-team__mid sy-rev" data-d="1">
+          <span class="sy-eyebrow"><span class="dot"></span>Живые люди, а не бот в чате</span>
+          <h3 class="sy-team__mid-h">Команда, которая сделает ваш сайт</h3>
+          <p class="sy-sub">Не фрилансер на аутсорсе — своя команда: дизайн, разработка, маркетинг.</p>
         </div>
         <div class="sy-team__grid">
           <figure class="sy-tm sy-rev">

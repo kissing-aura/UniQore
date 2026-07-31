@@ -5481,3 +5481,65 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   .demo-card__shot img { transition: none; }
   .demo-card:hover .demo-card__shot img { transform: none; }
 }
+
+/* ============================================================
+   ВОЛНА 5-6 (аудит 30.07) — резка длины + плотность на мобилке.
+   Дописано в хвост bundle.css (как wave2). Правишь → бампни ?v=.
+   Страница была 18.35 экрана @390 — цель ≤10. Контент НЕ режем,
+   ужимаем воздух и раскладку демо (все 6 демо на месте).
+   ============================================================ */
+
+/* Нота под услугами (растворённая trust-карточка «не платите за юзера») */
+.services3__foot {
+  margin: 26px auto 0; max-width: 62ch; text-align: center;
+  font-size: 13.5px; line-height: 1.5; color: var(--color-text-secondary);
+}
+.services3__foot span[data-usd] { color: var(--color-text-primary); font-weight: 600; }
+
+@media (max-width: 640px) {
+  /* Вертикальный ритм секций плотнее (было 72px → воздуха слишком много) */
+  section:not(.hero) { padding: 46px 0; }
+  .section-title { margin-bottom: 10px; }
+
+  /* Демо: 2 колонки + скриншот как доказательство, без вербозного Было/Стало.
+     Все 6 демо остаются, просто плотнее. Текст Было/Стало виден на десктопе. */
+  .demo-grid { grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 24px; }
+  .demo-card { padding: 11px; gap: 7px; border-radius: 14px; }
+  .demo-card__shot { margin: -11px -11px 2px; }
+  .demo-card__pp { display: none; }
+  .demo-card__title { font-size: 14.5px; line-height: 1.2; }
+  .demo-card__top { font-size: 10.5px; }
+  .demo-card__cta { font-size: 12.5px; }
+  .demo-sub { font-size: 13.5px; }
+
+  /* Границы (входит/не входит) — плотнее списки */
+  .inout__grid { gap: 14px; }
+  .inout__list li { margin-bottom: 8px; }
+  .inout__head { margin-bottom: 16px; }
+
+  /* Услуги — плотнее карточки, decorative-чипы модулей прячем (aria-hidden) */
+  .services3__grid { gap: 12px; }
+  .svc-card { padding: 18px; }
+  .svc-card__list { margin-top: 10px; }
+  .svc-card__list li { margin-bottom: 5px; }
+  .services3__head { margin-bottom: 18px; }
+  .svc-card__flag-modules { display: none; }
+
+  /* Процесс — плотнее шаги */
+  .process__steps { gap: 12px; }
+  .process__step { padding: 14px 0; }
+
+  /* FAQ — плотнее вопросы */
+  .faq-item__q { padding-top: 15px; padding-bottom: 15px; }
+  .faq__header { margin-bottom: 14px; }
+
+  /* Калькулятор потерь — плотнее */
+  .mirror__opts { gap: 8px; }
+  .mirror-section__sub { margin-bottom: 14px; }
+
+  /* Юрблок (wave4) — плотнее внутренние отступы */
+  .legalx__head { margin-bottom: 16px; }
+
+  /* Hero: метрики ближе к контенту */
+  .hero__metrics { margin-top: 18px; }
+}
