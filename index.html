@@ -160,10 +160,10 @@
         if (loaded) return;
         loaded = true;
         var s1 = document.createElement('script');
-        s1.src = 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js';
+        s1.src = 'assets/js/gsap.min.js?v=3.12.5';
         s1.onload = function() {
           var s2 = document.createElement('script');
-          s2.src = 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js';
+          s2.src = 'assets/js/ScrollTrigger.min.js?v=3.12.5';
           s2.onload = function() {
             var s3 = document.createElement('script');
             s3.src = 'js/gsap-effects.js?v=20260711e';
