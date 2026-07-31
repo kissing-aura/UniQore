@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Первый экран /sayty/ — финал</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<style>
+/* ФИНАЛ — лучшее из А и Б + реальная цена + гарантия год.
+   Доказательство до кнопки (Digital Silk). Выбор с ценой вместо мокапа (Halo Lab).
+   Цена показывает то, что реально покупают — 32 760 ₽, а не 11 700 голого лендинга.
+
+   Анти-slop: ноль eyebrow-чипов над H1, ноль box-shadow-свечения,
+   акцент лаймом ровно в двух местах на экран, радиусы разные (6/10/13/999),
+   иконок-заглушек нет — только реальные скриншоты. */
+:root{--l:#CDFF4F;--bg:#0A0E1A;--txt:#E7EAF0;--mut:#8792a3;--mut2:#6f7a8a;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.vp{width:390px;margin:0 auto;position:relative;overflow:hidden}
+.fold{position:absolute;top:844px;left:0;right:0;border-top:1px dashed rgba(255,80,80,.45);z-index:99;pointer-events:none}
+.fold::after{content:'сгиб';position:absolute;right:6px;top:3px;font-size:9px;color:rgba(255,80,80,.65);font-family:'JetBrains Mono',monospace}
+
+.nav{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;letter-spacing:-.02em}
+.brand svg{width:19px;height:19px;color:var(--l)}
+.burger{width:21px;height:2px;background:var(--txt);position:relative}
+.burger::before,.burger::after{content:'';position:absolute;left:0;width:21px;height:2px;background:var(--txt)}
+.burger::before{top:-6px}.burger::after{top:6px}
+
+.pad{padding:14px 20px 0}
+h1{font-family:'Unbounded','Geist',sans-serif;font-weight:800;font-size:30px;line-height:1.04;
+  letter-spacing:-.038em;margin-bottom:11px}
+h1 em{font-style:normal;color:var(--l)}
+.lead{font-size:15px;line-height:1.48;color:#a7b1bf;margin-bottom:17px}
+
+/* ДОКАЗАТЕЛЬСТВО — до кнопки, листается пальцем */
+.pl{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.pl b{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:400;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--mut2)}
+.pl a{font-size:12.5px;color:var(--mut);text-decoration:none}
+.strip{display:flex;gap:7px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px 6px;padding:0 20px;
+  scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.w{flex:0 0 232px;scroll-snap-align:start;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.02)}
+.w__i{height:138px;background-size:cover;background-position:top center;position:relative}
+.w__live{position:absolute;top:7px;left:7px;background:rgba(6,9,15,.86);border:1px solid rgba(205,255,79,.4);
+  border-radius:4px;padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:8.5px;
+  letter-spacing:.05em;color:var(--l)}
+.w__b{padding:9px 10px 11px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.w__n{font-weight:600;font-size:13.5px;letter-spacing:-.01em}
+.w__d{font-size:11px;color:var(--mut2);text-align:right}
+.dots{display:flex;gap:4px;justify-content:center;margin-bottom:16px}
+.dots i{width:4px;height:4px;border-radius:999px;background:rgba(255,255,255,.16)}
+.dots i:first-child{background:rgba(205,255,79,.55);width:14px}
+
+/* ВЫБОР — вместо мокапа. Цена показывает то, что покупают */
+.pick{border-top:1px solid var(--line);margin-bottom:16px}
+.r{display:flex;align-items:center;gap:11px;padding:13px 0;border-bottom:1px solid var(--line);
+  text-decoration:none;color:inherit;position:relative}
+.r__m{flex:1;min-width:0}
+.r__t{display:block;font-weight:600;font-size:15.5px;letter-spacing:-.012em;margin-bottom:2px}
+.r__s{display:block;font-size:11.5px;color:var(--mut2)}
+.r__p{flex:0 0 auto;text-align:right}
+.r__pv{display:block;font-family:'Unbounded','Geist',sans-serif;font-weight:700;font-size:14.5px;letter-spacing:-.025em}
+.r__pd{display:block;font-size:10.5px;color:var(--mut2);margin-top:2px}
+.r--hit .r__t{color:var(--l)}
+.r--hit .r__t::after{content:'чаще всего берут';display:inline-block;margin-left:7px;vertical-align:1px;
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.06em;color:var(--mut2);
+  text-transform:uppercase;font-weight:400}
+
+.cta{display:block;background:var(--l);color:#080C14;text-decoration:none;padding:16px 20px;border-radius:13px;
+  font-weight:700;font-size:16.5px;text-align:center;letter-spacing:-.01em;margin-bottom:10px}
+.gua{display:flex;flex-wrap:wrap;gap:5px 13px;justify-content:center;font-size:11.5px;color:var(--mut2);
+  padding-bottom:20px}
+.gua span{display:inline-flex;align-items:center;gap:5px}
+.gua svg{width:12px;height:12px;color:rgba(205,255,79,.65)}
+.gua b{color:#b9c3d0;font-weight:500}
+
+.next{border-top:1px solid var(--line);padding:20px 20px 44px}
+.next h2{font-family:'Unbounded','Geist',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.03em;margin-bottom:7px}
+.next p{font-size:13.5px;color:var(--mut);line-height:1.5}
+</style></head>
+<body>
+<div class="vp">
+  <div class="fold"></div>
+
+  <div class="nav">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+      uniqore
+    </div>
+    <div class="burger"></div>
+  </div>
+
+  <div class="pad">
+    <h1>Сайт, который<br>приводит заявки.<br><em>За 3–5 дней</em></h1>
+    <p class="lead">Собираем под вашу нишу — структуру, тексты и дизайн. Не шаблон с конструктора.</p>
+
+    <div class="pl">
+      <b>Сделали · работает сейчас</b>
+      <a href="#">все работы →</a>
+    </div>
+    <div class="strip">
+      <a class="w" href="#">
+        <div class="w__i" style="background-image:url(/keysy/cases/case-biensur.webp?v=20260731a)"><span class="w__live">● живой сайт</span></div>
+        <div class="w__b"><span class="w__n">Bien Sûr</span><span class="w__d">Ресторан<br>Санкт-Петербург</span></div>
+      </a>
+      <a class="w" href="#">
+        <div class="w__i" style="background-image:url(/keysy/cases/case-nemecia.webp?v=20260731a)"><span class="w__live">● живой сайт</span></div>
+        <div class="w__b"><span class="w__n">Немеция</span><span class="w__d">Автокомплекс<br>Омск</span></div>
+      </a>
+      <a class="w" href="#">
+        <div class="w__i" style="background-image:url(/keysy/cases/case-idtuning.webp?v=20260731a)"><span class="w__live">● живой сайт</span></div>
+        <div class="w__b"><span class="w__n">IDTuning</span><span class="w__d">Тюнинг-ателье</span></div>
+      </a>
+      <a class="w" href="#">
+        <div class="w__i" style="background-image:url(/keysy/cases/case-milla.webp?v=20260731a)"><span class="w__live">● живой сайт</span></div>
+        <div class="w__b"><span class="w__n">MILLA</span><span class="w__d">Интерьеры</span></div>
+      </a>
+    </div>
+    <div class="dots"><i></i><i></i><i></i><i></i></div>
+
+    <div class="pick">
+      <a class="r" href="#">
+        <span class="r__m"><span class="r__t">Лендинг</span><span class="r__s">Одна страница под одну цель</span></span>
+        <span class="r__p"><span class="r__pv">11 700 ₽</span><span class="r__pd">3 дня</span></span>
+      </a>
+      <a class="r r--hit" href="#">
+        <span class="r__m"><span class="r__t">Многостраничный</span><span class="r__s">С дизайном под бренд — услуги, каталог, блог</span></span>
+        <span class="r__p"><span class="r__pv">32 760 ₽</span><span class="r__pd">5 дней</span></span>
+      </a>
+      <a class="r" href="#">
+        <span class="r__m"><span class="r__t">Сайт + CRM</span><span class="r__s">Заявки сразу падают в систему</span></span>
+        <span class="r__p"><span class="r__pv">39 000 ₽</span><span class="r__pd">до 7 дней</span></span>
+      </a>
+    </div>
+
+    <a class="cta" href="#">Рассчитать мой сайт</a>
+    <div class="gua">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3z"/></svg><b>Гарантия год</b></span>
+      <span>Оплата после макета</span>
+      <span>Без ежемесячной платы</span>
+    </div>
+  </div>
+
+  <div class="next">
+    <h2>Почему так быстро</h2>
+    <p>У нас свой движок и готовая инфраструктура — не собираем каждый сайт с нуля и не держим менеджерскую прослойку…</p>
+  </div>
+</div>
+</body></html>
