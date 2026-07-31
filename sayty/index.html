@@ -51,7 +51,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260731a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260731d">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260731e">
   <style>/* критический размер видео инлайном — держит вёрстку даже при устаревшем кэше внешнего CSS (защита от «гигант-лого») */
   .nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
   .nav__logo-vid{width:100%;height:100%;object-fit:cover;display:none}
@@ -144,30 +144,69 @@
       <div class="sy-container">
         <div class="sy-hero__grid">
           <div class="sy-hero__left">
-            <h1 class="sy-hero__h1 sy-rev" data-d="1">Сайт под вашу нишу<br>за <em>3–5 дней</em></h1>
-            <p class="sy-hero__lead sy-rev" data-d="2">Собираем не по шаблону: структура, тексты и дизайн — под то, что покупают именно у вас.</p>
+            <h1 class="sy-hero__h1 sy-rev" data-d="1">Сайт, который<br>приводит <em>заявки</em></h1>
+            <p class="sy-hero__lead sy-rev" data-d="2">Собираем под вашу нишу за 3–5 дней — структуру, тексты и дизайн. Не шаблон с конструктора.</p>
+
+            <!-- Мобильный первый экран (приёмка 31.07): доказательство ДО кнопки.
+                 На десктопе скрыт — там ту же роль играет мокап справа. -->
+            <div class="sy-mfirst sy-rev" data-d="3">
+              <div class="sy-mfirst__lbl">
+                <b>Сделали · работает сейчас</b>
+                <a href="#portfolio">все работы →</a>
+              </div>
+              <div class="sy-mstrip">
+                <a class="sy-mw" href="/keysy/">
+                  <span class="sy-mw__i" style="background-image:url(/keysy/cases/case-biensur.webp?v=20260731a)"><span class="sy-mw__live">● живой сайт</span></span>
+                  <span class="sy-mw__b"><span class="sy-mw__n">Bien&nbsp;Sûr</span><span class="sy-mw__d">Ресторан<br>Санкт-Петербург</span></span>
+                </a>
+                <a class="sy-mw" href="/keysy/">
+                  <span class="sy-mw__i" style="background-image:url(/keysy/cases/case-nemecia.webp?v=20260731a)"><span class="sy-mw__live">● живой сайт</span></span>
+                  <span class="sy-mw__b"><span class="sy-mw__n">Немеция</span><span class="sy-mw__d">Автокомплекс<br>Омск</span></span>
+                </a>
+                <a class="sy-mw" href="#portfolio">
+                  <span class="sy-mw__i" style="background-image:url(/keysy/cases/case-idtuning.webp?v=20260731a)"></span>
+                  <span class="sy-mw__b"><span class="sy-mw__n">IDTuning</span><span class="sy-mw__d">Тюнинг-ателье</span></span>
+                </a>
+                <a class="sy-mw" href="#portfolio">
+                  <span class="sy-mw__i" style="background-image:url(/keysy/cases/case-milla.webp?v=20260731a)"></span>
+                  <span class="sy-mw__b"><span class="sy-mw__n">MILLA</span><span class="sy-mw__d">Интерьеры</span></span>
+                </a>
+              </div>
+
+              <div class="sy-mpick">
+                <a class="sy-mr" href="#pricing">
+                  <span class="sy-mr__m"><span class="sy-mr__t">Лендинг</span><span class="sy-mr__s">Одна страница под одну цель</span></span>
+                  <span class="sy-mr__p"><span class="sy-mr__pv" data-usd="150">$150</span><span class="sy-mr__pd">3 дня</span></span>
+                </a>
+                <a class="sy-mr sy-mr--hit" href="#design-team">
+                  <span class="sy-mr__m"><span class="sy-mr__t">Многостраничный</span><span class="sy-mr__s">С дизайном под бренд — услуги, каталог, блог</span></span>
+                  <span class="sy-mr__p"><span class="sy-mr__pv" data-usd="420">$420</span><span class="sy-mr__pd">5 дней</span></span>
+                </a>
+                <a class="sy-mr" href="#pricing">
+                  <span class="sy-mr__m"><span class="sy-mr__t">Сайт + CRM</span><span class="sy-mr__s">Заявки сразу падают в систему</span></span>
+                  <span class="sy-mr__p"><span class="sy-mr__pv" data-usd="500">$500</span><span class="sy-mr__pd">до 7 дней</span></span>
+                </a>
+              </div>
+            </div>
             <div class="sy-hero__pricebar sy-rev" data-d="3">
               <span class="sy-pricepill">от <b data-usd="150">$150</b></span>
               <span class="sy-pricepill__note">Платите один раз — дальше сайт ваш, без ежемесячной платы. Цену фиксируем в договоре, оплата после того, как утвердите макет.</span>
             </div>
             <div class="sy-hero__cta sy-rev" data-d="4">
-              <a href="#zayavka" class="sy-btn sy-btn--main sy-btn--lg" data-mag>Получить бесплатный расчёт <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <a href="#zayavka" class="sy-btn sy-btn--main sy-btn--lg" data-mag>Рассчитать мой сайт <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
               <a href="#portfolio" class="sy-btn sy-btn--ghost sy-btn--lg">Посмотреть проекты</a>
             </div>
-            <div class="sy-hero__mviz sy-rev" data-d="4" aria-hidden="true">
-              <div class="sy-mviz__phone">
-                <div class="sy-mviz__notch"></div>
-                <div class="sy-mviz__screen">
-                  <div class="sy-mviz__url">lumen-coffee.ru</div>
-                  <span class="sy-mviz__badge">Кофейня</span>
-                  <div class="sy-mviz__h">Кофе, который<br>запоминают.</div>
-                  <div class="sy-mviz__btn">Смотреть меню</div>
-                  <div class="sy-mviz__row"><b>Эспрессо</b><span>от 180 ₽</span></div>
-                  <div class="sy-mviz__row"><b>Раф</b><span>от 260 ₽</span></div>
-                </div>
-              </div>
-              <div class="sy-mviz__stat"><b>Заявки идут</b><span>после запуска</span></div>
+
+            <!-- Гарантия: есть у всех конкурентов (год у Korzilla, два у MWI,
+                 пожизненная у Veonix) — её отсутствие читалось как брак. -->
+            <div class="sy-guar sy-rev" data-d="5">
+              <span class="sy-guar__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3z"/></svg><b>Гарантия год</b></span>
+              <span class="sy-guar__i">Оплата после макета</span>
+              <span class="sy-guar__i">Без ежемесячной платы</span>
             </div>
+            <!-- Мокап телефона внутри телефона удалён (приёмка 31.07):
+                 занимал треть первого экрана на 390px под выдуманную кофейню,
+                 текст внутри него был 18px против 12.5px реального. -->
             <div class="sy-hero__benefits sy-rev" data-d="5">
               <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Исходники и доступы — ваши</span>
               <span class="sy-ben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Оплата после того, как утвердите макет</span>

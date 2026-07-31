@@ -985,3 +985,91 @@ textarea.sy-in{resize:vertical;min-height:84px}
     --sy-fs-lead: clamp(15.5px, 4vw, 17px);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   МОБИЛЬНЫЙ ПЕРВЫЙ ЭКРАН — приёмка 31.07
+
+   Было: заголовок → лид → цена → серое пояснение 12.5px → две кнопки →
+   мокап телефона с выдуманной кофейней (283 из 844 px). Доказательств
+   выше сгиба ноль: цифры 50+/20+/30+ лежали на 1107px.
+
+   Мокап телефона внутри телефона — приём, которого нет ни у одного из
+   семи проверенных агентств (Digital Silk, Ramotion, Cuberto, Halo Lab,
+   Webstacks, Fireart, Designjoy). Слот занимают доказательством.
+
+   Стало: заголовок → лид → лента живых работ → строки выбора с ценой →
+   одна кнопка → гарантия. Всё в 844px, следующий блок выглядывает на 36px.
+
+   Цена: подсвечен многостраничник с дизайном ($420 = 32 760 ₽) — то, что
+   реально покупают. «от 11 700 ₽» роняло нас в глазах рынка: медиана
+   лендинга в РФ 50 000 ₽, а диапазон 5–15 тыс. читается как «фрилансер
+   скопировал шаблон конструктором».
+   ═══════════════════════════════════════════════════════════════════ */
+
+.sy-mfirst{display:none}
+
+@media (max-width: 960px){
+  /* min-width:0 обязателен: без него лента из 4 карточек по 232px растягивает
+     колонку до 949px и утаскивает за собой заголовок с лидом — их обрезает
+     правым краем. document.scrollWidth при этом остаётся 390 из-за overflow
+     выше по дереву, поэтому обычная проверка на разъезд молчит. */
+  .sy-hero__left,.sy-hero__grid,.sy-hero .sy-container{min-width:0;max-width:100%}
+  .sy-mfirst{display:block;margin:13px 0 0;min-width:0;max-width:100%}
+
+  /* что заменено лентой и строками выбора */
+  .sy-hero__pricebar,
+  .sy-hero__benefits,
+  .sy-hero__proof,
+  .sy-hero .sy-trustrow,
+  .sy-hero__cta .sy-btn--ghost{display:none}
+
+  .sy-hero__cta{margin-top:13px}
+  .sy-hero__cta .sy-btn--main{width:100%;justify-content:center}
+
+  .sy-mfirst__lbl{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+  .sy-mfirst__lbl b{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;font-weight:400;
+    letter-spacing:.13em;text-transform:uppercase;color:var(--sy-mut2)}
+  .sy-mfirst__lbl a{font-size:12.5px;color:var(--sy-mut);text-decoration:none}
+
+  /* лента работ — листается пальцем, вторая карточка обрезается сгибом
+     справа: это «пик» по NN/g, он и зовёт листать дальше */
+  .sy-mstrip{display:flex;gap:7px;overflow-x:auto;scroll-snap-type:x mandatory;
+    margin:0 -18px 11px;padding:0 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .sy-mstrip::-webkit-scrollbar{display:none}
+  .sy-mw{flex:0 0 232px;scroll-snap-align:start;text-decoration:none;color:inherit;
+    border:1px solid var(--sy-line);border-radius:10px;overflow:hidden;
+    background:rgba(255,255,255,.02);display:block}
+  .sy-mw__i{display:block;height:128px;background-size:cover;background-position:top center;position:relative}
+  .sy-mw__live{position:absolute;top:7px;left:7px;background:rgba(6,9,15,.86);
+    border:1px solid rgba(205,255,79,.4);border-radius:4px;padding:2px 6px;
+    font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;letter-spacing:.05em;color:var(--sy-l)}
+  .sy-mw__b{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:8px 10px 9px}
+  .sy-mw__n{font-weight:600;font-size:13.5px;letter-spacing:-.01em}
+  .sy-mw__d{font-size:11px;color:var(--sy-mut2);text-align:right;line-height:1.35}
+
+  /* строки выбора — человек видит свой бюджет сразу */
+  .sy-mpick{border-top:1px solid var(--sy-line)}
+  .sy-mr{display:flex;align-items:center;gap:11px;padding:11px 0;
+    border-bottom:1px solid var(--sy-line);text-decoration:none;color:inherit}
+  .sy-mr__m{flex:1;min-width:0}
+  .sy-mr__t{display:block;font-weight:600;font-size:15.5px;letter-spacing:-.012em;margin-bottom:2px}
+  .sy-mr__s{display:block;font-size:11.5px;color:var(--sy-mut2);line-height:1.35}
+  .sy-mr__p{flex:0 0 auto;text-align:right}
+  .sy-mr__pv{display:block;font-family:'Unbounded',var(--font-display,sans-serif);font-weight:700;
+    font-size:14.5px;letter-spacing:-.025em}
+  .sy-mr__pd{display:block;font-size:10.5px;color:var(--sy-mut2);margin-top:2px}
+  .sy-mr--hit .sy-mr__t{color:var(--sy-l)}
+  .sy-mr--hit .sy-mr__t::after{content:'чаще всего берут';display:inline-block;margin-left:7px;
+    vertical-align:1px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--sy-mut2);font-weight:400}
+}
+
+/* гарантия — видна и на десктопе, и на мобилке */
+.sy-guar{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-top:13px;
+  font-size:12px;color:var(--sy-mut2)}
+.sy-guar__i{display:inline-flex;align-items:center;gap:5px}
+.sy-guar__i svg{width:13px;height:13px;color:rgba(205,255,79,.7);flex:0 0 auto}
+.sy-guar__i b{color:#b9c3d0;font-weight:500}
+@media (max-width: 960px){
+  .sy-guar{justify-content:center;margin-top:9px;gap:4px 11px;font-size:11.5px}
+}
