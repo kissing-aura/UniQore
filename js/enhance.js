@@ -24,6 +24,11 @@
     var tiltCards = document.querySelectorAll('.svc-card:not(.svc-card--flagship), .pkg, .demo-card, .price-teaser__card');
     tiltCards.forEach(function (card) {
       card.style.transformStyle = 'preserve-3d';
+      // ease:none — слежение 1:1 за курсором без лага (референс creonit).
+      // На входе снимаем transform-transition, на выходе возвращаем → плавный откат.
+      card.addEventListener('pointerenter', function () {
+        card.style.transition = 'transform 0s';
+      });
       card.addEventListener('pointermove', function (e) {
         var r = card.getBoundingClientRect();
         var px = (e.clientX - r.left) / r.width - 0.5;
@@ -31,6 +36,7 @@
         card.style.transform = 'perspective(900px) rotateX(' + (-py * TILT).toFixed(2) + 'deg) rotateY(' + (px * TILT).toFixed(2) + 'deg) translateY(-6px)';
       });
       card.addEventListener('pointerleave', function () {
+        card.style.transition = '';
         card.style.transform = '';
       });
     });

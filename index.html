@@ -168,9 +168,6 @@
             var s3 = document.createElement('script');
             s3.src = 'js/gsap-effects.js?v=20260711e';
             document.head.appendChild(s3);
-            var s4 = document.createElement('script');
-            s4.src = 'js/morph3d.js?v=20260711y';
-            document.head.appendChild(s4);
           };
           document.head.appendChild(s2);
         };
@@ -560,7 +557,7 @@
       <div class="container">
         <div class="services3__head">
           <div class="section-label">Услуги</div>
-          <h2 class="section-title">Одна команда —<br><em>весь цифровой отдел</em></h2>
+          <h2 class="section-title">Одна команда —<br>весь цифровой отдел</h2>
           <p class="services3__sub">От отдельной задачи до полной системы под ключ. Начните с того, что горит сейчас — остальное подключим, когда будете готовы.</p>
           <div class="cur-switch cur-switch--center" role="group" aria-label="Валюта" style="margin-top:22px">
             <button type="button" class="cur-switch__btn is-active" data-cur="USD" aria-pressed="true">$</button>
@@ -674,42 +671,6 @@
       </div>
     </section>
 
-    <!-- MORPH SIGNATURE — «Хаос → Система» (js/morph3d.js; мобилка/слабый GPU → постер) -->
-    <section class="morph-stage" id="morph" aria-label="Хаос бизнеса собирается в систему">
-      <div class="morph-pin">
-        <canvas id="morph-canvas" aria-hidden="true"></canvas>
-        <div class="morph-poster" aria-hidden="true">
-          <!-- Чистый мини-дашборд: смысл секции «всё в одной системе». Показывается на мобилке/без-WebGL. -->
-          <svg viewBox="0 0 400 262" xmlns="http://www.w3.org/2000/svg" fill="none">
-            <rect x="6" y="6" width="388" height="250" rx="18" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.09)"/>
-            <circle cx="28" cy="30" r="4.5" fill="#CDFF4F"/><circle cx="43" cy="30" r="4.5" fill="rgba(255,255,255,.22)"/><circle cx="58" cy="30" r="4.5" fill="rgba(255,255,255,.22)"/>
-            <rect x="150" y="24" width="100" height="12" rx="6" fill="rgba(255,255,255,.10)"/>
-            <rect x="330" y="25" width="22" height="9" rx="4.5" fill="rgba(205,255,79,.35)"/><circle cx="364" cy="30" r="4" fill="#CDFF4F"/>
-            <line x1="6" y1="52" x2="394" y2="52" stroke="rgba(255,255,255,.07)"/>
-            <rect x="22" y="66" width="110" height="50" rx="11" fill="rgba(205,255,79,.07)" stroke="rgba(205,255,79,.28)"/>
-            <rect x="34" y="78" width="52" height="14" rx="7" fill="#CDFF4F"/><rect x="34" y="99" width="70" height="7" rx="3.5" fill="rgba(255,255,255,.20)"/>
-            <rect x="145" y="66" width="110" height="50" rx="11" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)"/>
-            <rect x="157" y="78" width="46" height="14" rx="7" fill="rgba(255,255,255,.55)"/><rect x="157" y="99" width="66" height="7" rx="3.5" fill="rgba(255,255,255,.16)"/>
-            <rect x="268" y="66" width="110" height="50" rx="11" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.09)"/>
-            <rect x="280" y="78" width="40" height="14" rx="7" fill="rgba(255,255,255,.55)"/><rect x="280" y="99" width="60" height="7" rx="3.5" fill="rgba(255,255,255,.16)"/>
-            <path d="M22 176 L70 164 L118 170 L166 150 L214 156 L262 132 L310 140 L358 116 L358 190 L22 190 Z" fill="rgba(205,255,79,.10)"/>
-            <polyline points="22,176 70,164 118,170 166,150 214,156 262,132 310,140 358,116" stroke="#CDFF4F" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-            <circle cx="358" cy="116" r="4" fill="#CDFF4F"/>
-            <line x1="22" y1="190" x2="378" y2="190" stroke="rgba(255,255,255,.08)"/>
-            <circle cx="30" cy="212" r="7" fill="rgba(205,255,79,.25)"/><rect x="46" y="208" width="120" height="8" rx="4" fill="rgba(255,255,255,.20)"/>
-            <rect x="300" y="205" width="62" height="15" rx="7.5" fill="rgba(205,255,79,.16)" stroke="rgba(205,255,79,.35)"/>
-            <circle cx="30" cy="236" r="7" fill="rgba(255,255,255,.14)"/><rect x="46" y="232" width="150" height="8" rx="4" fill="rgba(255,255,255,.14)"/>
-            <rect x="300" y="229" width="62" height="15" rx="7.5" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
-          </svg>
-        </div>
-        <div class="morph-cap">
-          <div class="morph-cap__k">как это работает</div>
-          <b id="morph-t">Хаос бизнеса</b>
-          <small id="morph-s">заявки, реклама, таблички — всё вразнобой, теряется</small>
-        </div>
-      </div>
-    </section>
-
     <section class="mirror-section" id="mirror">
       <div class="container">
         <h2 class="section-title">Сколько вы теряете<br><em>без системы?</em></h2>
@@ -746,7 +707,7 @@
       </div>
       <div class="process__scrim" aria-hidden="true"></div>
       <div class="container">
-        <h2 class="section-title">От запроса до<br><em>работающей системы</em></h2>
+        <h2 class="section-title">От запроса до<br>работающей системы</h2>
         <div class="process__steps">
 
           <div class="process__step" data-reveal>
@@ -798,7 +759,7 @@
       <div class="container">
         <div class="faq__inner">
           <div class="faq__header">
-              <h2 class="section-title">Частые<br><em>вопросы</em></h2>
+              <h2 class="section-title">Частые<br>вопросы</h2>
             <p class="faq__sub">Отвечаем на всё что обычно волнует перед стартом.</p>
           </div>
           <div class="faq__list" data-reveal>
@@ -925,7 +886,7 @@
       <canvas class="contact__net" aria-hidden="true"></canvas>
       <div class="container">
         <div class="section-label">Связаться</div>
-        <h2 class="section-title">Расскажите о<br><em>вашем бизнесе</em></h2>
+        <h2 class="section-title">Расскажите о<br>вашем бизнесе</h2>
         <div class="contact__inner">
           <div class="contact__left" data-reveal>
             <p class="contact__desc">
@@ -1094,7 +1055,7 @@
   <script src="js/bgloop.js?v=20260711e" defer></script>
   <script src="js/nav-dropdown.js?v=20260720a" defer></script>
   <script src="js/cookie.js?v=20260730a" defer></script>
-  <script src="js/enhance.js?v=20260720b" defer></script>
+  <script src="js/enhance.js?v=20260731d" defer></script>
   <script src="js/contact-net.js?v=20260716a" defer></script>
   <!-- effects3d.js отключён: дублировал premium.js (тилт/магнит/счётчики) и вызывал конфликт transform. premium.js — единственный источник. -->
 
