@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран · ФИНАЛ</title>
+
+<!--
+═══════════════════════════════════════════════════════════════════════════
+  ПЕРВАЯ ПОЛОСА · продакшен-версия мобильного первого экрана /sayty/
+
+  ГЛАВНОЕ ПРАВИЛО ФАЙЛА: экран обязан быть полным и красивым при
+  ПОЛНОСТЬЮ ВЫКЛЮЧЕННОМ JS. Поэтому:
+    · кадр работы — обычный <img src> в разметке, decoding="sync";
+    · переменные --gx/--sy объявлены в CSS на #mover, каждый calc()
+      валиден до старта скрипта;
+    · ни один элемент не стартует с opacity:0 и ни одна анимация не
+      прячет контент — движение живёт ПОВЕРХ уже нарисованного;
+    · вкладки работ — единственное, что требует JS, поэтому без JS они
+      скрываются <noscript>-стилем, а не висят мёртвыми кнопками.
+
+  ЧТО ИЗМЕНЕНО ПРОТИВ lang-gazeta.html (по разбору четырёх критиков):
+   1. Выдуманный факт «этот вариант заказывают чаще остальных» убран.
+      На экране только то, что подтверждено списком фактов.
+   2. Заголовок больше не тратит все строки на срок. Две строки,
+      заполнение меры 98,8% и 95,4% (замер Georgia 700/30 на 354 px).
+      Ни clip-path, ни overflow:hidden — выносные элементы целы.
+   3. Цена набрана Geist'ом с tabular-nums: у Georgia минускульные
+      цифры по умолчанию и нет lining-альтернатив — «32 800» прыгало.
+      Заодно ушёл разнобой с ₽ (см. п.11).
+   4. Снятие риска вынесено из мелкого шрифта: сильнейший аргумент
+      стоит отдельной строкой прямо НАД кнопкой, остальные — под ней.
+      Ничего из этого не скрыто анимацией.
+   5. Кропы пересчитаны заново. Теперь во всех четырёх кадрах видна
+      шапка сайта клиента — иначе IDTuning читался как фото машины,
+      а Bien Sûr как стоковый интерьер. Полная ширина страницы, а не
+      зум во фрагмент.
+   6. Гироскоп снят целиком: на iOS он показывал системный запрос
+      доступа к датчикам на первом же флике скролла холодного
+      посетителя ради сдвига картинки на 7 px.
+   7. rAF пишет переменные в #mover, а не в корень экрана: инвалидация
+      стиля больше не задевает всё поддерево.
+   8. Unbounded не используется — 81 КБ (из них 31 КБ кириллицы
+      вхолостую) ради одного слова «uniqore». Логотип набран Geist'ом.
+   9. Внешних CSS-запросов ноль: два нужных @font-face встроены.
+      Render-blocking запрос перед первым экраном снят.
+  10. Кадр первого экрана — производный 1024 px (49 КБ) вместо
+      2000 px (124 КБ): decoding="sync" блокирует первую отрисовку,
+      и на медленном канале в РФ это ровно тот риск, ради которого
+      всё и делалось.
+  11. ₽ (U+20BD) не входит НИ В ОДИН unicode-range в css/fonts.css и
+      физически отсутствует в наших woff2 — он всегда рисуется
+      системным гротеском. Поэтому цифры цены тоже гротеск: рядом
+      стоят родственные знаки, а не Georgia со случайным рублём.
+  12. figcaption вложен в figure, у подписи есть aria-live,
+      <s>₽</s> заменён на <span>, декоративные <i>/<u> убраны.
+  13. Сгиб: строка «Если нужно проще или мощнее» разрезается линией
+      659 примерно посередине. Цена 11 700 ₽ остаётся ПОД сгибом —
+      дешёвая альтернатива не должна стоять рядом с кнопкой.
+
+  ПРИВИВКИ:
+   · из lang-vitrina — ценник как физическая карточка под небольшим
+     углом, наезжающая на кадр. Взято, но переписано под печать:
+     плоская газетная бумага, жёсткая контактная кромка, поворот 1,2°
+     вместо 2,6°, без градиента и без трёхслойной тени. Врезка-инверсия
+     из газеты не потеряна — карточка и ЕСТЬ та самая инверсия, просто
+     она переехала на кадр и встала вплотную к доказательству.
+   · из lang-arhitekt — выноска с полочкой НЕ взята, объяснение в
+     ответе: 45° диагональ + полочка в шаге от запрещённых направляющих
+     и спорит с прямоугольной сеткой полосы.
+
+  БЮДЖЕТ: 0 библиотек, 0 внешних запросов, 1 <img> в первом экране,
+  анимируются только transform и clip-path, одна rAF-петля на два
+  числа, засыпает в покое. prefers-reduced-motion гасит всё движение,
+  оставляя финальный вид.
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<link rel="preload" as="font" type="font/woff2" crossorigin
+      href="/assets/fonts/geist-var-cyrillic.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin
+      href="/assets/fonts/geist-var-latin.woff2">
+
+<style>
+/* ───────── шрифты: встроены, ноль внешних CSS-запросов ─────────
+   Тело — Geist (self-hosted, variable 100–900). Unbounded и JetBrains
+   Mono на этом экране не используются вообще и не объявлены. */
+@font-face{
+  font-family:'Geist';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url('/assets/fonts/geist-var-cyrillic.woff2') format('woff2-variations'),
+      url('/assets/fonts/geist-var-cyrillic.woff2') format('woff2');
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face{
+  font-family:'Geist';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url('/assets/fonts/geist-var-latin.woff2') format('woff2-variations'),
+      url('/assets/fonts/geist-var-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
+                U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,
+                U+2212,U+2215,U+FEFF,U+FFFD;
+}
+/* Засечный на Android — Noto Serif, он на 17–18% уже Georgia, и полоса
+   рассыпалась в узкий заголовок с флагом справа. Правится без единого
+   запроса: local()-фейс с size-adjust. Если local() не найден — падаем
+   в обычный serif, то есть в текущее поведение, регрессии нет. */
+@font-face{
+  font-family:'SerifFit';font-style:normal;font-weight:400;size-adjust:115%;
+  src:local('Noto Serif'),local('NotoSerif'),local('Noto Serif Regular'),local('NotoSerif-Regular');
+}
+@font-face{
+  font-family:'SerifFit';font-style:normal;font-weight:700;size-adjust:115%;
+  src:local('Noto Serif Bold'),local('NotoSerif-Bold');
+}
+@font-face{
+  font-family:'SerifFit';font-style:italic;font-weight:400;size-adjust:115%;
+  src:local('Noto Serif Italic'),local('NotoSerif-Italic');
+}
+
+/* Типизированные переменные: инвалидация не уходит вверх по дереву.
+   Дубли объявлены и обычным способом на #mover — на случай, если
+   @property не поддержан. */
+@property --gx{syntax:'<number>';inherits:false;initial-value:0}
+@property --sy{syntax:'<number>';inherits:false;initial-value:0}
+
+:root{
+  --bg:#0A0E1A;
+  --ink:#E7EAF0;
+  --txt:#A6B0BE;
+  --dim:#8A94A4;
+  --lime:#CDFF4F;
+  --paper:#EDEDE7;
+  --hair:rgba(231,234,240,.13);
+  --pad:18px;
+  --serif:Georgia,'Iowan Old Style','Times New Roman','SerifFit',serif;
+  --ease:cubic-bezier(.22,.9,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--ink);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+.vp{
+  width:100%;max-width:440px;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:900px;isolation:isolate;
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+
+/* ───────── 1 · титульная строка номера ───────── */
+.mast{height:34px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mast .name{font-size:17.5px;font-weight:600;letter-spacing:-.045em;color:var(--ink)}
+.mast .run{font-size:11.5px;color:var(--dim);letter-spacing:-.008em;white-space:nowrap}
+/* двойная линейка — печатная норма, а не направляющая: жирная сверху,
+   волосяная снизу, просвет 4 px (при 4 px общей высоты обе сливались
+   в одну полосу на 2× DPR). Жирная прочерчивается слева направо. */
+.dbl{position:relative;height:7px}
+.dbl::before,.dbl::after{content:'';position:absolute;left:0;right:0}
+.dbl::before{top:0;height:2px;background:var(--ink);transform-origin:0 50%;animation:draw .55s var(--ease) both}
+.dbl::after{bottom:0;height:1px;background:rgba(231,234,240,.09)}
+@keyframes draw{from{transform:scaleX(.1)}to{transform:scaleX(1)}}
+
+/* ───────── 2 · заголовок номера ───────── */
+.head{padding-top:12px;padding-bottom:12px}
+/* Кегль привязан к мере, а не к брейкпоинту: строка «Сайт со своим лицом,»
+   при Georgia 700 занимает ровно 11,653 × кегль (замер canvas). Формула
+   держит заполнение меры на 96–99% от 320 до 440 px и — что важнее —
+   гарантирует ДВЕ строки на любой ширине, поэтому высота заголовка
+   предсказуема и сгиб не уезжает от лишнего переноса. */
+h1{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(23px,calc(8.44vw - 3px),33px);
+  line-height:1.1;letter-spacing:-.021em;color:var(--ink);
+}
+/* Переносы заданы вручную: высота заголовка не зависит от шрифта,
+   а значит и сгиб не уезжает. Строки заполняют меру на 98,8% и 95,4%. */
+h1 span{display:block;animation:lift .45s var(--ease) both}
+h1 span+span{animation-delay:.06s}
+/* стартовое состояние ЧИТАЕМО: строка просто на 5 px ниже.
+   Ни клипа, ни overflow:hidden — иначе первый нарисованный кадр
+   срезает кромки букв, и на медленном канале висит именно он. */
+@keyframes lift{from{transform:translate3d(0,5px,0)}to{transform:none}}
+
+/* ───────── 3 · лид в две колонки с буквицей ───────── */
+.deck{
+  columns:2;column-gap:17px;column-rule:1px solid var(--hair);
+  min-height:57px;margin-bottom:13px;
+  font-size:12.5px;line-height:1.5;color:var(--txt);letter-spacing:-.004em;
+  -webkit-hyphens:auto;hyphens:auto;
+}
+.deck b{color:#CBD3DE;font-weight:600}
+/* Буквица настоящая: две полные строки набора (2 × 18,75 = 37,5 px).
+   Реализована явным <span>, а не ::first-letter — у WebKit давняя
+   история багов с ::first-letter+float внутри многоколонника, а цель
+   здесь именно iPhone Safari. Цвет — текстовый: лайм на всём экране
+   принадлежит только кнопке. */
+.dc{
+  float:left;font-family:var(--serif);font-weight:700;
+  font-size:50px;line-height:.75;margin:2px 5px 0 0;color:var(--ink);
+}
+.rule{height:1px;background:var(--hair)}
+
+/* ───────── 4 · кадр работы + ценник на нём ───────── */
+.frame{position:relative;height:246px;margin:0 var(--pad)}
+/* figure растянута на всю площадь блока, а окно снимка — отдельный слой
+   внутри неё. Иначе figcaption, вложенный по спеке в figure, срезался бы
+   её overflow:hidden — подпись просто не рисовалась. */
+.fig{position:absolute;inset:0}
+.photo{
+  position:absolute;left:0;right:0;top:0;height:182px;
+  overflow:hidden;background:#0D1017;contain:paint;touch-action:pan-y;
+}
+#mover{
+  --gx:0;--sy:0;
+  position:absolute;inset:0;display:block;
+  transform:translate3d(calc(var(--gx) * 5px),calc(var(--sy) * -.035px),0);
+  will-change:transform;
+}
+.photo img{
+  position:absolute;display:block;height:auto;
+  filter:saturate(.94) contrast(1.03) brightness(.97);
+  animation:settle 1.1s cubic-bezier(.2,.75,.2,1) both;
+}
+@keyframes settle{from{transform:scale(1.03)}to{transform:none}}
+/* смена работы: лист выходит из машины снизу вверх */
+@keyframes sheet{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+#mover.sw{animation:sheet .42s var(--ease)}
+
+/* ценник: газетная бумага, наезжает на кадр слева снизу и на 4 px
+   выходит за меру полосы — как наклейка, приложенная поверх набора.
+   Ширина в процентах меры: на 320 и на 440 карточка и подпись не
+   налезают друг на друга. */
+.tag{
+  position:absolute;left:-4px;top:156px;width:55.4%;z-index:3;
+  padding:9px 13px 11px;background:var(--paper);color:#11151F;
+  border:1px solid rgba(0,0,0,.22);
+  box-shadow:0 3px 7px -3px rgba(0,0,0,.6);
+  transform:rotate(-1.2deg);
+  animation:paste .5s var(--ease) .22s both;
+}
+/* стартовое состояние: карточка уже лежит и уже читается, просто
+   завалена сильнее. Ни прозрачности, ни клипа */
+@keyframes paste{
+  from{transform:rotate(-3.6deg) scale(.985)}
+  to{transform:rotate(-1.2deg)}
+}
+.tag .k{font-size:11px;line-height:1.2;color:#5E6575;letter-spacing:-.004em}
+.tag .p{
+  margin:3px 0 3px -1px;font-size:min(31px,8.7vw);font-weight:700;line-height:1.02;
+  letter-spacing:-.035em;color:#0E1220;white-space:nowrap;
+  font-variant-numeric:tabular-nums lining-nums;
+}
+.tag .p span{font-size:.62em;font-weight:600;margin-left:.13em;color:#3E4554}
+.tag .d{font-size:11.5px;line-height:1.25;color:#3F4756;letter-spacing:-.006em}
+
+/* подпись под кадром: курсив с полужирным вводным словом */
+.cap{
+  position:absolute;right:0;top:190px;width:40.7%;
+  font-family:var(--serif);font-style:italic;font-size:13px;line-height:1.28;
+  color:#98A2B2;
+}
+.cap b{font-style:normal;font-weight:700;color:#DCE1EA}
+@keyframes capin{from{transform:translate3d(-6px,0,0)}to{transform:none}}
+.cap span.sw{display:inline-block;animation:capin .34s var(--ease)}
+
+/* ───────── 5 · строка содержания: остальные работы ───────── */
+.toc{display:flex;align-items:stretch;height:44px;border-bottom:1px solid var(--hair)}
+.tab{
+  flex:1 1 0;min-width:0;background:none;border:0;padding:0 2px;position:relative;
+  color:var(--dim);font-family:inherit;font-size:13px;font-weight:400;
+  letter-spacing:-.015em;text-align:center;cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:color .18s linear;
+}
+/* аффорданс: у текущего материала подчёркнутая рубрика, как в
+   содержании номера. Вес НЕ меняем — иначе вся строка перекладывается
+   на каждый тап (flex:1 1 0 держит колонки, но ширина слова прыгает) */
+.tab::after{
+  content:'';position:absolute;left:50%;right:50%;bottom:11px;height:1.5px;
+  background:var(--ink);transition:left .18s var(--ease),right .18s var(--ease);
+}
+.tab[aria-pressed="true"]{color:var(--ink)}
+.tab[aria-pressed="true"]::after{left:4px;right:4px}
+.tab:first-child[aria-pressed="true"]::after{left:var(--pad);right:4px}
+.tab:last-child[aria-pressed="true"]::after{left:4px;right:var(--pad)}
+.tab:first-child{text-align:left;padding-left:var(--pad)}
+.tab:last-child{text-align:right;padding-right:var(--pad)}
+.tab:active{color:#CBD3DE}
+.tab:focus-visible{outline:1px solid rgba(205,255,79,.6);outline-offset:-3px}
+
+/* ───────── 6 · снятие риска и единственное действие ───────── */
+.risk{padding:13px var(--pad) 0;font-size:13.5px;line-height:1.3;color:#C6CEDA;letter-spacing:-.01em}
+.risk b{font-weight:600;color:var(--ink)}
+.act{padding:11px var(--pad) 0}
+.cta{
+  display:flex;align-items:center;justify-content:center;height:52px;
+  border-radius:2px;background:var(--lime);color:#0A0E1A;
+  font-size:15.5px;font-weight:600;letter-spacing:-.02em;text-decoration:none;
+  font-variant-numeric:tabular-nums lining-nums;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:transform .12s var(--ease),background .12s linear;
+}
+.cta:active{transform:translate3d(0,1px,0);background:#C2F53F}
+.fine{padding:12px var(--pad) 0;font-size:12.5px;line-height:1.4;color:#8A94A4;letter-spacing:-.006em}
+
+/* ───────── 7 · следующий материал, разрезанный сгибом ───────── */
+/* Замер на 390: низ мелкой строки 615, отсюда верх прописных у h2
+   = 615 + margin + 16,7. При margin 21 прописные начинаются на 652,
+   и линия 659 режет заголовок примерно посередине буквы, а не по
+   хвостам — только так «продолжение» читается как продолжение. */
+.more{margin-top:21px;border-top:1px solid var(--hair)}
+.more h2{
+  padding:11px var(--pad) 0;
+  font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.18;
+  letter-spacing:-.014em;color:var(--ink);
+}
+.mrow{
+  margin-top:11px;padding:11px var(--pad);border-top:1px solid rgba(231,234,240,.07);
+  font-size:13px;line-height:1.3;color:var(--txt);letter-spacing:-.01em;
+}
+.mrow+.mrow{margin-top:0}
+.mrow b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums lining-nums}
+.sign{padding:15px var(--pad) 44px;font-family:var(--serif);font-style:italic;font-size:13px;color:#8C96A6}
+
+/* ───────── маркеры сгиба (только прототип, снять перед выкаткой) ───────── */
+.fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,80,80,.42)}
+.fold b{
+  position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.9);
+  font-size:8px;font-weight:400;color:rgba(255,110,110,.75);
+}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.4)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.9)}
+.fold.dev{top:844px}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* 360 и уже (это Android: у iPhone минимум 390, поэтому линия 659
+   там уже не сгиб). Ритм ужимается, вся конверсионная часть
+   остаётся заметно выше 659, «продолжение» подводится к нему. */
+@media (max-width:389px){
+  :root{--pad:16px}
+  .head{padding-top:10px;padding-bottom:10px}
+  .deck{line-height:1.45;margin-bottom:12px}
+  .frame{height:224px}
+  .photo{height:166px}
+  .tag{top:142px;padding:8px 12px 10px}
+  .cap{top:174px;font-size:12.5px}
+  .toc{height:42px}
+  .tab{font-size:12.5px}
+  .risk{padding-top:11px;font-size:13px}
+  .act{padding-top:10px}
+  .fine{padding-top:10px;font-size:12px}
+  .more{margin-top:29px}
+}
+</style>
+<noscript><style>
+/* без JS вкладки — четыре мёртвые кнопки. Честнее убрать их совсем:
+   кадр, цена, снятие риска и кнопка остаются на месте */
+.toc{display:none}
+</style></noscript>
+</head>
+<body>
+
+<div class="vp" id="vp">
+
+  <header class="mast pad">
+    <span class="name">uniqore</span>
+    <span class="run">20+ сайтов · 30+ CRM</span>
+  </header>
+  <div class="dbl pad" aria-hidden="true"></div>
+
+  <section class="head pad">
+    <h1><span>Сайт со своим лицом,</span><span>а не из конструктора</span></h1>
+  </section>
+
+  <p class="deck pad"><span class="dc">Д</span>изайн рисуем под ваше дело, а не подставляем в шаблон. Тексты и структуру берём на&nbsp;себя, исходники после сдачи отдаём вам.</p>
+
+  <div class="rule"></div>
+
+  <div class="frame">
+    <figure class="fig">
+     <div class="photo" id="photo">
+      <span id="mover">
+        <!-- Единственный <img> первого экрана. decoding="sync" + eager:
+             с async браузер успевает нарисовать пустой проём до
+             раскодирования — на медленном канале это чёрная дыра вместо
+             доказательства. Поэтому же кадр отдаётся производным
+             файлом 1024 px (49 КБ) вместо мастера 2000 px (124 КБ). -->
+        <img id="shot" fetchpriority="high" decoding="sync" loading="eager"
+             src="/keysy/cases/case-nemecia-1024.webp" width="1024" height="581"
+             style="width:109.05%;left:-4.52%;top:-2px"
+             alt="Первый экран сайта автокомплекса «Немеция» в Омске">
+      </span>
+     </div>
+     <figcaption class="cap"><span id="cap" aria-live="polite"><b>Немеция.</b> Автокомплекс в&nbsp;Омске</span></figcaption>
+    </figure>
+
+    <aside class="tag">
+      <p class="k">многостраничный сайт</p>
+      <p class="p">32&#8239;800<span>₽</span></p>
+      <p class="d">свой дизайн, пять дней</p>
+    </aside>
+  </div>
+
+  <div class="toc" id="toc">
+    <button class="tab" type="button" aria-pressed="true"  data-i="0">Немеция</button>
+    <button class="tab" type="button" aria-pressed="false" data-i="1">Bien Sûr</button>
+    <button class="tab" type="button" aria-pressed="false" data-i="2">IDTuning</button>
+    <button class="tab" type="button" aria-pressed="false" data-i="3">MILLA</button>
+  </div>
+
+  <p class="risk">Платите <b>после того, как утвердите макет</b>.</p>
+
+  <div class="act">
+    <a class="cta" href="#zayavka">Заказать сайт за 32&#8239;800&nbsp;₽</a>
+  </div>
+
+  <p class="fine">Год гарантии · исходники отдаём · без&nbsp;ежемесячной&nbsp;платы</p>
+
+  <section class="more">
+    <h2>Если нужно проще или мощнее</h2>
+    <p class="mrow">Одна страница — <b>11 700 ₽</b>, три дня</p>
+    <p class="mrow">Сайт вместе с CRM — <b>39 000 ₽</b>, семь дней</p>
+    <p class="sign">Дальше — как проходят эти пять дней</p>
+  </section>
+
+  <div id="zayavka" aria-hidden="true"></div>
+
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var toc   = document.getElementById('toc'),
+    shot  = document.getElementById('shot'),
+    mover = document.getElementById('mover'),
+    cap   = document.getElementById('cap'),
+    photo = document.getElementById('photo'),
+    tabs  = toc.querySelectorAll('.tab'),
+    calm  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ═══ кропы ═══
+   Проём 354×182 (на 360 и уже — 328×174, ход тот же). Кадры отдаются
+   производными 1024 px, поэтому вся арифметика ниже — от ширины 1024.
+
+   Замер по пикселям мастеров (PIL, порог 235):
+     Немеция  2000×1134 — белая полоса снизу 167 px, содержимое кончается
+              около y=985; боковых полей нет;
+     Bien Sûr 2000×1133 — впечены белые поля 249 px слева и 251 справа,
+              снизу 10 px, сверху нет;
+     IDTuning 2000×1132 и MILLA 2000×1139 — полей нет.
+
+   Кадр берётся ПОЛНОЙ ШИРИНОЙ страницы (а не зумом во фрагмент) — иначе
+   IDTuning читается как фото машины, а Bien Sûr как стоковый интерьер.
+   Во всех четырёх в проём попадает шапка сайта клиента.
+
+   Ширина и сдвиг заданы В ПРОЦЕНТАХ от проёма, а не в пикселях: иначе
+   на 430 px (iPhone Pro Max) кадр шириной 386 px не закрывал проём и
+   справа зияла подложка на 24 px — замерено. Проценты считаны от базовой
+   меры 354 px: 386/354 = 109,05%, -16/354 = -4,52%; у Bien Sur
+   510/354 = 144,07%, -78/354 = -22,03%.
+
+   Ход картинки: ±5 px по X (только мышь, на телефоне 0) и 0..-5,25 px
+   по Y (прокрутка, ТОЛЬКО вверх). Знак выбран так, что вниз кадр не
+   едет вовсе, поэтому запаса сверху хватает 2 px, а снизу везде >=36 px.
+   Проверено перебором крайних положений: проём не оголяется. */
+var D = [
+  {s:'/keysy/cases/case-nemecia-1024.webp', iw:1024, ih:581, w:'109.05%', x:'-4.52%',
+   n:'Немеция.',  m:' Автокомплекс в Омске',
+   a:'Первый экран сайта автокомплекса «Немеция» в Омске'},
+  {s:'/keysy/cases/case-biensur-1024.webp', iw:1024, ih:580, w:'144.07%', x:'-22.03%',
+   n:'Bien Sûr.', m:' Ресторан в Санкт-Петербурге',
+   a:'Первый экран сайта ресторана Bien Sûr в Санкт-Петербурге'},
+  {s:'/keysy/cases/case-idtuning-1024.webp',iw:1024, ih:580, w:'109.05%', x:'-4.52%',
+   n:'IDTuning.', m:' Тюнинг-ателье',
+   a:'Первый экран сайта тюнинг-ателье IDTuning'},
+  {s:'/keysy/cases/case-milla-1024.webp',   iw:1024, ih:583, w:'109.05%', x:'-4.52%',
+   n:'MILLA.',    m:' Интерьеры',
+   a:'Первый экран сайта MILLA — интерьеры'}
+];
+var now = 0;
+
+function paint(i){
+  var d = D[i];
+  shot.src = d.s; shot.alt = d.a;
+  shot.setAttribute('width', d.iw); shot.setAttribute('height', d.ih);
+  shot.style.width = d.w;
+  shot.style.left  = d.x;
+  shot.style.top   = '-2px';
+  shot.style.animation = 'none';        /* посадка играет один раз, при загрузке */
+  cap.innerHTML = '<b>' + d.n + '</b>' + d.m;
+  for (var k=0;k<tabs.length;k++) tabs[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+  now = i;
+  if (calm) return;
+  mover.classList.remove('sw'); void mover.offsetWidth; mover.classList.add('sw');
+  cap.classList.remove('sw');   void cap.offsetWidth;   cap.classList.add('sw');
+}
+function show(i){
+  if (i===now || !D[i]) return;
+  var pre = new Image(), done = false;
+  pre.src = D[i].s;
+  /* декодируем ДО подмены, иначе шторка проявит старый кадр.
+     Страховка по таймеру обязательна: в притормаживающей вкладке
+     decode() умеет не разрешаться вовсе — без неё тап молча
+     ничего не делает. */
+  var go = function(){ if(done) return; done = true; paint(i); };
+  setTimeout(go, 400);
+  if (pre.decode) pre.decode().then(go).catch(go);
+  else if (pre.complete) go();
+  else { pre.onload = go; pre.onerror = go; }
+}
+toc.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('.tab');
+  if (t) show(+t.getAttribute('data-i'));
+});
+
+/* свайп по кадру. Вертикальный guard обязателен: без него обычная
+   прокрутка большим пальцем перелистывает работы */
+var sx=0, sy0=0;
+photo.addEventListener('touchstart', function(e){
+  sx=e.touches[0].clientX; sy0=e.touches[0].clientY;
+}, {passive:true});
+photo.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - sx,
+      dy = e.changedTouches[0].clientY - sy0;
+  if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+  show((now + (dx<0 ? 1 : 3)) % 4);
+}, {passive:true});
+
+/* ═══ параллакс ═══
+   Одна rAF-петля пишет два числа В САМ #mover, а не в корень экрана:
+   иначе браузер инвалидирует стиль всего поддерева на каждом кадре
+   прокрутки ради сдвига одной картинки.
+   Гироскопа здесь нет намеренно: на iOS запрос доступа к датчикам
+   всплывает системной модалкой на первом же флике скролла. */
+if (!calm) {
+  var tgx=0,tsy=0, cgx=0,csy=0, alive=false, st=mover.style;
+  function clamp(v){ return v<-1 ? -1 : v>1 ? 1 : v; }
+  function put(){
+    st.setProperty('--gx', cgx.toFixed(4));
+    st.setProperty('--sy', csy.toFixed(2));
+  }
+  function loop(){
+    cgx += (tgx-cgx)*.12; csy += (tsy-csy)*.20;
+    put();
+    if (Math.abs(tgx-cgx) > .002 || Math.abs(tsy-csy) > .3) requestAnimationFrame(loop);
+    else { cgx=tgx; csy=tsy; put(); alive=false; }
+  }
+  function kick(){ if(!alive){ alive=true; requestAnimationFrame(loop); } }
+
+  var maxSy = 150;
+  function readScroll(){
+    var v = window.pageYOffset || document.documentElement.scrollTop || 0;
+    tsy = v > maxSy ? maxSy : v; kick();
+  }
+  addEventListener('scroll', readScroll, {passive:true});
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) readScroll();     /* rAF в фоне заморожен — перечитать */
+  }, {passive:true});
+
+  /* горизонтальный ход — только там, где есть настоящий курсор.
+     На телефоне мыши нет, и слушатель pointermove лишь будил бы петлю
+     во время скролла пальцем */
+  var fine = window.matchMedia && window.matchMedia('(pointer:fine)').matches;
+  if (fine){
+    addEventListener('pointermove', function(e){
+      tgx = clamp((e.clientX/(innerWidth||390))*2 - 1); kick();
+    }, {passive:true});
+  }
+}
+
+/* Остальные кадры — после загрузки и только на нормальном канале.
+   На мобильном трафике из Директа 111 КБ вслепую не тянем. */
+addEventListener('load', function(){
+  var c = navigator.connection;
+  if (c && (c.saveData || /2g/.test(c.effectiveType||''))) return;
+  setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 700);
+});
+
+})();
+</script>
+</body>
+</html>
