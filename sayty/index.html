@@ -51,7 +51,7 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260731a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260731e">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260731h">
   <style>/* критический размер видео инлайном — держит вёрстку даже при устаревшем кэше внешнего CSS (защита от «гигант-лого») */
   .nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
   .nav__logo-vid{width:100%;height:100%;object-fit:cover;display:none}
@@ -140,6 +140,230 @@
   <main id="main">
 
     <!-- ═══════ HERO ═══════ -->
+
+    <!-- ═══════ МОБИЛЬНЫЙ ПЕРВЫЙ ЭКРАН (≤768px). Десктопный .sy-hero ниже не тронут ═══════ -->
+<div class="mh-vp" id="mh-vp">
+
+  <header class="mh-mast mh-pad">
+    <span class="mh-name">uniqore</span>
+    <span class="mh-run">20+ сайтов · 30+ CRM</span>
+  </header>
+  <div class="mh-dbl mh-pad" aria-hidden="true"></div>
+
+  <section class="mh-head mh-pad">
+    <h1><span>Сайт со своим лицом,</span><span>а не из конструктора</span></h1>
+  </section>
+
+  <p class="mh-deck mh-pad"><span class="mh-dc">Д</span>изайн рисуем под ваше дело, а не подставляем в шаблон. Тексты и структуру берём на&nbsp;себя, исходники после сдачи отдаём вам.</p>
+
+  <div class="mh-rule"></div>
+
+  <div class="mh-frame">
+    <figure class="mh-fig">
+     <div class="mh-photo" id="mh-photo">
+      <span id="mh-mover">
+        <!-- Единственный <img> первого экрана. decoding="sync" + eager:
+             с async браузер успевает нарисовать пустой проём до
+             раскодирования — на медленном канале это чёрная дыра вместо
+             доказательства. Поэтому же кадр отдаётся производным
+             файлом 1024 px (49 КБ) вместо мастера 2000 px (124 КБ). -->
+        <img id="mh-shot" fetchpriority="high" decoding="sync" loading="eager"
+             src="/keysy/cases/case-nemecia-1024.webp" width="1024" height="581"
+             style="width:109.05%;left:-4.52%;top:-2px"
+             alt="Первый экран сайта автокомплекса «Немеция» в Омске">
+      </span>
+     </div>
+     <figcaption class="mh-cap"><span id="mh-cap" aria-live="polite"><b>Немеция.</b> Автокомплекс в&nbsp;Омске</span></figcaption>
+    </figure>
+
+    <aside class="mh-tag">
+      <p class="mh-k">многостраничный сайт</p>
+      <p class="mh-p">32&#8239;800<span>₽</span></p>
+      <p class="mh-d">свой дизайн, пять дней</p>
+    </aside>
+  </div>
+
+  <div class="mh-toc" id="mh-toc">
+    <button class="mh-tab" type="button" aria-pressed="true"  data-i="0">Немеция</button>
+    <button class="mh-tab" type="button" aria-pressed="false" data-i="1">Bien Sûr</button>
+    <button class="mh-tab" type="button" aria-pressed="false" data-i="2">IDTuning</button>
+    <button class="mh-tab" type="button" aria-pressed="false" data-i="3">MILLA</button>
+  </div>
+
+  <p class="mh-risk">Платите <b>после того, как утвердите макет</b>.</p>
+
+  <div class="mh-act">
+    <a class="mh-cta" href="#zayavka">Заказать сайт за 32&#8239;800&nbsp;₽</a>
+  </div>
+
+  <p class="mh-fine">Год гарантии · исходники отдаём · без&nbsp;ежемесячной&nbsp;платы</p>
+
+  <section class="mh-more">
+    <h2>Если нужно проще или мощнее</h2>
+    <p class="mh-mrow">Одна страница — <b>11 700 ₽</b>, три дня</p>
+    <p class="mh-mrow">Сайт вместе с CRM — <b>39 000 ₽</b>, семь дней</p>
+    <p class="mh-sign">Дальше — как проходят эти пять дней</p>
+  </section>
+
+  <div id="mh-zayavka" aria-hidden="true"></div>
+
+  
+  
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var toc   = document.getElementById('toc'),
+    shot  = document.getElementById('shot'),
+    mover = document.getElementById('mover'),
+    cap   = document.getElementById('cap'),
+    photo = document.getElementById('photo'),
+    tabs  = toc.querySelectorAll('.tab'),
+    calm  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ═══ кропы ═══
+   Проём 354×182 (на 360 и уже — 328×174, ход тот же). Кадры отдаются
+   производными 1024 px, поэтому вся арифметика ниже — от ширины 1024.
+
+   Замер по пикселям мастеров (PIL, порог 235):
+     Немеция  2000×1134 — белая полоса снизу 167 px, содержимое кончается
+              около y=985; боковых полей нет;
+     Bien Sûr 2000×1133 — впечены белые поля 249 px слева и 251 справа,
+              снизу 10 px, сверху нет;
+     IDTuning 2000×1132 и MILLA 2000×1139 — полей нет.
+
+   Кадр берётся ПОЛНОЙ ШИРИНОЙ страницы (а не зумом во фрагмент) — иначе
+   IDTuning читается как фото машины, а Bien Sûr как стоковый интерьер.
+   Во всех четырёх в проём попадает шапка сайта клиента.
+
+   Ширина и сдвиг заданы В ПРОЦЕНТАХ от проёма, а не в пикселях: иначе
+   на 430 px (iPhone Pro Max) кадр шириной 386 px не закрывал проём и
+   справа зияла подложка на 24 px — замерено. Проценты считаны от базовой
+   меры 354 px: 386/354 = 109,05%, -16/354 = -4,52%; у Bien Sur
+   510/354 = 144,07%, -78/354 = -22,03%.
+
+   Ход картинки: ±5 px по X (только мышь, на телефоне 0) и 0..-5,25 px
+   по Y (прокрутка, ТОЛЬКО вверх). Знак выбран так, что вниз кадр не
+   едет вовсе, поэтому запаса сверху хватает 2 px, а снизу везде >=36 px.
+   Проверено перебором крайних положений: проём не оголяется. */
+var D = [
+  {s:'/keysy/cases/case-nemecia-1024.webp', iw:1024, ih:581, w:'109.05%', x:'-4.52%',
+   n:'Немеция.',  m:' Автокомплекс в Омске',
+   a:'Первый экран сайта автокомплекса «Немеция» в Омске'},
+  {s:'/keysy/cases/case-biensur-1024.webp', iw:1024, ih:580, w:'144.07%', x:'-22.03%',
+   n:'Bien Sûr.', m:' Ресторан в Санкт-Петербурге',
+   a:'Первый экран сайта ресторана Bien Sûr в Санкт-Петербурге'},
+  {s:'/keysy/cases/case-idtuning-1024.webp',iw:1024, ih:580, w:'109.05%', x:'-4.52%',
+   n:'IDTuning.', m:' Тюнинг-ателье в Москве',
+   a:'Первый экран сайта тюнинг-ателье IDTuning'},
+  {s:'/keysy/cases/case-milla-1024.webp',   iw:1024, ih:583, w:'109.05%', x:'-4.52%',
+   n:'MILLA.',    m:' Студия интерьеров в Самаре',
+   a:'Первый экран сайта MILLA — интерьеры'}
+];
+var now = 0;
+
+function paint(i){
+  var d = D[i];
+  shot.src = d.s; shot.alt = d.a;
+  shot.setAttribute('width', d.iw); shot.setAttribute('height', d.ih);
+  shot.style.width = d.w;
+  shot.style.left  = d.x;
+  shot.style.top   = '-2px';
+  shot.style.animation = 'none';        /* посадка играет один раз, при загрузке */
+  cap.innerHTML = '<b>' + d.n + '</b>' + d.m;
+  for (var k=0;k<tabs.length;k++) tabs[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+  now = i;
+  if (calm) return;
+  mover.classList.remove('sw'); void mover.offsetWidth; mover.classList.add('sw');
+  cap.classList.remove('sw');   void cap.offsetWidth;   cap.classList.add('sw');
+}
+function show(i){
+  if (i===now || !D[i]) return;
+  var pre = new Image(), done = false;
+  pre.src = D[i].s;
+  /* декодируем ДО подмены, иначе шторка проявит старый кадр.
+     Страховка по таймеру обязательна: в притормаживающей вкладке
+     decode() умеет не разрешаться вовсе — без неё тап молча
+     ничего не делает. */
+  var go = function(){ if(done) return; done = true; paint(i); };
+  setTimeout(go, 400);
+  if (pre.decode) pre.decode().then(go).catch(go);
+  else if (pre.complete) go();
+  else { pre.onload = go; pre.onerror = go; }
+}
+toc.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('.tab');
+  if (t) show(+t.getAttribute('data-i'));
+});
+
+/* свайп по кадру. Вертикальный guard обязателен: без него обычная
+   прокрутка большим пальцем перелистывает работы */
+var sx=0, sy0=0;
+photo.addEventListener('touchstart', function(e){
+  sx=e.touches[0].clientX; sy0=e.touches[0].clientY;
+}, {passive:true});
+photo.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - sx,
+      dy = e.changedTouches[0].clientY - sy0;
+  if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+  show((now + (dx<0 ? 1 : 3)) % 4);
+}, {passive:true});
+
+/* ═══ параллакс ═══
+   Одна rAF-петля пишет два числа В САМ #mover, а не в корень экрана:
+   иначе браузер инвалидирует стиль всего поддерева на каждом кадре
+   прокрутки ради сдвига одной картинки.
+   Гироскопа здесь нет намеренно: на iOS запрос доступа к датчикам
+   всплывает системной модалкой на первом же флике скролла. */
+if (!calm) {
+  var tgx=0,tsy=0, cgx=0,csy=0, alive=false, st=mover.style;
+  function clamp(v){ return v<-1 ? -1 : v>1 ? 1 : v; }
+  function put(){
+    st.setProperty('--gx', cgx.toFixed(4));
+    st.setProperty('--sy', csy.toFixed(2));
+  }
+  function loop(){
+    cgx += (tgx-cgx)*.12; csy += (tsy-csy)*.20;
+    put();
+    if (Math.abs(tgx-cgx) > .002 || Math.abs(tsy-csy) > .3) requestAnimationFrame(loop);
+    else { cgx=tgx; csy=tsy; put(); alive=false; }
+  }
+  function kick(){ if(!alive){ alive=true; requestAnimationFrame(loop); } }
+
+  var maxSy = 150;
+  function readScroll(){
+    var v = window.pageYOffset || document.documentElement.scrollTop || 0;
+    tsy = v > maxSy ? maxSy : v; kick();
+  }
+  addEventListener('scroll', readScroll, {passive:true});
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) readScroll();     /* rAF в фоне заморожен — перечитать */
+  }, {passive:true});
+
+  /* горизонтальный ход — только там, где есть настоящий курсор.
+     На телефоне мыши нет, и слушатель pointermove лишь будил бы петлю
+     во время скролла пальцем */
+  var fine = window.matchMedia && window.matchMedia('(pointer:fine)').matches;
+  if (fine){
+    addEventListener('pointermove', function(e){
+      tgx = clamp((e.clientX/(innerWidth||390))*2 - 1); kick();
+    }, {passive:true});
+  }
+}
+
+/* Остальные кадры — после загрузки и только на нормальном канале.
+   На мобильном трафике из Директа 111 КБ вслепую не тянем. */
+addEventListener('load', function(){
+  var c = navigator.connection;
+  if (c && (c.saveData || /2g/.test(c.effectiveType||''))) return;
+  setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 700);
+});
+
+})();
+</script>
+
     <section class="sy-hero">
       <div class="sy-container">
         <div class="sy-hero__grid">
@@ -913,5 +1137,164 @@
   <script src="/js/sayty.js?v=20260731b" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
   <script src="/js/cookie.js?v=20260730a" defer></script>
+  <script>
+(function(){
+  /* мобильный hero /sayty/ (приёмка 31.07). На десктопе выходим сразу —
+     разметка скрыта через CSS, а rAF-петля и слушатели там не нужны. */
+  if (window.matchMedia('(min-width:769px)').matches) return;
+
+(function(){
+'use strict';
+
+var toc   = document.getElementById('mh-toc'),
+    shot  = document.getElementById('mh-shot'),
+    mover = document.getElementById('mh-mover'),
+    cap   = document.getElementById('mh-cap'),
+    photo = document.getElementById('mh-photo'),
+    tabs  = toc.querySelectorAll('.mh-tab'),
+    calm  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ═══ кропы ═══
+   Проём 354×182 (на 360 и уже — 328×174, ход тот же). Кадры отдаются
+   производными 1024 px, поэтому вся арифметика ниже — от ширины 1024.
+
+   Замер по пикселям мастеров (PIL, порог 235):
+     Немеция  2000×1134 — белая полоса снизу 167 px, содержимое кончается
+              около y=985; боковых полей нет;
+     Bien Sûr 2000×1133 — впечены белые поля 249 px слева и 251 справа,
+              снизу 10 px, сверху нет;
+     IDTuning 2000×1132 и MILLA 2000×1139 — полей нет.
+
+   Кадр берётся ПОЛНОЙ ШИРИНОЙ страницы (а не зумом во фрагмент) — иначе
+   IDTuning читается как фото машины, а Bien Sûr как стоковый интерьер.
+   Во всех четырёх в проём попадает шапка сайта клиента.
+
+   Ширина и сдвиг заданы В ПРОЦЕНТАХ от проёма, а не в пикселях: иначе
+   на 430 px (iPhone Pro Max) кадр шириной 386 px не закрывал проём и
+   справа зияла подложка на 24 px — замерено. Проценты считаны от базовой
+   меры 354 px: 386/354 = 109,05%, -16/354 = -4,52%; у Bien Sur
+   510/354 = 144,07%, -78/354 = -22,03%.
+
+   Ход картинки: ±5 px по X (только мышь, на телефоне 0) и 0..-5,25 px
+   по Y (прокрутка, ТОЛЬКО вверх). Знак выбран так, что вниз кадр не
+   едет вовсе, поэтому запаса сверху хватает 2 px, а снизу везде >=36 px.
+   Проверено перебором крайних положений: проём не оголяется. */
+var D = [
+  {s:'/keysy/cases/case-nemecia-1024.webp', iw:1024, ih:581, w:'109.05%', x:'-4.52%',
+   n:'Немеция.',  m:' Автокомплекс в Омске',
+   a:'Первый экран сайта автокомплекса «Немеция» в Омске'},
+  {s:'/keysy/cases/case-biensur-1024.webp', iw:1024, ih:580, w:'144.07%', x:'-22.03%',
+   n:'Bien Sûr.', m:' Ресторан в Санкт-Петербурге',
+   a:'Первый экран сайта ресторана Bien Sûr в Санкт-Петербурге'},
+  {s:'/keysy/cases/case-idtuning-1024.webp',iw:1024, ih:580, w:'109.05%', x:'-4.52%',
+   n:'IDTuning.', m:' Тюнинг-ателье в Москве',
+   a:'Первый экран сайта тюнинг-ателье IDTuning'},
+  {s:'/keysy/cases/case-milla-1024.webp',   iw:1024, ih:583, w:'109.05%', x:'-4.52%',
+   n:'MILLA.',    m:' Студия интерьеров в Самаре',
+   a:'Первый экран сайта MILLA — интерьеры'}
+];
+var now = 0;
+
+function paint(i){
+  var d = D[i];
+  shot.src = d.s; shot.alt = d.a;
+  shot.setAttribute('width', d.iw); shot.setAttribute('height', d.ih);
+  shot.style.width = d.w;
+  shot.style.left  = d.x;
+  shot.style.top   = '-2px';
+  shot.style.animation = 'none';        /* посадка играет один раз, при загрузке */
+  cap.innerHTML = '<b>' + d.n + '</b>' + d.m;
+  for (var k=0;k<tabs.length;k++) tabs[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+  now = i;
+  if (calm) return;
+  mover.classList.remove('sw'); void mover.offsetWidth; mover.classList.add('sw');
+  cap.classList.remove('sw');   void cap.offsetWidth;   cap.classList.add('sw');
+}
+function show(i){
+  if (i===now || !D[i]) return;
+  var pre = new Image(), done = false;
+  pre.src = D[i].s;
+  /* декодируем ДО подмены, иначе шторка проявит старый кадр.
+     Страховка по таймеру обязательна: в притормаживающей вкладке
+     decode() умеет не разрешаться вовсе — без неё тап молча
+     ничего не делает. */
+  var go = function(){ if(done) return; done = true; paint(i); };
+  setTimeout(go, 400);
+  if (pre.decode) pre.decode().then(go).catch(go);
+  else if (pre.complete) go();
+  else { pre.onload = go; pre.onerror = go; }
+}
+toc.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('.mh-tab');
+  if (t) show(+t.getAttribute('data-i'));
+});
+
+/* свайп по кадру. Вертикальный guard обязателен: без него обычная
+   прокрутка большим пальцем перелистывает работы */
+var sx=0, sy0=0;
+photo.addEventListener('touchstart', function(e){
+  sx=e.touches[0].clientX; sy0=e.touches[0].clientY;
+}, {passive:true});
+photo.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - sx,
+      dy = e.changedTouches[0].clientY - sy0;
+  if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+  show((now + (dx<0 ? 1 : 3)) % 4);
+}, {passive:true});
+
+/* ═══ параллакс ═══
+   Одна rAF-петля пишет два числа В САМ #mover, а не в корень экрана:
+   иначе браузер инвалидирует стиль всего поддерева на каждом кадре
+   прокрутки ради сдвига одной картинки.
+   Гироскопа здесь нет намеренно: на iOS запрос доступа к датчикам
+   всплывает системной модалкой на первом же флике скролла. */
+if (!calm) {
+  var tgx=0,tsy=0, cgx=0,csy=0, alive=false, st=mover.style;
+  function clamp(v){ return v<-1 ? -1 : v>1 ? 1 : v; }
+  function put(){
+    st.setProperty('--gx', cgx.toFixed(4));
+    st.setProperty('--sy', csy.toFixed(2));
+  }
+  function loop(){
+    cgx += (tgx-cgx)*.12; csy += (tsy-csy)*.20;
+    put();
+    if (Math.abs(tgx-cgx) > .002 || Math.abs(tsy-csy) > .3) requestAnimationFrame(loop);
+    else { cgx=tgx; csy=tsy; put(); alive=false; }
+  }
+  function kick(){ if(!alive){ alive=true; requestAnimationFrame(loop); } }
+
+  var maxSy = 150;
+  function readScroll(){
+    var v = window.pageYOffset || document.documentElement.scrollTop || 0;
+    tsy = v > maxSy ? maxSy : v; kick();
+  }
+  addEventListener('scroll', readScroll, {passive:true});
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) readScroll();     /* rAF в фоне заморожен — перечитать */
+  }, {passive:true});
+
+  /* горизонтальный ход — только там, где есть настоящий курсор.
+     На телефоне мыши нет, и слушатель pointermove лишь будил бы петлю
+     во время скролла пальцем */
+  var fine = window.matchMedia && window.matchMedia('(pointer:fine)').matches;
+  if (fine){
+    addEventListener('pointermove', function(e){
+      tgx = clamp((e.clientX/(innerWidth||390))*2 - 1); kick();
+    }, {passive:true});
+  }
+}
+
+/* Остальные кадры — после загрузки и только на нормальном канале.
+   На мобильном трафике из Директа 111 КБ вслепую не тянем. */
+addEventListener('load', function(){
+  var c = navigator.connection;
+  if (c && (c.saveData || /2g/.test(c.effectiveType||''))) return;
+  setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 700);
+});
+
+})();
+
+})();
+  </script>
 </body>
 </html>

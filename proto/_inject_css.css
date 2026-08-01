@@ -1,0 +1,279 @@
+
+/* ───────── шрифты: встроены, ноль внешних CSS-запросов ─────────
+   Тело — Geist (self-hosted, variable 100–900). Unbounded и JetBrains
+   Mono на этом экране не используются вообще и не объявлены. */
+@font-face{
+  font-family:'Geist';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url('/assets/fonts/geist-var-cyrillic.woff2') format('woff2-variations'),
+      url('/assets/fonts/geist-var-cyrillic.woff2') format('woff2');
+  unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face{
+  font-family:'Geist';font-style:normal;font-weight:100 900;font-display:swap;
+  src:url('/assets/fonts/geist-var-latin.woff2') format('woff2-variations'),
+      url('/assets/fonts/geist-var-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
+                U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,
+                U+2212,U+2215,U+FEFF,U+FFFD;
+}
+/* Засечный на Android — Noto Serif, он на 17–18% уже Georgia, и полоса
+   рассыпалась в узкий заголовок с флагом справа. Правится без единого
+   запроса: local()-фейс с size-adjust. Если local() не найден — падаем
+   в обычный serif, то есть в текущее поведение, регрессии нет. */
+@font-face{
+  font-family:'SerifFit';font-style:normal;font-weight:400;size-adjust:115%;
+  src:local('Noto Serif'),local('NotoSerif'),local('Noto Serif Regular'),local('NotoSerif-Regular');
+}
+@font-face{
+  font-family:'SerifFit';font-style:normal;font-weight:700;size-adjust:115%;
+  src:local('Noto Serif Bold'),local('NotoSerif-Bold');
+}
+@font-face{
+  font-family:'SerifFit';font-style:italic;font-weight:400;size-adjust:115%;
+  src:local('Noto Serif Italic'),local('NotoSerif-Italic');
+}
+
+/* Типизированные переменные: инвалидация не уходит вверх по дереву.
+   Дубли объявлены и обычным способом на #mh-mover — на случай, если
+   @property не поддержан. */
+@property --gx{syntax:'<number>';inherits:false;initial-value:0}
+@property --sy{syntax:'<number>';inherits:false;initial-value:0}
+
+:root{
+  --bg:#0A0E1A;
+  --ink:#E7EAF0;
+  --txt:#A6B0BE;
+  --dim:#8A94A4;
+  --lime:#CDFF4F;
+  --paper:#EDEDE7;
+  --hair:rgba(231,234,240,.13);
+  --pad:18px;
+  --serif:Georgia,'Iowan Old Style','Times New Roman','SerifFit',serif;
+  --ease:cubic-bezier(.22,.9,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--ink);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+.mh-vp{
+  width:100%;max-width:440px;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:900px;isolation:isolate;
+}
+.mh-pad{padding-left:var(--pad);padding-right:var(--pad)}
+
+/* ───────── 1 · титульная строка номера ───────── */
+.mh-mast{height:34px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mh-mast .mh-name{font-size:17.5px;font-weight:600;letter-spacing:-.045em;color:var(--ink)}
+.mh-mast .mh-run{font-size:11.5px;color:var(--dim);letter-spacing:-.008em;white-space:nowrap}
+/* двойная линейка — печатная норма, а не направляющая: жирная сверху,
+   волосяная снизу, просвет 4 px (при 4 px общей высоты обе сливались
+   в одну полосу на 2× DPR). Жирная прочерчивается слева направо. */
+.mh-dbl{position:relative;height:7px}
+.mh-dbl::before,.mh-dbl::after{content:'';position:absolute;left:0;right:0}
+.mh-dbl::before{top:0;height:2px;background:var(--ink);transform-origin:0 50%;animation:draw .55s var(--ease) both}
+.mh-dbl::after{bottom:0;height:1px;background:rgba(231,234,240,.09)}
+@keyframes draw{from{transform:scaleX(.1)}to{transform:scaleX(1)}}
+
+/* ───────── 2 · заголовок номера ───────── */
+.mh-head{padding-top:12px;padding-bottom:12px}
+/* Кегль привязан к мере, а не к брейкпоинту: строка «Сайт со своим лицом,»
+   при Georgia 700 занимает ровно 11,653 × кегль (замер canvas). Формула
+   держит заполнение меры на 96–99% от 320 до 440 px и — что важнее —
+   гарантирует ДВЕ строки на любой ширине, поэтому высота заголовка
+   предсказуема и сгиб не уезжает от лишнего переноса. */
+h1{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(23px,calc(8.44vw - 3px),33px);
+  line-height:1.1;letter-spacing:-.021em;color:var(--ink);
+}
+/* Переносы заданы вручную: высота заголовка не зависит от шрифта,
+   а значит и сгиб не уезжает. Строки заполняют меру на 98,8% и 95,4%. */
+h1 span{display:block;animation:lift .45s var(--ease) both}
+h1 span+span{animation-delay:.06s}
+/* стартовое состояние ЧИТАЕМО: строка просто на 5 px ниже.
+   Ни клипа, ни overflow:hidden — иначе первый нарисованный кадр
+   срезает кромки букв, и на медленном канале висит именно он. */
+@keyframes lift{from{transform:translate3d(0,5px,0)}to{transform:none}}
+
+/* ───────── 3 · лид в две колонки с буквицей ───────── */
+.mh-deck{
+  columns:2;column-gap:17px;column-rule:1px solid var(--hair);
+  min-height:57px;margin-bottom:13px;
+  font-size:12.5px;line-height:1.5;color:var(--txt);letter-spacing:-.004em;
+  -webkit-hyphens:auto;hyphens:auto;
+}
+.mh-deck b{color:#CBD3DE;font-weight:600}
+/* Буквица настоящая: две полные строки набора (2 × 18,75 = 37,5 px).
+   Реализована явным <span>, а не ::first-letter — у WebKit давняя
+   история багов с ::first-letter+float внутри многоколонника, а цель
+   здесь именно iPhone Safari. Цвет — текстовый: лайм на всём экране
+   принадлежит только кнопке. */
+.mh-dc{
+  float:left;font-family:var(--serif);font-weight:700;
+  font-size:50px;line-height:.75;margin:2px 5px 0 0;color:var(--ink);
+}
+.mh-rule{height:1px;background:var(--hair)}
+
+/* ───────── 4 · кадр работы + ценник на нём ───────── */
+.mh-frame{position:relative;height:246px;margin:0 var(--pad)}
+/* figure растянута на всю площадь блока, а окно снимка — отдельный слой
+   внутри неё. Иначе figcaption, вложенный по спеке в figure, срезался бы
+   её overflow:hidden — подпись просто не рисовалась. */
+.mh-fig{position:absolute;inset:0}
+.mh-photo{
+  position:absolute;left:0;right:0;top:0;height:182px;
+  overflow:hidden;background:#0D1017;contain:paint;touch-action:pan-y;
+}
+#mh-mover{
+  --gx:0;--sy:0;
+  position:absolute;inset:0;display:block;
+  transform:translate3d(calc(var(--gx) * 5px),calc(var(--sy) * -.035px),0);
+  will-change:transform;
+}
+.mh-photo img{
+  position:absolute;display:block;height:auto;
+  filter:saturate(.94) contrast(1.03) brightness(.97);
+  animation:settle 1.1s cubic-bezier(.2,.75,.2,1) both;
+}
+@keyframes settle{from{transform:scale(1.03)}to{transform:none}}
+/* смена работы: лист выходит из машины снизу вверх */
+@keyframes sheet{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+#mh-mover.sw{animation:sheet .42s var(--ease)}
+
+/* ценник: газетная бумага, наезжает на кадр слева снизу и на 4 px
+   выходит за меру полосы — как наклейка, приложенная поверх набора.
+   Ширина в процентах меры: на 320 и на 440 карточка и подпись не
+   налезают друг на друга. */
+.mh-tag{
+  position:absolute;left:-4px;top:156px;width:55.4%;z-index:3;
+  padding:9px 13px 11px;background:var(--paper);color:#11151F;
+  border:1px solid rgba(0,0,0,.22);
+  box-shadow:0 3px 7px -3px rgba(0,0,0,.6);
+  transform:rotate(-1.2deg);
+  animation:paste .5s var(--ease) .22s both;
+}
+/* стартовое состояние: карточка уже лежит и уже читается, просто
+   завалена сильнее. Ни прозрачности, ни клипа */
+@keyframes paste{
+  from{transform:rotate(-3.6deg) scale(.985)}
+  to{transform:rotate(-1.2deg)}
+}
+.mh-tag .mh-k{font-size:11px;line-height:1.2;color:#5E6575;letter-spacing:-.004em}
+.mh-tag .mh-p{
+  margin:3px 0 3px -1px;font-size:min(31px,8.7vw);font-weight:700;line-height:1.02;
+  letter-spacing:-.035em;color:#0E1220;white-space:nowrap;
+  font-variant-numeric:tabular-nums lining-nums;
+}
+.mh-tag .mh-p span{font-size:.62em;font-weight:600;margin-left:.13em;color:#3E4554}
+.mh-tag .mh-d{font-size:11.5px;line-height:1.25;color:#3F4756;letter-spacing:-.006em}
+
+/* подпись под кадром: курсив с полужирным вводным словом */
+.mh-cap{
+  position:absolute;right:0;top:190px;width:40.7%;
+  font-family:var(--serif);font-style:italic;font-size:13px;line-height:1.28;
+  color:#98A2B2;
+}
+.mh-cap b{font-style:normal;font-weight:700;color:#DCE1EA}
+@keyframes capin{from{transform:translate3d(-6px,0,0)}to{transform:none}}
+.mh-cap span.sw{display:inline-block;animation:capin .34s var(--ease)}
+
+/* ───────── 5 · строка содержания: остальные работы ───────── */
+.mh-toc{display:flex;align-items:stretch;height:44px;border-bottom:1px solid var(--hair)}
+.mh-tab{
+  flex:1 1 0;min-width:0;background:none;border:0;padding:0 2px;position:relative;
+  color:var(--dim);font-family:inherit;font-size:13px;font-weight:400;
+  letter-spacing:-.015em;text-align:center;cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:color .18s linear;
+}
+/* аффорданс: у текущего материала подчёркнутая рубрика, как в
+   содержании номера. Вес НЕ меняем — иначе вся строка перекладывается
+   на каждый тап (flex:1 1 0 держит колонки, но ширина слова прыгает) */
+.mh-tab::after{
+  content:'';position:absolute;left:50%;right:50%;bottom:11px;height:1.5px;
+  background:var(--ink);transition:left .18s var(--ease),right .18s var(--ease);
+}
+.mh-tab[aria-pressed="true"]{color:var(--ink)}
+.mh-tab[aria-pressed="true"]::after{left:4px;right:4px}
+.mh-tab:first-child[aria-pressed="true"]::after{left:var(--pad);right:4px}
+.mh-tab:last-child[aria-pressed="true"]::after{left:4px;right:var(--pad)}
+.mh-tab:first-child{text-align:left;padding-left:var(--pad)}
+.mh-tab:last-child{text-align:right;padding-right:var(--pad)}
+.mh-tab:active{color:#CBD3DE}
+.mh-tab:focus-visible{outline:1px solid rgba(205,255,79,.6);outline-offset:-3px}
+
+/* ───────── 6 · снятие риска и единственное действие ───────── */
+.mh-risk{padding:13px var(--pad) 0;font-size:13.5px;line-height:1.3;color:#C6CEDA;letter-spacing:-.01em}
+.mh-risk b{font-weight:600;color:var(--ink)}
+.mh-act{padding:11px var(--pad) 0}
+.mh-cta{
+  display:flex;align-items:center;justify-content:center;height:52px;
+  border-radius:2px;background:var(--lime);color:#0A0E1A;
+  font-size:15.5px;font-weight:600;letter-spacing:-.02em;text-decoration:none;
+  font-variant-numeric:tabular-nums lining-nums;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:transform .12s var(--ease),background .12s linear;
+}
+.mh-cta:active{transform:translate3d(0,1px,0);background:#C2F53F}
+.mh-fine{padding:12px var(--pad) 0;font-size:12.5px;line-height:1.4;color:#8A94A4;letter-spacing:-.006em}
+
+/* ───────── 7 · следующий материал, разрезанный сгибом ───────── */
+/* Замер на 390: низ мелкой строки 615, отсюда верх прописных у h2
+   = 615 + margin + 16,7. При margin 21 прописные начинаются на 652,
+   и линия 659 режет заголовок примерно посередине буквы, а не по
+   хвостам — только так «продолжение» читается как продолжение. */
+.mh-more{margin-top:21px;border-top:1px solid var(--hair)}
+.mh-more h2{
+  padding:11px var(--pad) 0;
+  font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.18;
+  letter-spacing:-.014em;color:var(--ink);
+}
+.mh-mrow{
+  margin-top:11px;padding:11px var(--pad);border-top:1px solid rgba(231,234,240,.07);
+  font-size:13px;line-height:1.3;color:var(--txt);letter-spacing:-.01em;
+}
+.mh-mrow+.mh-mrow{margin-top:0}
+.mh-mrow b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums lining-nums}
+.mh-sign{padding:15px var(--pad) 44px;font-family:var(--serif);font-style:italic;font-size:13px;color:#8C96A6}
+
+/* ───────── маркеры сгиба (только прототип, снять перед выкаткой) ───────── */
+.mh-fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,80,80,.42)}
+.mh-fold b{
+  position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.9);
+  font-size:8px;font-weight:400;color:rgba(255,110,110,.75);
+}
+.mh-fold.real{top:659px;border-top-color:rgba(255,150,60,.4)}
+.mh-fold.real b{top:-13px;color:rgba(255,175,85,.9)}
+.mh-fold.dev{top:844px}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* 360 и уже (это Android: у iPhone минимум 390, поэтому линия 659
+   там уже не сгиб). Ритм ужимается, вся конверсионная часть
+   остаётся заметно выше 659, «продолжение» подводится к нему. */
+@media (max-width:389px){
+  :root{--pad:16px}
+  .mh-head{padding-top:10px;padding-bottom:10px}
+  .mh-deck{line-height:1.45;margin-bottom:12px}
+  .mh-frame{height:224px}
+  .mh-photo{height:166px}
+  .mh-tag{top:142px;padding:8px 12px 10px}
+  .mh-cap{top:174px;font-size:12.5px}
+  .mh-toc{height:42px}
+  .mh-tab{font-size:12.5px}
+  .mh-risk{padding-top:11px;font-size:13px}
+  .mh-act{padding-top:10px}
+  .mh-fine{padding-top:10px;font-size:12px}
+  .mh-more{margin-top:29px}
+}
+
+
+/* без JS вкладки — четыре мёртвые кнопки. Честнее убрать их совсем:
+   кадр, цена, снятие риска и кнопка остаются на месте */
+.mh-toc{display:none}
