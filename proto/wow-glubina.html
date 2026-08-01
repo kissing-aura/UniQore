@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран · ГЛУБИНА</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════════
+  ПОДХОД «ГЛУБИНА» — почему это делает экран сильным, а не просто «скрин»
+
+  Диагноз. В concept-final структура верная, но экран ПЛОСКИЙ: заголовок,
+  прямоугольник с картинкой, плашка, кнопка — всё лежит в одной плоскости,
+  на одной высоте. Мозг читает это как «страница». Дорого выглядит то, что
+  мозг читает как «предмет».
+
+  Решение — один физический принцип на весь экран:
+  ЭКРАН ЭТО НЕ ЛИСТ, А КОРОБКА. У неё есть дно, стекло и предметы сверху.
+
+    план -1  свет         — два мягких источника ЗА поверхностью, дрейфуют
+    план  0  поверхность  — сетка колонок, дизеринг: «дно» коробки
+    план  1  ОКНО         — кадр работы УТОПЛЕН в поверхность (inset-тени по
+                            всем четырём кромкам, тёмная верхняя кромка,
+                            светлая нижняя). Картинка живёт ЗА стеклом и
+                            ездит внутри проёма — это главный сигнал глубины:
+                            параллакс внутри рамки читается как «там дальше»
+    план  2  стекло       — блик, который скользит по проёму: доказывает, что
+                            между глазом и картинкой есть прозрачный слой
+    план  3  подпись      — сидит НА стекле, едет против картинки → расслоение
+    план  4  плита цены   — ПОДНЯТА над поверхностью: светлая грань сверху,
+                            контактная тень снизу падает на текст под ней
+    план  5  кнопка       — выше всех: контактная тень + лаймовый отскок света
+                            на фон (лайм светлый — он реально подсвечивает
+                            поверхность под собой). Не «свечение 0 0 20px»,
+                            а физика: bounce light + contact shadow
+
+  Что движется и почему это дёшево.
+    Одна rAF-петля пишет ТРИ числа в CSS-переменные (--gx, --gy, --sy).
+    Их читают 11 элементов через calc() внутри transform. Ни одна анимация
+    не трогает layout и не вызывает paint: только translate3d + opacity.
+    Петля засыпает, когда движение затухло, и просыпается на вводе.
+    Источник наклона: DeviceOrientation (с калибровкой по первому замеру и
+    медленным возвратом к нулю), фолбэк — pointermove/палец, фолбэк фолбэка —
+    медленный CSS-дрейф света, который идёт всегда.
+    Коэффициенты параллакса разнознаковые: дальние планы едут в одну сторону,
+    ближние в другую. Именно разность знаков даёт объём, а не амплитуда.
+
+  Что НЕ сделано намеренно.
+    Нет мокапа устройства (кадр — настоящий скрин, полем в край).
+    Нет трёх одинаковых карточек, нет чипа над заголовком, нет bento.
+    Нет свечения 0 0 20px — только направленный свет и контактные тени.
+    Нет вступительной анимации, которая прячет контент: всё читаемо на
+    первом кадре, свет проходит поверх готовой картинки.
+    Радиусы разные по смыслу: проём 0 (дыра в поверхности), плита 2,
+    кнопка 3 — предметы разной природы не могут иметь один радиус.
+
+  Бюджет: 0 внешних запросов, 0 библиотек, 1 <img> в первом экране,
+  остальные три кадра — после window.load.
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --txt:#E7EAF0;
+  --mut:#97A1B0;
+  --dim:#8792A3;
+  --lime:#CDFF4F;
+  --line:rgba(231,234,240,.09);
+  --hair:rgba(231,234,240,.055);
+  --pad:20px;
+  --ease:cubic-bezier(.33,1,.4,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--txt);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* .vp — «коробка». Все планы живут внутри неё, наружу ничего не торчит.
+   --gx/--gy — наклон в диапазоне -1..1, --sy — прокрутка в пикселях.
+   Значения по умолчанию заданы здесь, поэтому все calc() валидны ДО того,
+   как отработает JS: экран корректен на самом первом кадре. */
+.vp{
+  --gx:0; --gy:0; --sy:0;
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:900px;
+  isolation:isolate;
+}
+.mono{
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;text-transform:uppercase;
+  font-variant-numeric:tabular-nums;
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+.rule{height:1px;background:var(--line);position:relative;z-index:2}
+/* кромка поверхности прямо перед проёмом — она ловит свет ярче остальных
+   линий, и сразу за ней начинается тёмная внутренняя стенка выреза */
+.rule.lip{background:linear-gradient(90deg,rgba(231,234,240,.05),rgba(231,234,240,.22) 45%,rgba(231,234,240,.06))}
+
+/* ───────── план −1 · СВЕТ ЗА ПОВЕРХНОСТЬЮ ─────────
+   Внешний div дрейфует медленной CSS-анимацией (жизнь без ввода),
+   внутренний <i> едет от наклона. Разделены, чтобы два движения
+   складывались, а не перетирали друг друга. */
+.lux{position:absolute;z-index:0;pointer-events:none;will-change:transform}
+.lux i{display:block;width:100%;height:100%;will-change:transform}
+.l1{left:-90px;top:-130px;width:520px;height:420px;animation:drift1 19s var(--ease) infinite}
+.l1 i{
+  background:radial-gradient(45% 45% at 50% 50%,rgba(176,198,255,.085),rgba(176,198,255,0) 70%);
+  transform:translate3d(calc(var(--gx) * 26px),calc(var(--gy) * 18px),0);
+}
+.l2{left:-40px;top:470px;width:470px;height:340px;animation:drift2 24s var(--ease) infinite}
+.l2 i{
+  background:radial-gradient(46% 46% at 50% 50%,rgba(205,255,79,.062),rgba(205,255,79,0) 70%);
+  transform:translate3d(calc(var(--gx) * 20px),calc(var(--gy) * 13px),0);
+}
+@keyframes drift1{0%,100%{transform:translate3d(-14px,0,0)}50%{transform:translate3d(16px,10px,0)}}
+@keyframes drift2{0%,100%{transform:translate3d(12px,6px,0)}50%{transform:translate3d(-13px,-6px,0)}}
+
+/* ───────── план 0 · ПОВЕРХНОСТЬ ─────────
+   Вертикальные направляющие — та же сетка, по которой всё сверстано.
+   Едут от наклона чуть-чуть и отстают при прокрутке: «дно» коробки. */
+.grid{
+  position:absolute;top:-30px;bottom:-30px;left:var(--pad);right:var(--pad);z-index:0;
+  border-left:1px solid rgba(231,234,240,.07);
+  border-right:1px solid rgba(231,234,240,.07);
+  pointer-events:none;
+  transform:translate3d(calc(var(--gx) * 3px),calc(var(--sy) * -0.05px),0);
+  will-change:transform;
+}
+
+/* ───────── 1 · шапка ───────── */
+.hd{
+  height:44px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);position:relative;z-index:3;
+}
+.logo{font-family:'Unbounded','Geist',sans-serif;font-weight:500;font-size:16px;letter-spacing:-.04em}
+.hd .mono{font-size:10.5px;letter-spacing:.15em;color:var(--dim)}
+
+/* ───────── 2 · титул ───────── */
+.head{padding-top:18px;padding-bottom:11px;position:relative;z-index:3}
+/* плоскость чтения намеренно НЕПОДВИЖНА: если ездит и заголовок,
+   мозг читает это как дрожание, а не как объём. Двигаются только планы. */
+h1{
+  font-family:'Unbounded','Geist',sans-serif;font-weight:300;
+  font-size:30px;line-height:1.04;letter-spacing:-.03em;color:var(--txt);
+}
+h1 span{display:block}
+h1 .a{color:var(--mut)}                    /* подводка тише, обещание громче */
+h1 .c{display:flex;align-items:center;min-width:0}
+h1 .c i{
+  flex:1 1 auto;min-width:0;height:1px;margin-left:16px;
+  background:linear-gradient(90deg,rgba(205,255,79,.5),rgba(231,234,240,.11) 58%,rgba(231,234,240,0));
+  transform:translate3d(calc(var(--gx) * -4px),0,0);
+}
+.scale{
+  margin-top:14px;display:flex;align-items:baseline;justify-content:space-between;
+  gap:12px;min-width:0;font-size:13.5px;color:var(--dim);letter-spacing:-.005em;
+}
+.scale b{
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;
+  color:var(--txt);font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.scale .ix{flex:0 0 auto;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.scale .ix em{font-style:normal;color:var(--txt)}
+
+/* ───────── план 1 · ОКНО, УТОПЛЕННОЕ В ПОВЕРХНОСТЬ ───────── */
+.frame{
+  position:relative;z-index:3;height:180px;overflow:hidden;background:#0d111b;
+  contain:paint;
+}
+/* картинка ЗА стеклом: едет ВНУТРЬ проёма от наклона и отстаёт при прокрутке.
+   Кадры нарезаны с запасом по краям — при максимальном ходе (±14 / ±9)
+   проём не оголяется ни с одной стороны. */
+.frame img{
+  position:absolute;top:-28px;left:-20px;width:430px;height:auto;display:block;z-index:1;
+  filter:saturate(.74) contrast(1.07) brightness(.94);
+  /* ход: X ±14, Y ±9 от наклона, +0…16 от прокрутки.
+     Запас по краям посчитан под худшую комбинацию — проём не оголяется. */
+  transform:translate3d(calc(var(--gx) * 14px),calc(var(--gy) * 9px + var(--sy) * 0.08px),0);
+  will-change:transform;
+}
+@keyframes wipe{from{clip-path:inset(0 0 0 100%)}to{clip-path:inset(0 0 0 0)}}
+.frame img.sw{animation:wipe .44s var(--ease)}
+/* верхний увод — гасит светлые шапки клиентских сайтов, не стирая их */
+.frame::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:46px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.52),rgba(10,14,26,0));
+}
+/* низ кадра растворяется точно в цвет страницы */
+.frame::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:92px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.5) 26%,rgba(10,14,26,.9) 52%,rgba(10,14,26,.995) 70%,#0A0E1A 100%);
+}
+/* план 2 · СТЕКЛО. Блик едет отдельно от картинки — между глазом и
+   фотографией появляется прозрачный слой. Это второй сигнал глубины. */
+.spec{position:absolute;inset:0;z-index:3;overflow:hidden;pointer-events:none}
+.spec i{
+  position:absolute;top:-14%;left:50%;width:186px;height:128%;margin-left:-93px;
+  background:linear-gradient(90deg,rgba(231,234,240,0),rgba(231,234,240,.075) 46%,rgba(255,255,255,.028) 58%,rgba(231,234,240,0));
+  transform:translate3d(calc(var(--gx) * 62px),0,0) skewX(-13deg);
+  will-change:transform;
+}
+/* кромки проёма: сверху темно (свет сверху не заходит внутрь),
+   снизу тонкая светлая грань — так выглядит вырез в поверхности */
+.recess{
+  position:absolute;inset:0;z-index:4;pointer-events:none;
+  box-shadow:
+    inset 0 15px 26px -13px rgba(0,0,0,.92),
+    inset 0 -16px 28px -16px rgba(0,0,0,.7),
+    inset 14px 0 22px -18px rgba(0,0,0,.8),
+    inset -14px 0 22px -18px rgba(0,0,0,.8),
+    inset 0 1px 0 rgba(0,0,0,.6),
+    inset 0 -1px 0 rgba(231,234,240,.14);
+}
+/* план 3 · подпись сидит НА стекле и едет ПРОТИВ картинки */
+.cap{
+  position:absolute;left:var(--pad);right:var(--pad);bottom:10px;z-index:5;
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0;
+  font-size:10.5px;letter-spacing:.13em;color:#bcc4d0;
+  transform:translate3d(calc(var(--gx) * -5px),0,0);
+  will-change:transform;
+}
+.cap span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cap .no{flex:0 0 auto;color:var(--dim)}
+.cap .no em{font-style:normal;color:#e2e7ef}
+@keyframes capin{from{opacity:0;transform:translate3d(0,5px,0)}to{opacity:1;transform:none}}
+.cap #cap.sw{animation:capin .38s var(--ease)}
+
+/* ───────── 4 · оглавление работ 2×2 · вырезано в поверхности ───────── */
+.idx{
+  display:grid;grid-template-columns:1fr 1fr;position:relative;z-index:3;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(rgba(0,0,0,.28),rgba(0,0,0,0) 70%);
+}
+.cell{
+  position:relative;display:flex;align-items:center;gap:10px;min-width:0;
+  height:44px;padding:0 12px 0 var(--pad);
+  background:none;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  color:inherit;text-align:left;font-family:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:background .2s linear;
+}
+.cell:nth-child(2n){border-right:0;padding-left:15px}
+.cell:nth-child(n+3){border-bottom:0}
+.cell:active{background:rgba(231,234,240,.05)}
+.cell:focus-visible{outline:1px solid rgba(205,255,79,.55);outline-offset:-2px}
+.cell u{
+  flex:0 0 auto;text-decoration:none;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:10.5px;
+  letter-spacing:.06em;color:var(--dim);font-variant-numeric:tabular-nums;
+  transition:color .2s linear;
+}
+.cell b{
+  flex:1 1 auto;min-width:0;font-weight:500;font-size:13.5px;letter-spacing:-.015em;
+  color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .2s linear;
+}
+/* активная ячейка не «подсвечена», а вдавлена: лаймовая метка на левой кромке */
+.cell[aria-pressed="true"]{background:rgba(231,234,240,.05)}
+.cell[aria-pressed="true"] u{color:var(--lime)}
+.cell[aria-pressed="true"] b{color:var(--txt)}
+.cell[aria-pressed="true"]::before{
+  content:'';position:absolute;left:0;top:11px;bottom:11px;width:2px;background:var(--lime);
+}
+
+/* ───────── план 4 · ПЛИТА ЦЕНЫ ПОДНЯТА НАД ПОВЕРХНОСТЬЮ ───────── */
+.price{
+  position:relative;z-index:6;
+  padding:10px var(--pad) 11px 18px;
+  border-left:2px solid var(--lime);
+  background:
+    repeating-linear-gradient(0deg,rgba(205,255,79,.045) 0 1px,rgba(205,255,79,.014) 1px 3px),
+    linear-gradient(#141B2C,#0C1220);
+  box-shadow:inset 0 1px 0 rgba(231,234,240,.12);
+  /* плита НЕ едет по горизонтали: она лежит от края до края — предмет,
+     упирающийся в обе стенки, не может скользить вбок, а сдвиг срезал бы
+     лаймовую грань за край экрана. Подъём держат светлая верхняя грань,
+     бегущий по ней блик и контактная тень снизу. */
+}
+/* бегущий блик по поднятой верхней грани — грань ловит свет */
+.price .gl{position:absolute;left:0;right:0;top:0;height:1px;overflow:hidden;pointer-events:none}
+.price .gl i{
+  position:absolute;top:0;left:50%;width:150px;height:1px;margin-left:-75px;
+  background:linear-gradient(90deg,rgba(205,255,79,0),rgba(205,255,79,.85),rgba(205,255,79,0));
+  transform:translate3d(calc(var(--gx) * 74px),0,0);
+  will-change:transform;
+}
+/* контактная тень: доказательство, что плита НАД текстом под ней */
+.price .cast{
+  position:absolute;left:0;right:0;top:100%;height:24px;z-index:1;pointer-events:none;
+  background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.18) 46%,rgba(0,0,0,0));
+}
+.price .lbl{font-size:10.5px;letter-spacing:.14em;color:var(--lime)}
+.pr{display:flex;align-items:baseline;gap:14px;margin-top:7px;min-width:0}
+.num{
+  flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;
+  font-size:30px;line-height:1;letter-spacing:-.035em;color:var(--txt);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.num i{font-style:normal;font-size:.56em;color:#b9c1cd;margin-left:6px;letter-spacing:0}
+.pr .what{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.3;color:var(--mut)}
+.pr .what s{
+  display:block;text-decoration:none;font-size:10.5px;letter-spacing:.1em;color:var(--dim);
+  margin-top:3px;font-family:'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase;
+}
+.alt{
+  position:relative;z-index:3;padding:11px var(--pad) 0;
+  font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
+}
+.alt b{color:var(--mut);font-weight:500}
+
+/* ───────── план 5 · КНОПКА · самый верхний предмет ───────── */
+.act{padding:10px var(--pad) 0;position:relative;z-index:8}
+.cta{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  height:54px;border-radius:3px;background:var(--lime);color:#080c16;
+  font-size:16px;font-weight:600;letter-spacing:-.015em;text-decoration:none;
+  overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(0,0,0,.22);
+  transform:translate3d(calc(var(--gx) * -5px),0,0);
+  will-change:transform;
+  transition:box-shadow .12s var(--ease);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.cta:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(0,0,0,.3)}
+.cta:active .lab{transform:translate3d(0,1px,0)}
+.cta:active ~ .cast-cta{opacity:.5}
+.lab{position:relative;z-index:2;display:flex;align-items:center;gap:10px;transition:transform .12s var(--ease)}
+.cta svg{width:15px;height:15px;display:block}
+/* блик по глянцевой грани кнопки — едет от наклона */
+.cta .sheen{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.cta .sheen i{
+  position:absolute;top:-40%;left:50%;width:150px;height:180%;margin-left:-75px;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.26) 42%,rgba(255,255,255,.3) 56%,rgba(255,255,255,0));
+  transform:translate3d(calc(var(--gx) * 92px),0,0) skewX(-17deg);
+  will-change:transform;
+}
+/* контактная тень + отскок лаймового света на поверхность.
+   Это не «свечение вокруг кнопки» — это физика: светлый предмет
+   подсвечивает то, что лежит под ним, и прижат к поверхности тенью. */
+.cast-cta{
+  position:absolute;left:var(--pad);right:var(--pad);top:100%;height:26px;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(56% 100% at 50% 0%,rgba(205,255,79,.15),rgba(205,255,79,0) 72%),
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,0) 62%);
+  transform:translate3d(calc(var(--gx) * -3px),0,0);
+  transition:opacity .12s var(--ease);
+}
+.risk{
+  padding:12px var(--pad) 14px;position:relative;z-index:3;
+  font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
+}
+.risk b{color:var(--mut);font-weight:500}
+
+/* ───────── 7 · то, что выглядывает из-за сгиба ─────────
+   Нижний план темнее: поверхность уходит под поднятую «палубу» первого экрана. */
+.next{position:relative;z-index:3;background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.12))}
+.next .k{padding:15px var(--pad) 11px;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.nrow{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;
+  height:44px;padding:0 var(--pad);border-top:1px solid var(--hair);
+  font-size:13.5px;color:var(--mut);letter-spacing:-.01em;
+}
+.nrow em{
+  flex:0 0 auto;font-style:normal;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+}
+.tail{padding:16px var(--pad) 40px;font-size:10.5px;letter-spacing:.14em;color:#5f6a7a}
+
+/* ───────── фактура: дизеринг связывает планы в одну съёмку ───────── */
+.dither{
+  position:absolute;inset:0;z-index:50;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(231,234,240,.03) 0 1px,transparent 1px 3px);
+}
+
+/* ───────── одиночная проходка света при загрузке ─────────
+   Идёт ПОВЕРХ уже отрисованного контента: ничего не прячет,
+   но проходит через все планы разом и склеивает их в один объём.
+   Живёт 1.2 с, потом элемент удаляется из DOM. */
+.rake{
+  position:absolute;top:-20%;left:0;width:250px;height:140%;z-index:60;pointer-events:none;
+  background:linear-gradient(90deg,rgba(231,234,240,0),rgba(231,234,240,.075) 45%,rgba(255,255,255,.03) 60%,rgba(231,234,240,0));
+  transform:translate3d(-260px,0,0) skewX(-15deg);
+  animation:rake 1.15s cubic-bezier(.3,.05,.2,1) .12s 1 both;
+}
+@keyframes rake{
+  0%{transform:translate3d(-260px,0,0) skewX(-15deg);opacity:0}
+  12%{opacity:1}
+  100%{transform:translate3d(430px,0,0) skewX(-15deg);opacity:0}
+}
+
+/* ───────── маркеры сгиба (только прототип) ───────── */
+.fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,80,80,.45)}
+.fold b{
+  position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.88);
+  font-family:'JetBrains Mono',monospace;font-weight:400;font-size:8px;letter-spacing:.1em;color:rgba(255,90,90,.7);
+}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.4)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.85)}
+.fold.dev{top:844px}
+
+/* ───────── уважение к настройке «меньше движения» ─────────
+   Все планы остаются на месте (переменные = 0 → transform нулевой),
+   контент читается ровно так же. */
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rake{display:none}
+}
+
+/* узкие устройства: 360 и меньше — ничего не должно вылезать */
+@media (max-width:389px){
+  .vp{width:100%}
+  h1{font-size:28px}
+  .num{font-size:28px}
+}
+</style>
+</head>
+<body>
+
+<div class="vp" id="vp">
+
+  <!-- план −1 · свет за поверхностью -->
+  <div class="lux l1" aria-hidden="true"><i></i></div>
+  <div class="lux l2" aria-hidden="true"><i></i></div>
+
+  <!-- план 0 · поверхность -->
+  <div class="grid" aria-hidden="true"></div>
+
+  <!-- 1 · шапка -->
+  <header class="hd pad">
+    <span class="logo">uniqore</span>
+    <span class="mono">Сайты&nbsp;и&nbsp;CRM</span>
+  </header>
+
+  <!-- 2 · титул -->
+  <section class="head pad">
+    <h1>
+      <span class="a">Сайт, который</span>
+      <span>не стыдно</span>
+      <span class="c">показать<i></i></span>
+    </h1>
+    <p class="scale"><span><b>20+</b> сделанных сайтов · <b>30+</b> CRM</span><span class="mono ix"><em id="cur">01</em>&#8202;/&#8202;04</span></p>
+  </section>
+
+  <div class="rule lip"></div>
+
+  <!-- план 1–3 · окно в поверхности -->
+  <figure class="frame" id="frame">
+    <img id="shot" fetchpriority="high" decoding="async"
+         src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+         alt="Первый экран сайта автокомплекса «Немеция», Омск">
+    <div class="spec" aria-hidden="true"><i></i></div>
+    <div class="recess" aria-hidden="true"></div>
+    <figcaption class="cap mono">
+      <span id="cap" aria-live="polite">Автокомплекс, Омск</span>
+      <span class="no">работа <em id="cur2">01</em> из 04</span>
+    </figcaption>
+  </figure>
+
+  <!-- 4 · оглавление работ -->
+  <div class="idx" id="idx">
+    <button class="cell" type="button" aria-pressed="true"  data-i="0"><u>01</u><b>Немеция</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="1"><u>02</u><b>Bien Sûr</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="2"><u>03</u><b>IDTuning</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="3"><u>04</u><b>MILLA</b></button>
+  </div>
+
+  <!-- план 4 · плита цены -->
+  <section class="price">
+    <div class="gl" aria-hidden="true"><i></i></div>
+    <p class="mono lbl">Чаще всего берут</p>
+    <div class="pr">
+      <span class="num">32&thinsp;800<i>₽</i></span>
+      <span class="what">Многостраничный сайт, свой дизайн<s>срок 5 дней</s></span>
+    </div>
+    <div class="cast" aria-hidden="true"></div>
+  </section>
+  <p class="alt">Одна страница — <b>11 700 ₽</b> · сайт с CRM — <b>39 000 ₽</b></p>
+
+  <!-- план 5 · единственное действие -->
+  <div class="act">
+    <a class="cta" href="#zayavka">
+      <span class="sheen" aria-hidden="true"><i></i></span>
+      <span class="lab">Хочу такой сайт
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+    <div class="cast-cta" aria-hidden="true"></div>
+  </div>
+  <p class="risk"><b>Гарантия год</b> · оплата после макета · без абонплаты</p>
+
+  <!-- 7 · то, что выглядывает из-за сгиба -->
+  <div class="rule"></div>
+  <section class="next">
+    <p class="k mono">Дальше · что входит в 32 800 ₽</p>
+    <div class="nrow"><span>Дизайн-макет всех страниц</span><em>входит</em></div>
+    <div class="nrow"><span>Тексты и структура</span><em>пишем мы</em></div>
+    <div class="nrow"><span>Исходники после сдачи</span><em>отдаём</em></div>
+    <p class="tail mono">02 · как мы работаем</p>
+  </section>
+
+  <div class="dither" aria-hidden="true"></div>
+  <div class="rake" id="rake" aria-hidden="true"></div>
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var vp    = document.getElementById('vp'),
+    idx   = document.getElementById('idx'),
+    shot  = document.getElementById('shot'),
+    cap   = document.getElementById('cap'),
+    cur   = document.getElementById('cur'),
+    cur2  = document.getElementById('cur2'),
+    frame = document.getElementById('frame'),
+    cells = idx.querySelectorAll('.cell'),
+    calm  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ───────── кадры ─────────
+   Кроп подобран под каждый скриншот руками и расширен на запас хода:
+   у Bien Sûr в исходник впечены белые поля ~12% с каждой стороны — их
+   срезаем, остальные три сняты в край. Ширина/сдвиг подобраны так, чтобы
+   при максимальном параллаксе (±14 по X, ±9 по Y) проём не оголился. */
+var D = [
+  {s:'/keysy/cases/case-nemecia.webp', w:430, x:-20, m:'Автокомплекс, Омск',       a:'Первый экран сайта автокомплекса «Немеция», Омск'},
+  {s:'/keysy/cases/case-biensur.webp', w:566, x:-88, m:'Ресторан, Санкт-Петербург',a:'Первый экран сайта ресторана Bien Sûr, Санкт-Петербург'},
+  {s:'/keysy/cases/case-idtuning.webp',w:430, x:-20, m:'Тюнинг-ателье',            a:'Первый экран сайта тюнинг-ателье IDTuning'},
+  {s:'/keysy/cases/case-milla.webp',   w:430, x:-20, m:'Интерьеры',                a:'Первый экран сайта студии интерьеров MILLA'}
+];
+var now = 0;
+
+function paint(i){
+  var d = D[i], n = '0' + (i+1);
+  shot.src = d.s;
+  shot.alt = d.a;
+  shot.style.width = d.w + 'px';
+  shot.style.left  = d.x + 'px';
+  shot.classList.remove('sw'); void shot.offsetWidth; shot.classList.add('sw');
+  cap.textContent = d.m;
+  cap.classList.remove('sw'); void cap.offsetWidth; cap.classList.add('sw');
+  cur.textContent = n; cur2.textContent = n;
+  for (var k=0;k<cells.length;k++) cells[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+  now = i;
+}
+function show(i){
+  if (i===now || !D[i]) return;
+  /* декодируем ДО подмены: иначе шторка проявляет старый кадр */
+  var pre = new Image(); pre.src = D[i].s;
+  var go = function(){ paint(i); };
+  if (pre.decode) pre.decode().then(go).catch(go);
+  else if (pre.complete) go();
+  else { pre.onload = go; pre.onerror = go; }
+}
+idx.addEventListener('click', function(e){
+  var c = e.target.closest && e.target.closest('.cell');
+  if (c) show(+c.getAttribute('data-i'));
+});
+
+/* свайп по кадру. Вертикальный guard обязателен: без него обычная
+   прокрутка большим пальцем перелистывает работы. */
+var sx=0, sy0=0;
+frame.addEventListener('touchstart', function(e){
+  sx=e.touches[0].clientX; sy0=e.touches[0].clientY;
+}, {passive:true});
+frame.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - sx,
+      dy = e.changedTouches[0].clientY - sy0;
+  if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+  show((now + (dx<0 ? 1 : 3)) % 4);
+}, {passive:true});
+
+/* ═══════════ ПАРАЛЛАКС ═══════════
+   Одна петля, три числа, 11 потребителей. Петля засыпает, когда
+   движение затухло, и просыпается на любом вводе — в покое 0% CPU. */
+if (!calm) {
+
+  var tgx=0, tgy=0, tsy=0,      /* цель  */
+      cgx=0, cgy=0, csy=0,      /* текущее */
+      alive=false, st=vp.style;
+
+  function clamp(v){ return v<-1 ? -1 : v>1 ? 1 : v; }
+
+  function frameLoop(){
+    cgx += (tgx-cgx)*0.12;
+    cgy += (tgy-cgy)*0.12;
+    csy += (tsy-csy)*0.20;
+    st.setProperty('--gx', cgx.toFixed(4));
+    st.setProperty('--gy', cgy.toFixed(4));
+    st.setProperty('--sy', csy.toFixed(2));
+    if (Math.abs(tgx-cgx)+Math.abs(tgy-cgy) > 0.002 || Math.abs(tsy-csy) > 0.3) {
+      requestAnimationFrame(frameLoop);
+    } else {
+      cgx=tgx; cgy=tgy; csy=tsy;
+      st.setProperty('--gx', cgx.toFixed(4));
+      st.setProperty('--gy', cgy.toFixed(4));
+      st.setProperty('--sy', csy.toFixed(2));
+      alive=false;
+    }
+  }
+  function kick(){ if(!alive){ alive=true; requestAnimationFrame(frameLoop); } }
+
+  /* ── прокрутка: дальние планы отстают ──
+     Потолок 200 px: к этому моменту кадр уже ушёл за верх экрана,
+     а ход картинки внутри проёма остаётся в пределах запаса. ── */
+  var maxSy = 200;
+  addEventListener('scroll', function(){
+    var v = window.pageYOffset || document.documentElement.scrollTop || 0;
+    tsy = v > maxSy ? maxSy : v;
+    kick();
+  }, {passive:true});
+
+  /* ── фолбэк №1: свет идёт за пальцем / курсором ── */
+  var gyroOn = false;
+  function fromPoint(x, y){
+    if (gyroOn) return;
+    var w = innerWidth || 390, h = innerHeight || 800;
+    tgx = clamp((x/w)*2 - 1);
+    tgy = clamp((y/h)*2 - 1);
+    kick();
+  }
+  if (window.PointerEvent) {
+    addEventListener('pointermove', function(e){ fromPoint(e.clientX, e.clientY); }, {passive:true});
+    addEventListener('pointerdown', function(e){ fromPoint(e.clientX, e.clientY); }, {passive:true});
+  } else {
+    addEventListener('mousemove', function(e){ fromPoint(e.clientX, e.clientY); }, {passive:true});
+    addEventListener('touchmove', function(e){ fromPoint(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
+  }
+
+  /* ── основной источник: реальный наклон устройства ──
+     Ноль калибруется по первому замеру (человек держит телефон как держит,
+     а не «ровно»), затем очень медленно возвращается к текущей позе —
+     наклон не залипает, но и не дрожит. */
+  var base = null, bound = false;
+  function onOri(e){
+    var g = e.gamma, b = e.beta;
+    if (g == null && b == null) return;
+    g = g || 0; b = b || 0;
+    gyroOn = true;
+    if (!base) { base = {g:g, b:b}; }
+    else { base.g += (g-base.g)*0.0025; base.b += (b-base.b)*0.0025; }
+    tgx = clamp((g - base.g) / 15);
+    tgy = clamp((b - base.b) / 15);
+    kick();
+  }
+  function bindOri(){
+    if (bound) return;
+    bound = true;
+    addEventListener('deviceorientation', onOri, {passive:true});
+  }
+  function askOri(){
+    var DE = window.DeviceOrientationEvent;
+    if (!DE) return;
+    if (typeof DE.requestPermission === 'function') {
+      /* iOS 13+: только из жеста. Первый вызов без жеста отвалится — ловим. */
+      try {
+        DE.requestPermission().then(function(s){ if (s === 'granted') bindOri(); })
+                              .catch(function(){});
+      } catch(err){}
+    } else {
+      bindOri();                       /* Android / десктоп с датчиком */
+    }
+  }
+  askOri();
+  addEventListener('touchend', function once(){
+    removeEventListener('touchend', once);
+    askOri();
+  }, {passive:true});
+}
+
+/* проходка света отработала — убираем слой, чтобы не держать композит */
+var rake = document.getElementById('rake');
+if (rake) {
+  if (calm) { rake.parentNode.removeChild(rake); }
+  else { setTimeout(function(){ if (rake.parentNode) rake.parentNode.removeChild(rake); }, 1500); }
+}
+
+/* остальные кадры тянем только после загрузки — первый экран весит один снимок */
+addEventListener('load', function(){
+  setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 600);
+});
+
+})();
+</script>
+</body>
+</html>

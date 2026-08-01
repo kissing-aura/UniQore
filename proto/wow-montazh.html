@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран · МОНТАЖ</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+════════════════════════════════════════════════════════════════════════════
+  ПОДХОД «МОНТАЖ» — почему это делает экран сильным
+════════════════════════════════════════════════════════════════════════════
+
+  Проблема прошлой версии: скриншот в рамке — это ДОКУМЕНТ. Его считывают
+  за 0.3 с и идут дальше. Он не удерживает.
+
+  Решение: кадр перестаёт быть документом и становится КИНО. Три механики,
+  ни одна из которых не стоит килобайта:
+
+  1. КАДР НИКОГДА НЕ СТОИТ. Медленный наезд (Ken Burns) на transform:
+     scale+translateX. Мозг читает непрерывное движение как «живое видео»,
+     а не «картинку». Это то, что отличает трейлер от слайдшоу.
+     Сдвиг ТОЛЬКО по горизонтали — там запас 80px, край никогда не вылезет.
+
+  2. СМЕНА — СОБЫТИЕ, А НЕ ПЕРЕЛИСТЫВАНИЕ. Четыре разных склейки по кругу,
+     ни одна не повторяется подряд:
+       · ШТОРКА — новый кадр падает сверху, по линии реза едет лаймовый волосок
+       · СТЫК   — новый кадр занимает левую половину и ДЕРЖИТСЯ ~0.35 с.
+                  Две работы в одном кадре, разделённые лаймовым швом.
+                  Это единственный момент, где человек реально залипает:
+                  «стоп, их две». Потом шов уезжает вправо и открывает целиком
+       · НАПЛЫВ — новый въезжает справа, старый уходит влево на 16% и гаснет.
+                  Параллакс двух слоёв = глубина
+       · НАЕЗД  — новый входит снизу уже на scale 1.16 и садится в 1.0.
+                  Резкий, «ударный» — им заканчивается круг
+     Разные склейки = ощущение смонтированного материала, а не карусели.
+
+  3. РИТМ НЕРОВНЫЙ. 2.6 → 2.2 → 3.4 → 2.4 с. Ровный интервал читается как
+     механика (карусель), неровный — как режиссура. Длинная выдержка стоит
+     на «стыке», потому что там есть что рассматривать.
+
+  Подпись тоже монтируется: имя и профиль выезжают из-под маски со сдвигом
+  80 мс, счётчик 01/04 перещёлкивается. Полоска под именем работы —
+  ЗАПОЛНЯЕТСЯ за время выдержки кадра: это таймлайн, а не индикатор.
+  Человек видит «сейчас будет смена» ещё до смены.
+
+  ЧТО НЕ ДЕЛАЕТ: не двигается ничего ниже кадра. Цена, кнопка и гарантия
+  стоят мёртво. Движение работает только там, где оно = доказательство.
+
+  ЦЕНА ВОПРОСА: 0 внешних запросов, 0 библиотек, 1 <img> в первом экране
+  (второй слой JS создаёт после window.load). Анимируются только
+  clip-path / transform / opacity — ни одна не трогает layout.
+  Всё встаёт на паузу, когда кадр вне вьюпорта или вкладка скрыта.
+
+════════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --txt:#E7EAF0;          /* 15:1 */
+  --mut:#97A1B0;          /* 7.4:1 */
+  --dim:#8792A3;          /* 6.1:1 */
+  --lime:#CDFF4F;
+  --line:rgba(231,234,240,.09);
+  --hair:rgba(231,234,240,.055);
+  --pad:20px;
+  --eOut:cubic-bezier(.2,.85,.2,1);
+  --eCut:cubic-bezier(.76,0,.14,1);   /* филмовая склейка: резкий старт, мягкая посадка */
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--txt);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.vp{
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:1010px;
+}
+.mono{
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;text-transform:uppercase;
+  font-variant-numeric:tabular-nums;
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+.rule{height:1px;background:var(--line);position:relative;z-index:1}
+
+/* вертикальные направляющие — та же сетка, по которой всё сверстано */
+.grid{
+  position:absolute;top:0;bottom:0;left:var(--pad);right:var(--pad);z-index:0;
+  border-left:1px solid rgba(231,234,240,.07);
+  border-right:1px solid rgba(231,234,240,.07);
+  pointer-events:none;
+}
+
+/* ───── 1. шапка ───── */
+.hd{
+  height:42px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);position:relative;z-index:2;
+}
+.logo{font-family:'Unbounded','Geist',sans-serif;font-weight:500;font-size:16px;letter-spacing:-.04em}
+.hd .mono{font-size:10.5px;letter-spacing:.15em;color:var(--dim)}
+
+/* ───── 2. титул ───── */
+.head{padding-top:14px;padding-bottom:8px;position:relative;z-index:2}
+h1{
+  font-family:'Unbounded','Geist',sans-serif;font-weight:300;
+  font-size:28px;line-height:1.05;letter-spacing:-.03em;color:var(--txt);
+}
+/* строки — маски. Текст всегда opacity 1: даже кадр посреди анимации читаем */
+h1 .l{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
+h1 .l>span{display:block;animation:rise .46s var(--eOut) both}
+h1 .l:nth-child(2)>span{animation-delay:.06s}
+h1 .l:nth-child(3)>span{animation-delay:.12s}
+h1 .a>span{color:var(--mut)}          /* подводка тише, обещание громче */
+h1 .c{display:flex;align-items:center;min-width:0}
+h1 .c>span{flex:0 0 auto}
+h1 .c i{
+  flex:1 1 auto;min-width:0;height:1px;margin-left:16px;
+  background:rgba(231,234,240,.18);
+  transform-origin:0 50%;animation:lineIn .8s .22s var(--eOut) both;
+}
+@keyframes rise{from{transform:translateY(104%)}to{transform:translateY(0)}}
+@keyframes lineIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.scale{
+  margin-top:12px;display:flex;align-items:baseline;gap:10px;min-width:0;
+  font-size:13.5px;color:var(--dim);letter-spacing:-.005em;
+}
+.scale b{
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;
+  color:var(--txt);font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+
+/* ───── 3. КАДР ───── */
+.stage{
+  position:relative;z-index:1;height:196px;overflow:hidden;background:#0d111c;
+}
+.lay{position:absolute;inset:0;overflow:hidden;z-index:1;will-change:transform,clip-path}
+.lay.on{z-index:2}
+.lay img{
+  position:absolute;display:block;
+  /* пять чужих палитр сводим в серию кадрированием и скримом, а не перекраской */
+  filter:saturate(.72) contrast(1.08) brightness(.93);
+  transform-origin:50% 30%;
+  transform:scale(1.05);
+  will-change:transform;
+}
+
+/* медленный наезд — только scale и сдвиг по X (по X запас ≥80px, край не вылезет) */
+@keyframes kbA{from{transform:scale(1.05) translate3d(.9%,0,0)} to{transform:scale(1.12) translate3d(-.9%,0,0)}}
+@keyframes kbB{from{transform:scale(1.12) translate3d(-.8%,0,0)}to{transform:scale(1.05) translate3d(.8%,0,0)}}
+@keyframes kbC{from{transform:scale(1.06) translate3d(-1.1%,0,0)}to{transform:scale(1.13) translate3d(.6%,0,0)}}
+@keyframes kbD{from{transform:scale(1.13) translate3d(.4%,0,0)} to{transform:scale(1.06) translate3d(-1%,0,0)}}
+
+/* ── СКЛЕЙКИ ── */
+/* шторка: новый падает сверху */
+@keyframes cutWipe{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+/* стык: новый занимает левую половину и ДЕРЖИТСЯ. Две работы в одном кадре */
+@keyframes cutSplit{
+  0%  {clip-path:inset(0 100% 0 0)}
+  24% {clip-path:inset(0 50% 0 0)}
+  62% {clip-path:inset(0 50% 0 0)}
+  100%{clip-path:inset(0 0 0 0)}
+}
+/* наплыв: новый справа */
+@keyframes cutPush{from{transform:translate3d(390px,0,0)}to{transform:translate3d(0,0,0)}}
+@keyframes outPush{from{transform:translate3d(0,0,0);opacity:1}to{transform:translate3d(-16%,0,0);opacity:.35}}
+/* наезд: новый входит снизу уже крупным и садится */
+@keyframes cutPunch{
+  from{clip-path:inset(100% 0 0 0);transform:scale(1.16)}
+  to  {clip-path:inset(0 0 0 0);transform:scale(1)}
+}
+.lay.c-wipe {animation:cutWipe  .46s var(--eCut) both}
+.lay.c-split{animation:cutSplit .92s var(--eCut) both}
+.lay.c-push {animation:cutPush  .56s var(--eCut) both}
+.lay.c-punch{animation:cutPunch .52s var(--eCut) both}
+.lay.o-push {animation:outPush  .56s var(--eCut) both}
+
+/* линия реза — едет ровно по кромке склейки. 1.5px, transform-only */
+.seam{position:absolute;z-index:5;background:var(--lime);opacity:0;pointer-events:none}
+.seam.h{left:0;right:0;top:0;height:1.5px}
+.seam.v{top:0;bottom:0;left:0;width:1.5px}
+/* 196px = высота .stage, 195px = половина ширины .vp — держать синхронно с версткой */
+@keyframes sWipe {0%{opacity:0;transform:translateY(0)}    12%{opacity:.95}  88%{opacity:.95} 100%{opacity:0;transform:translateY(196px)}}
+@keyframes sPunch{0%{opacity:0;transform:translateY(196px)} 12%{opacity:.95} 88%{opacity:.95} 100%{opacity:0;transform:translateY(0)}}
+@keyframes sSplit{0%{opacity:0;transform:translateX(195px)} 20%{opacity:1} 62%{opacity:1}      100%{opacity:0;transform:translateX(390px)}}
+@keyframes sPush {0%{opacity:0;transform:translateX(390px)} 14%{opacity:.9} 82%{opacity:.9}    100%{opacity:0;transform:translateX(0)}}
+.seam.h.s-wipe {animation:sWipe  .46s var(--eCut) both}
+.seam.h.s-punch{animation:sPunch .52s var(--eCut) both}
+.seam.v.s-split{animation:sSplit .92s var(--eCut) both}
+.seam.v.s-push {animation:sPush  .56s var(--eCut) both}
+
+/* верхний увод — гасит светлые шапки клиентских сайтов, не стирая их */
+.stage .top{
+  position:absolute;left:0;right:0;top:0;height:52px;z-index:3;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.62),rgba(10,14,26,0));
+}
+/* низ кадра растворяется точно в цвет страницы — четыре работы читаются серией */
+.stage .bot{
+  position:absolute;left:0;right:0;bottom:0;height:104px;z-index:3;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.55) 38%,rgba(10,14,26,.95) 76%,#0A0E1A 100%);
+}
+/* уголки визира — асимметрично, только два */
+.tick{position:absolute;z-index:4;width:13px;height:13px;pointer-events:none;opacity:.42}
+.tick.tl{left:10px;top:10px;border-left:1px solid var(--lime);border-top:1px solid var(--lime)}
+.tick.br{right:10px;bottom:10px;border-right:1px solid var(--lime);border-bottom:1px solid var(--lime)}
+
+.hud{
+  position:absolute;z-index:6;right:var(--pad);top:12px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;font-size:10.5px;
+  letter-spacing:.1em;color:var(--dim);font-variant-numeric:tabular-nums;
+  display:flex;align-items:baseline;overflow:hidden;height:14px;
+}
+.hud em{font-style:normal;color:var(--lime);display:inline-block}
+.hud em.flip{animation:flip .4s var(--eOut)}
+@keyframes flip{from{transform:translateY(-110%)}to{transform:translateY(0)}}
+
+.cap{
+  position:absolute;z-index:6;left:var(--pad);right:var(--pad);bottom:11px;min-width:0;
+}
+.cap .ln{display:block;overflow:hidden;padding-bottom:.14em;margin-bottom:-.14em}
+.cap .ln>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cap .n{font-family:'Unbounded','Geist',sans-serif;font-weight:400;font-size:15px;letter-spacing:-.025em;color:#F2F5FA}
+.cap .m{margin-top:3px;font-size:9.5px;letter-spacing:.14em;color:#aab3c1}
+.cap .ln.go>span{animation:rise .42s var(--eOut) both}
+.cap .m.go>span{animation-delay:.08s}
+
+/* ───── 4. таймлайн работ ───── */
+.strip{
+  display:flex;align-items:stretch;justify-content:space-between;gap:6px;
+  height:36px;padding:0 var(--pad);position:relative;z-index:2;min-width:0;
+  border-bottom:1px solid var(--line);overflow:hidden;
+}
+.tab{
+  position:relative;flex:0 1 auto;min-width:0;
+  background:none;border:0;padding:0 1px;color:var(--dim);
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;
+  font-size:10.5px;letter-spacing:.055em;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:color .25s linear;
+}
+.tab::after{                              /* мёртвая дорожка таймлайна */
+  content:'';position:absolute;left:0;right:0;bottom:9px;height:1px;
+  background:rgba(231,234,240,.13);
+}
+.tab i{                                   /* заполняется за время выдержки кадра */
+  position:absolute;left:0;right:0;bottom:8.5px;height:1.5px;background:var(--lime);
+  transform:scaleX(0);transform-origin:0 50%;
+}
+.tab[aria-pressed="true"]{color:var(--txt)}
+.tab[aria-pressed="true"] i{transform:scaleX(1)}   /* безопасный дефолт до старта JS */
+.tab:focus-visible{outline:1px solid rgba(205,255,79,.55);outline-offset:2px}
+
+/* ───── 5. цена ───── */
+.price{
+  position:relative;z-index:2;
+  padding:9px var(--pad) 10px 18px;
+  border-left:2px solid var(--lime);
+  background:repeating-linear-gradient(0deg,rgba(205,255,79,.05) 0 1px,rgba(205,255,79,.018) 1px 3px);
+}
+.price .lbl{font-size:10.5px;letter-spacing:.14em;color:var(--lime)}
+.pr{display:flex;align-items:baseline;gap:14px;margin-top:7px;min-width:0}
+.num{
+  flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;
+  font-size:30px;line-height:1;letter-spacing:-.035em;color:var(--txt);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.num i{font-style:normal;font-size:.56em;color:#b9c1cd;margin-left:6px;letter-spacing:0}
+.pr .what{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.3;color:var(--mut)}
+.pr .what s{
+  display:block;text-decoration:none;font-size:10px;letter-spacing:.1em;color:var(--dim);
+  margin-top:3px;font-family:'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase;
+}
+.alt{
+  position:relative;z-index:2;padding:7px var(--pad) 0;
+  font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
+}
+.alt b{color:var(--mut);font-weight:500}
+
+/* ───── 6. единственное действие ───── */
+.act{padding:9px var(--pad) 0;position:relative;z-index:60}
+.cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  height:54px;border-radius:2px;background:var(--lime);color:#080c16;
+  font-size:16px;font-weight:600;letter-spacing:-.015em;text-decoration:none;
+  transition:transform .12s var(--eOut);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.cta:active{transform:scale(.982)}
+.cta svg{width:15px;height:15px;display:block}
+.risk{
+  padding:9px var(--pad) 10px;position:relative;z-index:2;
+  font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
+}
+.risk b{color:var(--mut);font-weight:500}
+
+/* ───── 7. то, что выглядывает из-за сгиба ───── */
+.next{position:relative;z-index:2}
+.next .k{padding:9px var(--pad) 5px;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.nrow{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;
+  height:44px;padding:0 var(--pad);border-top:1px solid var(--hair);
+  font-size:13.5px;color:var(--mut);letter-spacing:-.01em;
+}
+.nrow span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nrow em{
+  flex:0 0 auto;font-style:normal;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+}
+
+/* фактура: дизеринг вместо шума и стекла */
+.dither{
+  position:absolute;inset:0;z-index:55;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(231,234,240,.028) 0 1px,transparent 1px 3px);
+}
+
+/* ───── маркеры сгиба (только прототип) ───── */
+.fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,80,80,.45)}
+.fold b{position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.88);font-family:'JetBrains Mono',monospace;font-weight:400;font-size:8px;letter-spacing:.1em;color:rgba(255,90,90,.7)}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.4)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.85)}
+.fold.dev{top:844px}
+
+/* узкие телефоны (360) — только шрифт таймлайна, ничего не ломается */
+@media (max-width:374px){
+  .tab{font-size:9.5px;letter-spacing:.03em}
+  .strip{gap:4px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .lay img{transform:scale(1.05)!important}
+}
+</style>
+</head>
+<body>
+
+<div class="vp">
+  <div class="grid" aria-hidden="true"></div>
+
+  <!-- 1 · шапка -->
+  <header class="hd pad">
+    <span class="logo">uniqore</span>
+    <span class="mono">Сайты&nbsp;и&nbsp;CRM</span>
+  </header>
+
+  <!-- 2 · понимание -->
+  <section class="head pad">
+    <h1>
+      <span class="l a"><span>Сайт, который</span></span>
+      <span class="l"><span>не стыдно</span></span>
+      <span class="l c"><span>показать</span><i></i></span>
+    </h1>
+    <p class="scale"><span><b>20+</b> сделанных сайтов · <b>30+</b> CRM</span></p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 3 · доказательство: настоящие сайты клиентов, смонтированные в ленту -->
+  <figure class="stage" id="stage">
+    <div class="lay on" id="layA">
+      <img id="shotA" fetchpriority="high" decoding="async"
+           src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+           style="width:470px;height:auto;left:-40px;top:-24px"
+           alt="Первый экран сайта автокомплекса «Немеция», Омск">
+    </div>
+    <div class="lay" id="layB" aria-hidden="true"></div>
+
+    <div class="top" aria-hidden="true"></div>
+    <div class="bot" aria-hidden="true"></div>
+    <div class="seam h" id="seamH" aria-hidden="true"></div>
+    <div class="seam v" id="seamV" aria-hidden="true"></div>
+    <div class="tick tl" aria-hidden="true"></div>
+    <div class="tick br" aria-hidden="true"></div>
+
+    <div class="hud" aria-hidden="true"><em id="cur">01</em>&#8202;/&#8202;04</div>
+
+    <figcaption class="cap">
+      <span class="ln n" id="lnN"><span id="capN">Немеция</span></span>
+      <span class="ln m mono" id="lnM"><span id="capM">Автокомплекс · Омск</span></span>
+    </figcaption>
+  </figure>
+
+  <!-- 4 · таймлайн работ: он же навигация, он же индикатор выдержки кадра -->
+  <div class="strip" id="strip">
+    <button class="tab" type="button" aria-pressed="true"  data-i="0">Немеция<i></i></button>
+    <button class="tab" type="button" aria-pressed="false" data-i="1">Bien Sûr<i></i></button>
+    <button class="tab" type="button" aria-pressed="false" data-i="2">IDTuning<i></i></button>
+    <button class="tab" type="button" aria-pressed="false" data-i="3">MILLA<i></i></button>
+  </div>
+
+  <!-- 5 · цена -->
+  <section class="price">
+    <p class="mono lbl">Чаще всего берут</p>
+    <div class="pr">
+      <span class="num">32&thinsp;800<i>₽</i></span>
+      <span class="what">Многостраничный сайт, свой дизайн<s>срок 5 дней</s></span>
+    </div>
+  </section>
+  <p class="alt">Одна страница — <b>11 700 ₽</b> · сайт с CRM — <b>39 000 ₽</b></p>
+
+  <!-- 6 · одно действие -->
+  <div class="act">
+    <a class="cta" href="#zayavka">Хочу такой сайт
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+  <p class="risk"><b>Гарантия год</b> · оплата после макета · без абонплаты</p>
+
+  <!-- 7 · выглядывает из-за сгиба -->
+  <div class="rule"></div>
+  <section class="next">
+    <p class="k mono">Дальше · что входит в 32 800 ₽</p>
+    <div class="nrow"><span>Дизайн-макет всех страниц</span><em>входит</em></div>
+    <div class="nrow"><span>Тексты и структура</span><em>пишем мы</em></div>
+    <div class="nrow"><span>Исходники после сдачи</span><em>отдаём</em></div>
+  </section>
+
+  <div class="dither" aria-hidden="true"></div>
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* кроп подобран под каждый снимок руками:
+   у Bien Sûr в исходник впечены белые поля по 12,5% — их срезаем;
+   у Немеции сверху белая шапка сайта — оставляем 12px как признак «это сайт»,
+   дальше сразу герой. Все четыре центрированы по стейджу (центр = 195px),
+   поэтому наезд по X безопасен для любого кадра. */
+var D = [
+  {s:'/keysy/cases/case-nemecia.webp',  w:470, x:-40, y:-24, hold:2600,
+   n:'Немеция',  m:'Автокомплекс · Омск',
+   a:'Первый экран сайта автокомплекса «Немеция», Омск'},
+  {s:'/keysy/cases/case-biensur.webp',  w:520, x:-65, y:0,   hold:2200,
+   n:'Bien Sûr', m:'Ресторан · Санкт-Петербург',
+   a:'Первый экран сайта ресторана Bien Sûr, Санкт-Петербург'},
+  {s:'/keysy/cases/case-idtuning.webp', w:520, x:-65, y:0,   hold:3400,
+   n:'IDTuning', m:'Тюнинг-ателье · Москва',
+   a:'Первый экран сайта тюнинг-ателье IDTuning, Москва'},
+  {s:'/keysy/cases/case-milla.webp',    w:520, x:-65, y:-18, hold:2400,
+   n:'MILLA',    m:'Дизайн интерьера · Самара',
+   a:'Первый экран сайта студии дизайна интерьера MILLA, Самара'}
+];
+
+/* склейки по кругу + их длительности (мс) */
+var CUT = ['wipe','push','split','punch'];
+var DUR = {wipe:460, push:560, split:920, punch:520};
+var KB  = ['kbA','kbB','kbC','kbD'];
+
+var stage = document.getElementById('stage'),
+    layA  = document.getElementById('layA'),
+    layB  = document.getElementById('layB'),
+    seamH = document.getElementById('seamH'),
+    seamV = document.getElementById('seamV'),
+    strip = document.getElementById('strip'),
+    tabs  = strip.querySelectorAll('.tab'),
+    capN  = document.getElementById('capN'),
+    capM  = document.getElementById('capM'),
+    lnN   = document.getElementById('lnN'),
+    lnM   = document.getElementById('lnM'),
+    cur   = document.getElementById('cur');
+
+var front = layA, back = layB,
+    now = 0, tick = 0, timer = 0,
+    ready = false, running = false, busy = false, visible = true, onScreen = true;
+
+var CALM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function place(img, d){
+  img.style.width = d.w + 'px';
+  img.style.height = 'auto';
+  img.style.left = d.x + 'px';
+  img.style.top  = d.y + 'px';
+  img.alt = d.a;
+}
+
+/* ── подпись монтируется вместе с кадром ── */
+function meta(i){
+  var d = D[i], n = '0' + (i+1);
+  capN.textContent = d.n;
+  capM.textContent = d.m;
+  cur.textContent  = n;
+  if(!CALM){
+    lnN.classList.remove('go'); lnM.classList.remove('go');
+    cur.classList.remove('flip');
+    void lnN.offsetWidth;
+    lnN.classList.add('go'); lnM.classList.add('go'); cur.classList.add('flip');
+  }
+  for(var k=0;k<tabs.length;k++){
+    tabs[k].setAttribute('aria-pressed', k===i ? 'true' : 'false');
+  }
+}
+
+/* полоска под именем работы заполняется ровно за выдержку кадра */
+function timeline(i, ms){
+  if(CALM) return;
+  for(var k=0;k<tabs.length;k++){
+    var b = tabs[k].querySelector('i');
+    if(k===i){
+      b.style.transition = 'none';
+      b.style.transformOrigin = '0 50%';
+      b.style.transform = 'scaleX(0)';
+      void b.offsetWidth;
+      b.style.transition = 'transform ' + ms + 'ms linear';
+      b.style.transform = 'scaleX(1)';
+    }else{
+      b.style.transformOrigin = '100% 50%';   /* уходит в сторону движения */
+      b.style.transition = 'transform .28s ease-out';
+      b.style.transform = 'scaleX(0)';
+    }
+  }
+}
+
+function ensureImg(lay){
+  var img = lay.firstElementChild;
+  if(!img){
+    img = new Image();
+    img.decoding = 'async';
+    img.width = 2000; img.height = 1134;
+    lay.appendChild(img);
+  }
+  return img;
+}
+
+/* подготовка: кадр обязан быть ДЕКОДИРОВАН до склейки,
+   иначе шторка проявляет пустой слой */
+function advance(i, cutName){
+  if(busy || i === now) return;
+  busy = true;
+  var img = ensureImg(back), d = D[i];
+  if(img.getAttribute('data-s') !== d.s){
+    img.setAttribute('data-s', d.s);
+    img.src = d.s;
+  }
+  place(img, d);
+  var go = function(){ run(i, cutName); };
+  if(img.decode) img.decode().then(go).catch(go);
+  else if(img.complete) go();
+  else { img.onload = go; img.onerror = go; }
+}
+
+/* ── сама склейка ── */
+function run(i, cutName){
+  var d = D[i], img = ensureImg(back);
+  busy = true;
+
+  img.style.animation = 'none';
+  void img.offsetWidth;
+  img.style.animation = KB[i] + ' ' + ((d.hold + DUR[cutName] + 400)/1000) + 's linear both';
+
+  back.className  = 'lay on c-' + cutName;
+  front.className = 'lay' + (cutName === 'push' ? ' o-push' : '');
+
+  var s = (cutName === 'split' || cutName === 'push') ? seamV : seamH;
+  var other = (s === seamV) ? seamH : seamV;
+  other.className = 'seam ' + (other === seamV ? 'v' : 'h');
+  s.className = 'seam ' + (s === seamV ? 'v' : 'h');
+  void s.offsetWidth;
+  s.className += ' s-' + cutName;
+
+  setTimeout(function(){ meta(i); }, Math.round(DUR[cutName] * 0.42));
+
+  setTimeout(function(){
+    front.className = 'lay';
+    back.className  = 'lay on';
+    var t = front; front = back; back = t;
+    now = i; busy = false;
+    timeline(i, D[i].hold);
+    if(running) queue();
+  }, DUR[cutName] + 30);
+}
+
+function queue(){
+  clearTimeout(timer);
+  timer = setTimeout(function(){
+    if(!running || busy) return;
+    advance((now + 1) % D.length, CUT[(tick++) % CUT.length]);
+  }, D[now].hold);
+}
+
+function start(){
+  if(CALM || !ready || running || !visible || !onScreen) return;
+  running = true;
+  /* первый кадр тоже оживает — иначе он один стоит, а остальные дышат */
+  var f = front.firstElementChild;
+  if(f && !f.style.animation){
+    f.style.animation = KB[now] + ' ' + ((D[now].hold + 900)/1000) + 's linear both';
+  }
+  timeline(now, D[now].hold);
+  queue();
+}
+function stop(){
+  running = false;
+  clearTimeout(timer);
+}
+
+/* ── ручное переключение: тап по имени работы ── */
+strip.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('.tab');
+  if(!t) return;
+  var i = +t.getAttribute('data-i');
+  if(i === now || busy) return;
+  clearTimeout(timer);
+  if(CALM || !ready){
+    /* без анимации и без второго слоя: просто подменяем кадр */
+    var img = ensureImg(front);
+    img.src = D[i].s; place(img, D[i]);
+    now = i; meta(i);
+    return;
+  }
+  advance(i, CUT[(tick++) % CUT.length]);
+});
+
+/* ── пауза, когда не смотрят ── */
+document.addEventListener('visibilitychange', function(){
+  visible = !document.hidden;
+  if(visible) start(); else stop();
+});
+if(window.IntersectionObserver){
+  new IntersectionObserver(function(es){
+    onScreen = es[0].isIntersecting;
+    if(onScreen) start(); else stop();
+  }, {threshold:.3}).observe(stage);
+}
+
+/* ── остальные три кадра тянем ТОЛЬКО после load.
+      первый экран весит ровно один снимок ── */
+window.addEventListener('load', function(){
+  if(CALM) return;
+  setTimeout(function(){
+    var left = D.length - 1;
+    for(var i=1;i<D.length;i++){
+      var im = new Image();
+      im.onload = im.onerror = function(){ if(--left === 0){ ready = true; start(); } };
+      im.src = D[i].s;
+    }
+  }, 500);
+});
+})();
+</script>
+</body>
+</html>

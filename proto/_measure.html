@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<style>
+body{background:#0A0E1A;color:#E7EAF0;font-family:'Geist',sans-serif;padding:20px}
+.m{font-family:'Unbounded',sans-serif;white-space:nowrap;display:inline-block}
+pre{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:#CDFF4F}
+</style></head><body>
+<pre id="out">…</pre>
+<script>
+document.fonts.ready.then(function(){
+  var rows=[], words=['ПОКАЗАТЬ','НЕ СТЫДНО','САЙТ,','КОТОРЫЙ','показать','не стыдно'];
+  var sizes=[40,44,46,48,52,56,58,60,62,64,68];
+  var probe=document.createElement('span'); probe.className='m'; document.body.appendChild(probe);
+  words.forEach(function(w){
+    sizes.forEach(function(s){
+      [200,250,300,400,500].forEach(function(wt){
+        probe.style.fontSize=s+'px'; probe.style.fontWeight=wt;
+        probe.style.letterSpacing='-0.05em'; probe.textContent=w;
+        var a=probe.getBoundingClientRect().width;
+        probe.style.letterSpacing='-0.03em';
+        var b=probe.getBoundingClientRect().width;
+        rows.push(w+' | '+s+'px | w'+wt+' | ls-.05: '+a.toFixed(1)+' | ls-.03: '+b.toFixed(1));
+      });
+    });
+  });
+  probe.remove();
+  document.getElementById('out').textContent=rows.join('\n');
+});
+</script></body></html>

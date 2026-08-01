@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран · ЖИВОЙ КАДР</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════════
+  ПОЧЕМУ ЭТО РАБОТАЕТ  (мысль перед сборкой)
+
+  Претензия заказчика: «просто скрин». Скрин — это ПРОШЕДШЕЕ ВРЕМЯ.
+  Фотография работы = «когда-то мы что-то сделали». Ноль напряжения.
+
+  Ход: перевести доказательство в НАСТОЯЩЕЕ ВРЕМЯ. Кадр не стоит —
+  он прокручивается. Внутри рамки идёт живая страница: сверху пробегает
+  полоса загрузки, кадр уезжает вниз, как будто кто-то листает сайт
+  прямо сейчас, снизу тикает таймер, курсор сам доходит до следующей
+  работы и щёлкает. Человек ловит себя на том, что смотрит НА ЧЬЮ-ТО
+  СЕССИЮ. Это другой тип внимания: не «оценить картинку», а «досмотреть».
+
+  Три решения, которые отделяют это от «анимируем всё подряд»:
+
+  1. Едет ОДИН слой — картинка. Всё остальное неподвижно.
+     У нас исходник 2000×1134, а показываем 390 px. Значит внутри кадра
+     есть ~140 px запаса по вертикали и ~250 по горизонтали. Ездить по
+     ним — это translate3d по уже растрированному слою: ноль layout,
+     ноль перерисовки, чистый композитинг. Бесплатно для GPU.
+     Ось движения — ВЕРТИКАЛЬНАЯ, доминирующая. Горизонталь — только
+     лёгкий снос. Вертикаль читается как «скролл сайта».
+     Горизонталь читалась бы как Ken Burns по фотографии — не то.
+
+  2. Курсор кликает по НАШЕМУ интерфейсу, а не по кнопкам клиента.
+     Соблазн — навести призрачный курсор на «ЗАПИСЬ НА СЕРВИС» внутри
+     скрина. Отказался: координаты кнопки живут в чужой картинке, камера
+     их увозит, промах = сломанный вид. Вместо этого курсор доезжает до
+     нашей полосы работ и щёлкает по «02». Всегда попадает (свои DOM-
+     координаты), и заодно ОБУЧАЕТ: «сюда можно ткнуть». Демо интерфейса,
+     а не спецэффект.
+
+  3. Полоса-таймер — это верхняя линия активной вкладки.
+     Не отдельный элемент. Один и тот же 1px растёт слева направо, пока
+     идёт работа. Прогресс + подчёркивание активного = одна деталь на две
+     задачи. Так делают, когда бюджета на лишние пиксели нет.
+
+  Смена работы = склейка, а не диссолв. Полоса загрузки и штора идут
+  слева направо с одинаковым таймингом → читается как «страница
+  загрузилась», а не как «слайдер перелистнул».
+
+  СТРУКТУРА не тронута: понимание → доказательство → цена → одно
+  действие → снятие риска. 2×2-сетка работ свёрнута в одну строку из 4 —
+  это сэкономленные 48 px, которые ушли в высоту кадра (180 → 222).
+  Кадр стал больше и живым, порядок блоков тот же, кнопка выше сгиба.
+
+  БЮДЖЕТ: 0 внешних запросов, 0 библиотек, 1 <img> в первом экране,
+  остальные три тянутся после window.load и до их прихода реел не
+  стартует (на медленном канале первая работа просто продолжает жить).
+  Все анимации — transform / opacity / clip-path. Ни одного свойства,
+  вызывающего layout.
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --txt:#E7EAF0;         /* 15:1 */
+  --mut:#97A1B0;         /* 7.4:1 */
+  --dim:#8792A3;         /* 6.1:1 */
+  --lime:#CDFF4F;
+  --line:rgba(231,234,240,.09);
+  --hair:rgba(231,234,240,.055);
+  --pad:20px;
+  --ease:cubic-bezier(.33,1,.4,1);
+  --cut:cubic-bezier(.42,0,.12,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--txt);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.vp{
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:1020px;
+}
+.mono{
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;text-transform:uppercase;
+  font-variant-numeric:tabular-nums;
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+.rule{height:1px;background:var(--line);position:relative;z-index:1}
+
+/* вертикальные направляющие — та же сетка, по которой всё сверстано */
+.grid{
+  position:absolute;top:0;bottom:0;left:var(--pad);right:var(--pad);z-index:0;
+  border-left:1px solid rgba(231,234,240,.07);
+  border-right:1px solid rgba(231,234,240,.07);
+  pointer-events:none;
+}
+
+/* ───── 1. шапка ───── */
+.hd{
+  height:44px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);position:relative;z-index:2;
+}
+.logo{font-family:'Unbounded','Geist',sans-serif;font-weight:500;font-size:16px;letter-spacing:-.04em}
+.hd .mono{font-size:10.5px;letter-spacing:.15em;color:var(--dim)}
+
+/* ───── 2. титул ───── */
+.head{padding-top:14px;padding-bottom:8px;position:relative;z-index:2}
+h1{
+  font-family:'Unbounded','Geist',sans-serif;font-weight:300;
+  font-size:29px;line-height:1.03;letter-spacing:-.03em;color:var(--txt);
+}
+h1 span{display:block}
+h1 .a{color:var(--mut)}
+h1 .c{display:flex;align-items:center;min-width:0}
+h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(231,234,240,.16)}
+
+.scale{
+  margin-top:10px;display:flex;align-items:baseline;justify-content:space-between;
+  gap:12px;min-width:0;font-size:13.5px;color:var(--dim);letter-spacing:-.005em;
+}
+.scale b{
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;
+  color:var(--txt);font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.scale .ix{flex:0 0 auto;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.scale .ix em{font-style:normal;color:var(--txt)}
+
+/* ═══════ 3. ЖИВОЙ КАДР ═══════ */
+.proof{position:relative;z-index:2}
+
+.frame{
+  position:relative;height:220px;overflow:hidden;background:#0d1119;
+  contain:paint;                       /* кадр не заставляет пересчитывать соседей */
+}
+/* штора склейки: живёт в экранных координатах, поэтому отдельным слоем
+   над .cam — если повесить clip-path на саму камеру, штора поедет вместе
+   с картинкой и превратится в кашу */
+.stage{position:absolute;inset:0;overflow:hidden}
+.cam{
+  position:absolute;top:0;left:0;
+  will-change:transform;
+  transform:translate3d(0,0,0);
+}
+.film{
+  display:block;width:560px;height:auto;
+  /* чужие палитры сводим в серию кадрированием и скримом, а не перекраской.
+     Яркость НЕ душим: три из четырёх сайтов тёмные, минус 5 % превращали
+     кадр в пустой чёрный прямоугольник */
+  filter:saturate(.84) contrast(1.05);
+}
+@keyframes cut{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.stage.go{animation:cut .48s var(--cut)}
+
+/* полоса загрузки — идёт тем же таймингом, что и штора:
+   вместе они читаются как «страница загрузилась», а не «слайдер листнул» */
+.load{
+  position:absolute;top:0;left:0;right:0;height:2px;z-index:6;
+  background:var(--lime);transform:scaleX(0);transform-origin:0 50%;
+  opacity:0;pointer-events:none;
+}
+@keyframes loadbar{
+  0%{transform:scaleX(0);opacity:1}
+  62%{transform:scaleX(1);opacity:1}
+  100%{transform:scaleX(1);opacity:0}
+}
+.load.go{animation:loadbar .74s var(--cut)}
+
+/* верхний увод — гасит светлые шапки клиентских сайтов, не стирая их */
+.frame::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:46px;z-index:4;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.44),rgba(10,14,26,0));
+}
+/* нижний скрим не «затемняет», а растворяет кадр точно в цвет страницы */
+.frame::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:86px;z-index:4;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.5) 40%,rgba(10,14,26,.95) 78%,#0A0E1A 100%);
+}
+/* виньетка: гасит углы, чтобы кадр не выглядел наклейкой.
+   Радиальный градиент, а не box-shadow-свечение */
+.vig{
+  position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:radial-gradient(118% 80% at 50% 44%,transparent 48%,rgba(5,7,13,.34) 100%);
+}
+
+/* полоса прокрутки кадра. Не украшение: она доказывает, что страница
+   ДЛИННЕЕ окна, и держит мысль «сайт листают» даже когда кадр тёмный.
+   Ползунок едет тем же таймингом, что камера — они склеены */
+.sb{
+  position:absolute;right:3px;top:8px;bottom:8px;width:2px;z-index:6;
+  border-radius:1px;background:rgba(231,234,240,.09);pointer-events:none;
+}
+.sb b{
+  display:block;width:100%;height:60%;border-radius:1px;
+  background:rgba(205,255,79,.5);
+  transform:translate3d(0,0,0);will-change:transform;
+}
+
+.cap{
+  position:absolute;left:var(--pad);right:var(--pad);bottom:9px;z-index:7;
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0;
+  font-size:10.5px;letter-spacing:.13em;color:#c2cad6;
+}
+.cap span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cap .no{flex:0 0 auto;color:var(--dim)}
+.cap .no em{font-style:normal;color:#e2e7ef}
+@keyframes capin{from{opacity:0;transform:translate3d(0,7px,0)}to{opacity:1;transform:none}}
+.cap.go #cap{display:inline-block;animation:capin .34s var(--ease)}
+
+/* ───── 4. полоса работ = пульт кадра ───── */
+.reel{
+  display:flex;min-width:0;position:relative;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.tab{
+  flex:1 1 0;min-width:0;position:relative;
+  display:block;text-align:left;
+  height:44px;padding:7px 8px 0 10px;
+  background:none;border:0;border-right:1px solid var(--line);
+  color:inherit;font-family:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:background .2s linear;
+}
+.tab:first-child{padding-left:var(--pad)}
+.tab:last-child{border-right:0}
+.tab:active{background:rgba(231,234,240,.05)}
+.tab:focus-visible{outline:1px solid rgba(205,255,79,.55);outline-offset:-2px}
+.tab u{
+  display:block;text-decoration:none;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:9.5px;
+  letter-spacing:.1em;color:var(--dim);font-variant-numeric:tabular-nums;
+  transition:color .2s linear;
+}
+.tab b{
+  display:block;margin-top:2px;
+  font-weight:500;font-size:12px;letter-spacing:-.015em;line-height:1.15;
+  color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .2s linear;
+}
+/* верхняя линия активной вкладки = таймер работы. Одна деталь, две задачи */
+.tab i{
+  position:absolute;top:-1px;left:0;right:0;height:2px;background:var(--lime);
+  transform:scaleX(0);transform-origin:0 50%;opacity:0;
+}
+.tab[aria-selected="true"]{background:rgba(231,234,240,.045)}
+.tab[aria-selected="true"] u{color:var(--lime)}
+.tab[aria-selected="true"] b{color:var(--txt)}
+.tab[aria-selected="true"] i{opacity:1}
+
+/* призрачный курсор: доезжает до следующей работы и щёлкает.
+   Виден с первого кадра (запаркован на «01») — на скриншоте не пусто */
+.gc{
+  position:absolute;top:0;left:0;z-index:30;pointer-events:none;
+  transform:translate3d(46px,196px,0);
+  transition:transform .82s cubic-bezier(.3,.86,.24,1),opacity .35s linear;
+  opacity:.92;
+}
+.gc svg{display:block;width:15px;height:19px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+.gc .ring{
+  position:absolute;top:-11px;left:-11px;width:22px;height:22px;border-radius:50%;
+  border:1.5px solid var(--lime);opacity:0;transform:scale(.35);
+}
+@keyframes tap{
+  0%{opacity:.95;transform:scale(.3)}
+  70%{opacity:.5;transform:scale(1.5)}
+  100%{opacity:0;transform:scale(1.9)}
+}
+.gc.tap .ring{animation:tap .55s var(--ease)}
+.gc.off{opacity:0}
+
+/* ───── 5. цена ───── */
+.price{
+  position:relative;z-index:2;
+  padding:9px var(--pad) 9px 18px;
+  border-left:2px solid var(--lime);
+  background:repeating-linear-gradient(0deg,rgba(205,255,79,.05) 0 1px,rgba(205,255,79,.018) 1px 3px);
+}
+.price .lbl{font-size:10.5px;letter-spacing:.14em;color:var(--lime)}
+.pr{display:flex;align-items:baseline;gap:14px;margin-top:6px;min-width:0}
+.num{
+  flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:600;
+  font-size:30px;line-height:1;letter-spacing:-.035em;color:var(--txt);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.num i{font-style:normal;font-size:.56em;color:#b9c1cd;margin-left:6px;letter-spacing:0}
+.pr .what{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.3;color:var(--mut)}
+.pr .what s{display:block;text-decoration:none;font-size:10.5px;letter-spacing:.1em;color:var(--dim);margin-top:3px;font-family:'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase}
+.alt{
+  position:relative;z-index:2;padding:8px var(--pad) 0;
+  font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
+}
+.alt b{color:var(--mut);font-weight:500}
+
+/* ───── 6. единственное действие ───── */
+.act{padding:9px var(--pad) 0;position:relative;z-index:55}
+.cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  height:54px;border-radius:2px;background:var(--lime);color:#080c16;
+  font-size:16px;font-weight:600;letter-spacing:-.015em;text-decoration:none;
+  transition:transform .12s var(--ease);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  position:relative;overflow:hidden;
+}
+.cta:active{transform:scale(.982)}
+.cta svg{width:15px;height:15px;display:block}
+/* один медленный проход блика по кнопке — 4.6 s, transform, без свечения */
+.cta::after{
+  content:'';position:absolute;top:0;bottom:0;left:0;width:56px;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);
+  transform:translate3d(-90px,0,0);
+  animation:sheen 4.6s cubic-bezier(.5,0,.5,1) 1.4s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%{transform:translate3d(-90px,0,0)}22%,100%{transform:translate3d(430px,0,0)}}
+.risk{
+  padding:9px var(--pad) 13px;position:relative;z-index:2;
+  font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
+}
+.risk b{color:var(--mut);font-weight:500}
+
+/* ───── 7. то, что выглядывает из-за сгиба ───── */
+.next{position:relative;z-index:2}
+.next .k{padding:15px var(--pad) 11px;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.nrow{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;
+  height:44px;padding:0 var(--pad);border-top:1px solid var(--hair);
+  font-size:13.5px;color:var(--mut);letter-spacing:-.01em;
+}
+.nrow span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nrow em{
+  flex:0 0 auto;font-style:normal;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+}
+
+/* ───── фактура: дизеринг вместо шума и стекла ───── */
+.dither{
+  position:absolute;inset:0;z-index:50;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(231,234,240,.03) 0 1px,transparent 1px 3px);
+}
+
+/* ───── маркеры сгиба (только прототип) ───── */
+.fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,80,80,.45)}
+.fold b{position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.88);font-family:'JetBrains Mono',monospace;font-weight:400;font-size:8px;letter-spacing:.1em;color:rgba(255,90,90,.7)}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.4)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.85)}
+.fold.dev{top:844px}
+
+@media (max-width:379px){
+  :root{--pad:16px}
+  h1{font-size:27px}
+  .tab b{font-size:11.5px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  .gc{display:none}
+  .cta::after{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="vp">
+  <div class="grid" aria-hidden="true"></div>
+
+  <!-- 1 · шапка -->
+  <header class="hd pad">
+    <span class="logo">uniqore</span>
+    <span class="mono">Сайты&nbsp;и&nbsp;CRM</span>
+  </header>
+
+  <!-- 2 · понимание -->
+  <section class="head pad">
+    <h1>
+      <span class="a">Сайт, который</span>
+      <span>не стыдно</span>
+      <span class="c">показать<i></i></span>
+    </h1>
+    <p class="scale"><span><b>20+</b> сделанных сайтов · <b>30+</b> CRM</span><span class="mono ix"><em id="cur">01</em>&#8202;/&#8202;04</span></p>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- 3 · доказательство работой: живой кадр + его пульт -->
+  <div class="proof" id="proof">
+
+    <figure class="frame" id="frame">
+      <div class="stage" id="stage">
+        <div class="cam" id="cam" style="transform:translate3d(0px,0px,0)">
+          <img class="film" id="shot" fetchpriority="high" decoding="async"
+               src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+               style="width:560px"
+               alt="Сайт автокомплекса «Немеция», Омск — первый экран, снятый с рабочего сайта">
+        </div>
+      </div>
+      <i class="load" id="load" aria-hidden="true"></i>
+      <div class="vig" aria-hidden="true"></div>
+      <i class="sb" id="sb" aria-hidden="true"><b id="sbt"></b></i>
+      <figcaption class="cap mono" id="capwrap">
+        <span id="cap" aria-live="polite">Автокомплекс · Омск</span>
+        <span class="no">работа <em id="cur2">01</em> из 04</span>
+      </figcaption>
+    </figure>
+
+    <div class="reel" id="reel" role="tablist" aria-label="Наши работы">
+      <button class="tab" type="button" role="tab" aria-selected="true"  data-i="0"><i></i><u>01</u><b>Немеция</b></button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-i="1"><i></i><u>02</u><b>Bien Sûr</b></button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-i="2"><i></i><u>03</u><b>IDTuning</b></button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-i="3"><i></i><u>04</u><b>MILLA</b></button>
+    </div>
+
+    <div class="gc" id="ghost" aria-hidden="true">
+      <svg viewBox="0 0 15 19" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 1.6 L2 15.9 L5.9 12.2 L8.4 17.3 L10.9 16.1 L8.4 11.1 L13.4 11.1 Z"
+              fill="#EEF2F8" stroke="#080c16" stroke-width="1.3" stroke-linejoin="round"/>
+      </svg>
+      <span class="ring"></span>
+    </div>
+  </div>
+
+  <!-- 4 · цена -->
+  <section class="price">
+    <p class="mono lbl">Чаще всего берут</p>
+    <div class="pr">
+      <span class="num">32&thinsp;800<i>₽</i></span>
+      <span class="what">Многостраничный сайт, свой дизайн<s>срок 5 дней</s></span>
+    </div>
+  </section>
+  <p class="alt">Одна страница — <b>11 700 ₽</b> · сайт с CRM — <b>39 000 ₽</b></p>
+
+  <!-- 5 · одно действие -->
+  <div class="act">
+    <a class="cta" href="#zayavka">Хочу такой сайт
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <!-- 6 · снятие риска -->
+  <p class="risk"><b>Гарантия год</b> · оплата после макета · без абонплаты</p>
+
+  <!-- 7 · выглядывает из-за сгиба -->
+  <div class="rule"></div>
+  <section class="next">
+    <p class="k mono">Дальше · что входит в 32 800 ₽</p>
+    <div class="nrow"><span>Дизайн-макет всех страниц</span><em>входит</em></div>
+    <div class="nrow"><span>Тексты и структура</span><em>пишем мы</em></div>
+    <div class="nrow"><span>Исходники после сдачи</span><em>отдаём</em></div>
+  </section>
+
+  <div class="dither" aria-hidden="true"></div>
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ── данные кадров ──────────────────────────────────────────────────────
+   w  — ширина отрисовки исходника 2000 px внутри рамки 390 px; h — её высота.
+   a/b — начало и конец хода камеры: [x,y]. y отрицательный = кадр уезжает
+        вверх, то есть страница прокручивается ВНИЗ. Предел: |y| <= h - 220.
+
+   Кадрирование выбрано по содержимому, а не «покрупнее»:
+   в окне обязаны остаться шапка, заголовок и кнопка клиента — именно они
+   говорят «это сайт». Обрезанный по буквам заголовок читается как брак,
+   поэтому у Немеции, IDTuning и MILLA ход строго вертикальный, x закреплён.
+   У Bien Sûr в исходник впечены белые поля по 12,2 % с каждой стороны —
+   план крупнее (648) и x держит окно внутри контента. */
+var FH = 220;
+var D = [
+  {s:'/keysy/cases/case-nemecia.webp',  w:560, h:317.5, a:[0,-6],     b:[0,-90],     n:'Немеция',  m:'Автокомплекс · Омск',        alt:'Сайт автокомплекса «Немеция», Омск — первый экран'},
+  {s:'/keysy/cases/case-biensur.webp',  w:648, h:367.1, a:[-100,0],   b:[-140,-142], n:'Bien Sûr', m:'Ресторан · Санкт-Петербург', alt:'Сайт ресторана Bien Sûr, Санкт-Петербург — первый экран'},
+  {s:'/keysy/cases/case-idtuning.webp', w:560, h:317.0, a:[-92,0],    b:[-92,-95],   n:'IDTuning', m:'Тюнинг-ателье · Москва',     alt:'Сайт тюнинг-ателье IDTuning, Москва — первый экран'},
+  {s:'/keysy/cases/case-milla.webp',    w:600, h:341.7, a:[-105,0],   b:[-105,-118], n:'MILLA',    m:'Дизайн интерьера · Самара',  alt:'Сайт студии интерьера MILLA, Самара — первый экран'}
+];
+
+var DWELL = 7600,   /* сколько живёт одна работа            */
+    CAMT  = 9400,   /* ход камеры длиннее — не встаёт в паузу */
+    LEAD  = 1950,   /* за сколько курсор трогается к следующей */
+    TAPT  = 640;    /* за сколько до склейки — щелчок          */
+
+var proof = document.getElementById('proof'),
+    frame = document.getElementById('frame'),
+    stage = document.getElementById('stage'),
+    cam   = document.getElementById('cam'),
+    shot  = document.getElementById('shot'),
+    load  = document.getElementById('load'),
+    sbt   = document.getElementById('sbt'),
+    capw  = document.getElementById('capwrap'),
+    cap   = document.getElementById('cap'),
+    cur   = document.getElementById('cur'),
+    cur2  = document.getElementById('cur2'),
+    reel  = document.getElementById('reel'),
+    ghost = document.getElementById('ghost'),
+    tabs  = reel.querySelectorAll('.tab');
+
+var RM   = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches,
+    WA   = !!cam.animate,
+    now  = 0,
+    auto = false,     /* реел крутится сам            */
+    live = true,      /* кадр в зоне видимости        */
+    timers = [],
+    camAnim = null, barAnim = null, sbAnim = null;
+
+function clearT(){ for(var i=0;i<timers.length;i++) clearTimeout(timers[i]); timers=[]; }
+function T(fn,ms){ timers.push(setTimeout(fn,ms)); }
+function tf(p){ return 'translate3d('+p[0]+'px,'+p[1]+'px,0)'; }
+
+/* ── камера + ползунок прокрутки (склеены одним таймингом) ───────────── */
+var EASE = 'cubic-bezier(.28,.02,.34,1)';
+
+function drive(i){
+  var d = D[i],
+      track = FH - 16,                              /* .sb: top 8 / bottom 8 */
+      thumb = Math.max(30, Math.round(track * FH / d.h)),
+      run   = track - thumb,
+      max   = d.h - FH,
+      p0    = run * Math.min(1, -d.a[1] / max),
+      p1    = run * Math.min(1, -d.b[1] / max);
+
+  cam.style.transform = tf(d.a);          /* статичный фолбэк, если WAAPI нет */
+  sbt.style.height = thumb + 'px';
+  sbt.style.transform = 'translate3d(0,'+p0.toFixed(1)+'px,0)';
+
+  if (RM || !WA) return;
+  if (camAnim) camAnim.cancel();
+  if (sbAnim)  sbAnim.cancel();
+  camAnim = cam.animate(
+    [{transform:tf(d.a)},{transform:tf(d.b)}],
+    {duration:CAMT, easing:EASE, fill:'forwards'}
+  );
+  sbAnim = sbt.animate(
+    [{transform:'translate3d(0,'+p0.toFixed(1)+'px,0)'},
+     {transform:'translate3d(0,'+p1.toFixed(1)+'px,0)'}],
+    {duration:CAMT, easing:EASE, fill:'forwards'}
+  );
+}
+
+/* ── таймер работы = верхняя линия активной вкладки ──────────────────── */
+function tick(i){
+  var bar = tabs[i].firstElementChild;
+  if (barAnim) barAnim.cancel();
+  bar.style.transform = 'scaleX(1)';
+  if (RM || !WA || !auto) return;
+  barAnim = bar.animate(
+    [{transform:'scaleX(0)'},{transform:'scaleX(1)'}],
+    {duration:DWELL, easing:'linear', fill:'forwards'}
+  );
+}
+
+/* ── склейка ─────────────────────────────────────────────────────────── */
+function paint(i){
+  var d = D[i], n = '0'+(i+1), k;
+  shot.src = d.s; shot.alt = d.alt; shot.style.width = d.w+'px';
+  cap.textContent = d.m; cur.textContent = n; cur2.textContent = n;
+  for(k=0;k<tabs.length;k++){
+    tabs[k].setAttribute('aria-selected', k===i?'true':'false');
+    if(k!==i) tabs[k].firstElementChild.style.transform='scaleX(0)';
+  }
+  now = i;
+  drive(i);
+  tick(i);
+  if (!RM){
+    stage.classList.remove('go'); load.classList.remove('go'); capw.classList.remove('go');
+    void stage.offsetWidth;                                  /* один форс-реflow на склейку */
+    stage.classList.add('go'); load.classList.add('go'); capw.classList.add('go');
+  }
+}
+
+/* декодируем ДО подмены: иначе штора проявляет старый кадр */
+function show(i){
+  if (i===now || !D[i]) return;
+  var pre = new Image(); pre.src = D[i].s;
+  var go = function(){ paint(i); };
+  if (pre.decode) pre.decode().then(go)['catch'](go);
+  else if (pre.complete) go();
+  else { pre.onload = go; pre.onerror = go; }
+}
+
+/* ── призрачный курсор: своя полоса работ, не чужие кнопки ───────────── */
+function park(i,anim){
+  if (RM) return;
+  var pb = proof.getBoundingClientRect(), tb = tabs[i].getBoundingClientRect();
+  if (!anim) ghost.style.transition = 'none';
+  ghost.style.transform = 'translate3d('+
+      Math.round(tb.left - pb.left + tb.width*0.46) +'px,'+
+      Math.round(tb.top  - pb.top  + 21) +'px,0)';
+  if (!anim){ void ghost.offsetWidth; ghost.style.transition=''; }
+}
+function tap(){
+  ghost.classList.remove('tap'); void ghost.offsetWidth; ghost.classList.add('tap');
+}
+
+/* ── цикл ────────────────────────────────────────────────────────────── */
+function cycle(){
+  clearT();
+  if (!auto || !live) return;
+  var nx = (now+1)%D.length;
+  T(function(){ park(nx,true); }, DWELL-LEAD);
+  T(tap,                          DWELL-TAPT);
+  T(function(){ show(nx); cycle(); }, DWELL);
+}
+
+function stop(){                      /* человек тронул — машина уходит */
+  auto = false; clearT();
+  if (barAnim) barAnim.cancel();
+  ghost.classList.add('off');
+  tabs[now].firstElementChild.style.transform='scaleX(1)';
+}
+
+/* ── ручное управление ───────────────────────────────────────────────── */
+reel.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('.tab');
+  if (!t) return;
+  stop(); show(+t.getAttribute('data-i'));
+});
+
+/* свайп по кадру. Вертикальный guard обязателен: без него обычная
+   прокрутка большим пальцем перелистывает работы */
+var x0=0,y0=0;
+frame.addEventListener('touchstart',function(e){ x0=e.touches[0].clientX; y0=e.touches[0].clientY; },{passive:true});
+frame.addEventListener('touchend',function(e){
+  var dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+  if (Math.abs(dx)<45 || Math.abs(dx)<Math.abs(dy)*1.6) return;
+  stop(); show((now + (dx<0?1:D.length-1)) % D.length);
+},{passive:true});
+
+/* ── старт ───────────────────────────────────────────────────────────── */
+drive(0);                                   /* первая работа живёт сразу */
+tick(0);
+if (!RM){ load.classList.add('go'); park(0,false); }
+
+/* остальные три кадра — только после load. Пока их нет, реел не стартует:
+   на медленном канале человек видит живую первую работу, а не пустую рамку */
+window.addEventListener('load', function(){
+  if (RM) return;
+  setTimeout(function(){
+    var left = D.length-1, started = false;
+    var begin = function(){
+      if (started) return; started = true;
+      auto = true; tick(now); cycle();
+    };
+    for (var i=1;i<D.length;i++){
+      var im = new Image();
+      im.onload = im.onerror = function(){ if(--left<=0) begin(); };
+      im.src = D[i].s;
+    }
+    setTimeout(begin, 6000);               /* страховка, если картинки молчат */
+  }, 500);
+});
+
+/* не жжём батарею, когда кадр вне экрана или вкладка в фоне */
+if (window.IntersectionObserver){
+  new IntersectionObserver(function(en){
+    live = en[0].isIntersecting;
+    if (live){ if(auto) cycle(); } else clearT();
+  },{threshold:.25}).observe(frame);
+}
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden) clearT(); else if (auto && live) cycle();
+});
+
+})();
+</script>
+</body>
+</html>

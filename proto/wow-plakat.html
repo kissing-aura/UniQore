@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ мобильный первый экран — ПЛАКАТ</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+╔══════════════════════════════════════════════════════════════════════════╗
+║  ПОДХОД «ПЛАКАТ». Почему это делает экран сильным, а не просто «скрин».   ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+  Структура взята из concept-final.html и не тронута:
+  понимание → доказательство работой → цена → одно действие → снятие риска,
+  всё решение выше реального сгиба Safari (659px), ниже сгиба торчит хвост.
+  Меняется только ПОДАЧА. Всё живёт внутри @media (max-width:768px).
+
+  1. ТИПОГРАФИКА ВЕДЁТ, КАДР ПОДЧИНЁН.
+     Заголовок собран как афиша: три строки трёх разных плотностей.
+       «Сайт, который» — Geist 400/17, тихая подводка;
+       «НЕ СТЫДНО»     — Unbounded 600/38, плотный, тяжёлый, короткий;
+       «ПОКАЗАТЬ»      — Unbounded 250/66, лёгкий, огромный, во всю ширину
+                          экрана — от края до края, с лёгким уходом
+                          последней буквы за обрез.
+     Шаг веса 600→250 на фоне шага кегля 38→66 — это то, что вручную делает
+     дизайнер и никогда не делает сборщик блоков: у шаблона все строки одного
+     веса. Пустота справа от короткой тяжёлой строки не «дыра» — в неё
+     вставлен блок масштаба (20+ / 30+). Негативное пространство заполнено
+     смыслом, а не воздухом. Это же убрало целую строку — минус 28px высоты.
+
+  2. КАДР РАБОТЫ ВПИСАН В БУКВЫ.
+     Слово «ПОКАЗАТЬ» залито тем же скриншотом, что показан ниже
+     (background-clip:text). Один и тот же файл работает дважды: как
+     доказательство и как фактура типографики. Переключил работу в
+     оглавлении — сменилась и заливка букв. Экран становится одной системой,
+     а не стопкой независимых блоков.
+     Чтобы буквы читались на любом скриншоте (у клиентов палитры от почти
+     чёрной до почти белой — замерено: средняя яркость 46…134), поверх
+     фотографии лежит слой lime→серебро в режиме screen. Он гарантирует
+     нижнюю границу яркости: даже на самом тёмном кадре буквы выходят
+     светлее фона, а структура работы всё равно просвечивает.
+
+  3. РАЗРЕЗ.
+     Кадр обрезан не прямоугольником, а диагональю (34px на 390 ≈ 5°), и по
+     линии реза проходит лаймовое лезвие в 1.5px. Заголовок «садится» в
+     образовавшийся клин. Диагональ — единственная косая линия на экране,
+     поэтому читается как жест, а не как декор.
+
+  4. ДВИЖЕНИЕ — ОДНО СОБЫТИЕ, ОДИН ЖЕСТ.
+     Слева направо проходит одна волна: лезвие прочерчивается (scaleX) и
+     синхронно заливка затопляет буквы (clip-path). 0.72s, один раз.
+     Больше на экране не движется НИЧЕГО.
+     Тот же самый жест повторяется при переключении работы — движение
+     становится языком интерфейса, а не украшением.
+     Цена: две композитные анимации на ~0.7s. Ни библиотек, ни WebGL,
+     ни одного внешнего запроса. Только transform и clip-path.
+
+  5. КОНТЕНТ ВИДЕН С ПЕРВОГО КАДРА.
+     Базовый слой слова нарисован сплошным цветом (#8792a3, 6:1) и виден
+     всегда; заливка приходит поверх. Кадр работы не анимируется вообще —
+     доказательство показываем сразу. Все keyframes идут ОТ стартового
+     состояния К нормальному (fill-mode не используется), поэтому если
+     анимация не запустится — экран уже в финальном виде. Ни одного
+     элемента с opacity:0 в базовом состоянии.
+
+  ПРОИЗВОДИТЕЛЬНОСТЬ: один <img> в первом экране (fetchpriority=high),
+  три остальных кадра тянутся через 600ms после window.load.
+  Заливка букв использует ТОТ ЖЕ URL — второго запроса не будет.
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --txt:#E7EAF0;          /* 15:1  */
+  --mut:#97A1B0;          /* 7.4:1 */
+  --dim:#8792A3;          /* 6.1:1 */
+  --lime:#CDFF4F;
+  --line:rgba(231,234,240,.10);
+  --hair:rgba(231,234,240,.055);
+  --pad:20px;
+  --ease:cubic-bezier(.22,.8,.24,1);
+  --shot:url(/keysy/cases/case-nemecia.webp);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--txt);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* .vp — телефон. container-type даёт единицу cqw: дисплейный кегль
+   считается от ШИРИНЫ ЭТОЙ КОРОБКИ, а не от окна браузера, поэтому
+   макет одинаково точен и в прототипе на десктопе, и на 360px-андроиде.
+   --k:3.9px — резерв для браузеров без container queries (390/100). */
+.vp{
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:940px;
+  container-type:inline-size;
+  --k:3.9px;
+}
+@supports (width:1cqw){.vp{--k:1cqw}}
+
+.mono{
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;text-transform:uppercase;font-variant-numeric:tabular-nums;
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+
+/* вертикальные направляющие — та же сетка, по которой всё сверстано */
+.grid{
+  position:absolute;top:0;bottom:0;left:var(--pad);right:var(--pad);z-index:0;
+  border-left:1px solid rgba(231,234,240,.055);
+  border-right:1px solid rgba(231,234,240,.055);
+  pointer-events:none;
+}
+
+/* ───────── 1 · шапка плаката ───────── */
+.hd{
+  height:42px;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;min-width:0;border-bottom:1px solid var(--line);
+  position:relative;z-index:2;
+}
+.logo{font-family:'Unbounded','Geist',sans-serif;font-weight:500;font-size:16px;letter-spacing:-.045em}
+.hd .tag{font-size:10px;letter-spacing:.2em;color:var(--dim);flex:0 0 auto}
+
+/* ───────── 2 · титул-афиша ───────── */
+.ttl{position:relative;z-index:2;padding-top:15px}
+
+/* строка A: подводка + волосяная линия до правого края */
+.ttl .a{
+  display:flex;align-items:center;gap:12px;min-width:0;
+  padding:0 var(--pad);
+  font-size:17px;font-weight:400;letter-spacing:-.012em;color:var(--mut);
+}
+.ttl .a i{flex:1 1 auto;min-width:0;height:1px;background:rgba(231,234,240,.17)}
+
+/* строка B: плотная тяжёлая + блок масштаба в её негативном пространстве */
+.ttl .b{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:10px;min-width:0;padding:0 var(--pad);margin-top:8px;
+}
+.ttl .b em{
+  flex:0 1 auto;min-width:0;font-style:normal;
+  font-family:'Unbounded','Geist',sans-serif;font-weight:600;
+  font-size:calc(var(--k)*9.75);line-height:.9;letter-spacing:-.042em;
+  color:var(--txt);text-transform:uppercase;white-space:nowrap;
+}
+.scale{flex:0 0 auto;text-align:right;padding-bottom:3px}
+.scale span{
+  display:block;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-size:11px;line-height:1.55;letter-spacing:.02em;color:var(--dim);
+  text-transform:uppercase;font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.scale b{font-weight:700;color:var(--txt);letter-spacing:-.02em}
+
+/* строка C: гигант во всю ширину, без полей, с уходом за обрез.
+   66px при ширине 390 даёт ~397px — последняя «Ь» садится на обрез. */
+.ttl .c{
+  position:relative;display:block;margin-top:calc(var(--k)*1.1);
+  font-family:'Unbounded','Geist',sans-serif;font-weight:250;
+  font-size:calc(var(--k)*16.9);line-height:.86;letter-spacing:-.05em;
+  text-transform:uppercase;white-space:nowrap;
+}
+.ttl .c u{display:block;text-decoration:none;color:var(--dim)}   /* база — видна всегда */
+.ttl .c s{                                                        /* заливка кадром */
+  position:absolute;left:0;top:0;display:block;text-decoration:none;
+  font:inherit;letter-spacing:inherit;
+  /* screen-слой поднимает яркость тёмных скриншотов —
+     буквы читаются на любой из четырёх работ */
+  background-image:
+    linear-gradient(158deg,rgba(205,255,79,.66) 0%,rgba(235,240,248,.52) 58%,rgba(151,161,176,.44) 100%),
+    var(--shot);
+  background-blend-mode:screen,normal;
+  background-size:auto,150% auto;
+  background-position:0 0,50% 40%;
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+  animation:flood .72s var(--ease);
+}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .ttl .c s{display:none}
+  .ttl .c u{color:var(--txt)}
+}
+@keyframes flood{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+
+/* ───────── 3 · доказательство: кадр работы, срезанный диагональю ───────── */
+.stage{position:relative;z-index:2;margin-top:calc(var(--k)*-0.9)}
+.band{
+  position:relative;height:150px;overflow:hidden;background:#0e1320;
+  clip-path:polygon(0 34px,100% 0,100% 100%,0 100%);
+}
+.band img{
+  position:absolute;top:0;left:0;width:390px;height:auto;display:block;
+  /* пять чужих палитр сводим в серию кадрированием и скримом,
+     бренды клиентов не перекрашиваем */
+  filter:saturate(.72) contrast(1.09) brightness(.93);
+}
+.band img.sw{animation:wipe .42s var(--ease)}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+/* верхний увод гасит светлые шапки клиентских сайтов, не стирая их */
+.band::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:64px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.78),rgba(10,14,26,0));
+}
+/* низ растворяется точно в цвет страницы — кадр не «карточка», а разворот */
+.band::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:80px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.55) 42%,rgba(10,14,26,.96) 80%,var(--bg) 100%);
+}
+/* лезвие по линии реза: обрезка на обёртке, движение на внутренней полосе —
+   иначе scaleX увёл бы угол диагонали */
+.blade{
+  position:absolute;left:0;right:0;top:0;height:40px;z-index:3;pointer-events:none;
+  clip-path:polygon(0 34px,100% 0,100% 1.6px,0 35.6px);
+}
+.blade i{
+  display:block;height:100%;transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--lime) 0%,rgba(205,255,79,.62) 46%,rgba(205,255,79,.12) 100%);
+  animation:blade .72s var(--ease);
+}
+@keyframes blade{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.cap{
+  position:absolute;left:var(--pad);right:var(--pad);bottom:9px;z-index:4;
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0;
+  font-size:10.5px;letter-spacing:.13em;color:#c3cad6;
+}
+.cap span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cap .no{flex:0 0 auto;color:var(--dim)}
+.cap .no em{font-style:normal;color:#e2e7ef}
+
+/* ───────── 4 · оглавление работ (титры плаката) ───────── */
+.idx{
+  display:grid;grid-template-columns:1fr 1fr;position:relative;z-index:2;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.cell{
+  display:flex;align-items:center;gap:9px;min-width:0;
+  height:40px;padding:0 10px 0 var(--pad);
+  background:none;border:0;border-right:1px solid var(--line);
+  color:inherit;text-align:left;font-family:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:background .18s linear;
+}
+.cell:nth-child(2n){border-right:0;padding-left:14px}
+.cell:nth-child(n+3){border-top:1px solid var(--line)}
+.cell:active{background:rgba(231,234,240,.05)}
+.cell:focus-visible{outline:1px solid rgba(205,255,79,.6);outline-offset:-2px}
+.cell u{
+  flex:0 0 auto;text-decoration:none;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:500;font-size:10.5px;
+  letter-spacing:.06em;color:var(--dim);font-variant-numeric:tabular-nums;
+  transition:color .18s linear;
+}
+.cell b{
+  flex:1 1 auto;min-width:0;font-weight:500;font-size:13.5px;letter-spacing:-.015em;
+  color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .18s linear;
+}
+.cell[aria-pressed="true"]{background:rgba(231,234,240,.05)}
+.cell[aria-pressed="true"] u{color:var(--lime)}
+.cell[aria-pressed="true"] b{color:var(--txt)}
+
+/* ───────── 5 · цена ───────── */
+.price{
+  position:relative;z-index:2;padding:9px var(--pad) 10px 18px;
+  border-left:2px solid var(--lime);
+  background:repeating-linear-gradient(0deg,rgba(205,255,79,.05) 0 1px,rgba(205,255,79,.017) 1px 3px);
+}
+.price .lbl{font-size:10.5px;letter-spacing:.14em;color:var(--lime)}
+.pr{display:flex;align-items:baseline;gap:13px;margin-top:6px;min-width:0}
+.num{
+  flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;
+  font-size:32px;line-height:1;letter-spacing:-.04em;color:var(--txt);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.num i{font-style:normal;font-size:.55em;color:#c3cad6;margin-left:5px;letter-spacing:0}
+.pr .what{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.28;color:var(--mut)}
+.pr .what s{
+  display:block;text-decoration:none;margin-top:3px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase;
+  font-size:10.5px;letter-spacing:.1em;color:var(--dim);
+}
+.alt{
+  position:relative;z-index:2;padding:8px var(--pad) 0;
+  font-size:12.5px;line-height:1.3;color:var(--dim);letter-spacing:-.005em;
+}
+.alt b{color:var(--mut);font-weight:500}
+
+/* ───────── 6 · одно действие ───────── */
+.act{padding:11px var(--pad) 0;position:relative;z-index:60}
+.cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  height:54px;border-radius:3px;background:var(--lime);color:#080c16;
+  font-size:16.5px;font-weight:600;letter-spacing:-.018em;text-decoration:none;
+  transition:transform .12s var(--ease);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.cta:active{transform:scale(.982)}
+.cta svg{width:15px;height:15px;display:block;flex:0 0 auto}
+.risk{
+  padding:9px var(--pad) 13px;position:relative;z-index:2;
+  font-size:12.5px;line-height:1.3;color:var(--dim);letter-spacing:-.005em;
+}
+.risk b{color:var(--mut);font-weight:500}
+
+/* ───────── 7 · хвост: то, что режет сгиб ───────── */
+.rule{height:1px;background:var(--line);position:relative;z-index:2}
+.next{position:relative;z-index:2}
+.next .k{padding:13px var(--pad) 10px;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.nrow{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;
+  height:42px;padding:0 var(--pad);border-top:1px solid var(--hair);
+  font-size:13.5px;color:var(--mut);letter-spacing:-.01em;
+}
+.nrow span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nrow em{
+  flex:0 0 auto;font-style:normal;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-weight:500;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+}
+
+/* фактура печати: растр вместо шума и стекла */
+.dither{
+  position:absolute;inset:0;z-index:55;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(231,234,240,.028) 0 1px,transparent 1px 3px);
+}
+
+/* ───────── маркеры сгиба (только прототип) ───────── */
+.fold{position:absolute;left:0;right:0;z-index:80;pointer-events:none;border-top:1px dashed rgba(255,80,80,.45)}
+.fold b{position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.88);
+  font-family:'JetBrains Mono',monospace;font-weight:400;font-size:8px;letter-spacing:.1em;color:rgba(255,90,90,.7)}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.45)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.9)}
+.fold.dev{top:844px}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="vp">
+  <div class="grid" aria-hidden="true"></div>
+
+  <!-- 1 -->
+  <header class="hd pad">
+    <span class="logo">uniqore</span>
+    <span class="mono tag">Сайты&nbsp;под&nbsp;ключ</span>
+  </header>
+
+  <!-- 2 · титул-афиша -->
+  <h1 class="ttl">
+    <span class="a">Сайт, который<i></i></span>
+    <span class="b">
+      <em>не стыдно</em>
+      <span class="scale" aria-hidden="true">
+        <span><b>20+</b>&nbsp; сайтов</span>
+        <span><b>30+</b>&nbsp; CRM</span>
+      </span>
+    </span>
+    <span class="c">
+      <u>показать</u>
+      <s aria-hidden="true" id="ink">показать</s>
+    </span>
+  </h1>
+  <p class="vis-hidden" style="position:absolute;left:-9999px">20+ сделанных сайтов, 30+ CRM</p>
+
+  <!-- 3 · доказательство -->
+  <div class="stage">
+    <figure class="band">
+      <img id="shot" fetchpriority="high" decoding="async"
+           src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+           alt="Первый экран сайта автокомплекса «Немеция», Омск">
+      <figcaption class="cap mono">
+        <span id="cap" aria-live="polite">Немеция · автокомплекс, Омск</span>
+        <span class="no"><em id="cur">01</em>&#8202;/&#8202;04</span>
+      </figcaption>
+    </figure>
+    <div class="blade" aria-hidden="true"><i id="blade"></i></div>
+  </div>
+
+  <!-- 4 · титры -->
+  <div class="idx" id="idx">
+    <button class="cell" type="button" aria-pressed="true"  data-i="0"><u>01</u><b>Немеция</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="1"><u>02</u><b>Bien Sûr</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="2"><u>03</u><b>IDTuning</b></button>
+    <button class="cell" type="button" aria-pressed="false" data-i="3"><u>04</u><b>MILLA</b></button>
+  </div>
+
+  <!-- 5 · цена -->
+  <section class="price">
+    <p class="mono lbl">Чаще всего берут</p>
+    <div class="pr">
+      <span class="num">32&thinsp;800<i>₽</i></span>
+      <span class="what">Многостраничный сайт, свой дизайн<s>срок 5 дней</s></span>
+    </div>
+  </section>
+  <p class="alt">Одна страница — <b>11 700 ₽</b> · сайт с CRM — <b>39 000 ₽</b></p>
+
+  <!-- 6 · одно действие -->
+  <div class="act">
+    <a class="cta" href="#zayavka">Хочу такой сайт
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+  <p class="risk"><b>Гарантия год</b> · оплата после макета · без абонплаты</p>
+
+  <!-- 7 · хвост, который режет сгиб -->
+  <div class="rule"></div>
+  <section class="next">
+    <p class="k mono">Дальше · что входит в 32 800 ₽</p>
+    <div class="nrow"><span>Дизайн-макет всех страниц</span><em>входит</em></div>
+    <div class="nrow"><span>Тексты и структура</span><em>пишем мы</em></div>
+    <div class="nrow"><span>Исходники после сдачи</span><em>отдаём</em></div>
+  </section>
+
+  <div class="dither" aria-hidden="true"></div>
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+  /* кроп подобран под каждый скриншот руками: у Bien Sûr в исходник впечены
+     белые поля по 12.2% с каждой стороны — их надо срезать, остальные три
+     сняты в край */
+  var D = [
+    {s:'/keysy/cases/case-nemecia.webp', w:390, x:0,   m:'Немеция · автокомплекс, Омск',    a:'Первый экран сайта автокомплекса «Немеция», Омск'},
+    {s:'/keysy/cases/case-biensur.webp', w:516, x:-63, m:'Bien Sûr · ресторан, Петербург',  a:'Первый экран сайта ресторана Bien Sûr, Санкт-Петербург'},
+    {s:'/keysy/cases/case-idtuning.webp',w:390, x:0,   m:'IDTuning · тюнинг-ателье',        a:'Первый экран сайта тюнинг-ателье IDTuning'},
+    {s:'/keysy/cases/case-milla.webp',   w:390, x:0,   m:'MILLA · студия интерьеров',       a:'Первый экран сайта студии интерьеров MILLA'}
+  ];
+  var vp   = document.querySelector('.vp'),
+      idx  = document.getElementById('idx'),
+      shot = document.getElementById('shot'),
+      ink  = document.getElementById('ink'),
+      blade= document.getElementById('blade'),
+      cap  = document.getElementById('cap'),
+      cur  = document.getElementById('cur'),
+      cells= idx.querySelectorAll('.cell'),
+      now  = 0;
+
+  /* один и тот же жест: лезвие + затопление букв. Перезапуск через
+     reflow-тик, иначе повторная анимация не стартует */
+  function gesture(){
+    ink.style.animation='none'; blade.style.animation='none';
+    void ink.offsetWidth;
+    ink.style.animation=''; blade.style.animation='';
+  }
+
+  function paint(i){
+    var d = D[i], n = '0' + (i+1);
+    shot.src = d.s; shot.alt = d.a;
+    shot.style.width = d.w + 'px';
+    shot.style.left  = d.x + 'px';
+    shot.classList.remove('sw'); void shot.offsetWidth; shot.classList.add('sw');
+    vp.style.setProperty('--shot','url(' + d.s + ')');   /* заливка букв — тот же файл */
+    gesture();
+    cap.textContent = d.m;
+    cur.textContent = n;
+    for (var k=0;k<cells.length;k++) cells[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+    now = i;
+  }
+
+  function show(i){
+    if (i===now || !D[i]) return;
+    /* декодируем ДО подмены: иначе шторка проявляет старый кадр */
+    var pre = new Image(); pre.src = D[i].s;
+    var go = function(){ paint(i); };
+    if (pre.decode) pre.decode().then(go).catch(go);
+    else if (pre.complete) go();
+    else { pre.onload = go; pre.onerror = go; }
+  }
+
+  idx.addEventListener('click', function(e){
+    var c = e.target.closest && e.target.closest('.cell');
+    if (c) show(+c.getAttribute('data-i'));
+  });
+
+  /* свайп по кадру — тот же переключатель. Вертикальный guard обязателен:
+     без него обычная прокрутка большим пальцем перелистывает работы */
+  var fr = document.querySelector('.band'), x0=0, y0=0;
+  fr.addEventListener('touchstart', function(e){ x0=e.touches[0].clientX; y0=e.touches[0].clientY; }, {passive:true});
+  fr.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - x0,
+        dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+    show((now + (dx<0 ? 1 : 3)) % 4);
+  }, {passive:true});
+
+  /* остальные кадры тянем только после загрузки — первый экран весит один снимок */
+  window.addEventListener('load', function(){
+    setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 600);
+  });
+})();
+</script>
+</body>
+</html>
