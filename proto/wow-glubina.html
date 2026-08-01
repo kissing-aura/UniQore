@@ -38,7 +38,7 @@
 
   Что движется и почему это дёшево.
     Одна rAF-петля пишет ТРИ числа в CSS-переменные (--gx, --gy, --sy).
-    Их читают 11 элементов через calc() внутри transform. Ни одна анимация
+    Их читают 12 элементов через calc() внутри transform. Ни одна анимация
     не трогает layout и не вызывает paint: только translate3d + opacity.
     Петля засыпает, когда движение затухло, и просыпается на вводе.
     Источник наклона: DeviceOrientation (с калибровкой по первому замеру и
@@ -53,8 +53,8 @@
     Нет свечения 0 0 20px — только направленный свет и контактные тени.
     Нет вступительной анимации, которая прячет контент: всё читаемо на
     первом кадре, свет проходит поверх готовой картинки.
-    Радиусы разные по смыслу: проём 0 (дыра в поверхности), плита 2,
-    кнопка 3 — предметы разной природы не могут иметь один радиус.
+    Радиусы разные по смыслу: проём и плита — 0 (вырез и грань поверхности
+    не скругляются), кнопка — 3 (единственный предмет, который берут рукой).
 
   Бюджет: 0 внешних запросов, 0 библиотек, 1 <img> в первом экране,
   остальные три кадра — после window.load.
@@ -189,8 +189,8 @@ h1 .c i{
 .frame img.sw{animation:wipe .44s var(--ease)}
 /* верхний увод — гасит светлые шапки клиентских сайтов, не стирая их */
 .frame::before{
-  content:'';position:absolute;left:0;right:0;top:0;height:46px;z-index:2;pointer-events:none;
-  background:linear-gradient(rgba(10,14,26,.52),rgba(10,14,26,0));
+  content:'';position:absolute;left:0;right:0;top:0;height:56px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.72),rgba(10,14,26,.3) 55%,rgba(10,14,26,0));
 }
 /* низ кадра растворяется точно в цвет страницы */
 .frame::after{
@@ -206,10 +206,20 @@ h1 .c i{
   transform:translate3d(calc(var(--gx) * 62px),0,0) skewX(-13deg);
   will-change:transform;
 }
+/* полка из стекла в нижней части проёма: у подписи появляется СВОЯ
+   плоскость с собственной освещённой кромкой. Она едет вместе с подписью
+   и против картинки — это самый заметный статический признак расслоения. */
+.shelf{
+  position:absolute;left:-9px;right:-9px;bottom:0;height:34px;z-index:4;pointer-events:none;
+  border-top:1px solid rgba(231,234,240,.13);
+  background:linear-gradient(rgba(231,234,240,.052),rgba(231,234,240,.012));
+  transform:translate3d(calc(var(--gx) * -5px),0,0);
+  will-change:transform;
+}
 /* кромки проёма: сверху темно (свет сверху не заходит внутрь),
    снизу тонкая светлая грань — так выглядит вырез в поверхности */
 .recess{
-  position:absolute;inset:0;z-index:4;pointer-events:none;
+  position:absolute;inset:0;z-index:5;pointer-events:none;
   box-shadow:
     inset 0 15px 26px -13px rgba(0,0,0,.92),
     inset 0 -16px 28px -16px rgba(0,0,0,.7),
@@ -220,7 +230,7 @@ h1 .c i{
 }
 /* план 3 · подпись сидит НА стекле и едет ПРОТИВ картинки */
 .cap{
-  position:absolute;left:var(--pad);right:var(--pad);bottom:10px;z-index:5;
+  position:absolute;left:var(--pad);right:var(--pad);bottom:11px;z-index:6;
   display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0;
   font-size:10.5px;letter-spacing:.13em;color:#bcc4d0;
   transform:translate3d(calc(var(--gx) * -5px),0,0);
@@ -236,7 +246,9 @@ h1 .c i{
 .idx{
   display:grid;grid-template-columns:1fr 1fr;position:relative;z-index:3;
   border-bottom:1px solid var(--line);
-  background:linear-gradient(rgba(0,0,0,.28),rgba(0,0,0,0) 70%);
+  /* тень, которую вырез отбрасывает на поверхность под собой:
+     чем резче она гаснет, тем глубже читается проём */
+  background:linear-gradient(rgba(0,0,0,.46),rgba(0,0,0,0) 42%);
 }
 .cell{
   position:relative;display:flex;align-items:center;gap:10px;min-width:0;
@@ -414,11 +426,17 @@ h1 .c i{
   .rake{display:none}
 }
 
-/* узкие устройства: 360 и меньше — ничего не должно вылезать */
+/* узкие устройства (360 и меньше): описание тарифа переносится на две
+   строки — плита становится выше, и кнопка сползает к сгибу. Возвращаем
+   17 px за счёт вертикального ритма, кнопка остаётся выше 659. */
 @media (max-width:389px){
   .vp{width:100%}
   h1{font-size:28px}
   .num{font-size:28px}
+  .head{padding-top:14px;padding-bottom:9px}
+  .scale{margin-top:11px}
+  .frame{height:172px}
+  .pr{gap:11px}
 }
 </style>
 </head>
@@ -457,6 +475,7 @@ h1 .c i{
          src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
          alt="Первый экран сайта автокомплекса «Немеция», Омск">
     <div class="spec" aria-hidden="true"><i></i></div>
+    <div class="shelf" aria-hidden="true"></div>
     <div class="recess" aria-hidden="true"></div>
     <figcaption class="cap mono">
       <span id="cap" aria-live="polite">Автокомплекс, Омск</span>
@@ -619,6 +638,15 @@ if (!calm) {
     kick();
   }, {passive:true});
 
+  /* вернулись из фона: rAF там заморожен, позицию прокрутки надо перечитать,
+     иначе планы «догоняют» с рывком на первом же кадре после возврата */
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) return;
+    var v = window.pageYOffset || document.documentElement.scrollTop || 0;
+    tsy = v > maxSy ? maxSy : v;
+    kick();
+  }, {passive:true});
+
   /* ── фолбэк №1: свет идёт за пальцем / курсором ── */
   var gyroOn = false;
   function fromPoint(x, y){
@@ -645,11 +673,19 @@ if (!calm) {
     var g = e.gamma, b = e.beta;
     if (g == null && b == null) return;
     g = g || 0; b = b || 0;
-    gyroOn = true;
-    if (!base) { base = {g:g, b:b}; }
-    else { base.g += (g-base.g)*0.0025; base.b += (b-base.b)*0.0025; }
-    tgx = clamp((g - base.g) / 15);
-    tgy = clamp((b - base.b) / 15);
+    if (!base) { base = {g:g, b:b}; return; }
+    base.g += (g-base.g)*0.0025;
+    base.b += (b-base.b)*0.0025;
+    var nx = clamp((g - base.g) / 15),
+        ny = clamp((b - base.b) / 15);
+    /* датчик считаем живым только когда он реально шевельнулся. Часть
+       браузеров шлёт deviceorientation с нулями и без сенсора — без этой
+       проверки они навсегда отключили бы фолбэк по пальцу, и экран замер. */
+    if (!gyroOn) {
+      if (Math.abs(nx) + Math.abs(ny) < 0.02) return;
+      gyroOn = true;
+    }
+    tgx = nx; tgy = ny;
     kick();
   }
   function bindOri(){

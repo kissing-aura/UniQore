@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран · ПОДАЧА</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+  ЯЗЫК: подача проекта в архитектурном бюро.
+  Работа клиента = объект. Снимок объекта в край листа, к нему выноска
+  с полочкой, которая выходит из кадра в поле. Цена = смета: одна крупная
+  цифра, срок подан размерной линией с засечками. Выбранный объём работ
+  помечен штриховкой, как контур на разрезе.
+
+  Чего здесь нет намеренно: нумерации, фоновой сетки, цветной полосы по краю,
+  капслока, моноширинного шрифта, чипа над заголовком, карточек, свечения.
+  Заголовок и цифры набраны лёгким Geist — тон бюро, а не техно-редакции.
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --txt:#E7EAF0;
+  --mut:#98A3B4;
+  --dim:#7C8798;
+  --lime:#CDFF4F;
+  --hair:rgba(231,234,240,.10);
+  --pad:20px;
+  --e:cubic-bezier(.32,.9,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--txt);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* --gx/--gy — наклон -1..1, --sy — прокрутка. Значения заданы здесь,
+   поэтому все calc() валидны до запуска JS: первый кадр корректен. */
+.vp{
+  --gx:0; --gy:0; --sy:0;
+  width:390px;max-width:100%;margin:0 auto;position:relative;overflow:hidden;
+  min-height:940px;isolation:isolate;
+  background:
+    radial-gradient(120% 60% at 78% -6%,rgba(150,175,225,.075),rgba(150,175,225,0) 62%),
+    linear-gradient(#0B1020,#0A0E1A 46%);
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+
+/* ─── шапка ─── */
+.hd{
+  height:40px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--hair);position:relative;z-index:4;
+}
+.hd .lg{font-family:'Unbounded','Geist',sans-serif;font-weight:500;font-size:15.5px;letter-spacing:-.045em}
+.hd .do{font-size:11.5px;color:var(--dim);letter-spacing:-.005em}
+
+/* ─── титул ─── */
+.head{padding-top:14px;padding-bottom:12px;position:relative;z-index:4}
+h1{font-weight:300;font-size:29px;line-height:1.07;letter-spacing:-.038em}
+h1 em{display:block;font-style:normal;color:var(--mut)}
+.sub{margin-top:10px;font-size:13px;line-height:1.3;color:var(--dim);letter-spacing:-.008em}
+.sub b{font-weight:500;color:var(--mut);font-variant-numeric:tabular-nums}
+
+/* ─── объект: снимок в край листа + выноска в поле ─── */
+.plate{position:relative;z-index:4;height:178px}
+.win{position:absolute;left:0;right:0;top:0;height:150px;overflow:hidden;background:#0d1220;contain:paint}
+.pan{position:absolute;inset:0;animation:pan 27s var(--e) infinite}
+@keyframes pan{0%,100%{transform:translate3d(-5px,0,0)}50%{transform:translate3d(5px,0,0)}}
+.win img{
+  position:absolute;top:-36px;left:-20px;width:430px;height:auto;display:block;
+  filter:saturate(.78) contrast(1.05) brightness(.93);
+  transform:translate3d(calc(var(--gx) * 10px),calc(var(--gy) * 6px + var(--sy) * .06px),0);
+  will-change:transform;
+}
+@keyframes plot{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.win img.sw{animation:plot .5s var(--e)}
+/* верх кадра приглушён, низ уходит в лист — снимок читается как объект,
+   а не как вставленный прямоугольник */
+.win::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:32px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.42),rgba(10,14,26,0));
+}
+.win::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:66px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0),rgba(10,14,26,.55) 48%,rgba(10,14,26,.96) 88%,#0A0E1A);
+}
+/* засечки кадрирования по углам снимка */
+.cm{position:absolute;z-index:3;width:13px;height:13px;pointer-events:none;
+    animation:cmIn .3s var(--e) .05s both}
+@keyframes cmIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+.cm::before,.cm::after{content:'';position:absolute;background:rgba(231,234,240,.42)}
+.cm::before{left:0;top:0;width:13px;height:1px}
+.cm::after{left:0;top:0;width:1px;height:13px}
+.cm.a{left:11px;top:11px}
+.cm.b{right:11px;top:11px;transform:scaleX(-1)}
+.cm.c{left:11px;bottom:11px;transform:scaleY(-1)}
+.cm.d{right:11px;bottom:11px;transform:scale(-1)}
+@media (prefers-reduced-motion:no-preference){
+  .cm.b{animation-name:cmB}.cm.c{animation-name:cmC}.cm.d{animation-name:cmD}
+  @keyframes cmB{from{opacity:0;transform:scaleX(-1) scale(.4)}to{opacity:1;transform:scaleX(-1)}}
+  @keyframes cmC{from{opacity:0;transform:scaleY(-1) scale(.4)}to{opacity:1;transform:scaleY(-1)}}
+  @keyframes cmD{from{opacity:0;transform:scale(-1) scale(.4)}to{opacity:1;transform:scale(-1)}}
+}
+/* выноска: точка на объекте → диагональ → полочка, текст сидит на полочке.
+   Группа едет против снимка — так поле листа отделяется от кадра. */
+.call{position:absolute;inset:0;z-index:5;pointer-events:none;
+      transform:translate3d(calc(var(--gx) * -4px),0,0);will-change:transform}
+.dot{position:absolute;left:50px;top:126px;width:7px;height:7px;margin:-3px 0 0 -3px;
+     border:1px solid rgba(205,255,79,.85);border-radius:50%;
+     animation:dotIn .3s var(--e) both}
+.dot::after{content:'';position:absolute;inset:2px;border-radius:50%;background:var(--lime)}
+@keyframes dotIn{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+/* поворот обязан жить в базовом правиле, а не только в кейфреймах:
+   при «меньше движения» анимации выключены, и выноска иначе легла бы плашмя */
+.lead{position:absolute;left:50px;top:126px;width:62px;height:1px;
+      background:rgba(231,234,240,.5);transform-origin:0 50%;transform:rotate(45deg);
+      animation:leadIn .34s var(--e) .1s both}
+@keyframes leadIn{from{transform:rotate(45deg) scaleX(0)}to{transform:rotate(45deg) scaleX(1)}}
+.shelf{position:absolute;left:94px;top:170px;height:1px;right:16px;
+       background:rgba(231,234,240,.5);transform-origin:0 50%;
+       animation:shIn .32s var(--e) .3s both}
+@keyframes shIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.cap{position:absolute;left:98px;right:14px;top:151px;font-size:12px;line-height:15px;
+     color:var(--mut);letter-spacing:-.008em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+     animation:capIn .3s var(--e) .42s both}
+.cap b{font-weight:500;color:var(--txt)}
+@keyframes capIn{from{opacity:0;transform:translate3d(-7px,0,0)}to{opacity:1;transform:none}}
+
+/* ─── условные обозначения: четыре объекта ─── */
+.leg{display:flex;align-items:center;gap:6px;position:relative;z-index:4;
+     padding:0 14px;height:32px;margin-top:10px}
+.lg1{display:flex;align-items:center;gap:6px;flex:0 1 auto;min-width:0;
+     height:32px;padding:0 6px;background:none;border:0;color:var(--dim);
+     font-family:inherit;font-size:12.5px;letter-spacing:-.012em;cursor:pointer;
+     -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+     transition:color .18s linear}
+.lg1 i{flex:0 0 auto;width:5px;height:5px;border:1px solid rgba(231,234,240,.3);
+       transition:background .18s linear,border-color .18s linear}
+.lg1 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg1[aria-pressed="true"]{color:var(--txt)}
+.lg1[aria-pressed="true"] i{background:var(--lime);border-color:var(--lime)}
+.lg1:focus-visible{outline:1px solid rgba(205,255,79,.6);outline-offset:-1px}
+
+/* ─── смета: главный объём работ ─── */
+.est{position:relative;z-index:4;margin:10px var(--pad) 0;padding:13px 15px;
+     border:1px solid rgba(205,255,79,.19);
+     background:linear-gradient(rgba(231,234,240,.045),rgba(231,234,240,.012));
+     overflow:hidden}
+/* штриховка как на разрезе — помечает выбранный контур, гаснет вправо */
+.est::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:190px;pointer-events:none;
+  background:repeating-linear-gradient(45deg,rgba(205,255,79,.07) 0 1px,rgba(0,0,0,0) 1px 8px);
+  -webkit-mask-image:linear-gradient(90deg,#000,rgba(0,0,0,0));
+          mask-image:linear-gradient(90deg,#000,rgba(0,0,0,0));
+}
+.est>*{position:relative;z-index:1}
+.est .note{font-size:11.5px;line-height:1.25;color:rgba(205,255,79,.82);letter-spacing:-.005em}
+.row{display:flex;align-items:flex-end;gap:13px;margin-top:7px;min-width:0}
+.num{flex:0 0 auto;font-weight:300;font-size:43px;line-height:.94;letter-spacing:-.045em;
+     color:var(--txt);font-variant-numeric:tabular-nums;white-space:nowrap}
+.num span{font-size:.46em;color:#A9B4C4;margin-left:5px;letter-spacing:-.02em}
+.what{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.28;color:var(--mut);
+      letter-spacing:-.008em;padding-bottom:2px}
+/* размерная линия: срок подан как размер, с 45° засечками */
+.dim{display:flex;align-items:center;gap:7px;margin-top:11px}
+.dim .tk{flex:0 0 auto;width:1px;height:10px;background:rgba(231,234,240,.4);transform:rotate(45deg)}
+.dim .ln{flex:1 1 auto;height:1px;background:rgba(231,234,240,.19)}
+.dim .v{flex:0 0 auto;font-size:11.5px;color:var(--dim);letter-spacing:-.005em}
+
+.alt{position:relative;z-index:4;margin-top:9px;font-size:12.5px;line-height:1.3;
+     color:var(--dim);letter-spacing:-.008em}
+.alt b{font-weight:500;color:var(--mut);font-variant-numeric:tabular-nums}
+
+/* ─── одно действие ─── */
+.act{position:relative;z-index:5;margin-top:12px}
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;height:52px;
+     background:var(--lime);color:#080c16;border-radius:2px;text-decoration:none;
+     font-size:16px;font-weight:600;letter-spacing:-.02em;
+     touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+     transition:transform .12s var(--e)}
+.cta:active{transform:translate3d(0,1px,0)}
+.cta svg{width:15px;height:15px;display:block}
+.risk{position:relative;z-index:4;margin-top:10px;font-size:12.5px;line-height:1.32;
+      color:var(--dim);letter-spacing:-.008em}
+.risk b{font-weight:500;color:var(--mut)}
+
+/* ─── что уходит под сгиб ─── */
+.next{position:relative;z-index:4;margin-top:8px;border-top:1px solid var(--hair);
+      background:linear-gradient(rgba(0,0,0,.26),rgba(0,0,0,.08))}
+.next h2{padding:15px var(--pad) 3px;font-size:14.5px;font-weight:500;letter-spacing:-.022em}
+.nrow{padding:11px var(--pad);border-top:1px solid rgba(231,234,240,.055);
+      font-size:13px;color:var(--mut);letter-spacing:-.01em}
+.nrow:first-of-type{border-top:0}
+
+/* ─── маркеры сгиба (прототип) ─── */
+.fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,90,90,.4)}
+.fold b{position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.86);
+        font-size:8px;font-weight:400;letter-spacing:.02em;color:rgba(255,110,110,.75)}
+.fold.real{top:659px;border-top-color:rgba(255,155,60,.42)}
+.fold.real b{top:-13px;color:rgba(255,180,90,.85)}
+.fold.dev{top:844px}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media (max-width:389px){
+  .vp{width:100%}
+  h1{font-size:27px}
+  .win{height:142px}
+  .plate{height:170px}
+  .dot,.lead{top:118px}
+  .shelf{top:162px}
+  .cap{top:143px;font-size:11.5px}
+  .num{font-size:39px}
+  .leg{padding:0 12px;gap:3px}
+  .lg1{font-size:12px;padding:0 4px}
+}
+</style>
+</head>
+<body>
+
+<div class="vp" id="vp">
+
+  <header class="hd pad">
+    <span class="lg">uniqore</span>
+    <span class="do">делаем сайты и CRM</span>
+  </header>
+
+  <section class="head pad">
+    <h1>Сайт по проекту,<em>а не по шаблону</em></h1>
+    <p class="sub">Сделали <b>20+</b> сайтов и <b>30+</b> CRM. Вот один из них.</p>
+  </section>
+
+  <figure class="plate" id="plate">
+    <div class="win">
+      <div class="pan"><img id="shot" fetchpriority="high" decoding="async"
+        src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+        alt="Первый экран сайта автокомплекса «Немеция», Омск"></div>
+      <span class="cm a" aria-hidden="true"></span>
+      <span class="cm b" aria-hidden="true"></span>
+      <span class="cm c" aria-hidden="true"></span>
+      <span class="cm d" aria-hidden="true"></span>
+    </div>
+    <figcaption class="call" id="call">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="lead" aria-hidden="true"></span>
+      <span class="shelf" aria-hidden="true"></span>
+      <span class="cap" id="cap" aria-live="polite"><b>Немеция</b> · автокомплекс, Омск</span>
+    </figcaption>
+  </figure>
+
+  <nav class="leg" id="leg" aria-label="Показанные работы">
+    <button class="lg1" type="button" aria-pressed="true"  data-i="0"><i aria-hidden="true"></i><span>Немеция</span></button>
+    <button class="lg1" type="button" aria-pressed="false" data-i="1"><i aria-hidden="true"></i><span>Bien&nbsp;Sûr</span></button>
+    <button class="lg1" type="button" aria-pressed="false" data-i="2"><i aria-hidden="true"></i><span>IDTuning</span></button>
+    <button class="lg1" type="button" aria-pressed="false" data-i="3"><i aria-hidden="true"></i><span>MILLA</span></button>
+  </nav>
+
+  <section class="est">
+    <p class="note">Обычно заказывают этот объём</p>
+    <div class="row">
+      <span class="num">32&thinsp;800<span>₽</span></span>
+      <span class="what">Многостраничный сайт, дизайн рисуем под вас</span>
+    </div>
+    <p class="dim"><span class="tk" aria-hidden="true"></span><span class="ln" aria-hidden="true"></span><span class="v">5 дней от старта до сдачи</span><span class="ln" aria-hidden="true"></span><span class="tk" aria-hidden="true"></span></p>
+  </section>
+  <p class="alt pad"><b>11 700 ₽</b> — одна страница · <b>39 000 ₽</b> — сайт с CRM</p>
+
+  <div class="act pad">
+    <a class="cta" href="#zayavka">Обсудить проект
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+  <p class="risk pad">Платите после того, как утвердите макет. <b>Гарантия год</b>, абонплаты нет.</p>
+
+  <section class="next">
+    <h2>Состав проекта</h2>
+    <p class="nrow">Свой дизайн — не сборка из готовых блоков</p>
+    <p class="nrow">Исходники после сдачи отдаём вам</p>
+    <p class="nrow">Год гарантии на всё, что сделали</p>
+  </section>
+
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var vp=document.getElementById('vp'),leg=document.getElementById('leg'),
+    shot=document.getElementById('shot'),cap=document.getElementById('cap'),
+    call=document.getElementById('call'),plate=document.getElementById('plate'),
+    btn=leg.querySelectorAll('.lg1'),
+    calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Кроп под каждый снимок. Замерено по пикселям исходников:
+   Bien Sûr — впечены белые поля 249 px слева, 251 справа, 101 снизу (из 2000×1133);
+   Немеция — белая полоса 123 px снизу. Ширина и сдвиги подобраны так, чтобы
+   поля ушли за кадр даже при максимальном ходе (±10 по X, ±6 по Y, +14 от прокрутки):
+   у Bien Sûr остаётся ~22 px запаса с каждой стороны. */
+var D=[
+ {s:'/keysy/cases/case-nemecia.webp', w:430,x:-20,y:-36,n:'Немеция', m:'автокомплекс, Омск',        a:'Первый экран сайта автокомплекса «Немеция», Омск'},
+ {s:'/keysy/cases/case-biensur.webp', w:580,x:-95,y:-64,n:'Bien Sûr',m:'ресторан, Санкт-Петербург', a:'Первый экран сайта ресторана Bien Sûr, Санкт-Петербург'},
+ {s:'/keysy/cases/case-idtuning.webp',w:430,x:-20,y:-36,n:'IDTuning',m:'тюнинг-ателье',             a:'Первый экран сайта тюнинг-ателье IDTuning'},
+ {s:'/keysy/cases/case-milla.webp',   w:430,x:-20,y:-36,n:'MILLA',   m:'интерьеры',                 a:'Первый экран сайта студии интерьеров MILLA'}
+];
+var now=0;
+
+function paint(i){
+  var d=D[i];
+  shot.src=d.s; shot.alt=d.a;
+  shot.style.width=d.w+'px'; shot.style.left=d.x+'px'; shot.style.top=d.y+'px';
+  shot.classList.remove('sw'); void shot.offsetWidth; shot.classList.add('sw');
+  cap.innerHTML='<b></b> · ';
+  cap.firstChild.textContent=d.n;
+  cap.appendChild(document.createTextNode(d.m));
+  /* выноска перечерчивается заново — лист перекладывают, разметку наносят снова */
+  call.style.animation='none';
+  var k=call.querySelectorAll('.dot,.lead,.shelf,.cap');
+  for(var j=0;j<k.length;j++){ k[j].style.animation='none'; void k[j].offsetWidth; k[j].style.animation=''; }
+  for(var c=0;c<btn.length;c++) btn[c].setAttribute('aria-pressed', c===i?'true':'false');
+  now=i;
+}
+function show(i){
+  if(i===now||!D[i]) return;
+  var pre=new Image(), done=false;
+  pre.src=D[i].s;
+  /* декодируем до подмены, иначе шторка проявляет старый кадр.
+     Страховка обязательна: в притормаживающей вкладке decode() умеет
+     не разрешаться вовсе — без неё нажатие молча ничего не делает. */
+  var go=function(){ if(done) return; done=true; paint(i); };
+  setTimeout(go,400);
+  if(pre.decode) pre.decode().then(go).catch(go);
+  else if(pre.complete) go();
+  else { pre.onload=go; pre.onerror=go; }
+}
+leg.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('.lg1');
+  if(b) show(+b.getAttribute('data-i'));
+});
+
+/* свайп по снимку; вертикальный guard, иначе обычная прокрутка листает работы */
+var sx=0,sy=0;
+plate.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+plate.addEventListener('touchend',function(e){
+  var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.6) return;
+  show((now+(dx<0?1:3))%4);
+},{passive:true});
+
+/* Один rAF пишет три числа в переменные, их читают снимок и выноска.
+   Петля засыпает, когда движение затухло: в покое 0% CPU. */
+if(!calm){
+  var tx=0,ty=0,ts=0,cx=0,cy=0,cs=0,alive=false,st=vp.style;
+  function cl(v){return v<-1?-1:v>1?1:v}
+  function loop(){
+    cx+=(tx-cx)*.12; cy+=(ty-cy)*.12; cs+=(ts-cs)*.2;
+    st.setProperty('--gx',cx.toFixed(4));
+    st.setProperty('--gy',cy.toFixed(4));
+    st.setProperty('--sy',cs.toFixed(2));
+    if(Math.abs(tx-cx)+Math.abs(ty-cy)>.002||Math.abs(ts-cs)>.3) requestAnimationFrame(loop);
+    else{ cx=tx;cy=ty;cs=ts;
+      st.setProperty('--gx',cx.toFixed(4));st.setProperty('--gy',cy.toFixed(4));st.setProperty('--sy',cs.toFixed(2));
+      alive=false; }
+  }
+  function kick(){ if(!alive){alive=true;requestAnimationFrame(loop);} }
+  var maxS=230;
+  function onScroll(){ var v=window.pageYOffset||document.documentElement.scrollTop||0; ts=v>maxS?maxS:v; kick(); }
+  addEventListener('scroll',onScroll,{passive:true});
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) onScroll(); },{passive:true});
+
+  var gyro=false;
+  function fromPoint(x,y){
+    if(gyro) return;
+    tx=cl((x/(innerWidth||390))*2-1); ty=cl((y/(innerHeight||800))*2-1); kick();
+  }
+  if(window.PointerEvent){
+    addEventListener('pointermove',function(e){fromPoint(e.clientX,e.clientY);},{passive:true});
+    addEventListener('pointerdown',function(e){fromPoint(e.clientX,e.clientY);},{passive:true});
+  }else{
+    addEventListener('mousemove',function(e){fromPoint(e.clientX,e.clientY);},{passive:true});
+    addEventListener('touchmove',function(e){fromPoint(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  }
+  /* наклон устройства: ноль калибруется по первому замеру и медленно ползёт
+     за позой — не залипает и не дрожит */
+  var base=null,bound=false;
+  function onOri(e){
+    var g=e.gamma,b=e.beta;
+    if(g==null&&b==null) return;
+    g=g||0; b=b||0;
+    if(!base){ base={g:g,b:b}; return; }
+    base.g+=(g-base.g)*.0025; base.b+=(b-base.b)*.0025;
+    var nx=cl((g-base.g)/15), ny=cl((b-base.b)/15);
+    if(!gyro){ if(Math.abs(nx)+Math.abs(ny)<.02) return; gyro=true; }
+    tx=nx; ty=ny; kick();
+  }
+  function bind(){ if(bound) return; bound=true; addEventListener('deviceorientation',onOri,{passive:true}); }
+  function ask(){
+    var DE=window.DeviceOrientationEvent;
+    if(!DE) return;
+    if(typeof DE.requestPermission==='function'){
+      try{ DE.requestPermission().then(function(s){ if(s==='granted') bind(); }).catch(function(){}); }catch(err){}
+    } else bind();
+  }
+  ask();
+  addEventListener('touchend',function once(){ removeEventListener('touchend',once); ask(); },{passive:true});
+}
+
+/* остальные снимки — только после загрузки: в первом экране один <img> */
+addEventListener('load',function(){
+  setTimeout(function(){ for(var i=1;i<D.length;i++) (new Image()).src=D[i].s; },600);
+});
+})();
+</script>
+</body>
+</html>

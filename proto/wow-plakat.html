@@ -20,7 +20,7 @@
   1. ТИПОГРАФИКА ВЕДЁТ, КАДР ПОДЧИНЁН.
      Заголовок собран как афиша: три строки трёх разных плотностей.
        «Сайт, который» — Geist 400/17, тихая подводка;
-       «НЕ СТЫДНО»     — Unbounded 600/38, плотный, тяжёлый, короткий;
+       «НЕ СТЫДНО»     — Unbounded 600/36, плотный, тяжёлый, короткий;
        «ПОКАЗАТЬ»      — Unbounded 250/66, лёгкий, огромный, во всю ширину
                           экрана — от края до края, с лёгким уходом
                           последней буквы за обрез.
@@ -43,10 +43,12 @@
      светлее фона, а структура работы всё равно просвечивает.
 
   3. РАЗРЕЗ.
-     Кадр обрезан не прямоугольником, а диагональю (34px на 390 ≈ 5°), и по
-     линии реза проходит лаймовое лезвие в 1.5px. Заголовок «садится» в
-     образовавшийся клин. Диагональ — единственная косая линия на экране,
-     поэтому читается как жест, а не как декор.
+     Кадр обрезан не прямоугольником, а диагональю (40px на 390 ≈ 5.9°), и по
+     линии реза проходит лаймовое лезвие в 1.7px. Заголовок не стоит НАД
+     кадром — он в него ныряет: слева буквы висят в воздухе, справа их низ
+     уже ушёл под срез, поверх затемнённого верха фотографии. Диагональ —
+     единственная косая линия на экране, поэтому читается как жест, а не
+     как декор.
 
   4. ДВИЖЕНИЕ — ОДНО СОБЫТИЕ, ОДИН ЖЕСТ.
      Слева направо проходит одна волна: лезвие прочерчивается (scaleX) и
@@ -92,15 +94,19 @@ body{
   overflow-x:hidden;
 }
 
-/* .vp — телефон. container-type даёт единицу cqw: дисплейный кегль
-   считается от ШИРИНЫ ЭТОЙ КОРОБКИ, а не от окна браузера, поэтому
-   макет одинаково точен и в прототипе на десктопе, и на 360px-андроиде.
-   --k:3.9px — резерв для браузеров без container queries (390/100). */
+/* .vp — телефон. Дисплейный кегль считается от ШИРИНЫ ЭТОЙ КОРОБКИ,
+   а не от окна браузера: тогда «ПОКАЗАТЬ» ложится ровно на обрез и на
+   390, и на 360. Три ступени деградации:
+     --k:3.9px      — совсем старые движки (390/100);
+     min(3.9px,1vw) — Chrome 79+/Safari 13.4: на телефоне ≤390 берёт вьюпорт,
+                      в прототипе на десктопе остаётся 3.9px;
+     1cqw           — Chrome 105+/Safari 16: точная ширина контейнера. */
 .vp{
   width:390px;max-width:100%;margin:0 auto;position:relative;
   background:var(--bg);overflow:hidden;min-height:940px;
   container-type:inline-size;
   --k:3.9px;
+  --k:min(3.9px,1vw);
 }
 @supports (width:1cqw){.vp{--k:1cqw}}
 
@@ -128,7 +134,7 @@ body{
 .hd .tag{font-size:10px;letter-spacing:.2em;color:var(--dim);flex:0 0 auto}
 
 /* ───────── 2 · титул-афиша ───────── */
-.ttl{position:relative;z-index:2;padding-top:15px}
+.ttl{position:relative;z-index:4;padding-top:13px}
 
 /* строка A: подводка + волосяная линия до правого края */
 .ttl .a{
@@ -141,12 +147,12 @@ body{
 /* строка B: плотная тяжёлая + блок масштаба в её негативном пространстве */
 .ttl .b{
   display:flex;align-items:flex-end;justify-content:space-between;
-  gap:10px;min-width:0;padding:0 var(--pad);margin-top:8px;
+  gap:18px;min-width:0;padding:0 var(--pad);margin-top:6px;
 }
 .ttl .b em{
   flex:0 1 auto;min-width:0;font-style:normal;
   font-family:'Unbounded','Geist',sans-serif;font-weight:600;
-  font-size:calc(var(--k)*9.75);line-height:.9;letter-spacing:-.042em;
+  font-size:calc(var(--k)*9.2);line-height:.9;letter-spacing:-.042em;
   color:var(--txt);text-transform:uppercase;white-space:nowrap;
 }
 .scale{flex:0 0 auto;text-align:right;padding-bottom:3px}
@@ -172,13 +178,17 @@ body{
   /* screen-слой поднимает яркость тёмных скриншотов —
      буквы читаются на любой из четырёх работ */
   background-image:
-    linear-gradient(158deg,rgba(205,255,79,.66) 0%,rgba(235,240,248,.52) 58%,rgba(151,161,176,.44) 100%),
+    linear-gradient(158deg,rgba(205,255,79,.64) 0%,rgba(226,233,244,.37) 52%,rgba(150,162,182,.38) 100%),
     var(--shot);
   background-blend-mode:screen,normal;
-  background-size:auto,150% auto;
-  background-position:0 0,50% 40%;
+  background-size:auto,172% auto;
+  background-position:0 0,46% 33%;
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
+  /* волосяная обводка держит форму букв на пёстрой фотографии,
+     контраст добирает структуру работы внутри литеры */
+  -webkit-text-stroke:.6px rgba(231,234,240,.28);
+  filter:contrast(1.12) saturate(.8);
   animation:flood .72s var(--ease);
 }
 @supports not ((-webkit-background-clip:text) or (background-clip:text)){
@@ -188,12 +198,16 @@ body{
 @keyframes flood{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 
 /* ───────── 3 · доказательство: кадр работы, срезанный диагональю ───────── */
-.stage{position:relative;z-index:2;margin-top:calc(var(--k)*-0.9)}
+.stage{position:relative;z-index:2;margin-top:calc(var(--k)*-5.6)}
 .band{
-  position:relative;height:150px;overflow:hidden;background:#0e1320;
-  clip-path:polygon(0 34px,100% 0,100% 100%,0 100%);
+  position:relative;height:164px;overflow:hidden;background:#0e1320;
+  clip-path:polygon(0 40px,100% 0,100% 100%,0 100%);
 }
 .band img{
+  /* width/left/top здесь — страховка на случай, если инлайн-кроп
+     потеряется: без явной ширины браузер нарисует картинку в её
+     натуральные 2000px. Рабочие значения приходят из атрибута style
+     (первый кадр) и из JS (переключение). */
   position:absolute;top:0;left:0;width:390px;height:auto;display:block;
   /* пять чужих палитр сводим в серию кадрированием и скримом,
      бренды клиентов не перекрашиваем */
@@ -203,19 +217,19 @@ body{
 @keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 /* верхний увод гасит светлые шапки клиентских сайтов, не стирая их */
 .band::before{
-  content:'';position:absolute;left:0;right:0;top:0;height:64px;z-index:2;pointer-events:none;
-  background:linear-gradient(rgba(10,14,26,.78),rgba(10,14,26,0));
+  content:'';position:absolute;left:0;right:0;top:0;height:78px;z-index:2;pointer-events:none;
+  background:linear-gradient(var(--bg) 0%,rgba(10,14,26,.95) 24%,rgba(10,14,26,.42) 60%,rgba(10,14,26,0) 100%);
 }
 /* низ растворяется точно в цвет страницы — кадр не «карточка», а разворот */
 .band::after{
-  content:'';position:absolute;left:0;right:0;bottom:0;height:80px;z-index:2;pointer-events:none;
-  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.55) 42%,rgba(10,14,26,.96) 80%,var(--bg) 100%);
+  content:'';position:absolute;left:0;right:0;bottom:0;height:88px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.5) 38%,rgba(10,14,26,.96) 76%,var(--bg) 100%);
 }
 /* лезвие по линии реза: обрезка на обёртке, движение на внутренней полосе —
    иначе scaleX увёл бы угол диагонали */
 .blade{
-  position:absolute;left:0;right:0;top:0;height:40px;z-index:3;pointer-events:none;
-  clip-path:polygon(0 34px,100% 0,100% 1.6px,0 35.6px);
+  position:absolute;left:0;right:0;top:0;height:46px;z-index:3;pointer-events:none;
+  clip-path:polygon(0 40px,100% 0,100% 1.7px,0 41.7px);
 }
 .blade i{
   display:block;height:100%;transform-origin:0 50%;
@@ -240,7 +254,7 @@ body{
 }
 .cell{
   display:flex;align-items:center;gap:9px;min-width:0;
-  height:40px;padding:0 10px 0 var(--pad);
+  height:44px;padding:0 10px 0 var(--pad);
   background:none;border:0;border-right:1px solid var(--line);
   color:inherit;text-align:left;font-family:inherit;cursor:pointer;
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
@@ -267,11 +281,13 @@ body{
 
 /* ───────── 5 · цена ───────── */
 .price{
-  position:relative;z-index:2;padding:9px var(--pad) 10px 18px;
+  position:relative;z-index:2;padding:7px var(--pad) 8px 18px;
   border-left:2px solid var(--lime);
   background:repeating-linear-gradient(0deg,rgba(205,255,79,.05) 0 1px,rgba(205,255,79,.017) 1px 3px);
 }
-.price .lbl{font-size:10.5px;letter-spacing:.14em;color:var(--lime)}
+.price .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;min-width:0}
+.price .lbl{min-width:0;font-size:10.5px;letter-spacing:.14em;color:var(--lime)}
+.price .term{flex:0 0 auto;font-size:10.5px;letter-spacing:.12em;color:var(--dim)}
 .pr{display:flex;align-items:baseline;gap:13px;margin-top:6px;min-width:0}
 .num{
   flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;
@@ -279,20 +295,15 @@ body{
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 .num i{font-style:normal;font-size:.55em;color:#c3cad6;margin-left:5px;letter-spacing:0}
-.pr .what{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.28;color:var(--mut)}
-.pr .what s{
-  display:block;text-decoration:none;margin-top:3px;
-  font-family:'JetBrains Mono',ui-monospace,monospace;text-transform:uppercase;
-  font-size:10.5px;letter-spacing:.1em;color:var(--dim);
-}
+.pr .what{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.3;color:var(--mut)}
 .alt{
-  position:relative;z-index:2;padding:8px var(--pad) 0;
+  position:relative;z-index:2;padding:6px var(--pad) 0;
   font-size:12.5px;line-height:1.3;color:var(--dim);letter-spacing:-.005em;
 }
 .alt b{color:var(--mut);font-weight:500}
 
 /* ───────── 6 · одно действие ───────── */
-.act{padding:11px var(--pad) 0;position:relative;z-index:60}
+.act{padding:9px var(--pad) 0;position:relative;z-index:60}
 .cta{
   display:flex;align-items:center;justify-content:center;gap:10px;
   height:54px;border-radius:3px;background:var(--lime);color:#080c16;
@@ -303,7 +314,7 @@ body{
 .cta:active{transform:scale(.982)}
 .cta svg{width:15px;height:15px;display:block;flex:0 0 auto}
 .risk{
-  padding:9px var(--pad) 13px;position:relative;z-index:2;
+  padding:8px var(--pad) 9px;position:relative;z-index:2;
   font-size:12.5px;line-height:1.3;color:var(--dim);letter-spacing:-.005em;
 }
 .risk b{color:var(--mut);font-weight:500}
@@ -311,10 +322,10 @@ body{
 /* ───────── 7 · хвост: то, что режет сгиб ───────── */
 .rule{height:1px;background:var(--line);position:relative;z-index:2}
 .next{position:relative;z-index:2}
-.next .k{padding:13px var(--pad) 10px;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
+.next .k{padding:10px var(--pad) 7px;font-size:10.5px;letter-spacing:.14em;color:var(--dim)}
 .nrow{
   display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;
-  height:42px;padding:0 var(--pad);border-top:1px solid var(--hair);
+  height:38px;padding:0 var(--pad);border-top:1px solid var(--hair);
   font-size:13.5px;color:var(--mut);letter-spacing:-.01em;
 }
 .nrow span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -322,6 +333,9 @@ body{
   flex:0 0 auto;font-style:normal;font-family:'JetBrains Mono',ui-monospace,monospace;
   font-weight:500;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
 }
+
+/* текст только для скринридера — блок масштаба в титуле визуальный */
+.sr{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 
 /* фактура печати: растр вместо шума и стекла */
 .dither{
@@ -368,12 +382,12 @@ body{
       <s aria-hidden="true" id="ink">показать</s>
     </span>
   </h1>
-  <p class="vis-hidden" style="position:absolute;left:-9999px">20+ сделанных сайтов, 30+ CRM</p>
+  <p class="sr">20+ сделанных сайтов, 30+ CRM</p>
 
   <!-- 3 · доказательство -->
   <div class="stage">
     <figure class="band">
-      <img id="shot" fetchpriority="high" decoding="async"
+      <img id="shot" style="top:-30px;left:-25px;width:440px" fetchpriority="high" decoding="async"
            src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
            alt="Первый экран сайта автокомплекса «Немеция», Омск">
       <figcaption class="cap mono">
@@ -394,10 +408,13 @@ body{
 
   <!-- 5 · цена -->
   <section class="price">
-    <p class="mono lbl">Чаще всего берут</p>
+    <p class="top">
+      <span class="mono lbl">Чаще всего берут</span>
+      <span class="mono term">Срок 5 дней</span>
+    </p>
     <div class="pr">
       <span class="num">32&thinsp;800<i>₽</i></span>
-      <span class="what">Многостраничный сайт, свой дизайн<s>срок 5 дней</s></span>
+      <span class="what">Многостраничный сайт, свой дизайн</span>
     </div>
   </section>
   <p class="alt">Одна страница — <b>11 700 ₽</b> · сайт с CRM — <b>39 000 ₽</b></p>
@@ -427,13 +444,14 @@ body{
 <script>
 (function(){
   /* кроп подобран под каждый скриншот руками: у Bien Sûr в исходник впечены
-     белые поля по 12.2% с каждой стороны — их надо срезать, остальные три
-     сняты в край */
+     белые поля по 12.2% с каждой стороны — их надо срезать; y уводит вверх
+     светлые шапки клиентских сайтов, чтобы под срезом оказался сам кадр
+     работы, а не чужая навигация */
   var D = [
-    {s:'/keysy/cases/case-nemecia.webp', w:390, x:0,   m:'Немеция · автокомплекс, Омск',    a:'Первый экран сайта автокомплекса «Немеция», Омск'},
-    {s:'/keysy/cases/case-biensur.webp', w:516, x:-63, m:'Bien Sûr · ресторан, Петербург',  a:'Первый экран сайта ресторана Bien Sûr, Санкт-Петербург'},
-    {s:'/keysy/cases/case-idtuning.webp',w:390, x:0,   m:'IDTuning · тюнинг-ателье',        a:'Первый экран сайта тюнинг-ателье IDTuning'},
-    {s:'/keysy/cases/case-milla.webp',   w:390, x:0,   m:'MILLA · студия интерьеров',       a:'Первый экран сайта студии интерьеров MILLA'}
+    {s:'/keysy/cases/case-nemecia.webp', w:440, x:-25, y:-30, m:'Немеция · автокомплекс, Омск',   a:'Первый экран сайта автокомплекса «Немеция», Омск'},
+    {s:'/keysy/cases/case-biensur.webp', w:516, x:-63, y:-6,  m:'Bien Sûr · ресторан, Петербург', a:'Первый экран сайта ресторана Bien Sûr, Санкт-Петербург'},
+    {s:'/keysy/cases/case-idtuning.webp',w:500, x:-56, y:-14, m:'IDTuning · тюнинг-ателье',       a:'Первый экран сайта тюнинг-ателье IDTuning'},
+    {s:'/keysy/cases/case-milla.webp',   w:390, x:0,   y:0,   m:'MILLA · студия интерьеров',      a:'Первый экран сайта студии интерьеров MILLA'}
   ];
   var vp   = document.querySelector('.vp'),
       idx  = document.getElementById('idx'),
@@ -458,6 +476,7 @@ body{
     shot.src = d.s; shot.alt = d.a;
     shot.style.width = d.w + 'px';
     shot.style.left  = d.x + 'px';
+    shot.style.top   = d.y + 'px';
     shot.classList.remove('sw'); void shot.offsetWidth; shot.classList.add('sw');
     vp.style.setProperty('--shot','url(' + d.s + ')');   /* заливка букв — тот же файл */
     gesture();

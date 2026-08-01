@@ -138,15 +138,17 @@ h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(23
 
 .frame{
   position:relative;height:220px;overflow:hidden;background:#0d1119;
-  contain:paint;                       /* кадр не заставляет пересчитывать соседей */
 }
 /* штора склейки: живёт в экранных координатах, поэтому отдельным слоем
    над .cam — если повесить clip-path на саму камеру, штора поедет вместе
    с картинкой и превратится в кашу */
 .stage{position:absolute;inset:0;overflow:hidden}
+/* Сознательно БЕЗ will-change: браузер сам поднимает слой на время
+   transform-анимации и сам отпускает после. Постоянный will-change держал
+   бы растр 648×367 в памяти композитора все 30 секунд цикла — на среднем
+   Android это плата ни за что, выигрыша по кадрам нет */
 .cam{
   position:absolute;top:0;left:0;
-  will-change:transform;
   transform:translate3d(0,0,0);
 }
 .film{
@@ -181,7 +183,7 @@ h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(23
 /* нижний скрим не «затемняет», а растворяет кадр точно в цвет страницы */
 .frame::after{
   content:'';position:absolute;left:0;right:0;bottom:0;height:86px;z-index:4;pointer-events:none;
-  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.5) 40%,rgba(10,14,26,.95) 78%,#0A0E1A 100%);
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.55) 38%,rgba(10,14,26,.97) 74%,#0A0E1A 100%);
 }
 /* виньетка: гасит углы, чтобы кадр не выглядел наклейкой.
    Радиальный градиент, а не box-shadow-свечение */
@@ -193,14 +195,17 @@ h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(23
 /* полоса прокрутки кадра. Не украшение: она доказывает, что страница
    ДЛИННЕЕ окна, и держит мысль «сайт листают» даже когда кадр тёмный.
    Ползунок едет тем же таймингом, что камера — они склеены */
+/* тёмная подложка обязательна: на светлом кадре (Bien Sûr, Немеция)
+   полупрозрачный лайм по светлому просто исчезал, и деталь читалась
+   как баг «то есть, то нет» */
 .sb{
-  position:absolute;right:3px;top:8px;bottom:8px;width:2px;z-index:6;
-  border-radius:1px;background:rgba(231,234,240,.09);pointer-events:none;
+  position:absolute;right:4px;top:8px;bottom:8px;width:3px;z-index:6;
+  border-radius:2px;background:rgba(5,7,13,.42);pointer-events:none;
 }
 .sb b{
-  display:block;width:100%;height:60%;border-radius:1px;
-  background:rgba(205,255,79,.5);
-  transform:translate3d(0,0,0);will-change:transform;
+  display:block;width:100%;height:60%;border-radius:2px;
+  background:rgba(205,255,79,.68);
+  transform:translate3d(0,0,0);
 }
 
 .cap{
@@ -258,7 +263,9 @@ h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(23
    Виден с первого кадра (запаркован на «01») — на скриншоте не пусто */
 .gc{
   position:absolute;top:0;left:0;z-index:30;pointer-events:none;
-  transform:translate3d(46px,196px,0);
+  /* стартовая позиция совпадает с реальным «запаркован на 01» — park()
+     сразу её уточнит, но без JS курсор не прыгает в случайное место */
+  transform:translate3d(48px,242px,0);
   transition:transform .82s cubic-bezier(.3,.86,.24,1),opacity .35s linear;
   opacity:.92;
 }
@@ -306,19 +313,14 @@ h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(23
   font-size:16px;font-weight:600;letter-spacing:-.015em;text-decoration:none;
   transition:transform .12s var(--ease);
   touch-action:manipulation;-webkit-tap-highlight-color:transparent;
-  position:relative;overflow:hidden;
+  position:relative;
 }
 .cta:active{transform:scale(.982)}
 .cta svg{width:15px;height:15px;display:block}
-/* один медленный проход блика по кнопке — 4.6 s, transform, без свечения */
-.cta::after{
-  content:'';position:absolute;top:0;bottom:0;left:0;width:56px;
-  background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);
-  transform:translate3d(-90px,0,0);
-  animation:sheen 4.6s cubic-bezier(.5,0,.5,1) 1.4s infinite;
-  pointer-events:none;
-}
-@keyframes sheen{0%{transform:translate3d(-90px,0,0)}22%,100%{transform:translate3d(430px,0,0)}}
+/* Здесь был бегущий блик по кнопке. Снят намеренно: посмотрел вживую —
+   размывает лайм, читается как самый штампованный приём «сделать красиво»
+   и вешает на страницу вечную анимацию рядом с живым кадром. Движение в
+   первом экране должно быть ОДНО, и оно в кадре. Кнопка просто твёрдая */
 .risk{
   padding:9px var(--pad) 13px;position:relative;z-index:2;
   font-size:12.5px;line-height:1.35;color:var(--dim);letter-spacing:-.005em;
@@ -360,8 +362,7 @@ h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(23
 
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
-  .gc{display:none}
-  .cta::after{display:none}
+  .gc{display:none}          /* призрачный курсор — чистое движение, убираем целиком */
 }
 </style>
 </head>
@@ -476,10 +477,16 @@ h1 .c i{flex:1 1 auto;min-width:0;height:1px;margin-left:16px;background:rgba(23
    план крупнее (648) и x держит окно внутри контента. */
 var FH = 220;
 var D = [
-  {s:'/keysy/cases/case-nemecia.webp',  w:560, h:317.5, a:[0,-6],     b:[0,-90],     n:'Немеция',  m:'Автокомплекс · Омск',        alt:'Сайт автокомплекса «Немеция», Омск — первый экран'},
-  {s:'/keysy/cases/case-biensur.webp',  w:648, h:367.1, a:[-100,0],   b:[-140,-142], n:'Bien Sûr', m:'Ресторан · Санкт-Петербург', alt:'Сайт ресторана Bien Sûr, Санкт-Петербург — первый экран'},
-  {s:'/keysy/cases/case-idtuning.webp', w:560, h:317.0, a:[-92,0],    b:[-92,-95],   n:'IDTuning', m:'Тюнинг-ателье · Москва',     alt:'Сайт тюнинг-ателье IDTuning, Москва — первый экран'},
-  {s:'/keysy/cases/case-milla.webp',    w:600, h:341.7, a:[-105,0],   b:[-105,-118], n:'MILLA',    m:'Дизайн интерьера · Самара',  alt:'Сайт студии интерьера MILLA, Самара — первый экран'}
+  {s:'/keysy/cases/case-nemecia.webp',  w:560, h:317.5, a:[0,-6],     b:[0,-90],    m:'Автокомплекс · Омск',        alt:'Сайт автокомплекса «Немеция», Омск — первый экран'},
+  /* Bien Sûr: x закреплён на -92 — это левая колонка вёрстки клиента.
+     При сносе до -140 нижняя половина хода резала абзацы посреди букв
+     («анцузское бистро»), и кадр читался как брак, а не как прокрутка */
+  {s:'/keysy/cases/case-biensur.webp',  w:648, h:367.1, a:[-92,-30],  b:[-92,-145], m:'Ресторан · Санкт-Петербург', alt:'Сайт ресторана Bien Sûr, Санкт-Петербург — первый экран'},
+  {s:'/keysy/cases/case-idtuning.webp', w:560, h:317.0, a:[-92,0],    b:[-92,-95],  m:'Тюнинг-ателье · Москва',     alt:'Сайт тюнинг-ателье IDTuning, Москва — первый экран'},
+  /* MILLA: план 530 и x=-70 подобраны так, что центр окна совпадает
+     одновременно с центром логотипа и центром заголовка. На плане 600
+     заголовок упирался в оба края и читался как случайный обрез */
+  {s:'/keysy/cases/case-milla.webp',    w:530, h:301.8, a:[-70,0],    b:[-70,-79],  m:'Дизайн интерьера · Самара',  alt:'Сайт студии интерьера MILLA, Самара — первый экран'}
 ];
 
 var DWELL = 7600,   /* сколько живёт одна работа            */
@@ -522,7 +529,7 @@ function drive(i){
       track = FH - 16,                              /* .sb: top 8 / bottom 8 */
       thumb = Math.max(30, Math.round(track * FH / d.h)),
       run   = track - thumb,
-      max   = d.h - FH,
+      max   = Math.max(1, d.h - FH),                /* деление на 0, если план когда-то станет ниже рамки */
       p0    = run * Math.min(1, -d.a[1] / max),
       p1    = run * Math.min(1, -d.b[1] / max);
 
@@ -575,14 +582,30 @@ function paint(i){
   }
 }
 
-/* декодируем ДО подмены: иначе штора проявляет старый кадр */
+/* Готовим кадр ДО подмены: иначе штора проявляет старый.
+   ⚠ decode() на «оторванном» new Image() умеет НЕ РЕЗОЛВИТЬСЯ вообще —
+   поймано в браузере на этом же прототипе: картинка грузится
+   (complete=true, naturalWidth=2000), а промис висит вечно и реел не
+   переключается ни разу. Поэтому decode — только бонус поверх onload,
+   и сверху жёсткий таймаут. Один и тот же кадр не рисуем дважды (done).
+   seq гасит вторую гонку: без него автопереход, уже ушедший в загрузку,
+   дорисовывал свою работу ПОВЕРХ той, что человек выбрал пальцем. */
+var seq = 0;
 function show(i){
   if (i===now || !D[i]) return;
-  var pre = new Image(); pre.src = D[i].s;
-  var go = function(){ paint(i); };
-  if (pre.decode) pre.decode().then(go)['catch'](go);
-  else if (pre.complete) go();
-  else { pre.onload = go; pre.onerror = go; }
+  var my = ++seq, done = false, pre = new Image();
+  var go = function(){
+    if (done) return; done = true;
+    if (my === seq) paint(i);
+  };
+  pre.onload = function(){
+    if (pre.decode) { try{ pre.decode().then(go)['catch'](go); }catch(e){ go(); } }
+    else go();
+  };
+  pre.onerror = go;
+  pre.src = D[i].s;
+  if (pre.complete) pre.onload();
+  setTimeout(go, 500);                    /* страховка от зависшего decode */
 }
 
 /* ── призрачный курсор: своя полоса работ, не чужие кнопки ───────────── */
@@ -602,7 +625,7 @@ function tap(){
 /* ── цикл ────────────────────────────────────────────────────────────── */
 function cycle(){
   clearT();
-  if (!auto || !live) return;
+  if (!auto || !live || document.hidden) return;   /* вкладка могла открыться сразу в фоне */
   var nx = (now+1)%D.length;
   T(function(){ park(nx,true); }, DWELL-LEAD);
   T(tap,                          DWELL-TAPT);
@@ -610,7 +633,8 @@ function cycle(){
 }
 
 function stop(){                      /* человек тронул — машина уходит */
-  auto = false; clearT();
+  auto = false; clearT(); seq++;
+
   if (barAnim) barAnim.cancel();
   ghost.classList.add('off');
   tabs[now].firstElementChild.style.transform='scaleX(1)';
@@ -657,15 +681,39 @@ window.addEventListener('load', function(){
   }, 500);
 });
 
-/* не жжём батарею, когда кадр вне экрана или вкладка в фоне */
+/* Не жжём батарею, когда кадр вне экрана или вкладка в фоне.
+   Возврат — это полный перезапуск работы (камера + таймер + счётчик),
+   а не только таймеров: иначе после сворачивания камера уже доехала до
+   конца, а отсчёт стартовал заново — кадр замирал на 7,6 секунды */
+function halt(){
+  clearT();
+  if (camAnim) camAnim.pause();
+  if (sbAnim)  sbAnim.pause();
+  if (barAnim) barAnim.pause();
+}
+function resume(){
+  if (!auto || !live) return;
+  drive(now); tick(now); cycle();
+}
+
 if (window.IntersectionObserver){
   new IntersectionObserver(function(en){
-    live = en[0].isIntersecting;
-    if (live){ if(auto) cycle(); } else clearT();
+    var vis = en[0].isIntersecting;
+    if (vis === live) return;            /* гасим холостое срабатывание на старте */
+    live = vis;
+    if (live) resume(); else halt();
   },{threshold:.25}).observe(frame);
 }
 document.addEventListener('visibilitychange', function(){
-  if (document.hidden) clearT(); else if (auto && live) cycle();
+  if (document.hidden) halt(); else resume();
+});
+
+/* поворот экрана меняет ширину вкладок — курсор, запаркованный по старым
+   координатам, повис бы мимо своей работы до следующего хода */
+var rz;
+window.addEventListener('resize', function(){
+  clearTimeout(rz);
+  rz = setTimeout(function(){ park(now,false); }, 160);
 });
 
 })();

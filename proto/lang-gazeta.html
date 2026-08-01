@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран · ГАЗЕТА</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════
+  ЯЗЫК: ПЕРВАЯ ПОЛОСА
+
+  Не техно-интерфейс, а свёрстанный номер. Отличия от техно-редакционного
+  языка прошлого раунда — на уровне системы, а не покраски:
+
+  1. ШРИФТ. Заголовки и цифра цены — системный ЗАСЕЧНЫЙ (Georgia / Noto
+     Serif). Ноль внешних запросов, но весь силуэт экрана меняется.
+     JetBrains Mono не используется НИГДЕ. Unbounded оставлен ровно на
+     одно слово — логотип в шапке.
+  2. ТЕКСТ ЕСТЬ. Лид набран в ДВЕ КОЛОНКИ, с буквицей. Плотный набор —
+     это и есть газета, и это ровно то, чего не делает ни один
+     «минималистичный техно-экран».
+  3. ВРЕЗКА НАПЕЧАТАНА НА БУМАГЕ. Цена — светлый блок в край полосы,
+     чёрным по газетной бумаге. Никакой лаймовой полоски по кромке:
+     врезку выделяет инверсия, как в печати.
+  4. ПОДПИСЬ ПОД ФОТО — курсивом с полужирным вводным словом, как в
+     нормальном издании. Не метка капсом.
+  5. НОЛЬ КАПСА. Ноль нумерации 01/02. Ноль направляющих на фоне.
+     Ноль иконок и эмодзи. Лайм ровно в двух местах: буквица и кнопка.
+
+  ДВИЖЕНИЕ (только transform / opacity / clip-path):
+    · три строки заголовка выезжают из-под валика — сдвиг + узкий
+      клип справа; стартовое состояние ЧИТАЕМО (обрезано 22%, не 100%)
+    · главное фото садится на место (scale 1.035 → 1) и дальше живёт
+      параллаксом: наклон устройства / палец / прокрутка
+    · врезка «печатается» сверху вниз (клип снизу 32%, не 100%)
+    · переключение работы — вертикальная шторка снизу вверх, как лист
+      выходит из машины
+    Ни один элемент не стартует с opacity:0. При prefers-reduced-motion
+    всё замирает в конечном, полностью читаемом виде.
+
+  БЮДЖЕТ: 0 библиотек, 0 внешних запросов, 1 <img> в первом экране,
+  остальные три кадра — после window.load. Без JS страница полностью
+  читается и цена видна.
+═══════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --ink:#EDEFF4;
+  --txt:#A2ACBB;
+  --dim:#737E90;
+  --lime:#CDFF4F;
+  --paper:#EDEDE7;
+  --hair:rgba(231,234,240,.13);
+  --pad:18px;
+  --serif:Georgia,'Iowan Old Style','Times New Roman','Noto Serif',serif;
+  --ease:cubic-bezier(.22,.9,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--ink);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+.vp{
+  --gx:0; --gy:0; --sy:0;
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:920px;isolation:isolate;
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+
+/* ───────── 1 · титульная строка номера ───────── */
+.mast{
+  height:36px;display:flex;align-items:center;justify-content:space-between;
+  position:relative;
+}
+.mast .name{
+  font-family:'Unbounded','Geist',sans-serif;font-weight:500;
+  font-size:17px;letter-spacing:-.035em;color:var(--ink);
+}
+.mast .sec{font-size:11.5px;color:var(--dim);letter-spacing:-.005em}
+/* двойная линейка под титулом — печатная норма, а не направляющая:
+   жирная сверху, волосяная снизу. Жирная прочерчивается слева направо. */
+.dbl{position:relative;height:4px}
+.dbl i{
+  position:absolute;left:0;right:0;top:0;height:2px;background:var(--ink);
+  transform-origin:0 50%;animation:draw .55s var(--ease) both;
+}
+.dbl u{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--hair)}
+@keyframes draw{from{transform:scaleX(.12)}to{transform:scaleX(1)}}
+
+/* ───────── 2 · заголовок номера ───────── */
+.head{padding-top:14px;padding-bottom:10px}
+h1{
+  font-family:var(--serif);font-weight:700;
+  font-size:35px;line-height:.95;letter-spacing:-.008em;color:var(--ink);
+}
+h1 span{display:block;overflow:hidden}
+h1 span i{
+  display:block;font-style:normal;
+  animation:roll .5s var(--ease) both;
+}
+h1 span:nth-child(2) i{animation-delay:.07s}
+h1 span:nth-child(3) i{animation-delay:.14s}
+/* стартовое состояние читаемо: строка сдвинута на 10px и обрезана на 22% */
+@keyframes roll{
+  from{transform:translate3d(-10px,0,0);clip-path:inset(0 22% 0 0)}
+  to{transform:none;clip-path:inset(0 0 0 0)}
+}
+
+/* ───────── 3 · лид в две колонки с буквицей ───────── */
+/* Выключка ЛЕВАЯ, не по формату: на мере в 28 знаков полная выключка даёт
+   дыры между словами, а переносы в русском доступны не во всех браузерах.
+   Газетность держит сам двухколонный набор, а не выключка. */
+.deck{
+  columns:2;column-gap:16px;
+  font-size:12px;line-height:1.45;color:var(--txt);letter-spacing:-.003em;
+  margin-bottom:10px;
+}
+.deck::first-letter{
+  float:left;font-family:var(--serif);font-weight:700;
+  font-size:26px;line-height:.86;margin:2px 5px 0 0;color:var(--lime);
+}
+.deck b{color:#C9D1DC;font-weight:600}
+
+.rule{height:1px;background:var(--hair)}
+
+/* ───────── 4 · главное фото номера ───────── */
+.photo{
+  position:relative;height:150px;overflow:hidden;background:#0D1017;
+  contain:paint;touch-action:pan-y;
+}
+.photo>i{
+  position:absolute;left:0;top:0;width:100%;height:100%;display:block;
+  transform:translate3d(calc(var(--gx) * 7px),calc(var(--gy) * 4px + var(--sy) * .04px),0);
+  will-change:transform;
+}
+.photo img{
+  position:absolute;display:block;height:auto;
+  filter:saturate(.92) contrast(1.03) brightness(.96);
+  animation:settle 1.1s cubic-bezier(.2,.75,.2,1) both;
+}
+@keyframes settle{from{transform:scale(1.035)}to{transform:none}}
+/* шторка при смене работы: лист выходит из машины снизу вверх */
+@keyframes sheet{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+.photo>i.sw{animation:sheet .42s var(--ease)}
+
+/* ───────── 5 · подпись под фото ───────── */
+.cap{
+  padding:5px var(--pad);
+  font-family:var(--serif);font-style:italic;font-size:12.5px;line-height:1.25;
+  color:#8C96A6;
+}
+.cap b{font-style:normal;font-weight:700;color:#DCE1EA}
+/* подпись не исчезает целиком — уходит под шторку на 60% и возвращается */
+@keyframes capin{from{clip-path:inset(0 0 60% 0)}to{clip-path:inset(0 0 0 0)}}
+.cap span.sw{display:inline-block;animation:capin .38s var(--ease)}
+
+/* ───────── 6 · строка содержания: остальные материалы ───────── */
+.toc{
+  display:flex;align-items:stretch;height:36px;
+  border-bottom:1px solid var(--hair);
+}
+.tab{
+  flex:1 1 auto;min-width:0;background:none;border:0;padding:0 2px;
+  color:var(--dim);font-family:inherit;font-size:13px;font-weight:400;
+  letter-spacing:-.015em;text-align:center;cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:color .18s linear;
+}
+.tab:first-child{text-align:left;padding-left:var(--pad)}
+.tab:last-child{text-align:right;padding-right:var(--pad)}
+.tab[aria-pressed="true"]{color:var(--ink);font-weight:600}
+.tab:active{color:#C9D1DC}
+.tab:focus-visible{outline:1px solid rgba(205,255,79,.6);outline-offset:-3px}
+
+/* ───────── 7 · врезка: напечатана на бумаге ───────── */
+.box{
+  background:var(--paper);color:#11151F;
+  padding:11px var(--pad) 10px;
+  animation:print .5s var(--ease) .3s both;
+}
+/* стартовое состояние: 68% врезки уже видно */
+@keyframes print{from{clip-path:inset(0 0 32% 0)}to{clip-path:inset(0 0 0 0)}}
+.brow{display:flex;align-items:flex-start;gap:14px;min-width:0}
+.fig{
+  flex:0 0 auto;font-family:var(--serif);font-weight:700;
+  font-size:34px;line-height:1.06;letter-spacing:-.015em;color:#0E1220;
+  white-space:nowrap;
+}
+.fig s{text-decoration:none;font-size:.6em;margin-left:.14em;color:#3A4152}
+.what{
+  flex:1 1 auto;min-width:0;padding-top:3px;
+  font-size:12px;line-height:1.32;color:#3D4554;letter-spacing:-.005em;
+}
+.fine{
+  margin-top:9px;font-size:11.5px;line-height:1.4;color:#5A6373;letter-spacing:-.005em;
+}
+.fine em{font-family:var(--serif);font-size:12px;color:#171C28}
+
+/* ───────── 8 · единственное действие ───────── */
+.act{padding:8px var(--pad) 0}
+.cta{
+  display:flex;align-items:center;justify-content:center;height:48px;
+  border-radius:2px;background:var(--lime);color:#0A0E1A;
+  font-size:15.5px;font-weight:600;letter-spacing:-.02em;text-decoration:none;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:transform .12s var(--ease),background .12s linear;
+}
+.cta:active{transform:translate3d(0,1px,0);background:#C2F53F}
+
+/* ───────── 9 · следующий материал, срезанный сгибом ───────── */
+/* Следующий материал начинается ДО сгиба и разрезается им пополам:
+   срезанная строка — самый честный сигнал «полоса продолжается». */
+.more{margin-top:8px;border-top:1px solid var(--hair)}
+.more h2{
+  padding:7px var(--pad) 0;
+  font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.15;
+  letter-spacing:-.01em;color:var(--ink);
+}
+.mrow{
+  margin-top:10px;
+  padding:11px var(--pad);border-top:1px solid rgba(231,234,240,.07);
+  font-size:13px;line-height:1.3;color:var(--txt);letter-spacing:-.01em;
+}
+.mrow+.mrow{margin-top:0}
+.mrow b{color:var(--ink);font-weight:600}
+.sign{
+  padding:14px var(--pad) 40px;
+  font-family:var(--serif);font-style:italic;font-size:12.5px;color:#5F6A7A;
+}
+
+/* ───────── маркеры сгиба (только прототип) ───────── */
+.fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,80,80,.42)}
+.fold b{
+  position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.9);
+  font-size:8px;font-weight:400;letter-spacing:.02em;color:rgba(255,110,110,.75);
+}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.4)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.9)}
+.fold.dev{top:844px}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* 360 и уже: ужимаем ритм, всё критичное остаётся выше 659 */
+@media (max-width:389px){
+  :root{--pad:16px}
+  .vp{width:100%}
+  h1{font-size:32px}
+  .fig{font-size:31px}
+  .photo{height:140px}
+  .head{padding-top:12px;padding-bottom:8px}
+  .deck{font-size:11.5px}
+  .tab{font-size:12.5px}
+}
+</style>
+</head>
+<body>
+
+<div class="vp" id="vp">
+
+  <header class="mast pad">
+    <span class="name">uniqore</span>
+    <span class="sec">сайты под ключ</span>
+  </header>
+  <div class="dbl pad"><i></i><u></u></div>
+
+  <section class="head pad">
+    <h1>
+      <span><i>Ваш новый сайт</i></span>
+      <span><i>выходит в свет</i></span>
+      <span><i>на пятый день</i></span>
+    </h1>
+  </section>
+
+  <p class="deck pad">Многостраничный, со своим дизайном — не шаблон из конструктора. Тексты и структуру берём на себя, исходники отдаём. Сделали <b>20+ сайтов</b> и <b>30+ CRM</b>.</p>
+
+  <div class="rule"></div>
+
+  <figure class="photo" id="photo">
+    <i id="mover">
+      <!-- decoding="sync": единственный кадр первого экрана. С async браузер
+           успевает нарисовать пустой проём до раскодирования — на скриншоте
+           и на медленном канале это чёрная дыра вместо доказательства. -->
+      <img id="shot" fetchpriority="high" decoding="sync" loading="eager"
+           src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+           style="width:430px;left:-20px;top:-12px"
+           alt="Первый экран сайта автокомплекса «Немеция» в Омске">
+    </i>
+  </figure>
+  <figcaption class="cap"><span id="cap"><b>Немеция.</b> Автокомплекс в Омске</span></figcaption>
+
+  <div class="toc" id="toc">
+    <button class="tab" type="button" aria-pressed="true"  data-i="0">Немеция</button>
+    <button class="tab" type="button" aria-pressed="false" data-i="1">Bien Sûr</button>
+    <button class="tab" type="button" aria-pressed="false" data-i="2">IDTuning</button>
+    <button class="tab" type="button" aria-pressed="false" data-i="3">MILLA</button>
+  </div>
+
+  <section class="box">
+    <div class="brow">
+      <span class="fig">32&thinsp;800<s>₽</s></span>
+      <span class="what">Многостраничный сайт со своим дизайном, пять дней</span>
+    </div>
+    <p class="fine"><em>Этот вариант заказывают чаще остальных.</em> Год гарантии, платите после того как утвердите макет, ежемесячной платы нет, исходники отдаём.</p>
+  </section>
+
+  <div class="act">
+    <a class="cta" href="#zayavka">Заказать сайт за 32&thinsp;800&nbsp;₽</a>
+  </div>
+
+  <section class="more">
+    <h2>Если нужно проще или мощнее</h2>
+    <p class="mrow">Одна страница — <b>11 700 ₽</b>, три дня</p>
+    <p class="mrow">Сайт вместе с CRM — <b>39 000 ₽</b>, семь дней</p>
+    <p class="sign">Дальше — как проходят эти пять дней</p>
+  </section>
+
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var vp    = document.getElementById('vp'),
+    toc   = document.getElementById('toc'),
+    shot  = document.getElementById('shot'),
+    mover = document.getElementById('mover'),
+    cap   = document.getElementById('cap'),
+    photo = document.getElementById('photo'),
+    tabs  = toc.querySelectorAll('.tab'),
+    calm  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Кроп посчитан под каждый снимок. Полный ход: ±7 по X, ±4 по Y от наклона,
+   +6 по Y от прокрутки. Масштаб посадки 1.035 кадр только расширяет.
+   Запас сверху 12 px ≥ 10 px хода вниз, снизу 82 px — проём не оголяется.
+   Bien Sûr: замер по пикселям исходника — белое поле слева 249 px, справа
+   251 px (по 12,5%), сверху и снизу полей НЕТ. Поэтому кадр раздут до
+   566 px (поле = 70,5 px) и сдвинут на -88: содержимое занимает 70,5..495,6,
+   с запасом 17 px по обеим кромкам. По вертикали срезать нечего — берём
+   верх страницы, y = -14 (запас 14 px ≥ 10 px хода). */
+var D = [
+  {s:'/keysy/cases/case-nemecia.webp', w:430, x:-20, y:-12,
+   n:'Немеция.',  m:' Автокомплекс в Омске',
+   a:'Первый экран сайта автокомплекса «Немеция» в Омске'},
+  {s:'/keysy/cases/case-biensur.webp', w:566, x:-88, y:-14,
+   n:'Bien Sûr.', m:' Ресторан в Санкт-Петербурге',
+   a:'Первый экран сайта ресторана Bien Sûr в Санкт-Петербурге'},
+  {s:'/keysy/cases/case-idtuning.webp',w:430, x:-20, y:-28,
+   n:'IDTuning.', m:' Тюнинг-ателье',
+   a:'Первый экран сайта тюнинг-ателье IDTuning'},
+  {s:'/keysy/cases/case-milla.webp',   w:430, x:-20, y:-12,
+   n:'MILLA.',    m:' Интерьеры',
+   a:'Первый экран сайта студии интерьеров MILLA'}
+];
+var now = 0;
+
+function paint(i){
+  var d = D[i];
+  shot.src = d.s;
+  shot.alt = d.a;
+  shot.style.width = d.w + 'px';
+  shot.style.left  = d.x + 'px';
+  shot.style.top   = d.y + 'px';
+  shot.style.animation = 'none';           /* посадка играет один раз, при загрузке */
+  mover.classList.remove('sw'); void mover.offsetWidth; mover.classList.add('sw');
+  cap.innerHTML = '<b>' + d.n + '</b>' + d.m;
+  cap.classList.remove('sw'); void cap.offsetWidth; cap.classList.add('sw');
+  for (var k=0;k<tabs.length;k++) tabs[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+  now = i;
+}
+function show(i){
+  if (i===now || !D[i]) return;
+  var pre = new Image(); pre.src = D[i].s;      /* декодируем до подмены */
+  var go = function(){ paint(i); };
+  if (pre.decode) pre.decode().then(go).catch(go);
+  else if (pre.complete) go();
+  else { pre.onload = go; pre.onerror = go; }
+}
+toc.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('.tab');
+  if (t) show(+t.getAttribute('data-i'));
+});
+
+/* свайп по фото. Вертикальный guard: без него прокрутка пальцем листает работы */
+var sx=0, sy0=0;
+photo.addEventListener('touchstart', function(e){
+  sx=e.touches[0].clientX; sy0=e.touches[0].clientY;
+}, {passive:true});
+photo.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - sx,
+      dy = e.changedTouches[0].clientY - sy0;
+  if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+  show((now + (dx<0 ? 1 : 3)) % 4);
+}, {passive:true});
+
+/* ═══ параллакс: одна rAF-петля, три числа в CSS-переменных ═══
+   Петля засыпает, когда движение затухло, и просыпается на вводе. */
+if (!calm) {
+  var tgx=0,tgy=0,tsy=0, cgx=0,cgy=0,csy=0, alive=false, st=vp.style;
+  function clamp(v){ return v<-1 ? -1 : v>1 ? 1 : v; }
+  function loop(){
+    cgx += (tgx-cgx)*.12; cgy += (tgy-cgy)*.12; csy += (tsy-csy)*.20;
+    st.setProperty('--gx', cgx.toFixed(4));
+    st.setProperty('--gy', cgy.toFixed(4));
+    st.setProperty('--sy', csy.toFixed(2));
+    if (Math.abs(tgx-cgx)+Math.abs(tgy-cgy) > .002 || Math.abs(tsy-csy) > .3){
+      requestAnimationFrame(loop);
+    } else {
+      cgx=tgx; cgy=tgy; csy=tsy;
+      st.setProperty('--gx', cgx.toFixed(4));
+      st.setProperty('--gy', cgy.toFixed(4));
+      st.setProperty('--sy', csy.toFixed(2));
+      alive=false;
+    }
+  }
+  function kick(){ if(!alive){ alive=true; requestAnimationFrame(loop); } }
+
+  var maxSy = 150;
+  function readScroll(){
+    var v = window.pageYOffset || document.documentElement.scrollTop || 0;
+    tsy = v > maxSy ? maxSy : v; kick();
+  }
+  addEventListener('scroll', readScroll, {passive:true});
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) readScroll();          /* rAF в фоне заморожен — перечитать */
+  }, {passive:true});
+
+  var gyroOn = false;
+  function fromPoint(x,y){
+    if (gyroOn) return;
+    tgx = clamp((x/(innerWidth||390))*2 - 1);
+    tgy = clamp((y/(innerHeight||800))*2 - 1);
+    kick();
+  }
+  if (window.PointerEvent){
+    addEventListener('pointermove', function(e){ fromPoint(e.clientX,e.clientY); }, {passive:true});
+    addEventListener('pointerdown', function(e){ fromPoint(e.clientX,e.clientY); }, {passive:true});
+  } else {
+    addEventListener('mousemove', function(e){ fromPoint(e.clientX,e.clientY); }, {passive:true});
+    addEventListener('touchmove', function(e){ fromPoint(e.touches[0].clientX,e.touches[0].clientY); }, {passive:true});
+  }
+
+  /* реальный наклон: ноль калибруется по первой позе и медленно за ней идёт */
+  var base=null, bound=false;
+  function onOri(e){
+    var g=e.gamma, b=e.beta;
+    if (g==null && b==null) return;
+    g=g||0; b=b||0;
+    if (!base){ base={g:g,b:b}; return; }
+    base.g += (g-base.g)*.0025; base.b += (b-base.b)*.0025;
+    var nx=clamp((g-base.g)/15), ny=clamp((b-base.b)/15);
+    /* часть браузеров шлёт событие с нулями и без сенсора — иначе они
+       навсегда отключили бы фолбэк по пальцу и экран замер бы */
+    if (!gyroOn){ if (Math.abs(nx)+Math.abs(ny) < .02) return; gyroOn = true; }
+    tgx=nx; tgy=ny; kick();
+  }
+  function bindOri(){ if(bound) return; bound=true; addEventListener('deviceorientation', onOri, {passive:true}); }
+  function askOri(){
+    var DE = window.DeviceOrientationEvent;
+    if (!DE) return;
+    if (typeof DE.requestPermission === 'function'){
+      try { DE.requestPermission().then(function(s){ if(s==='granted') bindOri(); }).catch(function(){}); } catch(err){}
+    } else bindOri();
+  }
+  askOri();
+  addEventListener('touchend', function once(){ removeEventListener('touchend', once); askOri(); }, {passive:true});
+}
+
+/* остальные кадры — только после загрузки: первый экран весит один снимок */
+addEventListener('load', function(){
+  setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 600);
+});
+
+})();
+</script>
+</body>
+</html>

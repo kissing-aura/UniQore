@@ -145,7 +145,7 @@ h1 .c i{
 .lay img{
   position:absolute;display:block;
   /* пять чужих палитр сводим в серию кадрированием и скримом, а не перекраской */
-  filter:saturate(.72) contrast(1.08) brightness(.93);
+  filter:saturate(.78) contrast(1.06) brightness(.97);
   transform-origin:50% 30%;
   transform:scale(1.05);
   will-change:transform;
@@ -188,7 +188,15 @@ h1 .c i{
 /* 196px = высота .stage, 195px = половина ширины .vp — держать синхронно с версткой */
 @keyframes sWipe {0%{opacity:0;transform:translateY(0)}    12%{opacity:.95}  88%{opacity:.95} 100%{opacity:0;transform:translateY(196px)}}
 @keyframes sPunch{0%{opacity:0;transform:translateY(196px)} 12%{opacity:.95} 88%{opacity:.95} 100%{opacity:0;transform:translateY(0)}}
-@keyframes sSplit{0%{opacity:0;transform:translateX(195px)} 20%{opacity:1} 62%{opacity:1}      100%{opacity:0;transform:translateX(390px)}}
+/* ⚠ ключевой кадр БЕЗ transform не «держит» значение — свойство интерполируется
+   через всю анимацию. Поэтому у шва стыка transform прописан в каждом кадре
+   и повторяет геометрию cutSplit один в один */
+@keyframes sSplit{
+  0%  {opacity:.85;transform:translateX(0)}
+  24% {opacity:1;  transform:translateX(195px)}
+  62% {opacity:1;  transform:translateX(195px)}
+  100%{opacity:0;  transform:translateX(390px)}
+}
 @keyframes sPush {0%{opacity:0;transform:translateX(390px)} 14%{opacity:.9} 82%{opacity:.9}    100%{opacity:0;transform:translateX(0)}}
 .seam.h.s-wipe {animation:sWipe  .46s var(--eCut) both}
 .seam.h.s-punch{animation:sPunch .52s var(--eCut) both}
@@ -197,13 +205,14 @@ h1 .c i{
 
 /* верхний увод — гасит светлые шапки клиентских сайтов, не стирая их */
 .stage .top{
-  position:absolute;left:0;right:0;top:0;height:52px;z-index:3;pointer-events:none;
-  background:linear-gradient(rgba(10,14,26,.62),rgba(10,14,26,0));
+  position:absolute;left:0;right:0;top:0;height:42px;z-index:3;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.58),rgba(10,14,26,0));
 }
-/* низ кадра растворяется точно в цвет страницы — четыре работы читаются серией */
+/* низ кадра растворяется точно в цвет страницы — четыре работы читаются серией.
+   больше 80px забирать нельзя: скрим начинает съедать само доказательство */
 .stage .bot{
-  position:absolute;left:0;right:0;bottom:0;height:104px;z-index:3;pointer-events:none;
-  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.55) 38%,rgba(10,14,26,.95) 76%,#0A0E1A 100%);
+  position:absolute;left:0;right:0;bottom:0;height:78px;z-index:3;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0) 0%,rgba(10,14,26,.42) 34%,rgba(10,14,26,.88) 72%,#0A0E1A 100%);
 }
 /* уголки визира — асимметрично, только два */
 .tick{position:absolute;z-index:4;width:13px;height:13px;pointer-events:none;opacity:.42}
@@ -367,7 +376,7 @@ h1 .c i{
     <div class="lay on" id="layA">
       <img id="shotA" fetchpriority="high" decoding="async"
            src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
-           style="width:470px;height:auto;left:-40px;top:-24px"
+           style="width:470px;height:auto;left:-26px;top:-22px"
            alt="Первый экран сайта автокомплекса «Немеция», Омск">
     </div>
     <div class="lay" id="layB" aria-hidden="true"></div>
@@ -433,11 +442,12 @@ h1 .c i{
 
 /* кроп подобран под каждый снимок руками:
    у Bien Sûr в исходник впечены белые поля по 12,5% — их срезаем;
-   у Немеции сверху белая шапка сайта — оставляем 12px как признак «это сайт»,
-   дальше сразу герой. Все четыре центрированы по стейджу (центр = 195px),
-   поэтому наезд по X безопасен для любого кадра. */
+   у Немеции сверху белая шапка сайта — оставляем ~14px как признак «это сайт»,
+   дальше сразу герой, и сдвиг вправо, чтобы не резать заголовок клиента.
+   Запас по ширине у каждого кадра ≥ 78px, по высоте ≥ 46px — поэтому наезд
+   (scale 1.05…1.13 + сдвиг только по X) ни на одном кадре не открывает край. */
 var D = [
-  {s:'/keysy/cases/case-nemecia.webp',  w:470, x:-40, y:-24, hold:2600,
+  {s:'/keysy/cases/case-nemecia.webp',  w:470, x:-26, y:-22, hold:2600,
    n:'Немеция',  m:'Автокомплекс · Омск',
    a:'Первый экран сайта автокомплекса «Немеция», Омск'},
   {s:'/keysy/cases/case-biensur.webp',  w:520, x:-65, y:0,   hold:2200,
@@ -531,8 +541,19 @@ function ensureImg(lay){
   return img;
 }
 
-/* подготовка: кадр обязан быть ДЕКОДИРОВАН до склейки,
-   иначе шторка проявляет пустой слой */
+/* кадр обязан быть готов ДО склейки, иначе шторка проявляет пустой слой.
+   ⚠ decode() в скрытой вкладке не резолвится никогда — страхуем таймером,
+   иначе монтаж намертво встанет с busy=true */
+function whenReady(img, cb){
+  var fired = false, go = function(){ if(fired) return; fired = true; cb(); };
+  if(img.complete && img.naturalWidth){
+    if(img.decode){ img.decode().then(go).catch(go); setTimeout(go, 180); }
+    else go();
+  }else{
+    img.onload = go; img.onerror = go; setTimeout(go, 700);
+  }
+}
+
 function advance(i, cutName){
   if(busy || i === now) return;
   busy = true;
@@ -542,10 +563,7 @@ function advance(i, cutName){
     img.src = d.s;
   }
   place(img, d);
-  var go = function(){ run(i, cutName); };
-  if(img.decode) img.decode().then(go).catch(go);
-  else if(img.complete) go();
-  else { img.onload = go; img.onerror = go; }
+  whenReady(img, function(){ run(i, cutName); });
 }
 
 /* ── сама склейка ── */

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран · НАБОРНАЯ</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════════
+  ЯЗЫК: НАБОРНАЯ. Экран как рабочий стол типографии.
+
+  Один предмет решает всё: посреди тёмного стола лежит НАСТОЯЩИЙ БУМАЖНЫЙ
+  ЛИСТ — прайс, отпечатанный и выложенный на просушку. Цена набрана на
+  бумаге чёрной краской, оттиснута (светлый блик под буквой = вдавленность).
+  Кнопка — это штамп, поставленный на этот же лист. Всё предложение
+  физически лежит на одном листе, поэтому его нельзя «пролистать мимо».
+
+  Выше листа — оттиск-образец: скриншот работы подан как пробный лист,
+  лежащий на стопке других пробных листов (две кромки выглядывают из-под
+  него, чуть развёрнутые). Стопка — это и есть «20+ работ», без цифр в
+  кружочках.
+
+  Типографика. Общесистемная засечка (Georgia / Noto Serif) вместо ещё
+  одного гротеска: ноль запросов, и сразу читается «книга», а не «интерфейс».
+  Georgia даёт минускульные цифры — старый каталожный набор из коробки.
+  Кегли разведены намеренно: 46 → 12. Ничего среднего, кроме кнопки.
+
+  Лайм — краска второго прогона. Ровно два места: штамп и имя текущей
+  работы. Больше нигде.
+
+  Чего здесь принципиально нет: нумерации 01/02, направляющих на фоне,
+  цветной линейки по краю, капслока с разрядкой, моноширинного шрифта,
+  чипа над заголовком, ряда карточек, свечения, эмодзи, bento.
+
+  Движение (только transform/opacity):
+   • две лампы над столом дрейфуют и ведутся на наклон устройства;
+   • пробный лист «ложится» на стопку (доворот -2.6° → -0.7°),
+     картинка внутри него ездит от наклона — параллакс в кадре;
+   • лист прайса ПРИЖИМАЕТСЯ (доворот 1.3° → 0.35°, масштаб .985 → 1) —
+     жест печатного пресса;
+   • по бумаге медленно ведётся блик от наклона: доказательство, что это
+     мелованный лист под лампой, а не прямоугольник;
+   • строки заголовка вдвигаются вбок, как литеры в верстатку.
+   Стартовые состояния — только сдвиг/поворот, opacity нигде не 0:
+   на первом же кадре весь текст читается.
+
+  Бюджет: 0 библиотек, 0 внешних запросов, ровно один <img>.
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A;
+  --ink:#E7EAF0;
+  --mut:#98A2B1;
+  --dim:#727C8C;
+  --lime:#CDFF4F;
+  --m:20px;
+  --serif:Georgia,'Noto Serif','Times New Roman',serif;
+  --sans:'Geist',-apple-system,system-ui,sans-serif;
+  --disp:'Unbounded','Geist',sans-serif;
+  --e:cubic-bezier(.22,.86,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070d;color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ── стол ──
+   --gx/--gy — наклон -1..1, --sy — прокрутка. Значения по умолчанию заданы
+   здесь, поэтому каждый calc() валиден до запуска JS. */
+.vp{
+  --gx:0; --gy:0; --sy:0;
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--bg);overflow:hidden;min-height:990px;isolation:isolate;
+}
+/* тёплая подсветка сверху и провал в тень внизу — стол, а не полотно */
+.vp::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(130% 46% at 46% -6%,rgba(255,236,200,.05),rgba(255,236,200,0) 68%),
+    radial-gradient(100% 42% at 50% 104%,rgba(0,0,0,.55),rgba(0,0,0,0) 72%);
+}
+.m{padding-left:var(--m);padding-right:var(--m)}
+
+/* ── лампы: внешний блок дрейфует сам, внутренний ведётся на наклон ── */
+.lamp{position:absolute;z-index:0;pointer-events:none;will-change:transform}
+.lamp i{display:block;width:100%;height:100%;will-change:transform}
+.lamp.a{left:-116px;top:-150px;width:490px;height:400px;animation:driftA 21s var(--e) infinite}
+.lamp.a i{
+  background:radial-gradient(46% 46% at 50% 50%,rgba(255,231,188,.088),rgba(255,231,188,0) 70%);
+  transform:translate3d(calc(var(--gx) * 24px),calc(var(--gy) * 16px),0);
+}
+.lamp.b{left:-40px;top:398px;width:480px;height:370px;animation:driftB 27s var(--e) infinite}
+.lamp.b i{
+  background:radial-gradient(46% 46% at 50% 50%,rgba(178,200,238,.052),rgba(178,200,238,0) 70%);
+  transform:translate3d(calc(var(--gx) * 17px),calc(var(--gy) * 11px),0);
+}
+@keyframes driftA{0%,100%{transform:translate3d(-13px,0,0)}50%{transform:translate3d(15px,9px,0)}}
+@keyframes driftB{0%,100%{transform:translate3d(11px,5px,0)}50%{transform:translate3d(-12px,-6px,0)}}
+
+/* ── колонтитул ── */
+.strip{
+  padding-top:12px;height:46px;position:relative;z-index:3;
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+}
+.mark{font-family:var(--disp);font-weight:500;font-size:15px;letter-spacing:-.045em;color:var(--ink)}
+.tally{font-family:var(--serif);font-size:11.5px;color:var(--dim);white-space:nowrap}
+
+/* ── титул: набран как титульный лист ── */
+.title{padding-top:4px;position:relative;z-index:3}
+h1{font-family:var(--serif);font-weight:400;color:var(--ink)}
+h1 .big{
+  display:block;font-weight:700;font-size:50px;line-height:.92;letter-spacing:-.024em;
+  animation:setL .52s var(--e) both;
+}
+h1 .sub{
+  display:block;font-style:italic;font-size:24px;line-height:1.05;
+  letter-spacing:-.012em;color:#C6CEDB;margin-top:1px;
+  animation:setR .58s .05s var(--e) both;
+}
+.lede{
+  margin-top:10px;font-size:12.5px;line-height:1.45;color:var(--mut);
+  letter-spacing:-.005em;max-width:330px;
+  animation:setL .6s .1s var(--e) both;
+}
+/* литеры вдвигаются в верстатку — сдвиг без затухания, текст читаем всегда */
+@keyframes setL{from{transform:translate3d(-15px,0,0)}to{transform:none}}
+@keyframes setR{from{transform:translate3d(12px,0,0)}to{transform:none}}
+
+/* ── пробный лист на стопке ── */
+.spec{margin-top:12px;position:relative;z-index:3}
+.stack{position:absolute;left:0;right:0;top:0;height:146px;z-index:0;pointer-events:none}
+.stack i{
+  position:absolute;left:3px;right:3px;top:0;height:146px;display:block;
+  background:#161C2C;border:1px solid rgba(231,234,240,.095);
+  box-shadow:0 10px 20px -14px rgba(0,0,0,.95);
+  will-change:transform;
+}
+.stack .s1{transform:rotate(1.4deg) translate3d(calc(var(--gx) * -4px),0,0)}
+.stack .s2{transform:rotate(-2deg)  translate3d(calc(var(--gx) * -7px),0,0)}
+
+.proof{
+  /* фон проёма — тон незапечатанного листа, а не чёрная дыра:
+     на медленном канале кадр читается как чистая бумага под краску */
+  position:relative;z-index:1;height:146px;overflow:hidden;
+  background:linear-gradient(#161C2B,#0F1421);
+  transform:rotate(-.7deg);
+  box-shadow:0 16px 28px -16px rgba(0,0,0,.95);
+  contain:paint;
+  animation:lay .58s .04s var(--e) both;
+}
+/* лист ложится на стопку: доворот и осадка. opacity не трогаем */
+@keyframes lay{
+  from{transform:rotate(-2.7deg) translate3d(0,7px,0)}
+  to  {transform:rotate(-.7deg)  translate3d(0,0,0)}
+}
+.sheet{position:absolute;inset:0;z-index:1;overflow:hidden}
+.sheet img{
+  position:absolute;top:-34px;left:-21px;width:392px;height:auto;display:block;
+  filter:saturate(.72) contrast(1.06) brightness(.93);
+  transform:translate3d(calc(var(--gx) * 10px),calc(var(--gy) * 6px + var(--sy) * 0.06px),0);
+  will-change:transform;
+}
+/* новый оттиск проявляется сверху вниз, как краска, снятая с формы */
+@keyframes ink{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.sheet.sw{animation:ink .44s var(--e)}
+/* светлые шапки чужих сайтов приглушаем, не стирая */
+.proof .top{
+  position:absolute;left:0;right:0;top:0;height:46px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,.5),rgba(10,14,26,0));
+}
+.proof .bot{
+  position:absolute;left:0;right:0;bottom:0;height:54px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(10,14,26,0),rgba(10,14,26,.3) 46%,rgba(10,14,26,.62));
+}
+/* оттиск вдавлен в лист: тонкая кромка и притенённые края */
+.bite{
+  position:absolute;inset:0;z-index:4;pointer-events:none;
+  box-shadow:
+    inset 0 0 0 1px rgba(231,234,240,.11),
+    inset 0 11px 18px -14px rgba(0,0,0,.9),
+    inset 0 -11px 18px -14px rgba(0,0,0,.65);
+}
+.cred{
+  margin-top:10px;font-family:var(--serif);font-style:italic;font-size:12px;
+  color:var(--dim);line-height:1.4;
+  transform:translate3d(calc(var(--gx) * -3px),0,0);
+}
+.cred b{font-style:normal;font-weight:700;color:var(--ink)}
+
+/* ── перечень работ: строка ссылок, как в книжной сноске ── */
+.run{
+  margin-top:4px;position:relative;z-index:3;
+  display:flex;align-items:center;flex-wrap:nowrap;
+}
+.run button{
+  flex:0 0 auto;background:none;border:0;height:36px;padding:0 8px;
+  font-family:var(--serif);font-size:13px;color:var(--dim);
+  text-decoration:underline dotted rgba(231,234,240,.24);text-underline-offset:4px;
+  cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;transition:color .18s linear;
+}
+.run button:first-of-type{padding-left:0}
+.run button:focus-visible{outline:1px solid rgba(205,255,79,.6);outline-offset:-3px}
+.run button[aria-pressed="true"]{color:var(--lime);font-weight:700;text-decoration:none}
+.run .sep{flex:0 0 auto;font-family:var(--serif);font-size:12px;color:rgba(231,234,240,.2)}
+
+/* ═══ ЛИСТ ПРАЙСА · настоящая бумага на тёмном столе ═══ */
+.coupon{
+  position:relative;z-index:4;margin:14px var(--m) 0;padding:14px 16px 14px;
+  color:#1A1E25;transform:rotate(.35deg);
+  background:
+    radial-gradient(120% 80% at 8% -10%,#F4EFE2,rgba(244,239,226,0) 62%),
+    radial-gradient(96% 74% at 96% 108%,#DFD7C4,rgba(223,215,196,0) 58%),
+    linear-gradient(#ECE5D6,#E6DECD);
+  box-shadow:
+    0 22px 36px -20px rgba(0,0,0,.95),
+    0 2px 0 rgba(0,0,0,.3),
+    inset 0 1px 0 rgba(255,255,255,.8),
+    inset 0 -1px 0 rgba(0,0,0,.12);
+  animation:press .55s .06s var(--e) both;
+}
+/* пресс прижимает лист */
+@keyframes press{
+  from{transform:rotate(1.3deg) scale(.985)}
+  to  {transform:rotate(.35deg) scale(1)}
+}
+/* блик лампы по мелованной бумаге — ведётся на наклон */
+.coupon .gloss{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.coupon .gloss i{
+  position:absolute;top:-30%;left:50%;width:200px;height:160%;margin-left:-100px;
+  background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.4) 47%,rgba(255,255,255,0));
+  transform:translate3d(calc(var(--gx) * 68px),0,0) skewX(-12deg);
+  will-change:transform;
+}
+.coupon > *:not(.gloss){position:relative;z-index:2}
+
+.item{
+  font-family:var(--serif);font-weight:700;font-size:13.5px;line-height:1.25;
+  color:#171B22;letter-spacing:-.005em;
+}
+.money{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:3px}
+.fig{
+  flex:0 0 auto;font-family:var(--serif);font-weight:700;font-size:35px;line-height:1.06;
+  letter-spacing:-.03em;color:#12161C;white-space:nowrap;
+  text-shadow:0 1px 0 rgba(255,255,255,.62);      /* оттиск: краска вдавлена */
+}
+.fig i{font-family:var(--sans);font-style:normal;font-size:.44em;color:#5C6470;margin-left:5px}
+.term{
+  flex:1 1 auto;min-width:0;text-align:right;font-family:var(--serif);
+  font-size:11px;line-height:1.42;color:#4E5663;padding-bottom:3px;
+}
+.term em{display:block;font-style:italic;color:#6B7280}
+
+/* второй и третий тариф — каталожная строка с отточием */
+.also{margin-top:11px}
+.also .ln{display:flex;align-items:baseline;gap:7px;padding:1px 0}
+.also span{flex:0 0 auto;font-family:var(--serif);font-size:11.5px;color:#3D4552}
+.also .dots{flex:1 1 auto;height:0;border-bottom:1px dotted rgba(26,30,37,.34);transform:translateY(-3px)}
+.also b{flex:0 0 auto;font-family:var(--serif);font-weight:700;font-size:11.5px;color:#1A1E25}
+.rub{font-family:var(--sans);font-size:.92em}
+
+.fn{border:0;height:1px;width:46px;background:rgba(26,30,37,.3);margin:11px 0 8px}
+.small{font-size:10.5px;line-height:1.5;color:#4B5360;letter-spacing:0}
+
+/* ── штамп: единственное действие ── */
+.stamp{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  height:48px;margin-top:11px;border-radius:1px;
+  background:var(--lime);color:#111806;
+  font-family:var(--sans);font-weight:600;font-size:15.5px;letter-spacing:-.012em;
+  text-decoration:none;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 -1px 0 rgba(0,0,0,.22),
+    0 2px 0 rgba(26,30,37,.2);
+  transition:transform .12s var(--e),box-shadow .12s var(--e);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.stamp span{font-size:16px;line-height:1;transform:translateY(-1px)}
+.stamp:active{
+  transform:translate3d(0,2px,0);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 0 -1px 0 rgba(0,0,0,.22);
+}
+
+/* ── следующий разворот выглядывает из-за сгиба ── */
+.turn{margin-top:16px;position:relative;z-index:3;padding-bottom:44px}
+.turn h2{
+  font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.12;
+  letter-spacing:-.018em;color:#AEB8C7;
+}
+.turn p{margin-top:9px;font-family:var(--serif);font-style:italic;font-size:12px;color:var(--dim)}
+
+/* ── маркеры сгиба (только прототип) ── */
+.fold{position:absolute;left:0;right:0;z-index:70;pointer-events:none;border-top:1px dashed rgba(255,80,80,.45)}
+.fold b{
+  position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.88);
+  font-family:var(--sans);font-weight:400;font-size:8px;letter-spacing:.04em;color:rgba(255,90,90,.75);
+}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.42)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.9)}
+.fold.dev{top:844px}
+
+/* ── меньше движения ── */
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* ── узкий экран ── */
+@media (max-width:389px){
+  .vp{width:100%}
+  h1 .big{font-size:42px}
+  h1 .sub{font-size:22px}
+  .fig{font-size:32px}
+  .item{font-size:13px}
+  .run button{padding:0 6px;font-size:12.5px}
+  .coupon{padding:13px 14px}
+}
+</style>
+</head>
+<body>
+
+<div class="vp" id="vp">
+
+  <div class="lamp a" aria-hidden="true"><i></i></div>
+  <div class="lamp b" aria-hidden="true"><i></i></div>
+
+  <header class="strip m">
+    <span class="mark">uniqore</span>
+    <span class="tally">20+ сайтов, 30+ CRM</span>
+  </header>
+
+  <section class="title m">
+    <h1>
+      <span class="big">Сайты</span>
+      <span class="sub">ручного набора</span>
+    </h1>
+    <p class="lede">Собираем под ваш бизнес. Шаблонов не держим.</p>
+  </section>
+
+  <section class="spec m">
+    <div class="stack" aria-hidden="true"><i class="s2"></i><i class="s1"></i></div>
+    <figure class="proof" id="proof">
+      <div class="sheet" id="sheet">
+        <img id="shot" fetchpriority="high" decoding="async"
+             src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+             alt="Первый экран сайта автокомплекса «Немеция» в Омске">
+      </div>
+      <div class="top" aria-hidden="true"></div>
+      <div class="bot" aria-hidden="true"></div>
+      <div class="bite" aria-hidden="true"></div>
+    </figure>
+    <figcaption class="cred" aria-live="polite"><b id="capN">Немеция</b> <span id="capD">— автокомплекс в Омске</span></figcaption>
+  </section>
+
+  <nav class="run m" id="run" aria-label="Работы">
+    <button type="button" data-i="0" aria-pressed="true">Немеция</button>
+    <span class="sep" aria-hidden="true">·</span>
+    <button type="button" data-i="1" aria-pressed="false">Bien&nbsp;Sûr</button>
+    <span class="sep" aria-hidden="true">·</span>
+    <button type="button" data-i="2" aria-pressed="false">IDTuning</button>
+    <span class="sep" aria-hidden="true">·</span>
+    <button type="button" data-i="3" aria-pressed="false">MILLA</button>
+  </nav>
+
+  <!-- лист прайса -->
+  <section class="coupon">
+    <div class="gloss" aria-hidden="true"><i></i></div>
+
+    <p class="item">Многостраничный сайт со своим дизайном</p>
+    <div class="money">
+      <span class="fig">32&thinsp;800<i>₽</i></span>
+      <span class="term">сдаём за 5 дней<em>берут чаще двух других</em></span>
+    </div>
+
+    <div class="also">
+      <div class="ln"><span>Одна страница, 3 дня</span><i class="dots" aria-hidden="true"></i><b>11&thinsp;700&nbsp;<i class="rub">₽</i></b></div>
+      <div class="ln"><span>Сайт вместе с CRM, 7 дней</span><i class="dots" aria-hidden="true"></i><b>39&thinsp;000&nbsp;<i class="rub">₽</i></b></div>
+    </div>
+
+    <hr class="fn">
+    <p class="small">Гарантия год. Платите после того, как утвердите макет. Ежемесячной платы нет, исходники отдаём.</p>
+
+    <a class="stamp" href="#zayavka">Обсудить мой сайт<span aria-hidden="true">→</span></a>
+  </section>
+
+  <section class="turn m">
+    <h2>Каждую работу — целиком</h2>
+    <p>Bien Sûr — ресторан в Санкт-Петербурге</p>
+  </section>
+
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var vp    = document.getElementById('vp'),
+    run   = document.getElementById('run'),
+    sheet = document.getElementById('sheet'),
+    shot  = document.getElementById('shot'),
+    proof = document.getElementById('proof'),
+    capN  = document.getElementById('capN'),
+    capD  = document.getElementById('capD'),
+    btns  = run.querySelectorAll('button'),
+    calm  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ── кроп каждого оттиска ──
+   Окно 350×146. Ширина/сдвиги подобраны по каждому снимку так, чтобы в кадр
+   попадал первый экран работы, а при максимальном ходе параллакса
+   (±10 по X, ±6 по Y) проём не оголялся ни с одной стороны.
+   У Bien Sûr в исходник впечены белые поля ~12,5 % слева и справа —
+   поэтому его рендерим шире (523) и уводим левее: поля уходят за кромку. */
+var D = [
+  {s:'/keysy/cases/case-nemecia.webp', w:392, x:-21, y:-34,
+   n:'Немеция',  d:'— автокомплекс в Омске',
+   a:'Первый экран сайта автокомплекса «Немеция» в Омске'},
+  {s:'/keysy/cases/case-biensur.webp', w:523, x:-86, y:-30,
+   n:'Bien Sûr', d:'— ресторан в Санкт-Петербурге',
+   a:'Первый экран сайта ресторана Bien Sûr в Санкт-Петербурге'},
+  {s:'/keysy/cases/case-idtuning.webp',w:392, x:-21, y:-24,
+   n:'IDTuning', d:'— тюнинг-ателье',
+   a:'Первый экран сайта тюнинг-ателье IDTuning'},
+  {s:'/keysy/cases/case-milla.webp',   w:392, x:-21, y:-22,
+   n:'MILLA',    d:'— интерьеры',
+   a:'Первый экран сайта студии интерьеров MILLA'}
+];
+var now = 0;
+
+function paint(i){
+  var d = D[i];
+  shot.src = d.s;
+  shot.alt = d.a;
+  shot.style.width = d.w + 'px';
+  shot.style.left  = d.x + 'px';
+  shot.style.top   = d.y + 'px';
+  sheet.classList.remove('sw'); void sheet.offsetWidth; sheet.classList.add('sw');
+  capN.textContent = d.n;
+  capD.textContent = d.d;
+  for (var k=0;k<btns.length;k++) btns[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+  now = i;
+}
+function show(i){
+  if (i===now || !D[i]) return;
+  /* декодируем ДО подмены, иначе шторка проявит старый кадр */
+  var pre = new Image(); pre.src = D[i].s;
+  var go = function(){ paint(i); };
+  if (pre.decode) pre.decode().then(go).catch(go);
+  else if (pre.complete) go();
+  else { pre.onload = go; pre.onerror = go; }
+}
+run.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('button');
+  if (b) show(+b.getAttribute('data-i'));
+});
+
+/* смахивание по оттиску. Вертикальный guard обязателен: без него обычная
+   прокрутка большим пальцем перелистывала бы работы. */
+var sx=0, sy0=0;
+proof.addEventListener('touchstart', function(e){
+  sx=e.touches[0].clientX; sy0=e.touches[0].clientY;
+}, {passive:true});
+proof.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - sx,
+      dy = e.changedTouches[0].clientY - sy0;
+  if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+  show((now + (dx<0 ? 1 : 3)) % 4);
+}, {passive:true});
+
+/* ═══ наклон и прокрутка ═══
+   Одна rAF-петля пишет три числа в CSS-переменные; их читают восемь
+   элементов внутри transform. Ни layout, ни paint не трогаются.
+   Петля засыпает, когда движение затухло, и просыпается на вводе. */
+if (!calm) {
+
+  var tgx=0, tgy=0, tsy=0,
+      cgx=0, cgy=0, csy=0,
+      alive=false, st=vp.style;
+
+  function clamp(v){ return v<-1 ? -1 : v>1 ? 1 : v; }
+
+  function loop(){
+    cgx += (tgx-cgx)*0.12;
+    cgy += (tgy-cgy)*0.12;
+    csy += (tsy-csy)*0.20;
+    st.setProperty('--gx', cgx.toFixed(4));
+    st.setProperty('--gy', cgy.toFixed(4));
+    st.setProperty('--sy', csy.toFixed(2));
+    if (Math.abs(tgx-cgx)+Math.abs(tgy-cgy) > 0.002 || Math.abs(tsy-csy) > 0.3) {
+      requestAnimationFrame(loop);
+    } else {
+      cgx=tgx; cgy=tgy; csy=tsy;
+      st.setProperty('--gx', cgx.toFixed(4));
+      st.setProperty('--gy', cgy.toFixed(4));
+      st.setProperty('--sy', csy.toFixed(2));
+      alive=false;
+    }
+  }
+  function kick(){ if(!alive){ alive=true; requestAnimationFrame(loop); } }
+
+  var maxSy = 200;
+  function readScroll(){
+    var v = window.pageYOffset || document.documentElement.scrollTop || 0;
+    tsy = v > maxSy ? maxSy : v;
+    kick();
+  }
+  addEventListener('scroll', readScroll, {passive:true});
+  /* вернулись из фона: rAF там заморожен, позицию надо перечитать,
+     иначе планы догоняют рывком на первом же кадре */
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) readScroll();
+  }, {passive:true});
+
+  /* фолбэк: свет идёт за пальцем или курсором */
+  var gyroOn = false;
+  function fromPoint(x, y){
+    if (gyroOn) return;
+    var w = innerWidth || 390, h = innerHeight || 800;
+    tgx = clamp((x/w)*2 - 1);
+    tgy = clamp((y/h)*2 - 1);
+    kick();
+  }
+  if (window.PointerEvent) {
+    addEventListener('pointermove', function(e){ fromPoint(e.clientX, e.clientY); }, {passive:true});
+    addEventListener('pointerdown', function(e){ fromPoint(e.clientX, e.clientY); }, {passive:true});
+  } else {
+    addEventListener('mousemove', function(e){ fromPoint(e.clientX, e.clientY); }, {passive:true});
+    addEventListener('touchmove', function(e){ fromPoint(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
+  }
+
+  /* основной источник — реальный наклон. Ноль калибруется по первому замеру
+     (человек держит телефон как держит), затем очень медленно тянется к
+     текущей позе: наклон не залипает и не дрожит. */
+  var base = null, bound = false;
+  function onOri(e){
+    var g = e.gamma, b = e.beta;
+    if (g == null && b == null) return;
+    g = g || 0; b = b || 0;
+    if (!base) { base = {g:g, b:b}; return; }
+    base.g += (g-base.g)*0.0025;
+    base.b += (b-base.b)*0.0025;
+    var nx = clamp((g - base.g) / 15),
+        ny = clamp((b - base.b) / 15);
+    /* часть браузеров шлёт deviceorientation с нулями и без сенсора —
+       без этой проверки они навсегда убили бы фолбэк по пальцу */
+    if (!gyroOn) {
+      if (Math.abs(nx) + Math.abs(ny) < 0.02) return;
+      gyroOn = true;
+    }
+    tgx = nx; tgy = ny;
+    kick();
+  }
+  function bindOri(){
+    if (bound) return;
+    bound = true;
+    addEventListener('deviceorientation', onOri, {passive:true});
+  }
+  function askOri(){
+    var DE = window.DeviceOrientationEvent;
+    if (!DE) return;
+    if (typeof DE.requestPermission === 'function') {
+      try { DE.requestPermission().then(function(s){ if (s==='granted') bindOri(); }).catch(function(){}); }
+      catch(err){}
+    } else {
+      bindOri();
+    }
+  }
+  askOri();
+  addEventListener('touchend', function once(){
+    removeEventListener('touchend', once);
+    askOri();
+  }, {passive:true});
+}
+
+/* остальные оттиски тянем только после загрузки — первый экран весит один снимок */
+addEventListener('load', function(){
+  setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 600);
+});
+
+})();
+</script>
+</body>
+</html>

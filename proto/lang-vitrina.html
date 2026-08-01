@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран · ВИТРИНА</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════════
+  ЯЗЫК «ВИТРИНА» — ночной магазин, один освещённый предмет
+
+  Прошлый раунд провалился, потому что четыре агента независимо пришли к
+  одному техно-редакционному языку: нумерация 01/02/03, направляющие на
+  фоне, лаймовая линейка у плашки, капслок с разрядкой, моноширинный
+  шрифт как признак «технологичности». Здесь всего этого нет ни в одном
+  месте — не смягчено, а вычеркнуто.
+
+  Вместо страницы с блоками — витрина ночью:
+
+    свет      конус из точечного светильника над подиумом. Он живой:
+              поворачивается за пальцем, медленно дышит как настоящая
+              лампа накаливания. Это единственный источник в кадре
+    подиум    работа клиента стоит как предмет: не в край экрана, а
+              внутри стекла, с тёплой гранью сверху, контактной тенью
+              под собой и отражением на полированном полу
+    ценник    бумажная карточка кремового цвета, чуть завалена, стоит
+              перед предметом. Настоящий магазинный ценник: тёмная
+              краска на светлой бумаге. Это единственное светлое пятно
+              с текстом — его невозможно не заметить
+    мрак      виньетка гасит всё, что не предмет. Текста мало, он живёт
+              подписью, а не заголовком раздела
+
+  Физика вместо украшений.
+    Предмет НЕ двигается — двигается свет. Поворачивается конус,
+    едет световое пятно на полу, контактная тень уходит в другую
+    сторону, блик скользит по стеклу, картинка чуть плывёт за стеклом.
+    Разность направлений даёт объём; предмет, стоящий неподвижно,
+    читается как вещь, а не как слайд.
+
+  Что происходит при переключении работы.
+    Свет коротко вспыхивает и «перенаводится»: витрина на четверть
+    секунды теряет предмет и снова его находит. Никаких шторок.
+
+  Бюджет: 0 библиотек, 0 внешних запросов, 1 <img> в первом экране,
+  анимируются только transform и opacity, одна rAF-петля на три числа,
+  засыпает в покое. Весь контент читаем на первом кадре — гаснут и
+  зажигаются только декоративные слои света.
+
+  Кропы. Bien Sûr сдан с впечёнными белыми полями: замер по пикселям
+  дал 12.45% слева и 12.55% справа, содержимое внутри 4:3 — поля
+  срезаны кадрированием. Остальные три сняты в край, 16:9.
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --void:#0A0E1A;
+  --ink:#E7EAF0;
+  --soft:#98A1B0;
+  --dim:#68717F;
+  --lime:#CDFF4F;
+  --warm:255,240,214;          /* цвет лампы: тёплый, чуть желтее белого */
+  --pad:22px;
+  --ease:cubic-bezier(.34,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:#05070C;color:var(--ink);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* --gx/--gy: направление света, -1..1. --sy: прокрутка.
+   Значения по умолчанию заданы здесь, поэтому каждый calc() валиден
+   ещё до того, как отработает JS: первый кадр уже правильный. */
+.vp{
+  --gx:0; --gy:0; --sy:0;
+  width:390px;max-width:100%;margin:0 auto;position:relative;
+  background:var(--void);overflow:hidden;min-height:900px;isolation:isolate;
+}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+
+/* ───────── СВЕТ ─────────
+   Луч собран из двух мягких эллипсов: узкого и плотного у светильника,
+   широкого и слабого у пола. Ни клипа, ни маски — у света не бывает
+   прямых кромок, а именно они выдают «фигуру на фоне» вместо света.
+   Качается вокруг точки подвеса — как лампа на длинном шнуре. */
+.beam{
+  position:absolute;top:92px;left:50%;width:480px;margin-left:-240px;height:372px;
+  z-index:1;pointer-events:none;
+  background:
+    radial-gradient(31% 58% at 50% 2%,rgba(var(--warm),.13),rgba(var(--warm),.032) 52%,rgba(var(--warm),0) 74%),
+    radial-gradient(66% 50% at 50% 86%,rgba(var(--warm),.062),rgba(var(--warm),0) 74%);
+  transform-origin:50% -30px;
+  transform:rotate(calc(var(--gx) * 3.6deg));
+  animation:lampon 1.05s var(--ease) both, breathe 9.5s ease-in-out 1.05s infinite;
+  will-change:transform;
+}
+@keyframes lampon{from{opacity:0}to{opacity:1}}
+@keyframes breathe{0%,100%{opacity:1}52%{opacity:.86}}
+
+/* мрак по краям: всё, что не предмет, уходит в тень */
+.dark{
+  position:absolute;inset:0;z-index:30;pointer-events:none;
+  background:radial-gradient(126% 68% at 50% 34%,rgba(3,5,10,0) 40%,rgba(3,5,10,.58) 100%);
+}
+
+/* ───────── шапка ───────── */
+.hd{height:46px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:4}
+.brand{font-family:'Unbounded','Geist',sans-serif;font-weight:400;font-size:15.5px;letter-spacing:-.035em}
+.hd small{font-size:12px;color:var(--dim);letter-spacing:0}
+
+/* ───────── титул ─────────
+   Плоскость чтения неподвижна. Двигается только свет — иначе
+   мозг читает движение как дрожание, а не как объём. */
+.head{padding-top:15px;position:relative;z-index:4}
+h1{
+  font-family:'Unbounded','Geist',sans-serif;font-weight:300;
+  font-size:29px;line-height:1.06;letter-spacing:-.035em;
+}
+h1 em{display:block;font-style:normal;color:#8F98A8;font-weight:200}
+.lede{margin-top:11px;font-size:13px;line-height:1.4;color:var(--soft);max-width:300px}
+.lede b{color:var(--ink);font-weight:500}
+
+/* ───────── ВИТРИНА ───────── */
+.stage{
+  position:relative;z-index:4;height:246px;margin-top:13px;overflow:hidden;
+  contain:paint;
+}
+/* световое пятно на полу — едет за пальцем сильнее всего остального.
+   Предмет стоит 16…212 внутри витрины, пол — линия 212. */
+.pool{
+  position:absolute;left:50%;top:176px;width:424px;height:124px;margin-left:-212px;z-index:1;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(var(--warm),.15),rgba(var(--warm),.04) 52%,rgba(var(--warm),0) 76%);
+  transform:translate3d(calc(var(--gx) * 17px),0,0);
+  animation:lampon 1.05s var(--ease) both;
+  will-change:transform;pointer-events:none;
+}
+/* контактная тень — уходит ПРОТИВ света. Именно она сажает предмет на пол */
+.cast{
+  position:absolute;left:50%;top:206px;width:348px;height:40px;margin-left:-174px;z-index:4;
+  background:radial-gradient(50% 60% at 50% 12%,rgba(0,0,0,.82),rgba(0,0,0,.42) 42%,rgba(0,0,0,.12) 70%,rgba(0,0,0,0) 88%);
+  transform:translate3d(calc(var(--gx) * -13px),0,0);
+  will-change:transform;pointer-events:none;
+}
+/* предмет. Стоит неподвижно: вещь на подиуме не ездит */
+.obj{
+  position:absolute;left:50%;top:16px;width:330px;height:196px;margin-left:-165px;z-index:3;
+  border-radius:3px;overflow:hidden;background:#0C1017;
+  /* отражение в полированном полу. Маска box-reflect читается ОТ
+     дальнего края к предмету — поэтому градиент записан наоборот:
+     прозрачно вдали, плотнее у самого основания. Остаток съедает
+     overflow витрины, наружу отражение не выходит. */
+  -webkit-box-reflect:below 4px linear-gradient(rgba(255,255,255,0) 87%,rgba(255,255,255,.08) 94%,rgba(255,255,255,.26) 100%);
+  /* НИКАКОЙ вступительной анимации: предмет — это контент, он обязан
+     быть виден на первом кадре. Зажигается только свет вокруг него. */
+}
+/* грань витрины: тонкая тёплая кромка сверху и по контуру. Отдельным
+   слоем, а не inset-тенью на .obj — inset ушла бы ПОД картинку */
+.obj::after{
+  content:'';position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:3px;
+  box-shadow:inset 0 1px 0 rgba(var(--warm),.38),inset 0 0 0 1px rgba(var(--warm),.075),
+             inset 0 -20px 26px -22px rgba(0,0,0,.85);
+}
+.win{position:absolute;inset:0;overflow:hidden}
+.win img{
+  position:absolute;display:block;height:auto;
+  filter:saturate(.86) contrast(1.04) brightness(.93);
+  /* ход картинки за стеклом. Запас кадра по вертикали — 18 px сверху
+     и 13 снизу, поэтому суммарный ход вниз (наклон + прокрутка)
+     ограничен 15 px: проём не оголяется ни в одной комбинации. */
+  transform:translate3d(calc(var(--gx) * 11px),calc(var(--gy) * 4px + var(--sy) * .05px),0);
+  will-change:transform;
+}
+/* верхняя кромка витрины кладёт тень внутрь — заодно гасит белые
+   шапки клиентских сайтов, не стирая их */
+.win::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:40px;z-index:2;pointer-events:none;
+  background:linear-gradient(rgba(6,9,16,.5),rgba(6,9,16,0));
+}
+/* лампа стоит над предметом: макушка освещена, нижние углы уходят
+   в тень. Радиус, а не полоса — иначе это читается как «затемнение
+   картинки», а не как направленный свет */
+.win::after{
+  content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(118% 92% at 50% -12%,rgba(var(--warm),.14),rgba(0,0,0,0) 44%,rgba(0,0,0,.2) 72%,rgba(0,0,0,.4) 100%);
+}
+/* стекло: блик скользит отдельно от картинки — между глазом и работой
+   появляется прозрачный слой */
+.glass{position:absolute;inset:0;z-index:4;overflow:hidden;pointer-events:none}
+.glass i{
+  position:absolute;top:-24%;left:50%;width:150px;height:150%;margin-left:-75px;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(var(--warm),.085) 44%,rgba(255,255,255,.03) 60%,rgba(255,255,255,0));
+  transform:translate3d(calc(var(--gx) * 66px),0,0) skewX(-14deg);
+  will-change:transform;
+}
+/* вспышка перенаведения света при смене работы */
+.flare{
+  position:absolute;left:50%;top:0;width:360px;height:230px;margin-left:-180px;z-index:5;
+  background:radial-gradient(50% 50% at 50% 40%,rgba(var(--warm),.4),rgba(var(--warm),0) 70%);
+  opacity:0;pointer-events:none;
+}
+.flare.on{animation:flare .5s var(--ease)}
+@keyframes flare{0%{opacity:0}22%{opacity:.85}100%{opacity:0}}
+.win.sw img{animation:refocus .45s var(--ease)}
+@keyframes refocus{0%{opacity:.14}55%{opacity:.7}100%{opacity:1}}
+
+/* подпись предмета: маленькая, живёт на полу слева */
+.plate{
+  position:absolute;left:var(--pad);bottom:6px;z-index:6;max-width:176px;
+  font-size:12.5px;line-height:1.3;color:#9AA3B2;letter-spacing:-.005em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* ───────── ЦЕННИК ─────────
+   Бумажная карточка, чуть завалена, стоит перед предметом.
+   Единственное светлое пятно с текстом на всём экране. */
+.tag{
+  position:absolute;right:14px;bottom:20px;z-index:7;width:172px;
+  padding:11px 14px 12px;border-radius:2px;
+  background:linear-gradient(168deg,#F4EFE4,#DFD7C6);
+  color:#171A22;
+  box-shadow:0 20px 26px -16px rgba(0,0,0,.95),0 3px 6px -3px rgba(0,0,0,.7),
+             inset 0 1px 0 rgba(255,255,255,.75);
+  transform:rotate(calc(-2.6deg + var(--gx) * .8deg));
+  will-change:transform;
+}
+.tag .k,.tag .d{font-size:11px;line-height:1.25;color:#7B7261;letter-spacing:0}
+.tag .p{
+  font-family:'Unbounded','Geist',sans-serif;font-weight:500;
+  font-size:25px;line-height:1.1;letter-spacing:-.045em;color:#14161C;margin:3px 0 4px;
+  white-space:nowrap;
+}
+.tag .p i{font-style:normal;font-size:.62em;color:#6C6455;margin-left:3px;letter-spacing:-.02em}
+
+/* ───────── выбор работы ─────────
+   Имена без номеров и без рамок. Активное — освещено, остальные в тени. */
+.names{display:flex;flex-wrap:nowrap;align-items:center;position:relative;z-index:4;margin-top:2px;min-width:0}
+.nm{
+  position:relative;flex:0 0 auto;background:none;border:0;padding:11px 0 11px;
+  font-family:inherit;font-size:13px;letter-spacing:-.01em;color:#5E6776;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:color .22s linear;
+}
+.nm + .nm{margin-left:13px}
+.nm + .nm::before{content:'·';position:absolute;left:-9px;color:#333B4A}
+.nm[aria-pressed="true"]{color:#F2ECDF}
+.nm[aria-pressed="true"]::after{
+  content:'';position:absolute;left:50%;bottom:5px;width:3px;height:3px;margin-left:-1.5px;
+  border-radius:50%;background:rgba(var(--warm),.9);
+}
+.nm:focus-visible{outline:1px solid rgba(var(--warm),.5);outline-offset:1px}
+
+/* ───────── остальное — тихо, в тени ───────── */
+.alt{position:relative;z-index:4;margin-top:6px;font-size:12.5px;line-height:1.35;color:var(--dim)}
+.alt b{color:var(--soft);font-weight:500}
+
+.act{position:relative;z-index:6;margin-top:14px}
+.cta{
+  position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  height:56px;border-radius:100px;text-decoration:none;
+  background:linear-gradient(#DAFF74,#C1F63C);color:#0B1305;
+  font-size:16.5px;font-weight:600;letter-spacing:-.015em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.2),
+             0 16px 24px -18px rgba(0,0,0,.95);
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:transform .13s var(--ease);
+}
+.cta span{position:relative;z-index:2}
+.cta:active{transform:translate3d(0,1px,0)}
+.cta i{
+  position:absolute;top:-40%;left:50%;width:130px;height:180%;margin-left:-65px;z-index:1;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.26) 50%,rgba(255,255,255,0));
+  transform:translate3d(calc(var(--gx) * 88px),0,0) skewX(-16deg);
+  will-change:transform;
+}
+.risk{position:relative;z-index:4;margin-top:12px;font-size:12.5px;line-height:1.4;color:var(--dim)}
+.risk b{color:var(--soft);font-weight:500}
+
+/* ───────── следующая витрина: выглядывает из-за сгиба ───────── */
+.next{
+  position:relative;z-index:4;margin:18px var(--pad) 0;padding:15px 16px 18px;
+  border-radius:3px;background:linear-gradient(#0E131E,#0A0E1A);
+  box-shadow:inset 0 1px 0 rgba(var(--warm),.13);
+}
+.next h2{font-family:'Unbounded','Geist',sans-serif;font-weight:300;font-size:16px;letter-spacing:-.03em;color:#DCE2EC}
+.next p{margin-top:9px;font-size:12.5px;line-height:1.45;color:var(--dim)}
+.next p b{color:var(--soft);font-weight:500}
+.foot{position:relative;z-index:4;padding:16px var(--pad) 46px;font-size:12px;color:#4A5262}
+
+/* ───────── маркеры сгиба (только прототип) ───────── */
+.fold{position:absolute;left:0;right:0;z-index:80;pointer-events:none;border-top:1px dashed rgba(255,80,80,.45)}
+.fold b{
+  position:absolute;right:4px;top:3px;padding:1px 4px;background:rgba(5,7,13,.9);
+  font-family:'Geist',sans-serif;font-weight:400;font-size:8.5px;color:rgba(255,90,90,.75);
+}
+.fold.real{top:659px;border-top-color:rgba(255,150,60,.4)}
+.fold.real b{top:-13px;color:rgba(255,175,85,.85)}
+.fold.dev{top:844px}
+
+/* ───────── меньше движения ─────────
+   Свет замирает, переменные остаются нулевыми, всё читается так же. */
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* узкие устройства */
+@media (max-width:389px){
+  .vp{width:100%}
+  :root{--pad:18px}
+  h1{font-size:27px}
+  .tag{right:11px;width:164px}
+  .tag .p{font-size:23.5px}
+  .lede{max-width:280px}
+}
+</style>
+</head>
+<body>
+
+<div class="vp" id="vp">
+
+  <!-- луч точечного светильника -->
+  <div class="beam" aria-hidden="true"></div>
+
+  <header class="hd pad">
+    <span class="brand">uniqore</span>
+    <small>сайты и CRM</small>
+  </header>
+
+  <section class="head pad">
+    <h1>Сайт как витрина<em>вашего дела</em></h1>
+    <p class="lede">Больше <b>20 сайтов</b> и <b>30 CRM</b>. Четыре из них — под светом.</p>
+  </section>
+
+  <!-- ВИТРИНА -->
+  <section class="stage pad" id="stage">
+    <div class="pool" aria-hidden="true"></div>
+    <div class="cast" aria-hidden="true"></div>
+
+    <figure class="obj">
+      <div class="win" id="win">
+        <img id="shot" fetchpriority="high" decoding="async"
+             src="/keysy/cases/case-nemecia.webp" width="2000" height="1134"
+             style="width:400px;left:-35px;top:-18px"
+             alt="Первый экран сайта автокомплекса «Немеция», Омск">
+        <div class="glass" aria-hidden="true"><i></i></div>
+      </div>
+      <div class="flare" id="flare" aria-hidden="true"></div>
+    </figure>
+
+    <figcaption class="plate" id="plate" aria-live="polite">автокомплекс, Омск</figcaption>
+
+    <!-- ценник -->
+    <aside class="tag">
+      <p class="k">многостраничный сайт</p>
+      <p class="p">32&thinsp;800<i>₽</i></p>
+      <p class="d">свой дизайн, 5 дней</p>
+    </aside>
+  </section>
+
+  <nav class="names pad" id="names" aria-label="Работы">
+    <button class="nm" type="button" aria-pressed="true"  data-i="0">Немеция</button>
+    <button class="nm" type="button" aria-pressed="false" data-i="1">Bien&nbsp;Sûr</button>
+    <button class="nm" type="button" aria-pressed="false" data-i="2">IDTuning</button>
+    <button class="nm" type="button" aria-pressed="false" data-i="3">MILLA</button>
+  </nav>
+
+  <p class="alt pad">Одна страница — <b>11 700 ₽</b> · сайт с CRM — <b>39 000 ₽</b></p>
+
+  <div class="act pad">
+    <a class="cta" href="#zayavka">
+      <i aria-hidden="true"></i><span>Собрать мой сайт</span>
+    </a>
+  </div>
+
+  <p class="risk pad"><b>Год гарантии.</b> Платите после того, как утвердите макет. Ежемесячной платы у нас нет.</p>
+
+  <!-- следующая витрина -->
+  <section class="next">
+    <h2>Что стоит за 32 800 ₽</h2>
+    <p>Дизайн рисуем под ваше дело, а не подставляем в шаблон. Тексты и структуру пишем сами — от вас нужны только фотографии.</p>
+    <p><b>Исходники отдаём</b> — сайт остаётся вашим, даже если однажды вы уйдёте к другим.</p>
+  </section>
+  <p class="foot">Дальше — как это делается за пять дней</p>
+
+  <div class="dark" aria-hidden="true"></div>
+  <div class="fold real"><b>659 · Safari</b></div>
+  <div class="fold dev"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var vp    = document.getElementById('vp'),
+    win   = document.getElementById('win'),
+    shot  = document.getElementById('shot'),
+    plate = document.getElementById('plate'),
+    flare = document.getElementById('flare'),
+    stage = document.getElementById('stage'),
+    names = document.getElementById('names'),
+    btns  = names.querySelectorAll('.nm'),
+    calm  = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ───────── кадры ─────────
+   Окно витрины 330×196. Кадр берётся с запасом по краям, чтобы при
+   максимальном ходе картинки (±11 по X, ±5 по Y) проём не оголился.
+   У Bien Sûr замер по пикселям дал белые поля 12.45% слева и 12.55%
+   справа, содержимое внутри — 4:3. Кадр увеличен и сдвинут так, что
+   поля уходят за края проёма. */
+var D = [
+  {s:'/keysy/cases/case-nemecia.webp', w:400, x:-35,  y:-18, d:'автокомплекс, Омск',
+   a:'Первый экран сайта автокомплекса «Немеция», Омск'},
+  {s:'/keysy/cases/case-biensur.webp', w:534, x:-101, y:-18, d:'ресторан, Санкт-Петербург',
+   a:'Первый экран сайта ресторана Bien Sûr, Санкт-Петербург'},
+  {s:'/keysy/cases/case-idtuning.webp',w:400, x:-35,  y:-18, d:'тюнинг-ателье',
+   a:'Первый экран сайта тюнинг-ателье IDTuning'},
+  {s:'/keysy/cases/case-milla.webp',   w:400, x:-35,  y:-18, d:'интерьеры',
+   a:'Первый экран сайта студии интерьеров MILLA'}
+];
+var now = 0;
+
+function paint(i){
+  var d = D[i];
+  shot.src = d.s;
+  shot.alt = d.a;
+  shot.style.width = d.w + 'px';
+  shot.style.left  = d.x + 'px';
+  shot.style.top   = d.y + 'px';
+  plate.textContent = d.d;
+  for (var k=0;k<btns.length;k++) btns[k].setAttribute('aria-pressed', k===i ? 'true':'false');
+  now = i;
+  if (calm) return;
+  /* свет коротко теряет предмет и снова его находит */
+  win.classList.remove('sw');   void win.offsetWidth;   win.classList.add('sw');
+  flare.classList.remove('on'); void flare.offsetWidth; flare.classList.add('on');
+}
+function show(i){
+  if (i===now || !D[i]) return;
+  /* декодируем ДО подмены, иначе вспышка проявит старый кадр */
+  var pre = new Image(); pre.src = D[i].s;
+  var go = function(){ paint(i); };
+  if (pre.decode) pre.decode().then(go).catch(go);
+  else if (pre.complete) go();
+  else { pre.onload = go; pre.onerror = go; }
+}
+names.addEventListener('click', function(e){
+  var b = e.target.closest && e.target.closest('.nm');
+  if (b) show(+b.getAttribute('data-i'));
+});
+
+/* свайп по витрине. Вертикальный guard обязателен: без него обычная
+   прокрутка большим пальцем перелистывает работы. */
+var sx=0, sy=0;
+stage.addEventListener('touchstart', function(e){
+  sx=e.touches[0].clientX; sy=e.touches[0].clientY;
+}, {passive:true});
+stage.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - sx,
+      dy = e.changedTouches[0].clientY - sy;
+  if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+  show((now + (dx<0 ? 1 : 3)) % 4);
+}, {passive:true});
+
+/* ═══════════ СВЕТ ИДЁТ ЗА ПАЛЬЦЕМ ═══════════
+   Одна rAF-петля пишет три числа в CSS-переменные, их читают восемь
+   слоёв через calc() внутри transform. Ни layout, ни paint — только
+   композитинг. Петля засыпает, когда движение затухло. */
+if (!calm) {
+
+  var tgx=0, tgy=0, tsy=0, cgx=0, cgy=0, csy=0, alive=false, st=vp.style;
+
+  function clamp(v){ return v<-1 ? -1 : v>1 ? 1 : v; }
+  function put(){
+    st.setProperty('--gx', cgx.toFixed(4));
+    st.setProperty('--gy', cgy.toFixed(4));
+    st.setProperty('--sy', csy.toFixed(2));
+  }
+  function loop(){
+    cgx += (tgx-cgx)*0.11;
+    cgy += (tgy-cgy)*0.11;
+    csy += (tsy-csy)*0.20;
+    put();
+    if (Math.abs(tgx-cgx)+Math.abs(tgy-cgy) > 0.002 || Math.abs(tsy-csy) > 0.3) {
+      requestAnimationFrame(loop);
+    } else {
+      cgx=tgx; cgy=tgy; csy=tsy; put(); alive=false;
+    }
+  }
+  function kick(){ if(!alive){ alive=true; requestAnimationFrame(loop); } }
+
+  /* прокрутка: картинка за стеклом чуть отстаёт */
+  var maxSy = 220;
+  function readScroll(){
+    var v = window.pageYOffset || document.documentElement.scrollTop || 0;
+    tsy = v > maxSy ? maxSy : v;
+    kick();
+  }
+  addEventListener('scroll', readScroll, {passive:true});
+  /* вернулись из фона: rAF там заморожен, позицию надо перечитать,
+     иначе слои догоняют рывком на первом же кадре */
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) readScroll();
+  }, {passive:true});
+
+  /* палец / курсор */
+  var gyro = false;
+  function fromPoint(x, y){
+    if (gyro) return;
+    tgx = clamp((x/(innerWidth||390))*2 - 1);
+    tgy = clamp((y/(innerHeight||800))*2 - 1);
+    kick();
+  }
+  if (window.PointerEvent) {
+    addEventListener('pointermove', function(e){ fromPoint(e.clientX,e.clientY); }, {passive:true});
+    addEventListener('pointerdown', function(e){ fromPoint(e.clientX,e.clientY); }, {passive:true});
+  } else {
+    addEventListener('mousemove', function(e){ fromPoint(e.clientX,e.clientY); }, {passive:true});
+    addEventListener('touchmove', function(e){ fromPoint(e.touches[0].clientX,e.touches[0].clientY); }, {passive:true});
+  }
+
+  /* наклон устройства — основной источник, если он есть.
+     Ноль калибруется по первой же посадке телефона в руке и очень
+     медленно ползёт за ней: наклон не залипает и не дрожит. */
+  var base=null, bound=false;
+  function onOri(e){
+    var g=e.gamma, b=e.beta;
+    if (g==null && b==null) return;
+    g=g||0; b=b||0;
+    if (!base){ base={g:g,b:b}; return; }
+    base.g += (g-base.g)*0.0025;
+    base.b += (b-base.b)*0.0025;
+    var nx = clamp((g-base.g)/15), ny = clamp((b-base.b)/15);
+    /* часть браузеров шлёт событие с нулями и без сенсора: считаем
+       датчик живым только когда он реально шевельнулся, иначе он
+       навсегда отключит фолбэк по пальцу и свет замрёт */
+    if (!gyro){
+      if (Math.abs(nx)+Math.abs(ny) < 0.02) return;
+      gyro = true;
+    }
+    tgx=nx; tgy=ny; kick();
+  }
+  function bindOri(){ if(!bound){ bound=true; addEventListener('deviceorientation', onOri, {passive:true}); } }
+  function askOri(){
+    var DE = window.DeviceOrientationEvent;
+    if (!DE) return;
+    if (typeof DE.requestPermission === 'function'){
+      try { DE.requestPermission().then(function(s){ if(s==='granted') bindOri(); }).catch(function(){}); }
+      catch(err){}
+    } else bindOri();
+  }
+  askOri();
+  addEventListener('touchend', function once(){
+    removeEventListener('touchend', once); askOri();
+  }, {passive:true});
+}
+
+/* остальные кадры тянем после загрузки: первый экран весит один снимок */
+addEventListener('load', function(){
+  setTimeout(function(){ for (var i=1;i<D.length;i++) (new Image()).src = D[i].s; }, 600);
+});
+
+})();
+</script>
+</body>
+</html>
