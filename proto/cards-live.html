@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Блок «Вы получаете не просто сайт» — микро-интерфейсы</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   Тексты владельца не тронуты. Изменена только подача:
+   вместо абстрактной иконки в каждой карточке — работающий
+   кусочек интерфейса, который доказывает ровно это утверждение.
+
+   Взято из замеров референсов:
+   · Linear   — карточка портретная, визуал ~65% высоты, текст внизу,
+                обводка волоском 5% белого, радиус 8px (не 16)
+   · Attio    — разделители через gap:1px на фоне, а не border
+   · Neon     — акцент на доли процента площади, ноль свечений
+   · Resend   — лента въезжает снизу через flex-direction:column-reverse
+   · анти-slop — box-shadow 0 0 40px физически невозможен, глаз читает
+                подделку; легитимно только кольцо 0 0 0 1px
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#0A0E1A;
+  --card:#0E1320;
+  --ink:#EEF1F6;
+  --txt:#98A2B3;
+  --dim:#68707F;
+  --lime:#CDFF4F;
+  --hair:rgba(238,241,246,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+.wrap{max-width:1240px;margin:0 auto;padding:80px 40px 120px}
+h1{font-family:'Unbounded';font-weight:800;font-size:44px;line-height:1.06;letter-spacing:-.04em}
+.lead{margin-top:16px;color:var(--txt);font-size:17px;line-height:1.55;max-width:44ch}
+.hint{margin-top:14px;color:var(--dim);font-size:13.5px}
+
+/* ── сетка: волоски через gap, а не border (приём Attio) ── */
+.grid{
+  margin-top:52px;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--hair);
+  border:1px solid var(--hair);border-radius:10px;overflow:hidden;
+}
+.card{
+  position:relative;background:var(--card);
+  padding:0 0 22px;min-height:392px;
+  display:flex;flex-direction:column;
+  transition:background .35s ease;
+}
+.card:hover{background:#101627}
+
+/* сцена микро-интерфейса — верхние ~62% карточки */
+.stage{
+  position:relative;height:210px;overflow:hidden;
+  border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg,rgba(255,255,255,.014),transparent);
+}
+.n{
+  position:absolute;top:14px;right:16px;z-index:5;
+  font-family:'JetBrains Mono';font-size:11px;color:var(--dim);
+}
+.t{margin:18px 20px 0;font-weight:600;font-size:16px;letter-spacing:-.015em}
+.d{margin:8px 20px 0;font-size:13.5px;line-height:1.5;color:var(--txt)}
+
+/* ═══ 01 — форма: посетитель превращается в заявку ═══ */
+.f{position:absolute;inset:0;padding:26px 20px;display:flex;flex-direction:column;justify-content:center;gap:9px}
+.f-row{height:30px;border:1px solid var(--hair);border-radius:5px;background:rgba(255,255,255,.02);
+  display:flex;align-items:center;padding:0 10px;font-size:11.5px;color:var(--dim)}
+.f-row b{font-weight:400;color:var(--txt);opacity:0;transition:opacity .2s}
+.card:hover .f-row:nth-child(1) b{opacity:1;transition-delay:.35s}
+.card:hover .f-row:nth-child(2) b{opacity:1;transition-delay:.8s}
+.f-btn{
+  height:32px;border-radius:5px;background:#20262f;color:var(--txt);
+  display:grid;place-items:center;font-size:12px;font-weight:600;
+  transition:background .25s ease,color .25s ease;
+}
+.card:hover .f-btn{background:var(--lime);color:#0A0E1A;transition-delay:1.25s}
+.cursor{
+  position:absolute;left:38%;top:34%;width:13px;height:13px;z-index:4;
+  transition:transform 1.15s cubic-bezier(.5,0,.2,1);
+}
+.card:hover .cursor{transform:translate(46px,116px)}
+.cursor svg{width:100%;height:100%;fill:var(--ink);filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+
+/* ═══ 02 — реклама: две линии расходятся ═══ */
+.chart{position:absolute;inset:0;padding:24px 20px}
+.chart svg{width:100%;height:104px;overflow:visible}
+.chart path{fill:none;stroke-width:1.6;stroke-linecap:round}
+.p-spend{stroke:#3B4250}
+.p-earn{stroke:var(--lime);stroke-dasharray:220;stroke-dashoffset:220;transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1) .15s}
+.card:hover .p-earn{stroke-dashoffset:0}
+.legend{display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--dim)}
+.legend i{display:inline-block;width:14px;height:2px;margin-right:6px;vertical-align:middle;border-radius:2px}
+.goals{margin-top:12px;display:flex;flex-direction:column;gap:6px;font-size:11.5px;color:var(--dim)}
+.goals div{display:flex;align-items:center;gap:7px;opacity:.4;transition:opacity .3s}
+.card:hover .goals div:nth-child(1){opacity:1;transition-delay:.9s}
+.card:hover .goals div:nth-child(2){opacity:1;transition-delay:1.15s}
+.tick{width:12px;height:12px;border-radius:3px;border:1px solid var(--hair);display:grid;place-items:center;flex:0 0 auto}
+.card:hover .tick{border-color:rgba(205,255,79,.4)}
+.tick svg{width:8px;height:8px;stroke:var(--lime);stroke-width:3;fill:none;
+  stroke-dasharray:12;stroke-dashoffset:12;transition:stroke-dashoffset .3s}
+.card:hover .goals div:nth-child(1) .tick svg{stroke-dashoffset:0;transition-delay:1s}
+.card:hover .goals div:nth-child(2) .tick svg{stroke-dashoffset:0;transition-delay:1.25s}
+
+/* ═══ 03 — Telegram: уведомления въезжают снизу (приём Resend) ═══ */
+.feed{position:absolute;inset:0;padding:22px 18px;display:flex;flex-direction:column-reverse;gap:8px;justify-content:flex-start}
+.note{
+  display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border-radius:8px;
+  background:#151B29;border:1px solid var(--hair);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .32s ease,transform .32s cubic-bezier(.2,1,.3,1);
+}
+.card:hover .note:nth-child(1){opacity:1;transform:none;transition-delay:.15s}
+.card:hover .note:nth-child(2){opacity:1;transform:none;transition-delay:.75s}
+.card:hover .note:nth-child(3){opacity:1;transform:none;transition-delay:1.35s}
+.note .av{width:20px;height:20px;border-radius:6px;background:#242C3B;flex:0 0 auto;
+  display:grid;place-items:center}
+.note .av svg{width:11px;height:11px;stroke:var(--txt);fill:none;stroke-width:2}
+.note b{display:block;font-size:11.5px;font-weight:600}
+.note span{display:block;font-size:10.5px;color:var(--dim);margin-top:1px}
+.note em{font-style:normal;margin-left:auto;font-family:'JetBrains Mono';font-size:9.5px;color:var(--dim);flex:0 0 auto}
+
+/* ═══ 04 — скорость: полоса добегает и замирает ═══ */
+.speed{position:absolute;inset:0;padding:26px 20px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.track{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--lime);border-radius:2px;
+  transition:width .82s cubic-bezier(.15,.85,.25,1)}
+.card:hover .fill{width:100%}
+.ms{font-family:'JetBrains Mono';font-size:30px;letter-spacing:-.02em;color:var(--ink)}
+.ms i{font-style:normal;font-size:14px;color:var(--dim);margin-left:3px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:44px}
+.bars div{flex:1;background:rgba(255,255,255,.07);border-radius:2px 2px 0 0;transform-origin:bottom;
+  transform:scaleY(.18);transition:transform .5s cubic-bezier(.2,1,.3,1)}
+.card:hover .bars div{transform:scaleY(1)}
+.card:hover .bars div:nth-child(2){transition-delay:.06s}
+.card:hover .bars div:nth-child(3){transition-delay:.12s}
+.card:hover .bars div:nth-child(4){transition-delay:.18s}
+.card:hover .bars div:nth-child(5){transition-delay:.24s}
+.bars div:last-child{background:rgba(205,255,79,.55)}
+
+.note-foot{margin-top:44px;color:var(--dim);font-size:13.5px;line-height:1.65;max-width:70ch;
+  border-top:1px solid var(--hair);padding-top:22px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:1080px){.grid{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.grid{grid-template-columns:1fr}h1{font-size:30px}.wrap{padding:48px 20px 80px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Вы получаете<br>не просто сайт</h1>
+  <p class="lead">А инструмент, который превращает рекламный трафик в заявки и продажи.</p>
+  <p class="hint">Наведи курсор на карточку — внутри оживает то, о чём она говорит.</p>
+
+  <div class="grid">
+
+    <!-- 01 -->
+    <div class="card">
+      <div class="stage">
+        <div class="n">01</div>
+        <div class="f">
+          <div class="f-row">Имя <b>&nbsp;· Виталий</b></div>
+          <div class="f-row">Телефон <b>&nbsp;· +7 913 …</b></div>
+          <div class="f-btn">Отправить заявку</div>
+        </div>
+        <div class="cursor">
+          <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg>
+        </div>
+      </div>
+      <div class="t">Заявки, а не просмотры</div>
+      <div class="d">Структура ведёт посетителя к действию — трафик превращается в обращения, а не в отказы.</div>
+    </div>
+
+    <!-- 02 -->
+    <div class="card">
+      <div class="stage">
+        <div class="n">02</div>
+        <div class="chart">
+          <svg viewBox="0 0 220 104" preserveAspectRatio="none">
+            <path class="p-spend" d="M0,74 C40,72 80,70 110,69 C150,67 190,66 220,65"/>
+            <path class="p-earn"  d="M0,80 C40,74 70,60 105,46 C145,30 185,18 220,10"/>
+          </svg>
+          <div class="legend">
+            <span><i style="background:#3B4250"></i>потрачено</span>
+            <span><i style="background:#CDFF4F"></i>получено</span>
+          </div>
+          <div class="goals">
+            <div><span class="tick"><svg viewBox="0 0 12 12"><path d="M2 6.5l2.6 2.6L10 3.5"/></svg></span>цель «заявка» настроена</div>
+            <div><span class="tick"><svg viewBox="0 0 12 12"><path d="M2 6.5l2.6 2.6L10 3.5"/></svg></span>метрика подключена</div>
+          </div>
+        </div>
+      </div>
+      <div class="t">Окупаемая реклама</div>
+      <div class="d">Готов под Яндекс Директ с первого дня: метрика и цели настроены — видно отдачу с каждого рубля.</div>
+    </div>
+
+    <!-- 03 -->
+    <div class="card">
+      <div class="stage">
+        <div class="n">03</div>
+        <div class="feed">
+          <div class="note">
+            <span class="av"><svg viewBox="0 0 24 24"><path d="M21 5L2 12l7 2 2 7z"/></svg></span>
+            <div><b>Заявка с сайта</b><span>Ольга · запись на ТО</span></div><em>сейчас</em>
+          </div>
+          <div class="note">
+            <span class="av"><svg viewBox="0 0 24 24"><path d="M21 5L2 12l7 2 2 7z"/></svg></span>
+            <div><b>Заявка с сайта</b><span>Виталий · +7 913 …</span></div><em>1 мин</em>
+          </div>
+          <div class="note">
+            <span class="av"><svg viewBox="0 0 24 24"><path d="M21 5L2 12l7 2 2 7z"/></svg></span>
+            <div><b>Заявка с сайта</b><span>Марат · расчёт</span></div><em>4 мин</em>
+          </div>
+        </div>
+      </div>
+      <div class="t">Ни одного потерянного лида</div>
+      <div class="d">Каждая заявка мгновенно в Telegram и CRM — вы отвечаете первым, пока клиент ещё горячий.</div>
+    </div>
+
+    <!-- 04 -->
+    <div class="card">
+      <div class="stage">
+        <div class="n">04</div>
+        <div class="speed">
+          <div class="ms">0.8<i>сек</i></div>
+          <div class="track"><div class="fill"></div></div>
+          <div class="bars"><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+      </div>
+      <div class="t">Клиент, который не ушёл</div>
+      <div class="d">Сайт грузится мгновенно — никто не закрывает вкладку, не дождавшись загрузки.</div>
+    </div>
+
+  </div>
+
+  <p class="note-foot">Тексты не тронуты — изменилась только подача. Вместо четырёх абстрактных иконок, которые можно поменять местами и никто не заметит, в каждой карточке работает то, о чём она говорит. Лайм оставлен на долях процента площади: линия дохода, галочки целей, кнопка формы и последний столбец. Свечений нет ни одного — только волосяные обводки. Разделители сделаны зазором в 1 пиксель, а не рамками.</p>
+
+</div>
+</body>
+</html>
