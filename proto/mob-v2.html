@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>/sayty/ — мобильный первый экран v2</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<style>
+/* ══════════════════════════════════════════════════════════════
+   ЛОГИКА ЭКРАНА
+
+   Мы продаём дизайн — значит первый экран обязан сам быть примером
+   дизайна, а не рамкой вокруг чужого скриншота. Отсюда решения:
+
+   1. Только фирменные гарнитуры. Никакой системной Georgia:
+      веб-студия, у которой в hero шрифт по умолчанию, себе противоречит.
+   2. Работа показана крупно и первой идёт самая красивая (Bien Sûr),
+      а не первая по алфавиту. Человек должен захотеть такой же.
+   3. Порядок считывания: что мы делаем → чем докажем → сколько стоит →
+      одно действие → что снимает риск. Всё до 659 px — реального сгиба
+      Safari, где адресная строка съедает ~185 px от высоты экрана.
+   4. Один акцент на экран. Лайм только на кнопке и активной работе.
+   ══════════════════════════════════════════════════════════════ */
+
+:root{
+  --bg:#0A0E1A;
+  --ink:#EEF1F6;
+  --txt:#98A2B3;
+  --dim:#6E7788;
+  --lime:#CDFF4F;
+  --line:rgba(238,241,246,.10);
+  --pad:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#05070d;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+.vp{
+  position:relative;width:390px;margin:0 auto;min-height:1010px;
+  background:var(--bg);color:var(--ink);
+  font-family:'Geist',-apple-system,system-ui,sans-serif;
+  overflow:hidden;
+}
+
+/* тонкий световой градиент сверху — даёт глубину без свечения на элементах */
+.vp::before{
+  content:'';position:absolute;inset:0 0 auto;height:340px;pointer-events:none;
+  background:radial-gradient(120% 100% at 18% 0%,rgba(205,255,79,.07),transparent 62%);
+}
+
+/* ─────────── шапка ─────────── */
+.bar{
+  position:relative;display:flex;align-items:baseline;justify-content:space-between;
+  padding:18px var(--pad) 0;
+}
+.logo{font-family:'Unbounded';font-weight:700;font-size:17px;letter-spacing:-.03em}
+.who{font-size:12px;color:var(--dim);letter-spacing:.01em}
+
+/* ─────────── заголовок ─────────── */
+.head{position:relative;padding:18px var(--pad) 0}
+h1{
+  font-family:'Unbounded';font-weight:800;
+  font-size:29px;line-height:1.06;letter-spacing:-.04em;
+  /* оптический вынос: крупный кегль зрительно отступает вправо */
+  margin-left:-1px;
+}
+h1 i{font-style:normal;color:var(--lime)}
+.sub{
+  margin-top:10px;font-size:14.5px;line-height:1.45;color:var(--txt);
+  max-width:30ch;
+}
+.sub b{color:var(--ink);font-weight:600}
+
+/* ─────────── работа ─────────── */
+.work{position:relative;margin-top:16px}
+
+.shot{
+  position:relative;height:188px;overflow:hidden;
+  background:#0E1420;
+  /* кадр уходит в край экрана — так он читается как окно, а не карточка */
+}
+.shot img{
+  position:absolute;top:50%;left:50%;
+  width:var(--w,470px);
+  transform:translate(-50%,-50%) translate(var(--x,0px),var(--y,0px));
+  filter:saturate(.9) contrast(1.03);
+  transition:opacity .28s ease;
+}
+/* низ кадра растворяется в фоне — без рамки и без резкой границы */
+.shot::after{
+  content:'';position:absolute;inset:auto 0 0;height:76px;pointer-events:none;
+  background:linear-gradient(transparent,var(--bg));
+}
+
+.meta{
+  display:flex;align-items:baseline;gap:8px;
+  padding:10px var(--pad) 0;
+}
+.meta b{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.meta span{font-size:13px;color:var(--dim)}
+
+/* переключатель работ — засечки, а не кнопки-таблетки */
+.pick{
+  display:flex;gap:0;padding:11px var(--pad) 0;
+}
+.pick button{
+  flex:1;appearance:none;background:none;border:0;cursor:pointer;
+  padding:8px 0 9px;
+  font-family:'Geist';font-size:12.5px;letter-spacing:-.005em;
+  color:var(--dim);text-align:left;
+  border-top:1.5px solid var(--line);
+  transition:color .2s ease,border-color .2s ease;
+}
+.pick button[aria-pressed="true"]{color:var(--ink);border-top-color:var(--lime)}
+
+/* ─────────── цена ─────────── */
+.buy{padding:15px var(--pad) 0}
+.price{
+  display:flex;align-items:flex-end;gap:11px;
+}
+.rub{
+  font-family:'Unbounded';font-weight:700;font-size:34px;letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums lining-nums;line-height:1;
+}
+.rub em{font-style:normal;font-size:19px;font-weight:500;color:var(--txt);margin-left:2px}
+.what{padding-bottom:3px;font-size:13px;line-height:1.35;color:var(--txt)}
+.what b{display:block;color:var(--ink);font-weight:600;font-size:13.5px}
+
+.alt{
+  margin-top:10px;font-size:12.5px;color:var(--dim);
+  font-variant-numeric:tabular-nums lining-nums;
+}
+.alt b{color:var(--txt);font-weight:500}
+
+/* ─────────── действие ─────────── */
+.go{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  margin:13px var(--pad) 0;padding:16px 20px;
+  background:var(--lime);color:#0A0E1A;text-decoration:none;
+  font-family:'Geist';font-weight:700;font-size:16px;letter-spacing:-.015em;
+  border-radius:3px;
+}
+.go svg{width:17px;height:17px;flex:0 0 auto}
+
+.fine{
+  padding:12px var(--pad) 0;font-size:12.5px;line-height:1.5;color:var(--dim);
+}
+.fine b{color:var(--txt);font-weight:500}
+
+/* ─────────── что дальше (выглядывает из-за сгиба) ─────────── */
+.next{margin-top:24px;border-top:1px solid var(--line);padding:18px var(--pad) 0}
+.next h2{font-family:'Unbounded';font-weight:600;font-size:17px;letter-spacing:-.03em}
+.next ul{list-style:none;margin-top:12px}
+.next li{
+  display:flex;justify-content:space-between;gap:14px;
+  padding:11px 0;border-bottom:1px solid var(--line);
+  font-size:14px;color:var(--txt);
+}
+.next li span{color:var(--dim);font-size:13px;flex:0 0 auto}
+
+/* ─────────── маркеры сгиба (только в макете) ─────────── */
+.fold{position:absolute;left:0;right:0;border-top:1px dashed rgba(255,90,90,.5);pointer-events:none;z-index:9}
+.fold b{position:absolute;right:4px;top:-15px;font-family:'JetBrains Mono';font-size:10px;color:rgba(255,120,120,.8);font-weight:400}
+.f659{top:659px}
+.f844{top:844px;border-top-color:rgba(255,255,255,.22)}
+.f844 b{color:rgba(255,255,255,.4)}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="vp">
+
+  <div class="bar">
+    <div class="logo">uniqore</div>
+    <div class="who">сайты и CRM</div>
+  </div>
+
+  <div class="head">
+    <h1>Сайты, которые<br>не стыдно <i>показать</i></h1>
+    <p class="sub">Под вашу нишу: структура, тексты, дизайн. <b>20+ сделано.</b></p>
+  </div>
+
+  <div class="work">
+    <div class="shot">
+      <img id="shot" src="/keysy/cases/case-biensur-1024.webp" alt="Сайт ресторана Bien Sûr" style="--w:470px;--x:0px;--y:-6px">
+    </div>
+    <div class="meta">
+      <b id="name">Bien Sûr</b>
+      <span id="niche">ресторан, Санкт-Петербург</span>
+    </div>
+    <div class="pick" id="pick">
+      <button data-i="0" aria-pressed="true">Bien Sûr</button>
+      <button data-i="1" aria-pressed="false">MILLA</button>
+      <button data-i="2" aria-pressed="false">IDTuning</button>
+      <button data-i="3" aria-pressed="false">Немеция</button>
+    </div>
+  </div>
+
+  <div class="buy">
+    <div class="price">
+      <div class="rub">32 800<em>₽</em></div>
+      <div class="what"><b>Многостраничный сайт</b>свой дизайн, 5 дней</div>
+    </div>
+    <div class="alt">Одна страница — <b>11 700 ₽</b> · с CRM — <b>39 000 ₽</b></div>
+  </div>
+
+  <a class="go" href="#zayavka">Обсудить мой сайт
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
+  </a>
+
+  <p class="fine"><b>Год гарантии.</b> Платите после того, как утвердите макет. Ежемесячной платы нет, исходники отдаём.</p>
+
+  <div class="next">
+    <h2>Что входит в 32 800 ₽</h2>
+    <ul>
+      <li>Дизайн-макет всех страниц <span>входит</span></li>
+      <li>Тексты и структура <span>пишем мы</span></li>
+      <li>Мобильная версия <span>отдельно собираем</span></li>
+    </ul>
+  </div>
+
+  <div class="fold f659"><b>659 · Safari</b></div>
+  <div class="fold f844"><b>844 · экран</b></div>
+</div>
+
+<script>
+(function(){
+  /* Работы отсортированы по силе визуала, а не по алфавиту: первым идёт
+     то, что должно вызвать «хочу такой». Кроп у каждой свой — у Bien Sûr
+     в исходник впечены белые поля, их срезаем шириной и сдвигом. */
+  var W = [
+    {s:'/keysy/cases/case-biensur-1024.webp',  n:'Bien Sûr',  m:'ресторан, Санкт-Петербург', w:470, x:0,   y:-6},
+    {s:'/keysy/cases/case-milla-1024.webp',    n:'MILLA',     m:'интерьеры, Самара',         w:430, x:0,   y:-10},
+    {s:'/keysy/cases/case-idtuning-1024.webp', n:'IDTuning',  m:'тюнинг-ателье, Москва',     w:430, x:0,   y:-34},
+    {s:'/keysy/cases/case-nemecia-1024.webp',  n:'Немеция',   m:'автокомплекс, Омск',        w:420, x:0,   y:-30}
+  ];
+
+  var shot = document.getElementById('shot'),
+      name = document.getElementById('name'),
+      niche= document.getElementById('niche'),
+      pick = document.getElementById('pick'),
+      cur = 0;
+
+  function show(i){
+    if (i === cur || !W[i]) return;
+    var d = W[i], img = new Image();
+    img.src = d.s;
+    var apply = function(){
+      shot.style.opacity = 0;
+      setTimeout(function(){
+        shot.src = d.s;
+        shot.alt = 'Сайт: ' + d.n;
+        shot.style.setProperty('--w', d.w + 'px');
+        shot.style.setProperty('--x', d.x + 'px');
+        shot.style.setProperty('--y', d.y + 'px');
+        name.textContent = d.n;
+        niche.textContent = d.m;
+        shot.style.opacity = 1;
+      }, 140);
+      [].forEach.call(pick.children, function(b, k){
+        b.setAttribute('aria-pressed', k === i ? 'true' : 'false');
+      });
+      cur = i;
+    };
+    if (img.decode) img.decode().then(apply).catch(apply);
+    else if (img.complete) apply();
+    else { img.onload = apply; img.onerror = apply; }
+  }
+
+  pick.addEventListener('click', function(e){
+    var b = e.target.closest('button');
+    if (b) show(+b.getAttribute('data-i'));
+  });
+
+  /* свайп по кадру. Вертикальный guard обязателен — иначе обычная
+     прокрутка большим пальцем листает работы. */
+  var sx = 0, sy = 0;
+  var shotBox = document.querySelector('.shot');
+  shotBox.addEventListener('touchstart', function(e){
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, {passive:true});
+  shotBox.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - sx,
+        dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+      show((cur + (dx < 0 ? 1 : 3)) % 4);
+    }
+  }, {passive:true});
+
+  /* остальные кадры подтягиваем только после загрузки страницы */
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      W.slice(1).forEach(function(d){ new Image().src = d.s; });
+    }, 600);
+  });
+})();
+</script>
+</body>
+</html>
