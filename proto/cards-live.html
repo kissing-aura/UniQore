@@ -8,18 +8,25 @@
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
 <style>
 /* ═══════════════════════════════════════════════════════════════
-   Тексты владельца не тронуты. Изменена только подача:
-   вместо абстрактной иконки в каждой карточке — работающий
-   кусочек интерфейса, который доказывает ровно это утверждение.
+   Тексты владельца не тронуты. Вместо абстрактной иконки в каждой
+   карточке работает то, о чём она говорит.
+
+   Правки по замечаниям:
+   · анимация стартует сама, цепочкой слева направо, при входе блока
+     в экран; повтор — по наведению
+   · курсор доводится точно до центра кнопки (замер в JS, не на глаз)
+   · номер 01–04 крупнее и не перекрывается сценой
+   · график Директа переделан: сетка, заливка, точки на изломах,
+     значение в конце линии
+   · четвёртая карточка доведена: гонка двух полос, наш сайт против
+     типичного, с честными подписями
+   · общий масштаб уменьшен
 
    Взято из замеров референсов:
-   · Linear   — карточка портретная, визуал ~65% высоты, текст внизу,
-                обводка волоском 5% белого, радиус 8px (не 16)
-   · Attio    — разделители через gap:1px на фоне, а не border
-   · Neon     — акцент на доли процента площади, ноль свечений
-   · Resend   — лента въезжает снизу через flex-direction:column-reverse
-   · анти-slop — box-shadow 0 0 40px физически невозможен, глаз читает
-                подделку; легитимно только кольцо 0 0 0 1px
+   Linear — портретная карточка, визуал сверху, текст внизу, волосок 6%
+   Attio — разделители через gap:1px, а не border
+   Neon  — акцент на долях процента площади, ноль свечений
+   Resend — лента въезжает снизу через column-reverse
    ═══════════════════════════════════════════════════════════════ */
 :root{
   --bg:#0A0E1A;
@@ -33,121 +40,162 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 
-.wrap{max-width:1240px;margin:0 auto;padding:80px 40px 120px}
-h1{font-family:'Unbounded';font-weight:800;font-size:44px;line-height:1.06;letter-spacing:-.04em}
-.lead{margin-top:16px;color:var(--txt);font-size:17px;line-height:1.55;max-width:44ch}
-.hint{margin-top:14px;color:var(--dim);font-size:13.5px}
+.wrap{max-width:1120px;margin:0 auto;padding:70px 40px 110px}
+h1{font-family:'Unbounded';font-weight:800;font-size:38px;line-height:1.07;letter-spacing:-.04em}
+.lead{margin-top:14px;color:var(--txt);font-size:16px;line-height:1.55;max-width:44ch}
+.hint{margin-top:12px;color:var(--dim);font-size:13px}
 
-/* ── сетка: волоски через gap, а не border (приём Attio) ── */
 .grid{
-  margin-top:52px;
+  margin-top:44px;
   display:grid;grid-template-columns:repeat(4,1fr);
   gap:1px;background:var(--hair);
   border:1px solid var(--hair);border-radius:10px;overflow:hidden;
 }
 .card{
   position:relative;background:var(--card);
-  padding:0 0 22px;min-height:392px;
+  padding:0 0 20px;min-height:344px;
   display:flex;flex-direction:column;
   transition:background .35s ease;
 }
 .card:hover{background:#101627}
 
-/* сцена микро-интерфейса — верхние ~62% карточки */
 .stage{
-  position:relative;height:210px;overflow:hidden;
+  position:relative;height:184px;overflow:hidden;
   border-bottom:1px solid var(--hair);
   background:linear-gradient(180deg,rgba(255,255,255,.014),transparent);
 }
+/* номер: свой угол, сцена под него не залезает */
 .n{
-  position:absolute;top:14px;right:16px;z-index:5;
-  font-family:'JetBrains Mono';font-size:11px;color:var(--dim);
+  position:absolute;top:12px;right:14px;z-index:6;
+  font-family:'Unbounded';font-weight:700;font-size:15px;
+  color:rgba(238,241,246,.22);letter-spacing:-.02em;
+  transition:color .4s ease;
 }
-.t{margin:18px 20px 0;font-weight:600;font-size:16px;letter-spacing:-.015em}
-.d{margin:8px 20px 0;font-size:13.5px;line-height:1.5;color:var(--txt)}
+.card.play .n{color:rgba(205,255,79,.65)}
+.t{margin:16px 18px 0;font-weight:600;font-size:15px;letter-spacing:-.015em}
+.d{margin:7px 18px 0;font-size:12.8px;line-height:1.5;color:var(--txt)}
 
-/* ═══ 01 — форма: посетитель превращается в заявку ═══ */
-.f{position:absolute;inset:0;padding:26px 20px;display:flex;flex-direction:column;justify-content:center;gap:9px}
-.f-row{height:30px;border:1px solid var(--hair);border-radius:5px;background:rgba(255,255,255,.02);
-  display:flex;align-items:center;padding:0 10px;font-size:11.5px;color:var(--dim)}
+/* ═══ 01 — форма ═══ */
+.f{position:absolute;left:18px;right:18px;top:34px;display:flex;flex-direction:column;gap:8px}
+.f-row{height:28px;border:1px solid var(--hair);border-radius:5px;background:rgba(255,255,255,.02);
+  display:flex;align-items:center;padding:0 9px;font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden}
 .f-row b{font-weight:400;color:var(--txt);opacity:0;transition:opacity .2s}
-.card:hover .f-row:nth-child(1) b{opacity:1;transition-delay:.35s}
-.card:hover .f-row:nth-child(2) b{opacity:1;transition-delay:.8s}
+.card.play .f-row:nth-child(1) b{opacity:1;transition-delay:.4s}
+.card.play .f-row:nth-child(2) b{opacity:1;transition-delay:.9s}
 .f-btn{
-  height:32px;border-radius:5px;background:#20262f;color:var(--txt);
-  display:grid;place-items:center;font-size:12px;font-weight:600;
+  height:30px;border-radius:5px;background:#20262f;color:var(--txt);
+  display:grid;place-items:center;font-size:11.5px;font-weight:600;
   transition:background .25s ease,color .25s ease;
 }
-.card:hover .f-btn{background:var(--lime);color:#0A0E1A;transition-delay:1.25s}
+.card.play .f-btn{background:var(--lime);color:#0A0E1A;transition-delay:1.5s}
 .cursor{
-  position:absolute;left:38%;top:34%;width:13px;height:13px;z-index:4;
-  transition:transform 1.15s cubic-bezier(.5,0,.2,1);
+  position:absolute;width:12px;height:12px;z-index:5;
+  left:0;top:0;
+  transform:translate(var(--cx0,50px),var(--cy0,40px));
+  transition:transform 1.25s cubic-bezier(.45,0,.2,1);
 }
-.card:hover .cursor{transform:translate(46px,116px)}
-.cursor svg{width:100%;height:100%;fill:var(--ink);filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+.card.play .cursor{transform:translate(var(--cx1,90px),var(--cy1,132px))}
+.cursor svg{width:100%;height:100%;fill:var(--ink);filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
+.ping{
+  position:absolute;z-index:4;width:26px;height:26px;border-radius:50%;
+  border:1px solid rgba(205,255,79,.6);
+  left:0;top:0;transform:translate(calc(var(--cx1,90px) - 7px),calc(var(--cy1,132px) - 7px)) scale(.2);
+  opacity:0;
+}
+.card.play .ping{animation:ping .6s ease-out 1.5s}
+@keyframes ping{from{opacity:.9;transform:translate(calc(var(--cx1) - 7px),calc(var(--cy1) - 7px)) scale(.2)}
+                to{opacity:0;transform:translate(calc(var(--cx1) - 7px),calc(var(--cy1) - 7px)) scale(1.5)}}
 
-/* ═══ 02 — реклама: две линии расходятся ═══ */
-.chart{position:absolute;inset:0;padding:24px 20px}
-.chart svg{width:100%;height:104px;overflow:visible}
-.chart path{fill:none;stroke-width:1.6;stroke-linecap:round}
-.p-spend{stroke:#3B4250}
-.p-earn{stroke:var(--lime);stroke-dasharray:220;stroke-dashoffset:220;transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1) .15s}
-.card:hover .p-earn{stroke-dashoffset:0}
-.legend{display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--dim)}
-.legend i{display:inline-block;width:14px;height:2px;margin-right:6px;vertical-align:middle;border-radius:2px}
-.goals{margin-top:12px;display:flex;flex-direction:column;gap:6px;font-size:11.5px;color:var(--dim)}
-.goals div{display:flex;align-items:center;gap:7px;opacity:.4;transition:opacity .3s}
-.card:hover .goals div:nth-child(1){opacity:1;transition-delay:.9s}
-.card:hover .goals div:nth-child(2){opacity:1;transition-delay:1.15s}
-.tick{width:12px;height:12px;border-radius:3px;border:1px solid var(--hair);display:grid;place-items:center;flex:0 0 auto}
-.card:hover .tick{border-color:rgba(205,255,79,.4)}
-.tick svg{width:8px;height:8px;stroke:var(--lime);stroke-width:3;fill:none;
+/* ═══ 02 — график Директа ═══ */
+.chart{position:absolute;left:16px;right:16px;top:30px}
+.plot{position:relative;height:96px}
+.plot svg{width:100%;height:100%;overflow:visible;display:block}
+.gridline{stroke:rgba(238,241,246,.05);stroke-width:1}
+.p-spend{fill:none;stroke:#39404E;stroke-width:1.5;stroke-linecap:round;
+  stroke-dasharray:240;stroke-dashoffset:240;transition:stroke-dashoffset 1.1s ease-out .1s}
+.card.play .p-spend{stroke-dashoffset:0}
+.p-fill{fill:url(#lg);opacity:0;transition:opacity .7s ease .75s}
+.card.play .p-fill{opacity:1}
+.p-earn{fill:none;stroke:var(--lime);stroke-width:1.8;stroke-linecap:round;
+  stroke-dasharray:240;stroke-dashoffset:240;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1) .45s}
+.card.play .p-earn{stroke-dashoffset:0}
+.dot{fill:var(--lime);r:0;transition:r .25s ease}
+.card.play .dot{r:2.4}
+.card.play .dot:nth-of-type(1){transition-delay:1.0s}
+.card.play .dot:nth-of-type(2){transition-delay:1.2s}
+.card.play .dot:nth-of-type(3){transition-delay:1.4s}
+.val{
+  position:absolute;right:0;top:2px;font-family:'JetBrains Mono';font-size:11px;
+  color:var(--lime);opacity:0;transform:translateY(4px);
+  transition:opacity .35s ease 1.5s,transform .35s ease 1.5s;
+}
+.card.play .val{opacity:1;transform:none}
+.legend{display:flex;gap:14px;margin-top:10px;font-size:10.5px;color:var(--dim)}
+.legend i{display:inline-block;width:12px;height:2px;margin-right:5px;vertical-align:middle;border-radius:2px}
+.goals{margin-top:9px;display:flex;flex-direction:column;gap:5px;font-size:10.8px;color:var(--dim)}
+.goals div{display:flex;align-items:center;gap:6px;opacity:.35;transition:opacity .3s}
+.card.play .goals div:nth-child(1){opacity:1;transition-delay:1.7s}
+.card.play .goals div:nth-child(2){opacity:1;transition-delay:1.9s}
+.tick{width:11px;height:11px;border-radius:3px;border:1px solid var(--hair);display:grid;place-items:center;flex:0 0 auto}
+.card.play .tick{border-color:rgba(205,255,79,.4)}
+.tick svg{width:7px;height:7px;stroke:var(--lime);stroke-width:3;fill:none;
   stroke-dasharray:12;stroke-dashoffset:12;transition:stroke-dashoffset .3s}
-.card:hover .goals div:nth-child(1) .tick svg{stroke-dashoffset:0;transition-delay:1s}
-.card:hover .goals div:nth-child(2) .tick svg{stroke-dashoffset:0;transition-delay:1.25s}
+.card.play .goals div:nth-child(1) .tick svg{stroke-dashoffset:0;transition-delay:1.8s}
+.card.play .goals div:nth-child(2) .tick svg{stroke-dashoffset:0;transition-delay:2s}
 
-/* ═══ 03 — Telegram: уведомления въезжают снизу (приём Resend) ═══ */
-.feed{position:absolute;inset:0;padding:22px 18px;display:flex;flex-direction:column-reverse;gap:8px;justify-content:flex-start}
+/* ═══ 03 — Telegram ═══ */
+.feed{position:absolute;inset:0;padding:20px 16px;display:flex;flex-direction:column-reverse;gap:7px;justify-content:flex-start}
 .note{
-  display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border-radius:8px;
+  display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:7px;
   background:#151B29;border:1px solid var(--hair);
   opacity:0;transform:translateY(14px);
   transition:opacity .32s ease,transform .32s cubic-bezier(.2,1,.3,1);
 }
-.card:hover .note:nth-child(1){opacity:1;transform:none;transition-delay:.15s}
-.card:hover .note:nth-child(2){opacity:1;transform:none;transition-delay:.75s}
-.card:hover .note:nth-child(3){opacity:1;transform:none;transition-delay:1.35s}
-.note .av{width:20px;height:20px;border-radius:6px;background:#242C3B;flex:0 0 auto;
-  display:grid;place-items:center}
-.note .av svg{width:11px;height:11px;stroke:var(--txt);fill:none;stroke-width:2}
-.note b{display:block;font-size:11.5px;font-weight:600}
-.note span{display:block;font-size:10.5px;color:var(--dim);margin-top:1px}
-.note em{font-style:normal;margin-left:auto;font-family:'JetBrains Mono';font-size:9.5px;color:var(--dim);flex:0 0 auto}
+.card.play .note:nth-child(1){opacity:1;transform:none;transition-delay:.2s}
+.card.play .note:nth-child(2){opacity:1;transform:none;transition-delay:.85s}
+.card.play .note:nth-child(3){opacity:1;transform:none;transition-delay:1.5s}
+.note .av{width:19px;height:19px;border-radius:5px;background:#242C3B;flex:0 0 auto;display:grid;place-items:center}
+.note .av svg{width:10px;height:10px;stroke:var(--txt);fill:none;stroke-width:2}
+.note b{display:block;font-size:11px;font-weight:600}
+.note span{display:block;font-size:10px;color:var(--dim);margin-top:1px}
+.note em{font-style:normal;margin-left:auto;font-family:'JetBrains Mono';font-size:9px;color:var(--dim);flex:0 0 auto}
 
-/* ═══ 04 — скорость: полоса добегает и замирает ═══ */
-.speed{position:absolute;inset:0;padding:26px 20px;display:flex;flex-direction:column;justify-content:center;gap:14px}
-.track{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
-.fill{height:100%;width:0;background:var(--lime);border-radius:2px;
-  transition:width .82s cubic-bezier(.15,.85,.25,1)}
-.card:hover .fill{width:100%}
-.ms{font-family:'JetBrains Mono';font-size:30px;letter-spacing:-.02em;color:var(--ink)}
-.ms i{font-style:normal;font-size:14px;color:var(--dim);margin-left:3px}
-.bars{display:flex;align-items:flex-end;gap:5px;height:44px}
-.bars div{flex:1;background:rgba(255,255,255,.07);border-radius:2px 2px 0 0;transform-origin:bottom;
-  transform:scaleY(.18);transition:transform .5s cubic-bezier(.2,1,.3,1)}
-.card:hover .bars div{transform:scaleY(1)}
-.card:hover .bars div:nth-child(2){transition-delay:.06s}
-.card:hover .bars div:nth-child(3){transition-delay:.12s}
-.card:hover .bars div:nth-child(4){transition-delay:.18s}
-.card:hover .bars div:nth-child(5){transition-delay:.24s}
-.bars div:last-child{background:rgba(205,255,79,.55)}
+/* ═══ 04 — гонка: наш сайт против типичного ═══ */
+.race{position:absolute;left:18px;right:18px;top:26px;display:flex;flex-direction:column;gap:14px}
+.lane b{display:block;font-size:11px;font-weight:600;margin-bottom:6px;display:flex;justify-content:space-between}
+.lane b i{font-style:normal;font-family:'JetBrains Mono';font-size:10.5px;color:var(--dim);font-weight:400}
+.rail{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;position:relative}
+.bar{position:absolute;inset:0 auto 0 0;width:0;border-radius:3px}
+.bar--we{background:var(--lime);transition:width .8s cubic-bezier(.15,.9,.3,1) .25s}
+.bar--they{background:#39404E;transition:width 4.2s linear .25s}
+.card.play .bar--we{width:100%}
+.card.play .bar--they{width:100%}
+.lane--we i{color:var(--lime)}
+/* превью страницы: серый скелет → готовый контент */
+.prev{margin-top:2px;height:56px;border:1px solid var(--hair);border-radius:6px;overflow:hidden;position:relative;background:#0B1017}
+.sk{position:absolute;inset:0;padding:8px;display:flex;flex-direction:column;gap:5px}
+.sk div{background:rgba(255,255,255,.06);border-radius:3px}
+.sk .s1{height:7px;width:52%}
+.sk .s2{height:5px;width:78%}
+.sk .s3{height:5px;width:64%}
+.sk .s4{height:14px;width:38%;margin-top:auto;background:rgba(255,255,255,.09)}
+.rl{position:absolute;inset:0;padding:8px;display:flex;flex-direction:column;gap:5px;opacity:0;transition:opacity .3s ease 1s}
+.card.play .rl{opacity:1}
+.card.play .sk{opacity:0;transition:opacity .3s ease 1s}
+.rl .r1{font-size:9.5px;font-weight:700;color:var(--ink)}
+.rl .r2{font-size:8px;color:var(--txt);line-height:1.4}
+.rl .r3{margin-top:auto;height:14px;width:44%;border-radius:3px;background:var(--lime);
+  display:grid;place-items:center;font-size:7.5px;font-weight:700;color:#0A0E1A}
 
-.note-foot{margin-top:44px;color:var(--dim);font-size:13.5px;line-height:1.65;max-width:70ch;
-  border-top:1px solid var(--hair);padding-top:22px}
+.foot{margin-top:38px;color:var(--dim);font-size:13px;line-height:1.65;max-width:70ch;
+  border-top:1px solid var(--hair);padding-top:20px}
 
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  .card .f-row b,.card .val,.card .note,.card .goals div{opacity:1!important;transform:none!important}
+}
 @media (max-width:1080px){.grid{grid-template-columns:1fr 1fr}}
-@media (max-width:640px){.grid{grid-template-columns:1fr}h1{font-size:30px}.wrap{padding:48px 20px 80px}}
+@media (max-width:640px){.grid{grid-template-columns:1fr}h1{font-size:27px}.wrap{padding:44px 20px 70px}}
 </style>
 </head>
 <body>
@@ -155,39 +203,54 @@ h1{font-family:'Unbounded';font-weight:800;font-size:44px;line-height:1.06;lette
 
   <h1>Вы получаете<br>не просто сайт</h1>
   <p class="lead">А инструмент, который превращает рекламный трафик в заявки и продажи.</p>
-  <p class="hint">Наведи курсор на карточку — внутри оживает то, о чём она говорит.</p>
+  <p class="hint">Анимация запускается сама, цепочкой. Наведи на карточку — проиграется заново.</p>
 
-  <div class="grid">
+  <div class="grid" id="grid">
 
     <!-- 01 -->
-    <div class="card">
+    <div class="card" data-i="0">
       <div class="stage">
         <div class="n">01</div>
         <div class="f">
-          <div class="f-row">Имя <b>&nbsp;· Виталий</b></div>
-          <div class="f-row">Телефон <b>&nbsp;· +7 913 …</b></div>
-          <div class="f-btn">Отправить заявку</div>
+          <div class="f-row">Имя<b>&nbsp;· Виталий</b></div>
+          <div class="f-row">Телефон<b>&nbsp;· +7 913 …</b></div>
+          <div class="f-btn" id="btn0">Отправить заявку</div>
         </div>
-        <div class="cursor">
-          <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg>
-        </div>
+        <span class="ping"></span>
+        <div class="cursor"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg></div>
       </div>
       <div class="t">Заявки, а не просмотры</div>
       <div class="d">Структура ведёт посетителя к действию — трафик превращается в обращения, а не в отказы.</div>
     </div>
 
     <!-- 02 -->
-    <div class="card">
+    <div class="card" data-i="1">
       <div class="stage">
         <div class="n">02</div>
         <div class="chart">
-          <svg viewBox="0 0 220 104" preserveAspectRatio="none">
-            <path class="p-spend" d="M0,74 C40,72 80,70 110,69 C150,67 190,66 220,65"/>
-            <path class="p-earn"  d="M0,80 C40,74 70,60 105,46 C145,30 185,18 220,10"/>
-          </svg>
+          <div class="plot">
+            <svg viewBox="0 0 200 96" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#CDFF4F" stop-opacity=".22"/>
+                  <stop offset="100%" stop-color="#CDFF4F" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line class="gridline" x1="0" y1="24" x2="200" y2="24"/>
+              <line class="gridline" x1="0" y1="52" x2="200" y2="52"/>
+              <line class="gridline" x1="0" y1="80" x2="200" y2="80"/>
+              <path class="p-fill" d="M0,74 C38,70 74,58 104,44 C138,28 172,16 200,8 L200,96 L0,96 Z"/>
+              <path class="p-spend" d="M0,80 C38,79 74,77 104,76 C138,75 172,74 200,73"/>
+              <path class="p-earn"  d="M0,74 C38,70 74,58 104,44 C138,28 172,16 200,8"/>
+              <circle class="dot" cx="104" cy="44"/>
+              <circle class="dot" cx="152" cy="24"/>
+              <circle class="dot" cx="200" cy="8"/>
+            </svg>
+            <div class="val">×3,4</div>
+          </div>
           <div class="legend">
-            <span><i style="background:#3B4250"></i>потрачено</span>
-            <span><i style="background:#CDFF4F"></i>получено</span>
+            <span><i style="background:#39404E"></i>расход</span>
+            <span><i style="background:#CDFF4F"></i>выручка</span>
           </div>
           <div class="goals">
             <div><span class="tick"><svg viewBox="0 0 12 12"><path d="M2 6.5l2.6 2.6L10 3.5"/></svg></span>цель «заявка» настроена</div>
@@ -200,7 +263,7 @@ h1{font-family:'Unbounded';font-weight:800;font-size:44px;line-height:1.06;lette
     </div>
 
     <!-- 03 -->
-    <div class="card">
+    <div class="card" data-i="2">
       <div class="stage">
         <div class="n">03</div>
         <div class="feed">
@@ -223,13 +286,26 @@ h1{font-family:'Unbounded';font-weight:800;font-size:44px;line-height:1.06;lette
     </div>
 
     <!-- 04 -->
-    <div class="card">
+    <div class="card" data-i="3">
       <div class="stage">
         <div class="n">04</div>
-        <div class="speed">
-          <div class="ms">0.8<i>сек</i></div>
-          <div class="track"><div class="fill"></div></div>
-          <div class="bars"><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="race">
+          <div class="lane lane--we">
+            <b>Ваш сайт <i>0,8 сек</i></b>
+            <div class="rail"><span class="bar bar--we"></span></div>
+          </div>
+          <div class="lane">
+            <b>Типичный на конструкторе <i>4,2 сек</i></b>
+            <div class="rail"><span class="bar bar--they"></span></div>
+          </div>
+          <div class="prev">
+            <div class="sk"><div class="s1"></div><div class="s2"></div><div class="s3"></div><div class="s4"></div></div>
+            <div class="rl">
+              <div class="r1">Автокомплекс «Немеция»</div>
+              <div class="r2">Ремонт, запчасти и плановое ТО<br>для VAG, Mercedes и BMW</div>
+              <div class="r3">Записаться</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="t">Клиент, который не ушёл</div>
@@ -238,8 +314,58 @@ h1{font-family:'Unbounded';font-weight:800;font-size:44px;line-height:1.06;lette
 
   </div>
 
-  <p class="note-foot">Тексты не тронуты — изменилась только подача. Вместо четырёх абстрактных иконок, которые можно поменять местами и никто не заметит, в каждой карточке работает то, о чём она говорит. Лайм оставлен на долях процента площади: линия дохода, галочки целей, кнопка формы и последний столбец. Свечений нет ни одного — только волосяные обводки. Разделители сделаны зазором в 1 пиксель, а не рамками.</p>
+  <p class="foot">Тексты не тронуты — изменилась только подача. Вместо четырёх абстрактных иконок, которые можно поменять местами и никто не заметит, в каждой карточке работает то, о чём она говорит. Лайм оставлен на долях процента площади. Свечений нет — только волосяные обводки и зазор в 1 пиксель вместо рамок.</p>
 
 </div>
+
+<script>
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+
+  /* курсор доводим точно до центра кнопки — замером, а не на глаз */
+  function aimCursor(){
+    var card = cards[0], btn = card.querySelector('.f-btn'),
+        cur = card.querySelector('.cursor'), stage = card.querySelector('.stage');
+    if (!btn || !cur || !stage) return;
+    var s = stage.getBoundingClientRect(), b = btn.getBoundingClientRect();
+    var x1 = Math.round(b.left - s.left + b.width / 2 - 4);
+    var y1 = Math.round(b.top - s.top + b.height / 2 - 2);
+    card.style.setProperty('--cx0', Math.round(s.width * 0.30) + 'px');
+    card.style.setProperty('--cy0', '26px');
+    card.style.setProperty('--cx1', x1 + 'px');
+    card.style.setProperty('--cy1', y1 + 'px');
+  }
+  aimCursor();
+  window.addEventListener('resize', aimCursor, {passive:true});
+
+  function play(card){
+    card.classList.remove('play');
+    void card.offsetWidth;          // сброс, чтобы переходы стартовали заново
+    card.classList.add('play');
+  }
+
+  /* автозапуск цепочкой при входе блока в экран */
+  var started = false;
+  function chain(){
+    if (started) return;
+    started = true;
+    cards.forEach(function(c, i){ setTimeout(function(){ play(c); }, i * 700); });
+  }
+
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting) { chain(); io.disconnect(); } });
+    }, {threshold:.35});
+    io.observe(document.getElementById('grid'));
+  } else {
+    chain();
+  }
+
+  /* повтор по наведению */
+  cards.forEach(function(c){
+    c.addEventListener('mouseenter', function(){ play(c); });
+  });
+})();
+</script>
 </body>
 </html>
