@@ -476,6 +476,7 @@ textarea.sy-in{resize:vertical;min-height:84px}
 .sy-pf__frame iframe{position:absolute;top:0;left:0;width:250%;height:250%;transform:scale(.4);transform-origin:top left;border:0;pointer-events:none;transition:transform 3.4s ease}
 .sy-pf:hover .sy-pf__frame iframe{transform:scale(.4) translateY(-40%)}
 .sy-pf__real{position:absolute;top:11px;left:11px;z-index:3;font-family:var(--font-mono,monospace);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#08130a;background:var(--sy-l);padding:4px 9px;border-radius:999px;font-weight:700;box-shadow:0 4px 12px -3px rgba(205,255,79,.5)}
+.sy-pf__real--tr{left:auto;right:11px;top:auto;bottom:11px}
 .sy-pf__frame-scrim{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,transparent 60%,rgba(6,9,15,.5));pointer-events:none}
 /* видео-кейс + не-кликабельное превью */
 .sy-pf__video{position:absolute;inset:0;z-index:0;overflow:hidden;background:#0e1420}

@@ -120,6 +120,11 @@
     .rcase__cap { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 18px 22px 22px; }
     .rcase__cap h3 { font-family: 'Unbounded', var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -.01em; margin: 0; }
     .rcase__cap span { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-muted); letter-spacing: .02em; white-space: nowrap; }
+    a.rcase { text-decoration: none; color: inherit; }
+    .rcase__shot { position: relative; }
+    .rcase__live { position: absolute; top: 12px; left: 12px; z-index: 2; display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: rgba(10,12,11,.6); -webkit-backdrop-filter: blur(9px); backdrop-filter: blur(9px); border: 1px solid rgba(255,255,255,.16); font-family: var(--font-mono); font-size: 11px; letter-spacing: .03em; color: #eafff2; pointer-events: none; }
+    .rcase__live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #5fe39a; box-shadow: 0 0 9px #5fe39a; }
+    a.rcase:hover .rcase__cap h3 { color: #fff; }
     @media (max-width: 720px) { .rcase-grid { grid-template-columns: 1fr; gap: 20px; } .rcase__cap { padding: 16px 18px 20px; } }
     /* reveal-on-scroll кейсов: база — ВИДИМО (без ghost-риска), анимация накладывается классом .play при входе в вьюпорт */
     @keyframes rcaseIn { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
@@ -263,7 +268,7 @@
       <div class="container">
         <div class="section-label">Кейсы</div>
         <h1 class="fx-scatter">Системы, которые <em>уже работают</em></h1>
-        <p class="page-hero__sub">Реальные системы и сайты, которые мы собрали клиентам. Демо можно открыть и потыкать, клиентские сайты — вживую на скриншотах.</p>
+        <p class="page-hero__sub">Реальные системы и сайты, которые мы собрали клиентам. Демо и клиентские сайты — всё открывается вживую, можно потыкать.</p>
         <div class="proof-strip">
           <div class="proof-strip__item"><span class="proof-strip__val">6</span><span class="proof-strip__label">сайтов-кейсов</span></div>
           <div class="proof-strip__item"><span class="proof-strip__val">5</span><span class="proof-strip__label">живых демо</span></div>
@@ -365,32 +370,32 @@
       <div class="container">
         <div class="section-label">Кейсы сайтов</div>
         <h2 class="section-title section-title--tight">Сайты, которые <em>мы делаем</em></h2>
-        <p class="section-lead">Реальные сайты, которые мы собрали клиентам — под нишу и бренд, не шаблоны. Показываем фото, а не ссылки: чужой продакшн без спроса не выкладываем. И ваш не выложим.</p>
+        <p class="section-lead">Реальные сайты, которые мы собрали клиентам — под нишу и бренд, не шаблоны. Кликните на любой — откроется вживую.</p>
         <div class="rcase-grid">
-          <article class="rcase">
-            <div class="rcase__shot"><img src="/keysy/cases/case-idtuning.jpg?v=20260720d" alt="Сайт тюнинг-ателье IDTuning, Москва" loading="lazy"></div>
+          <a class="rcase" href="https://idtuning.ru" target="_blank" rel="noopener noreferrer">
+            <div class="rcase__shot"><span class="rcase__live">живой сайт</span><img src="/keysy/cases/case-idtuning.jpg?v=20260720d" alt="Сайт тюнинг-ателье IDTuning, Москва" loading="lazy"></div>
             <div class="rcase__cap"><h3>IDTuning</h3><span>Тюнинг-ателье · Москва</span></div>
-          </article>
-          <article class="rcase">
-            <div class="rcase__shot"><img src="/keysy/cases/case-milla.jpg?v=20260720d" alt="Сайт студии дизайна интерьера MILLA Design, Самара" loading="lazy"></div>
+          </a>
+          <a class="rcase" href="https://milladesign.ru" target="_blank" rel="noopener noreferrer">
+            <div class="rcase__shot"><span class="rcase__live">живой сайт</span><img src="/keysy/cases/case-milla.jpg?v=20260720d" alt="Сайт студии дизайна интерьера MILLA Design, Самара" loading="lazy"></div>
             <div class="rcase__cap"><h3>MILLA Design</h3><span>Дизайн интерьера · Самара</span></div>
-          </article>
-          <article class="rcase">
-            <div class="rcase__shot"><img src="/keysy/cases/case-biensur.jpg?v=20260720d" alt="Сайт ресторана Bien Sûr, Санкт-Петербург" loading="lazy"></div>
-            <div class="rcase__cap"><h3>Bien Sûr</h3><span>Ресторан · СПб</span></div>
-          </article>
-          <article class="rcase">
-            <div class="rcase__shot"><img src="/keysy/cases/case-banidesign.jpg?v=20260720d" alt="Сайт студии Бани Дизайн — хаммамы под ключ" loading="lazy"></div>
-            <div class="rcase__cap"><h3>Бани Дизайн</h3><span>Хаммамы · под ключ</span></div>
-          </article>
-          <article class="rcase">
-            <div class="rcase__shot"><img src="/keysy/cases/case-nemecia.jpg?v=20260720d" alt="Сайт автосервиса Немеция, Омск" loading="lazy"></div>
+          </a>
+          <a class="rcase" href="https://granat.me" target="_blank" rel="noopener noreferrer">
+            <div class="rcase__shot"><span class="rcase__live">живой сайт</span><img src="/keysy/cases/case-granat.jpg?v=20260802a" alt="Сайт ресторана «Гранат», Воронеж" loading="lazy"></div>
+            <div class="rcase__cap"><h3>Гранат</h3><span>Ресторан · Воронеж</span></div>
+          </a>
+          <a class="rcase" href="https://banilab.ru" target="_blank" rel="noopener noreferrer">
+            <div class="rcase__shot"><span class="rcase__live">живой сайт</span><img src="/keysy/cases/case-banilab.jpg?v=20260802a" alt="Сайт BaniLab — строительство бань под ключ, Москва" loading="lazy"></div>
+            <div class="rcase__cap"><h3>BaniLab</h3><span>Бани под ключ · Москва</span></div>
+          </a>
+          <a class="rcase" href="https://xn--e1aajod1d6c.xn--p1ai/" target="_blank" rel="noopener noreferrer">
+            <div class="rcase__shot"><span class="rcase__live">живой сайт</span><img src="/keysy/cases/case-nemecia.jpg?v=20260720d" alt="Сайт автосервиса Немеция, Омск" loading="lazy"></div>
             <div class="rcase__cap"><h3>Немеция</h3><span>Автосервис · Омск</span></div>
-          </article>
-          <article class="rcase">
-            <div class="rcase__shot"><img src="/keysy/cases/case-avalink.jpg?v=20260720d" alt="Сайт мультибрендового автосервиса AVALINK, Москва" loading="lazy"></div>
+          </a>
+          <a class="rcase" href="https://avalink.ru" target="_blank" rel="noopener noreferrer">
+            <div class="rcase__shot"><span class="rcase__live">живой сайт</span><img src="/keysy/cases/case-avalink.jpg?v=20260720d" alt="Сайт мультибрендового автосервиса AVALINK, Москва" loading="lazy"></div>
             <div class="rcase__cap"><h3>AVALINK</h3><span>Автосервис · Москва</span></div>
-          </article>
+          </a>
         </div>
       </div>
     </section>
