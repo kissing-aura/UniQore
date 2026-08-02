@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Прототип: сайт собирается на глазах</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   ПРОТОТИП. Скролл = таймлайн сборки сайта.
+   Четыре карточки слева — четыре стадии справа.
+   Ноль библиотек, только scroll + transform/opacity.
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  --bg:#0A0E1A; --ink:#EEF1F6; --txt:#98A2B3; --dim:#6E7788;
+  --lime:#CDFF4F; --line:rgba(238,241,246,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+.intro{max-width:1240px;margin:0 auto;padding:70px 40px 0}
+.intro h1{font-family:'Unbounded';font-weight:800;font-size:46px;line-height:1.05;letter-spacing:-.04em}
+.intro p{margin-top:16px;color:var(--txt);font-size:17px;line-height:1.55;max-width:46ch}
+
+/* ── сцена: липкая, скроллится «сквозь» ── */
+.scene{position:relative;height:420vh}
+.sticky{position:sticky;top:0;height:100vh;display:flex;align-items:center}
+.grid{
+  width:100%;max-width:1240px;margin:0 auto;padding:0 40px;
+  display:grid;grid-template-columns:minmax(300px,400px) 1fr;gap:56px;align-items:center;
+}
+
+/* ── левая колонка: этапы ── */
+.steps{display:flex;flex-direction:column;gap:4px}
+.step{
+  padding:18px 20px;border-left:2px solid var(--line);
+  opacity:.32;transition:opacity .45s ease,border-color .45s ease;
+}
+.step.on{opacity:1;border-left-color:var(--lime)}
+.step b{display:block;font-size:17px;font-weight:600;letter-spacing:-.015em;margin-bottom:5px}
+.step span{font-size:14px;line-height:1.5;color:var(--txt)}
+.step i{
+  font-style:normal;font-family:'JetBrains Mono';font-size:11px;color:var(--dim);
+  display:block;margin-bottom:7px;
+}
+.step.on i{color:var(--lime)}
+
+.day{
+  margin-top:26px;padding-left:22px;font-family:'Unbounded';font-weight:700;
+  font-size:14px;color:var(--txt);letter-spacing:-.01em;
+}
+.day b{color:var(--ink);font-size:22px;font-variant-numeric:tabular-nums}
+
+/* ── правая колонка: окно браузера ── */
+.mock{position:relative;perspective:1700px}
+.win{
+  position:relative;border:1px solid rgba(255,255,255,.13);border-radius:16px;overflow:hidden;
+  background:linear-gradient(180deg,#0f151f,#0a0e17);
+  transform:rotateY(-6deg) rotateX(3deg);transform-style:preserve-3d;
+  box-shadow:0 2px 8px rgba(0,0,0,.5),0 40px 90px -28px rgba(0,0,0,.85),0 90px 170px -60px rgba(0,0,0,.92);
+  aspect-ratio:16/10;
+}
+.mock::before{
+  content:'';position:absolute;z-index:-1;inset:6% -8% -12% -4%;
+  background:radial-gradient(closest-side,rgba(205,255,79,.34),rgba(49,224,176,.1) 48%,transparent 72%);
+  filter:blur(48px);pointer-events:none;
+}
+.bar{
+  display:flex;align-items:center;gap:8px;padding:11px 14px;
+  border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+}
+.dots{display:flex;gap:5px}
+.dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
+.url{
+  flex:1;text-align:center;font-family:'JetBrains Mono';font-size:11px;color:var(--dim);
+  transition:color .4s ease;
+}
+.win.s4 .url{color:var(--txt)}
+
+.view{position:relative;height:calc(100% - 41px);overflow:hidden;background:#0b1119}
+
+/* ── СТАДИЯ 1: каркас ── */
+.wire{position:absolute;inset:0;padding:22px;display:flex;flex-direction:column;gap:12px}
+.wire div{background:rgba(255,255,255,.07);border-radius:4px}
+.wire .w-nav{height:26px}
+.wire .w-hero{height:96px}
+.wire .w-row{display:flex;gap:12px;flex:1;background:none}
+.wire .w-row div{flex:1;background:rgba(255,255,255,.07)}
+
+/* ── СТАДИЯ 2: структура и типографика ── */
+.type{
+  position:absolute;inset:0;padding:22px;opacity:0;transition:opacity .5s ease;
+  display:flex;flex-direction:column;
+}
+.type .t-nav{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--dim)}
+.type .t-nav b{font-family:'Unbounded';font-size:13px;color:var(--ink)}
+.type .t-h{font-family:'Unbounded';font-weight:800;font-size:26px;line-height:1.1;letter-spacing:-.03em;margin-top:22px}
+.type .t-p{font-size:12px;color:var(--txt);margin-top:9px;max-width:34ch;line-height:1.5}
+.type .t-row{display:flex;gap:10px;margin-top:auto}
+.type .t-row div{flex:1;height:62px;border:1px solid var(--line);border-radius:6px}
+
+/* ── СТАДИЯ 3: цвет и фото ── */
+.paint{position:absolute;inset:0;opacity:0;transition:opacity .55s ease}
+.paint img{width:100%;height:100%;object-fit:cover;object-position:top center;filter:saturate(.9)}
+
+/* ── СТАДИЯ 4: живой сайт + заявка ── */
+.live{position:absolute;right:14px;bottom:14px;z-index:3;
+  display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:9px;
+  background:rgba(10,14,26,.92);border:1px solid rgba(205,255,79,.34);
+  backdrop-filter:blur(6px);
+  opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease;
+}
+.live .dot{width:7px;height:7px;border-radius:50%;background:var(--lime);flex:0 0 auto}
+.live b{font-size:12.5px;font-weight:600}
+.live span{display:block;font-size:11px;color:var(--dim);margin-top:1px}
+
+/* переключение стадий */
+.win.s2 .wire{opacity:0;transition:opacity .4s ease}
+.win.s2 .type{opacity:1}
+.win.s3 .wire{opacity:0}
+.win.s3 .type{opacity:0}
+.win.s3 .paint{opacity:1}
+.win.s4 .wire,.win.s4 .type{opacity:0}
+.win.s4 .paint{opacity:1}
+.win.s4 .live{opacity:1;transform:none}
+
+.after{max-width:1240px;margin:0 auto;padding:90px 40px 140px;border-top:1px solid var(--line)}
+.after p{color:var(--dim);font-size:15px;line-height:1.6;max-width:60ch}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:900px){
+  .scene{height:auto}
+  .sticky{position:static;height:auto;padding:40px 0}
+  .grid{grid-template-columns:1fr;gap:32px}
+  .intro h1{font-size:32px}
+}
+</style>
+</head>
+<body>
+
+<div class="intro">
+  <h1>Вы получаете<br>не просто сайт</h1>
+  <p>А инструмент, который превращает рекламный трафик в заявки и продажи. Крути вниз — сайт справа собирается.</p>
+</div>
+
+<div class="scene" id="scene">
+  <div class="sticky">
+    <div class="grid">
+
+      <div class="steps" id="steps">
+        <div class="step on">
+          <i>01</i><b>Структура под заявку</b>
+          <span>Сначала каркас: что где стоит и куда ведёт человека.</span>
+        </div>
+        <div class="step">
+          <i>02</i><b>Тексты и типографика</b>
+          <span>Пишем сами — от вас нужны только факты о бизнесе.</span>
+        </div>
+        <div class="step">
+          <i>03</i><b>Дизайн под нишу</b>
+          <span>Цвет, фото, детали. Не шаблон из конструктора.</span>
+        </div>
+        <div class="step">
+          <i>04</i><b>Заявки идут в Telegram</b>
+          <span>Метрика и цели настроены — видно отдачу с каждого рубля.</span>
+        </div>
+        <div class="day">день <b id="day">1</b> из 5</div>
+      </div>
+
+      <div class="mock">
+        <div class="win s1" id="win">
+          <div class="bar">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <div class="url" id="url">черновик</div>
+          </div>
+          <div class="view">
+            <div class="wire">
+              <div class="w-nav"></div>
+              <div class="w-hero"></div>
+              <div class="w-row"><div></div><div></div><div></div></div>
+            </div>
+            <div class="type">
+              <div class="t-nav"><b>Bien Sûr</b><span>Меню · О нас · Контакты</span></div>
+              <div class="t-h">Ресторан, куда<br>возвращаются</div>
+              <div class="t-p">Французское бистро на Мастерской. Бронь стола в два клика.</div>
+              <div class="t-row"><div></div><div></div><div></div></div>
+            </div>
+            <div class="paint">
+              <img src="/keysy/cases/case-biensur-1024.webp" alt="Готовый сайт ресторана Bien Sûr" loading="lazy" width="1024" height="580">
+            </div>
+            <div class="live">
+              <span class="dot"></span>
+              <div><b>Новая заявка</b><span>стол на 4 · сегодня 19:00</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="after">
+  <p>Это прототип механики. Скролл управляет сборкой: каркас → тексты → дизайн → живой сайт с заявкой. Всё на CSS-переходах, без библиотек — вес нулевой. На мобильной версии сцена разворачивается в обычный список, липкость отключается.</p>
+</div>
+
+<script>
+(function(){
+  var scene = document.getElementById('scene'),
+      win   = document.getElementById('win'),
+      url   = document.getElementById('url'),
+      day   = document.getElementById('day'),
+      steps = document.getElementById('steps').querySelectorAll('.step');
+
+  var URLS = ['черновик', 'структура', 'дизайн-макет', 'bien-sur.ru'];
+  var DAYS = ['1', '2', '4', '5'];
+  var cur = -1, ticking = false;
+
+  function set(i){
+    if (i === cur) return;
+    cur = i;
+    win.className = 'win s' + (i + 1);
+    url.textContent = URLS[i];
+    day.textContent = DAYS[i];
+    for (var k = 0; k < steps.length; k++){
+      steps[k].classList.toggle('on', k === i);
+    }
+  }
+
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var r = scene.getBoundingClientRect();
+      // прогресс прохождения сцены: 0 в начале, 1 в конце
+      var total = r.height - window.innerHeight;
+      var p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+      set(Math.min(3, Math.floor(p * 4.0001)));
+      ticking = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>
