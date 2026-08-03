@@ -1947,14 +1947,12 @@ h1 span+span{animation-delay:.06s}
   .sy-hero__lead{order:2;margin-top:12px;max-width:320px;font-size:14.5px!important}
   .sy-hero__right{order:3;margin:26px auto 0;width:100%;overflow:visible;display:flex;justify-content:center}
   .sy-hero__cta{order:4;margin-top:26px}
-  .sy-mock{width:500px!important;zoom:.68;transform:none!important;margin:0!important;animation:none!important}
-  .sy-mock::before{filter:blur(46px)!important;inset:0 -8% -12% -8%!important}
+  .sy-mock{width:500px!important;zoom:.7;transform:none!important;margin:0 auto!important}
+  .sy-mock::before{filter:blur(44px)!important;inset:-8%!important}
   .sy-browser{transform:none!important}
   .sy-browser__view{height:300px!important}
   .sy-site{opacity:1!important}
-  .sy-site__scroll{animation:none!important;transform:none!important}
-  .sy-site__scroll>*,.sy-site__scroll>*>*{opacity:1!important;transform:none!important;animation:none!important}
+  .sy-site__scroll>*,.sy-site__scroll>*>*{opacity:1!important}
   .sy-phone{display:none!important}
-  .sy-cursor{display:none!important}
   .sy-fcard{display:none!important}
 }
