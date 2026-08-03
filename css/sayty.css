@@ -1956,3 +1956,6 @@ h1 span+span{animation-delay:.06s}
   .sy-phone{display:none!important}
   .sy-fcard{display:none!important}
 }
+
+/* Курсор в мокапе наводится на кнопки — для этого сайт внутри НЕ автоскроллит (движущиеся кнопки курсор промахивал). Ниши по-прежнему циклятся. */
+.sy-site__scroll{animation:none!important;transform:none!important}

@@ -169,23 +169,38 @@
     }, 4600);
   }
 
-  /* ── курсор: ходит по ВИДИМОЙ правой зоне мокапа (телефон слева-снизу его больше не прячет), плавно ── */
+  /* ── курсор: наводится на РЕАЛЬНУЮ кнопку сайта и СЛЕДИТ за ней пока сайт
+       автоскроллит (rAF-лерп к текущей позиции кнопки), кликает по прибытии.
+       Позиция делится на zoom — на мобилке мокап ужат zoom:.7. Классы кнопок
+       у движка ниш разные (lmn-pill/nord-cta/…) — ловим по -cta/-pill/-btn. ── */
   var cursor = document.getElementById('syCursor');
   var cursorView = document.querySelector('.sy-browser__view');
   if (cursor && cursorView && !reduce) {
-    // точки как доли вьюпорта — все правее телефона (он занимает левые ~32% снизу), так курсор всегда в кадре
-    var fspots = [[0.44, 0.16], [0.74, 0.30], [0.56, 0.54], [0.82, 0.64], [0.50, 0.40]];
-    var ci = 0;
+    var mockEl = document.querySelector('.sy-mock');
+    // короткий переход (~интервалу), иначе автоскролл кнопки + длинный transition = курсор вечно отстаёт
+    cursor.style.transition = 'transform .5s cubic-bezier(.33,0,.22,1)';
+    // offset-координаты (layout-пространство view, БЕЗ zoom) — надёжно на зумленном мокапе.
+    function localPos(el) { var x = 0, y = 0, n = el; while (n && n !== cursorView) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x: x, y: y }; }
+    function inView(b) { var p = localPos(b); return b.offsetWidth > 0 && p.y >= 2 && (p.y + b.offsetHeight) <= cursorView.clientHeight - 2; }
+    // держится на главной кнопке (крупнейшая видимая CTA/pill), сайт заморожен — стоит стабильно
+    function primaryBtn() {
+      var all = Array.prototype.slice.call(cursorView.querySelectorAll('[class*="-cta"],[class*="-pill"],[class*="-btn"]'))
+        .filter(inView);
+      if (!all.length) return null;
+      all.sort(function (a, b) { return (b.offsetWidth * b.offsetHeight) - (a.offsetWidth * a.offsetHeight) || (localPos(a).y - localPos(b).y); });
+      return all[0];
+    }
     function moveCursor() {
-      var w = cursorView.clientWidth, h = cursorView.clientHeight;
-      if (!w || !h) return;
-      var f = fspots[ci];
-      cursor.style.transform = 'translate(' + Math.round(f[0] * w) + 'px,' + Math.round(f[1] * h) + 'px)';
-      setTimeout(function () { cursor.classList.add('click'); setTimeout(function () { cursor.classList.remove('click'); }, 420); }, 900);
-      ci = (ci + 1) % fspots.length;
+      if (!cursorView.clientHeight) return;
+      var b = primaryBtn();
+      if (!b) return;
+      var p = localPos(b);
+      cursor.style.transform = 'translate(' + Math.round(p.x + b.offsetWidth / 2) + 'px,' + Math.round(p.y + b.offsetHeight / 2) + 'px)';
     }
     moveCursor();
-    setInterval(moveCursor, 2600);
+    setInterval(moveCursor, 500);
+    // клик по кнопке периодически
+    setInterval(function () { cursor.classList.add('click'); setTimeout(function () { cursor.classList.remove('click'); }, 400); }, 2600);
   }
 
   /* ── portfolio filter ── */
