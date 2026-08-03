@@ -1,0 +1,551 @@
+
+/* ══════════════════════ ОБЩЕЕ ══════════════════════ */
+
+
+
+
+
+
+
+
+.uq-grid{margin-top:44px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
+  background:var(--hair);border:1px solid var(--hair);border-radius:10px;overflow:hidden}
+.uq-card{position:relative;background:var(--card);padding:0 0 16px;min-height:318px;
+  display:flex;flex-direction:column;transition:background .4s ease}
+.uq-card:hover{background:#101728}
+.uq-stage{position:relative;height:178px;overflow:hidden;border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg,rgba(255,255,255,.014),transparent)}
+.uq-n{position:absolute;top:12px;right:14px;z-index:8;font-family:'Unbounded',system-ui,sans-serif;
+  font-weight:700;font-size:13px;color:rgba(238,241,246,.2);letter-spacing:-.02em;
+  transition:color .5s ease}
+.uq-card.play .uq-n{color:rgba(205,255,79,.7)}
+.uq-t{margin:13px 16px 0;font-weight:600;font-size:14px;letter-spacing:-.015em}
+.uq-d{margin:6px 16px 0;font-size:12px;line-height:1.5;color:var(--txt)}
+
+
+
+
+/* ══════════════════════ 01 · ЗАЯВКИ, А НЕ ПРОСМОТРЫ ══════════════════════
+   Сцена — запись экрана одного визита. Курсор приходит из-за левого верхнего
+   угла, структура забирает его в поля и доводит до кнопки; волосяная линия
+   слева заполняется по мере пути (0 → 28 → 60 → 86 → 100%).
+   Лайм: каретка 1px, спина 1px, кольцо и текст подтверждения, слово «заявка». */
+
+/* откуда пришёл */
+.c1-src{position:absolute;left:22px;top:12px;z-index:4;display:flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;letter-spacing:.055em;
+  color:var(--dim);white-space:nowrap;
+  transition:opacity .45s ease,transform .55s var(--e)}
+.c1-src i{display:block;width:9px;height:1px;background:currentColor;opacity:.65;flex:0 0 auto}
+
+/* спина структуры */
+.c1-spine{position:absolute;left:9px;top:40px;width:1px;height:114px;background:var(--hair);
+  border-radius:1px;overflow:hidden;z-index:3}
+/* заливка светлеет к переднему краю: ярко там, где посетитель сейчас */
+.c1-spine i{position:absolute;inset:0;display:block;
+  background:linear-gradient(180deg,rgba(205,255,79,.16),rgba(205,255,79,.5) 55%,var(--lime));
+  transform-origin:top center;transform:scaleY(1);will-change:transform}
+
+/* форма */
+.c1-form{position:absolute;left:22px;right:18px;top:40px;z-index:2}
+.c1-row{height:30px;border:1px solid var(--hair);border-radius:6px;
+  background:rgba(255,255,255,.02);display:flex;align-items:center;padding:0 9px;
+  font-size:11px;color:var(--dim);contain:layout;
+  transition:border-color .28s ease,background-color .28s ease,opacity .4s ease}
+.c1-row+.c1-row{margin-top:9px}
+.c1-row.focus{border-color:rgba(238,241,246,.24);background:rgba(238,241,246,.045)}
+.c1-lb{flex:0 0 auto;transition:color .3s ease}
+.c1-row.focus .c1-lb{color:var(--txt)}
+.c1-vl{color:var(--ink);margin-left:6px;white-space:nowrap}
+.c1-vl.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.2px;letter-spacing:-.01em}
+.c1-caret{flex:0 0 auto;width:1px;height:12px;background:var(--lime);margin-left:1.5px;opacity:0}
+.c1-row.focus .c1-caret{opacity:1;animation:c1blink 1.05s steps(1) .45s infinite}
+.c1-row.focus.typing .c1-caret{animation:none;opacity:1}
+@keyframes c1blink{50%{opacity:0}}
+.c1-chk{margin-left:auto;width:11px;height:11px;flex:0 0 auto;opacity:1;transform:none;
+  transition:opacity .25s ease,transform .32s var(--e)}
+.c1-row:not(.done) .c1-chk{opacity:0;transform:scale(.75)}
+.c1-chk svg{width:100%;height:100%;fill:none;stroke:rgba(238,241,246,.5);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14;stroke-dashoffset:0;
+  transition:stroke-dashoffset .34s ease .06s}
+.c1-row:not(.done) .c1-chk svg{stroke-dashoffset:14;transition-delay:0s}
+.c1-form.lock .c1-row{opacity:.55;border-color:var(--hair);background:rgba(255,255,255,.015)}
+
+/* кнопка */
+.c1-btn{margin-top:12px;height:33px;border-radius:6px;position:relative;overflow:hidden;
+  display:grid;place-items:center;font-size:11.5px;font-weight:600;
+  background:#161C27;color:var(--dim);box-shadow:0 0 0 1px rgba(238,241,246,0);
+  transition:background-color .34s ease,color .34s ease,box-shadow .34s ease,transform .13s ease}
+.c1-btn.ready{background:#222A38;color:var(--ink);box-shadow:0 0 0 1px rgba(238,241,246,.10);
+  transform:translateY(-1px)}
+.c1-btn.press{transform:translateY(0) scale(.965);background:#1B2130}
+.c1-btn.done{background:#131926;color:var(--lime);box-shadow:0 0 0 1px rgba(205,255,79,.45);
+  transform:translateY(-1px)}
+.c1-lb2{transition:opacity .18s ease,transform .28s var(--e)}
+.c1-btn.done .c1-lb2{opacity:0;transform:translateY(-9px)}
+.c1-ok2{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:11.5px;font-weight:700;opacity:0;transform:translateY(9px);
+  transition:opacity .26s ease,transform .34s var(--e)}
+.c1-btn.done .c1-ok2{opacity:1;transform:none;transition-delay:.06s}
+.c1-ok2 svg{width:12px;height:12px;fill:none;stroke:var(--lime);stroke-width:2.6;
+  stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14;stroke-dashoffset:14;
+  transition:stroke-dashoffset .34s ease}
+.c1-btn.done .c1-ok2 svg{stroke-dashoffset:0;transition-delay:.24s}
+
+/* курсор и отклик клика */
+.c1-cur{position:absolute;left:0;top:0;width:13px;height:13px;z-index:7;opacity:0;
+  transform:translate(-26px,-26px);will-change:transform;pointer-events:none}
+.c1-cur-i{display:block;width:100%;height:100%;transform-origin:2px 2px;
+  transition:transform .12s cubic-bezier(.3,.1,.3,1)}
+.c1-cur.press .c1-cur-i{transform:scale(.84)}
+.c1-cur svg{display:block;width:100%;height:100%;fill:#fff;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.9))}
+.c1-ring{position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(238,241,246,.42);opacity:0;z-index:6;pointer-events:none}
+.c1-ring.go{animation:c1ring .5s cubic-bezier(.2,.72,.3,1) forwards}
+@keyframes c1ring{
+  from{opacity:.6;transform:translate(var(--rx,0),var(--ry,0)) scale(.28)}
+  to  {opacity:0; transform:translate(var(--rx,0),var(--ry,0)) scale(1.12)}}
+
+/* итог визита */
+.c1-conv{position:absolute;left:22px;bottom:11px;z-index:4;display:flex;align-items:center;gap:7px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;color:var(--dim);
+  transition:opacity .4s ease}
+.c1-conv .uq-p{transition:opacity .4s ease}
+.c1-conv.done .uq-p{opacity:.45}
+.c1-conv .arw{opacity:.45}
+.c1-conv .uq-hit{color:var(--lime);transition:opacity .35s var(--e),transform .38s var(--e)}
+
+/* мгновенный сброс без перекраски */
+.uq-card.c1-noanim 
+
+
+/* ══════════════════════ 02 · ОКУПАЕМАЯ РЕКЛАМА ══════════════════════
+   Панель аналитики, которая заполняется данными по неделям. Каркас (ось,
+   сетка, номера недель, легенда) существует ДО анимации. Ось разносторонняя:
+   расход вниз шестью одинаковыми пеньками, выручка вверх колоннами.
+   Нижние 10,29px колонки выручки — приглушённый лайм: это то, что просто
+   вернуло вложенное. Яркий лайм остаётся только на прибыли. */
+
+.c2-panel{position:absolute;inset:0;padding:11px 16px 0}
+
+/* строка статуса: метрика · цель */
+.c2-head{display:flex;align-items:center;gap:11px;height:11px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;letter-spacing:.02em;
+  color:var(--dim);white-space:nowrap}
+.c2-head span{display:inline-flex;align-items:center;gap:4px}
+.c2-tick{width:8px;height:8px;flex:0 0 auto;display:block}
+.c2-tick path{stroke:var(--lime);stroke-width:2.4;fill:none;stroke-linecap:round;
+  stroke-linejoin:round;stroke-dasharray:13;stroke-dashoffset:0}
+
+/* KPI: отношение выручки к расходу */
+.c2-kpi{margin-top:9px;display:flex;align-items:center;gap:9px;height:22px}
+.c2-ratio{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;font-size:21px;
+  line-height:22px;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}
+.c2-sub{display:flex;flex-direction:column;justify-content:center;gap:1px;
+  font-size:8.5px;line-height:10px;color:var(--dim);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+
+/* график */
+.c2-plot{position:relative;height:72px;margin-top:7px}
+.c2-grid{position:absolute;left:0;right:0;height:1px;background:rgba(238,241,246,.035)}
+/* ось нуля идёт ПОВЕРХ колонок: без неё серый расход снизу и серый «возврат»
+   сверху слипаются в один пьедестал и разносторонность оси пропадает */
+.c2-axis{position:absolute;left:0;right:0;top:58px;height:1px;z-index:5;
+  background:rgba(238,241,246,.2)}
+/* линия окупаемости — ровно по верху «возвратной» части колонок */
+.c2-be{position:absolute;left:0;right:0;top:46.7px;height:1px;z-index:3;transform-origin:0 50%;
+  background:repeating-linear-gradient(90deg,rgba(238,241,246,.24) 0 2px,transparent 2px 5px)}
+.c2-cols{position:absolute;inset:0;display:flex;z-index:2}
+.c2-col{flex:1;position:relative}
+.c2-up{position:absolute;left:50%;margin-left:-7px;width:14px;bottom:27px;
+  border-radius:1.5px 1.5px 0 0;transform-origin:50% 100%;
+  background:linear-gradient(to top,
+    rgba(205,255,79,.26) 0,rgba(205,255,79,.26) 10.29px,var(--lime) 10.29px)}
+.c2-dn{position:absolute;left:50%;margin-left:-7px;width:14px;top:59px;height:10.29px;
+  border-radius:0 0 1.5px 1.5px;transform-origin:50% 0;background:#39404E}
+.c2-wk{position:absolute;top:72px;left:0;right:0;text-align:center;font-style:normal;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:6.5px;
+  color:rgba(238,241,246,.2)}
+
+/* легенда с деньгами */
+.c2-leg{margin-top:6px;display:flex;flex-direction:column;gap:3px}
+.c2-row{display:flex;align-items:center;font-size:10.5px;line-height:13px;color:var(--dim)}
+.c2-sw{width:10px;height:2px;border-radius:2px;margin-right:6px;flex:0 0 auto}
+.c2-val{margin-left:auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;
+  color:var(--txt);font-variant-numeric:tabular-nums}
+
+/* ── состояния. Всё выше — ФИНАЛЬНОЕ состояние: без JS класс .c2-live
+      не появится и карточка читается целиком. .c2-live прячет, .play играет. */
+.c2-live .c2-head{opacity:0}
+.c2-live .c2-tick path{stroke-dashoffset:13}
+.c2-live .c2-kpi{opacity:0;transform:translateY(4px)}
+.c2-live .c2-up,.c2-live .c2-dn{transform:scaleY(0)}
+.c2-live .c2-be{transform:scaleX(0)}
+
+.c2-live.play .c2-head{opacity:1;transition:opacity .3s ease .04s}
+.c2-live.play .c2-tick path{stroke-dashoffset:0;transition:stroke-dashoffset .26s ease .15s}
+.c2-live.play .c2-s2 .c2-tick path{transition-delay:.33s}
+.c2-live.play .c2-kpi{opacity:1;transform:none;
+  transition:opacity .32s ease .82s,transform .42s cubic-bezier(.22,1,.28,1) .82s}
+.c2-live.play .c2-up,.c2-live.play .c2-dn{transform:scaleY(1)}
+.c2-live.play .c2-be{transform:scaleX(1);
+  transition:transform .44s cubic-bezier(.22,1,.28,1) 2.16s}
+
+/* расход выходит первым, коротко и жёстко — бюджет фиксирован */
+.c2-live.play .c2-dn{transition:transform .23s cubic-bezier(.34,.86,.4,1)}
+.c2-live.play .c2-col:nth-child(1) .c2-dn{transition-delay:.560s}
+.c2-live.play .c2-col:nth-child(2) .c2-dn{transition-delay:.765s}
+.c2-live.play .c2-col:nth-child(3) .c2-dn{transition-delay:.970s}
+.c2-live.play .c2-col:nth-child(4) .c2-dn{transition-delay:1.175s}
+.c2-live.play .c2-col:nth-child(5) .c2-dn{transition-delay:1.380s}
+.c2-live.play .c2-col:nth-child(6) .c2-dn{transition-delay:1.585s}
+/* выручка отвечает через 90 мс и едет тем дольше, чем выше колонка */
+.c2-live.play .c2-up{transition:transform .30s cubic-bezier(.18,.86,.32,1)}
+.c2-live.play .c2-col:nth-child(1) .c2-up{transition-delay:.650s;transition-duration:.300s}
+.c2-live.play .c2-col:nth-child(2) .c2-up{transition-delay:.855s;transition-duration:.322s}
+.c2-live.play .c2-col:nth-child(3) .c2-up{transition-delay:1.060s;transition-duration:.344s}
+.c2-live.play .c2-col:nth-child(4) .c2-up{transition-delay:1.265s;transition-duration:.366s}
+.c2-live.play .c2-col:nth-child(5) .c2-up{transition-delay:1.470s;transition-duration:.388s}
+.c2-live.play .c2-col:nth-child(6) .c2-up{transition-delay:1.675s;transition-duration:.410s}
+
+
+/* ══════════════════════ 03 · МАРШРУТ ЗАЯВКИ ══════════════════════
+   Одна заявка: ствол → развилка → два разных по устройству приёмника
+   (чат и таблица). Секундомер идёт от нуля и замирает ровно тогда,
+   когда доехал второй адресат. Конечное состояние = разметка по умолчанию,
+   начальное включает сам скрипт классом .armed. */
+
+.c3{position:absolute;inset:0;padding:13px 16px 10px;display:flex;flex-direction:column}
+
+/* источник */
+.c3-chip{align-self:center;display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;
+  height:22px;padding:0 10px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(255,255,255,.024);font-size:10px;color:var(--txt);white-space:nowrap;
+  transition:opacity .34s ease,transform .52s var(--e3)}
+.c3.armed .c3-chip:not(.on){opacity:0;transform:translateY(6px);transition:none}
+.c3-dot{position:relative;width:5px;height:5px;border-radius:50%;flex:0 0 auto;
+  background:#3B4253;transition:background .55s ease}
+.c3-dot.hot{background:var(--lime);transition:background .12s ease}
+.c3-dot::after{content:'';position:absolute;inset:-1px;border-radius:50%;
+  border:1px solid rgba(205,255,79,.8);opacity:0}
+.c3-dot.hot::after{animation:c3ring .72s ease-out}
+@keyframes c3ring{from{opacity:.85;transform:scale(.6)}to{opacity:0;transform:scale(3.1)}}
+
+/* развилка */
+.c3-fork{flex:0 0 auto;height:54px;margin-top:4px}
+.c3-fork svg{display:block;width:100%;height:100%}
+.c3-rail{fill:none;stroke:rgba(238,241,246,.15);stroke-width:1.1;stroke-linecap:round;
+  transition:stroke .6s ease}
+.c3.armed .c3-rail:not(.lit){stroke:rgba(238,241,246,.05);transition:none}
+.c3-pk{fill:none;stroke:var(--lime);stroke-width:1.8;stroke-linecap:round;
+  stroke-dasharray:13 100;stroke-dashoffset:13}
+.c3-fork.go-tr .c3-pk-tr{stroke-dashoffset:-100;transition:stroke-dashoffset .122s cubic-bezier(.5,0,.6,1)}
+.c3-fork.go-tg .c3-pk-tg{stroke-dashoffset:-100;transition:stroke-dashoffset .285s cubic-bezier(.25,.55,.4,1)}
+.c3-fork.go-crm .c3-pk-crm{stroke-dashoffset:-100;transition:stroke-dashoffset .693s cubic-bezier(.34,.42,.42,1)}
+
+/* два адресата */
+.c3-dsts{flex:1 1 auto;min-height:0;display:flex;gap:10px}
+.c3-dst{flex:1 1 0;min-width:0;border:1px solid rgba(238,241,246,.14);border-radius:7px;
+  background:#141A27;padding:6px;display:flex;flex-direction:column;
+  transition:border-color .45s ease}
+.c3.armed .c3-dst:not(.uq-hit){border-color:var(--hair);transition:none}
+.c3.armed .c3-dst.hit{animation:c3land .5s var(--e3out)}
+@keyframes c3land{0%{transform:translateY(3px)}55%{transform:translateY(-1.5px)}100%{transform:none}}
+.c3-dh{display:flex;align-items:center;gap:5px;flex:0 0 auto;height:12px;
+  font-size:9px;font-weight:600;color:var(--txt);letter-spacing:.01em}
+.c3-g{width:9px;height:9px;flex:0 0 auto;fill:none;stroke:var(--dim);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* Telegram — сообщение в чате */
+.c3-bub{margin-top:auto;background:#1B2231;border-radius:7px 7px 7px 3px;padding:5px 6px;
+  transition:opacity .3s ease,transform .46s var(--e3)}
+.c3.armed .c3-dst:not(.uq-hit) .c3-bub{opacity:0;transform:translateY(7px) scale(.965);transition:none}
+.c3-l1{font-size:10px;line-height:12px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c3-l2{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:7.4px;line-height:9px;
+  color:var(--dim);letter-spacing:-.03em;white-space:nowrap}
+.c3-meta{height:8px;margin-top:1px;display:flex;align-items:center;justify-content:flex-end;gap:3px}
+.c3-ms{flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-size:7px;line-height:8px;color:var(--dim);letter-spacing:-.02em}
+.c3-dc{flex:0 0 auto;width:11px;height:7px;fill:none;stroke:var(--txt);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.c3-dc path{stroke-dasharray:13;stroke-dashoffset:0;transition:stroke-dashoffset .3s ease}
+.c3-dst.hit .c3-dc .uq-a{transition-delay:.19s}
+.c3-dst.hit .c3-dc .uq-b{transition-delay:.27s}
+.c3.armed .c3-dst:not(.uq-hit) .c3-dc path{stroke-dashoffset:13;transition:none}
+
+/* CRM — строка в таблице */
+.c3-tbl{margin-top:auto;display:flex;flex-direction:column;gap:4px}
+.c3-r{height:17px;display:flex;align-items:center;gap:4px;padding:0 6px;border-radius:4px;
+  background:rgba(255,255,255,.035)}
+.c3-r b{font-size:9.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c3-r i{margin-left:auto;flex:0 0 auto;font-style:normal;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:7px;color:var(--dim);
+  letter-spacing:-.02em}
+.c3-r--new{transition:opacity .3s ease .09s,transform .44s var(--e3) .09s}
+.c3-r--old{background:rgba(255,255,255,.018);transition:transform .46s var(--e3out)}
+.c3-r--old b{color:var(--dim);font-weight:500}
+.c3.armed .c3-dst:not(.uq-hit) .c3-r--new{opacity:0;transform:translateY(-5px);transition:none}
+.c3.armed .c3-dst:not(.uq-hit) .c3-r--old{transform:translateY(-21px);transition:none}
+
+/* итог */
+.c3-sum{flex:0 0 auto;height:12px;margin-top:7px;display:flex;align-items:center;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.6px;color:var(--dim);
+  letter-spacing:-.01em}
+.c3-ok{width:9px;height:9px;margin-right:5px;flex:0 0 auto;fill:none;stroke:var(--txt);
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:12;stroke-dashoffset:0;transition:stroke-dashoffset .34s ease .12s}
+.c3.armed .c3-sum:not(.full) .c3-ok{stroke-dashoffset:12;transition:none}
+.c3-cn{color:var(--txt);font-weight:400}
+.c3-clock{margin-left:auto;flex:0 0 auto;display:inline-block;font-size:9.6px;color:var(--lime);
+  letter-spacing:-.02em;transform-origin:100% 50%;
+  transition:color .3s ease,transform .34s var(--e3)}
+.c3.armed .c3-clock:not(.done){color:var(--dim);transform:none;transition:none}
+.c3.armed .c3-clock.done{animation:c3settle .36s var(--e3)}
+@keyframes c3settle{0%{transform:scale(1.09)}100%{transform:none}}
+
+
+/* ══════════════════════ 04 · ДВА ПОСЕТИТЕЛЯ ══════════════════════
+   Два окна браузера и два курсора. Слева страница собирается за 0,8 с и
+   посетитель остаётся на кнопке. Справа три секунды пустота, полоса
+   загрузки не доходит до конца, человек закрывает вкладку на 3,0 с.
+   Уход вызывается финишем ИХ секундомера, а не отдельным таймером. */
+
+.c4{
+  --e:cubic-bezier(.22,1,.28,1);        /* мягкий выход, всё «приезжает» */
+  --dec:cubic-bezier(.4,0,.2,1);        /* решительное движение          */
+  --slow:cubic-bezier(.45,.05,.55,.95); /* вялое, нетерпеливое           */
+  position:absolute;left:18px;right:18px;top:34px;
+  display:flex;gap:12px;align-items:stretch;
+}
+.c4-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+
+/* подпись сверху */
+.c4-lab{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.2px;letter-spacing:.09em;
+  color:var(--dim);text-transform:uppercase;height:11px;line-height:11px;white-space:nowrap;
+  opacity:0;transform:translateY(-2px);transition:opacity .3s ease,transform .35s var(--e)}
+.uq-card.play .c4-lab{opacity:1;transform:none}
+.uq-card.play .c4-col--we .c4-lab{transition-delay:.06s}
+.uq-card.play .c4-col--they .c4-lab{transition-delay:.14s}
+
+/* окно браузера */
+.c4-win{margin-top:6px;height:106px;border:1px solid var(--hair);border-radius:6px;
+  background:#0B1017;position:relative;overflow:hidden;
+  transition:border-color .55s ease,opacity .38s ease,transform .42s var(--dec)}
+.c4-win--we{transform-origin:50% 100%}
+.uq-card.c4-won .c4-win--we{border-color:rgba(205,255,79,.2)}
+
+/* хром: вкладка + линия загрузки */
+.c4-bar{height:17px;border-bottom:1px solid rgba(238,241,246,.05);position:relative;
+  background:rgba(255,255,255,.022)}
+.c4-tab{position:absolute;left:4px;top:3px;width:62px;height:14px;border-radius:4px 4px 0 0;
+  background:rgba(238,241,246,.05);display:flex;align-items:center;padding:0 4px;gap:4px;
+  transform-origin:0 50%;transition:transform .26s cubic-bezier(.5,0,.9,.4),opacity .2s ease}
+.c4-favbox{position:relative;width:8px;height:8px;flex:0 0 auto}
+.c4-fav{position:absolute;inset:.5px;border-radius:2px;background:var(--lime);
+  opacity:0;transform:scale(.4);transition:opacity .18s ease,transform .34s var(--e)}
+.uq-card.play .c4-win--we .c4-fav{opacity:1;transform:none;transition-delay:.86s}
+.c4-favghost{position:absolute;inset:.5px;border-radius:2px;border:1px solid rgba(238,241,246,.16)}
+.c4-tabname{height:3px;border-radius:2px;background:rgba(238,241,246,.13);flex:1 1 auto}
+.c4-win--they .c4-tabname{background:rgba(238,241,246,.08)}
+/* крестик вкладки — появляется, когда до него дотягивается курсор */
+.c4-x{width:8px;height:8px;flex:0 0 auto;opacity:0;transform:scale(.7);
+  transition:opacity .2s ease,transform .3s var(--e)}
+.c4-x svg{width:100%;height:100%;stroke:rgba(238,241,246,.72);stroke-width:2.2;
+  stroke-linecap:round;fill:none}
+.c4-x.c4-x--on{opacity:1;transform:none}
+
+/* линия загрузки под хромом */
+.c4-load{position:absolute;left:0;right:0;bottom:-1px;height:1.5px;transform-origin:0 50%;
+  transform:scaleX(0)}
+.c4-load--we{background:var(--lime);opacity:.55}
+.uq-card.play .c4-load--we{animation:c4-sweep .74s var(--dec) .1s forwards}
+.c4-load--they{background:#39404E}
+.uq-card.play .c4-load--they{animation:c4-crawl 3s linear .1s forwards}
+@keyframes c4-sweep{
+  0%{transform:scaleX(0);opacity:.55}
+  76%{transform:scaleX(1);opacity:.55}
+  100%{transform:scaleX(1);opacity:0}
+}
+@keyframes c4-crawl{           /* ступеньки и два застоя — как в жизни */
+  0%{transform:scaleX(0)}
+  7%{transform:scaleX(.21)}
+  13%{transform:scaleX(.25)}
+  27%{transform:scaleX(.27)}   /* застой первый */
+  34%{transform:scaleX(.39)}
+  62%{transform:scaleX(.42)}   /* застой второй, самый длинный */
+  80%{transform:scaleX(.5)}
+  100%{transform:scaleX(.54)}
+}
+
+/* тело окна */
+.c4-
+
+/* наш сайт: страница собирается */
+.c4-h{font-size:9.3px;font-weight:700;letter-spacing:-.01em;color:var(--ink);white-space:nowrap;
+  clip-path:inset(0 100% 0 0);transition:clip-path .3s cubic-bezier(.2,.75,.3,1)}
+.uq-card.play .c4-h{clip-path:inset(0 0 0 0);transition-delay:.14s}
+.c4-p{margin-top:4px;font-size:7.4px;line-height:1.55;color:var(--txt);white-space:nowrap;
+  opacity:0;transform:translateY(2.5px);transition:opacity .26s ease,transform .3s var(--e)}
+.uq-card.play .c4-p{opacity:1;transform:none;transition-delay:.28s}
+.c4-meta{margin-top:3px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:6.6px;
+  color:var(--dim);letter-spacing:.03em;white-space:nowrap;opacity:0;transform:translateY(2px);
+  transition:opacity .24s ease,transform .28s var(--e)}
+.uq-card.play .c4-meta{opacity:1;transform:none;transition-delay:.38s}
+.c4-btn{margin-top:auto;width:47px;height:13px;border-radius:3px;background:var(--lime);
+  color:#0A0E1A;font-size:7px;font-weight:700;letter-spacing:.01em;display:grid;place-items:center;
+  opacity:0;transform:scale(.9);transform-origin:0 50%;
+  transition:opacity .2s ease,transform .34s var(--e),filter .3s ease}
+.uq-card.play .c4-btn{opacity:1;transform:none;transition-delay:.46s}
+.c4-btn.c4-hot{filter:brightness(1.08)}
+
+/* конструктор: пустота */
+.c4-ghost{height:4px;border-radius:2px;background:rgba(238,241,246,.055);
+  opacity:0;transition:opacity .5s ease}
+.c4-ghost--a{width:64%}
+.c4-ghost--b{width:37%;margin-top:5px}
+.uq-card.play .c4-ghost--a{opacity:1;transition-delay:1.5s}
+.uq-card.play .c4-ghost--b{opacity:1;transition-delay:2.35s}
+.c4-spinwrap{margin:auto;width:15px;height:15px;position:relative}
+.c4-spin{position:absolute;inset:0;border-radius:50%;border:1.4px solid rgba(238,241,246,.09);
+  border-top-color:rgba(238,241,246,.42);transition:opacity .4s ease}
+.uq-card.play .c4-spin{animation:c4-rot .82s linear .1s infinite}
+@keyframes c4-rot{to{transform:rotate(360deg)}}
+
+/* курсоры */
+.c4-cur{position:absolute;left:0;top:0;width:12px;height:12px;z-index:6;opacity:0;
+  transition:opacity .25s ease,transform .6s var(--e)}
+.c4-cur svg{width:100%;height:100%;fill:#EEF1F6;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))}
+.c4-cur--we{transform:translate(64px,74px)}
+.uq-card.play .c4-cur--we{opacity:1;transition:opacity .25s ease .95s,transform .6s var(--e)}
+.uq-card.play .c4-cur--we.c4-go{transform:translate(25px,86px);
+  transition:opacity .25s ease .95s,transform .62s var(--dec)}
+.c4-cur--they{transform:translate(47px,57px)}
+.uq-card.play .c4-cur--they{opacity:1;transition:opacity .25s ease 1.55s,transform .6s var(--e)}
+.uq-card.play .c4-cur--they.c4-drift{transform:translate(40px,66px);
+  transition:opacity .25s ease 1.55s,transform .7s var(--slow)}
+.uq-card.play .c4-cur--they.c4-tox{transform:translate(53px,11px);
+  transition:opacity .25s ease 1.55s,transform .38s var(--dec)}
+
+/* кольцо клика по крестику — строго серое, лайма у них нет */
+.c4-ring{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;
+  border:1px solid rgba(238,241,246,.45);opacity:0;pointer-events:none;z-index:5;
+  transform:translate(48px,0px)}
+.c4-ring.c4-pop{animation:c4-ring .46s ease-out}
+@keyframes c4-ring{
+  from{opacity:.75;transform:translate(48px,0px) scale(.3)}
+  to{opacity:0;transform:translate(48px,0px) scale(1.1)}
+}
+
+/* смерть вкладки: гаснет содержимое, но рама и застрявшая полоса
+   остаются уликой — до конца так и не догрузилось */
+.c4-win--they.c4-dead{opacity:.4;transform:translateY(3px) scale(.985);
+  border-color:rgba(238,241,246,.045)}
+.c4-win--they.c4-dead .c4-
+.c4-win--they.c4-dead .c4-tab{transform:scaleX(0);opacity:.4}
+.c4-win--they.c4-dead .c4-spin{animation-play-state:paused}
+.c4-win--they.c4-dead .c4-load--they{animation-play-state:paused}
+.c4-win--they.c4-dead .c4-cur--they{opacity:0;transition-delay:.12s}
+
+/* мгновенный откат при повторе: окно не «оживает» плавно, а просто заново целое */
+.uq-card.c4-nofx .c4-win--they,.uq-card.c4-nofx .c4-win--they *,
+.uq-card.c4-nofx .c4-cross,.uq-card.c4-nofx .c4-time--they,
+.uq-card.c4-nofx .c4-st{transition:none!important}
+
+/* аварийный финал: если .play так и не пришёл — кадр без движения */
+.uq-card.c4-final .c4-load--we{animation:none;transform:scaleX(1);opacity:0}
+.uq-card.c4-final .c4-load--they{animation:none;transform:scaleX(.42)}
+.uq-card.c4-final .c4-spin{animation:none}
+
+/* нижняя строка: статус + секундомер */
+.c4-foot{margin-top:8px;height:12px;display:flex;align-items:baseline;justify-content:space-between;gap:5px}
+.c4-st{font-size:8.8px;letter-spacing:-.005em;white-space:nowrap;
+  opacity:0;transform:translateY(2px);transition:opacity .3s ease,transform .34s var(--e)}
+.c4-st--we{color:var(--txt)}
+.c4-st--they{color:var(--dim)}
+.uq-card.play .c4-st--we.c4-on,.uq-card.play .c4-st--they.c4-on{opacity:1;transform:none}
+.c4-time{position:relative;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.2px;
+  white-space:nowrap;opacity:0;transition:opacity .3s ease,color .35s ease}
+.uq-card.play .c4-time{opacity:1;transition-delay:.1s}
+.c4-time--we{color:var(--lime)}
+.c4-time--they{color:var(--txt)}
+.c4-time--they.c4-cut{color:var(--dim)}
+.c4-cross{position:absolute;left:-1px;right:-1px;top:50%;height:1px;background:var(--dim);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .3s var(--dec)}
+.c4-time--they.c4-cut .c4-cross{transform:scaleX(1);transition-delay:.08s}
+
+
+/* ══════════════════════ БЕЗ ДВИЖЕНИЯ ══════════════════════
+   Свод из четырёх карточек: всё статично, конечные значения на месте. */
+@media (prefers-reduced-motion:reduce){
+  .uq-card *,.uq-card *::before,.uq-card *::after{transition:none!important;animation:none!important}
+
+  /* 01 */
+  .c1-cur,.c1-ring{display:none!important}
+  .c1-spine i{transform:scaleY(1)!important}
+  .c1-src,.c1-conv,.c1-conv .uq-hit{opacity:1!important;transform:none!important}
+  .c1-caret{opacity:0!important}
+
+  /* 02 */
+  .c2-live .c2-head{opacity:1}
+  .c2-live .c2-tick path{stroke-dashoffset:0}
+  .c2-live .c2-kpi{opacity:1;transform:none}
+  .c2-live .c2-up,.c2-live .c2-dn{transform:scaleY(1)}
+  .c2-live .c2-be{transform:scaleX(1)}
+
+  /* 03 */
+  .c3.armed .c3-chip:not(.on),
+  .c3.armed .c3-dst:not(.uq-hit) .c3-bub,
+  .c3.armed .c3-dst:not(.uq-hit) .c3-r--new{opacity:1!important;transform:none!important}
+  .c3.armed .c3-dst:not(.uq-hit) .c3-r--old{transform:none!important}
+  .c3.armed .c3-dst:not(.uq-hit){border-color:rgba(238,241,246,.14)!important}
+  .c3.armed .c3-rail:not(.lit){stroke:rgba(238,241,246,.15)!important}
+  .c3.armed .c3-dst:not(.uq-hit) .c3-dc path,
+  .c3.armed .c3-sum:not(.full) .c3-ok{stroke-dashoffset:0!important}
+  .c3.armed .c3-clock:not(.done){color:var(--lime)!important}
+  .c3-pk{stroke-dashoffset:13!important}
+
+  /* 04 */
+  .c4-lab,.c4-time,.c4-p,.c4-meta,.c4-btn,.c4-ghost,.c4-st{opacity:1!important;transform:none!important}
+  .c4-h{clip-path:inset(0 0 0 0)!important}
+  .c4-fav{opacity:1!important;transform:none!important}
+  .c4-load--we{transform:scaleX(1);opacity:0}
+  .c4-load--they{transform:scaleX(.42)}
+  .c4-win--they{opacity:.4!important;transform:none!important}
+  .c4-win--they .c4-
+  .c4-win--they .c4-tab{opacity:.4!important;transform:scaleX(0)!important}
+  .c4-win--we{border-color:rgba(205,255,79,.2)}
+  .c4-cur,.c4-ring{opacity:0!important}
+  .c4-time--they{color:var(--dim)!important}
+  .c4-time--they .c4-cross{transform:scaleX(1)!important}
+}
+
+/* ══════════════════════ УЗКИЕ ЭКРАНЫ ══════════════════════
+   Геометрия сцен рассчитана на карточку ~258px. При перестроении сетки
+   колонки не растягиваем, а центрируем — иначе поплывут фиксированные
+   координаты курсоров в карточке 04. */
+@media (max-width:1080px){
+  .uq-grid{grid-template-columns:repeat(2,minmax(0,260px));justify-content:center}
+}
+@media (max-width:640px){
+  .uq-grid{grid-template-columns:minmax(0,260px)}
+  
+  
+}
+
+
+  /* карточка 04 задаёт в CSS кадр ДО анимации — без JS переводим её в финал */
+  .c4-lab,.c4-time,.c4-p,.c4-meta,.c4-btn,.c4-ghost,.c4-st{opacity:1!important;transform:none!important}
+  .c4-h{clip-path:inset(0 0 0 0)!important}
+  .c4-fav{opacity:1!important;transform:none!important}
+  .c4-load--we{transform:scaleX(1);opacity:0}
+  .c4-load--they{transform:scaleX(.42)}
+  .c4-win--they{opacity:.4}
+  .c4-win--they .c4-
+  .c4-win--they .c4-tab{opacity:.4;transform:scaleX(0)}
+  .c4-win--we{border-color:rgba(205,255,79,.2)}
+  .c4-cur{opacity:0!important}
+  .c4-time--they{color:var(--dim)!important}
+  .c4-time--they .c4-cross{transform:scaleX(1)!important}
