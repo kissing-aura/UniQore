@@ -1374,29 +1374,6 @@ h1 span+span{animation-delay:.06s}
   .mh-vp { display: none !important; }
 }
 
-/* ══ ПРОТОТИП мобильного hero с десктоп-мокапом (локально, не коммитить без одобрения) ══ */
-@media(max-width:768px){
-  .mh-vp{display:none!important}
-  html,body{overflow-x:hidden}
-  .sy-hero{display:block!important;padding:88px 0 36px}
-  .sy-hero__grid{display:flex;flex-direction:column;align-items:stretch;gap:0}
-  .sy-hero__left{display:contents}
-  .sy-mfirst,.sy-hero__benefits,.sy-trustrow,.sy-hero__proof,.sy-guar,.sy-hero__pricebar{display:none!important}
-  .sy-hero__h1{order:1;font-size:28px;margin-top:4px}
-  .sy-hero__lead{order:2;margin-top:12px;max-width:none}
-  .sy-hero__right{order:3;display:block!important;margin:26px auto 0;overflow:visible;width:100%}
-  .sy-hero__cta{order:4;margin-top:26px}
-  .sy-mock{width:296px;max-width:none;margin:0 auto;perspective:1100px;animation:none}
-  .sy-mock::before{filter:blur(26px)}
-  .sy-browser{transform:rotateY(-5deg) rotateX(3deg)}
-  .sy-browser__view{height:206px}
-  .sy-phone{display:block;width:84px;min-width:0;max-width:none;left:auto;right:0;bottom:-7%}
-  .sy-fcard{font-size:10px;padding:5px 8px;border-radius:11px}
-  .sy-fcard__ic{width:19px;height:19px}
-  .sy-fcard--a{top:-8%;left:0}
-  .sy-fcard--b,.sy-fcard--c,.sy-fcard--d{display:none}
-}
-
 /* ══════════════════════ ОБЩЕЕ ══════════════════════ */
 
 
