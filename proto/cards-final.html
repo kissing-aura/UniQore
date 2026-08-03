@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Вы получаете не просто сайт — блок из четырёх карточек</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+════════════════════════════════════════════════════════════════════════════
+  СБОРКА. Четыре карточки, каждая написана отдельно, перенесены целиком.
+
+  01 «Заявки, а не просмотры»   — запись экрана одного визита: курсор приходит
+                                  из-за угла, структура ведёт его до отправки,
+                                  спина слева показывает пройденный путь.
+  02 «Окупаемая реклама»        — панель аналитики, которая заполняется данными
+                                  по неделям; разносторонняя ось, ×3,4 считается.
+  03 «Ни одного потерянного лида» — маршрут одной заявки: ствол → развилка →
+                                  Telegram и CRM, секундомер замирает на 0,40 с.
+  04 «Клиент, который не ушёл»  — два окна и два посетителя: слева страница
+                                  собралась, справа человек закрыл вкладку.
+
+  ЧТО ОБЩЕЕ (объявлено один раз)
+  · переменные :root, шрифты, сетка gap:1px, оболочка .card/.stage/.n/.t/.d
+  · блок @media (prefers-reduced-motion:reduce) — свод из четырёх
+  · запуск: IntersectionObserver на сетке, цепочка с шагом 750 мс,
+    повтор по наведению на конкретную карточку (её шаг в цепочке снимается,
+    чтобы наведение не выглядело сломанным).
+
+  ЧТО ЛИЧНОЕ (не пересекается)
+  · классы: c1- / c2- / c3- / c4-, id тоже с префиксом
+  · каждый скрипт — отдельный <script>: ошибка в одном не гасит остальные
+  · каждая карточка сама выставляет своё конечное состояние, даже если rAF
+    заморожен (фоновая вкладка) — у всех есть доводчик по таймеру
+  · у каждой карточки страховка на 6000 мс: если .play так и не пришёл
+    (общий скрипт не отработал), она встаёт в финал без анимации.
+
+  Ноль внешних запросов, ноль библиотек, ноль картинок.
+  Тексты карточек не тронуты.
+════════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+/* ══════════════════════ ОБЩЕЕ ══════════════════════ */
+:root{
+  --bg:#0A0E1A; --card:#0E1320; --ink:#EEF1F6; --txt:#98A2B3; --dim:#68707F;
+  --lime:#CDFF4F; --hair:rgba(238,241,246,.06);
+  --e:cubic-bezier(.22,1,.28,1);
+  --e3:cubic-bezier(.22,1,.28,1);
+  --e3out:cubic-bezier(.2,.9,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:70px 40px 110px}
+h1{font-family:'Unbounded',system-ui,sans-serif;font-weight:800;font-size:38px;line-height:1.07;
+  letter-spacing:-.04em}
+.lead{margin-top:14px;color:var(--txt);font-size:16px;line-height:1.55;max-width:44ch}
+.hint{margin-top:12px;color:var(--dim);font-size:13px}
+
+.grid{margin-top:44px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
+  background:var(--hair);border:1px solid var(--hair);border-radius:10px;overflow:hidden}
+.card{position:relative;background:var(--card);padding:0 0 20px;min-height:352px;
+  display:flex;flex-direction:column;transition:background .4s ease}
+.card:hover{background:#101728}
+.stage{position:relative;height:192px;overflow:hidden;border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg,rgba(255,255,255,.014),transparent)}
+.n{position:absolute;top:12px;right:14px;z-index:8;font-family:'Unbounded',system-ui,sans-serif;
+  font-weight:700;font-size:15px;color:rgba(238,241,246,.2);letter-spacing:-.02em;
+  transition:color .5s ease}
+.card.play .n{color:rgba(205,255,79,.7)}
+.t{margin:16px 18px 0;font-weight:600;font-size:15px;letter-spacing:-.015em}
+.d{margin:7px 18px 0;font-size:12.8px;line-height:1.5;color:var(--txt)}
+
+.foot{margin-top:38px;color:var(--dim);font-size:13px;line-height:1.65;max-width:70ch;
+  border-top:1px solid var(--hair);padding-top:20px}
+
+
+/* ══════════════════════ 01 · ЗАЯВКИ, А НЕ ПРОСМОТРЫ ══════════════════════
+   Сцена — запись экрана одного визита. Курсор приходит из-за левого верхнего
+   угла, структура забирает его в поля и доводит до кнопки; волосяная линия
+   слева заполняется по мере пути (0 → 28 → 60 → 86 → 100%).
+   Лайм: каретка 1px, спина 1px, кольцо и текст подтверждения, слово «заявка». */
+
+/* откуда пришёл */
+.c1-src{position:absolute;left:22px;top:12px;z-index:4;display:flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;letter-spacing:.055em;
+  color:var(--dim);white-space:nowrap;
+  transition:opacity .45s ease,transform .55s var(--e)}
+.c1-src i{display:block;width:9px;height:1px;background:currentColor;opacity:.65;flex:0 0 auto}
+
+/* спина структуры */
+.c1-spine{position:absolute;left:9px;top:40px;width:1px;height:114px;background:var(--hair);
+  border-radius:1px;overflow:hidden;z-index:3}
+/* заливка светлеет к переднему краю: ярко там, где посетитель сейчас */
+.c1-spine i{position:absolute;inset:0;display:block;
+  background:linear-gradient(180deg,rgba(205,255,79,.16),rgba(205,255,79,.5) 55%,var(--lime));
+  transform-origin:top center;transform:scaleY(1);will-change:transform}
+
+/* форма */
+.c1-form{position:absolute;left:22px;right:18px;top:40px;z-index:2}
+.c1-row{height:30px;border:1px solid var(--hair);border-radius:6px;
+  background:rgba(255,255,255,.02);display:flex;align-items:center;padding:0 9px;
+  font-size:11px;color:var(--dim);contain:layout;
+  transition:border-color .28s ease,background-color .28s ease,opacity .4s ease}
+.c1-row+.c1-row{margin-top:9px}
+.c1-row.focus{border-color:rgba(238,241,246,.24);background:rgba(238,241,246,.045)}
+.c1-lb{flex:0 0 auto;transition:color .3s ease}
+.c1-row.focus .c1-lb{color:var(--txt)}
+.c1-vl{color:var(--ink);margin-left:6px;white-space:nowrap}
+.c1-vl.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.2px;letter-spacing:-.01em}
+.c1-caret{flex:0 0 auto;width:1px;height:12px;background:var(--lime);margin-left:1.5px;opacity:0}
+.c1-row.focus .c1-caret{opacity:1;animation:c1blink 1.05s steps(1) .45s infinite}
+.c1-row.focus.typing .c1-caret{animation:none;opacity:1}
+@keyframes c1blink{50%{opacity:0}}
+.c1-chk{margin-left:auto;width:11px;height:11px;flex:0 0 auto;opacity:1;transform:none;
+  transition:opacity .25s ease,transform .32s var(--e)}
+.c1-row:not(.done) .c1-chk{opacity:0;transform:scale(.75)}
+.c1-chk svg{width:100%;height:100%;fill:none;stroke:rgba(238,241,246,.5);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14;stroke-dashoffset:0;
+  transition:stroke-dashoffset .34s ease .06s}
+.c1-row:not(.done) .c1-chk svg{stroke-dashoffset:14;transition-delay:0s}
+.c1-form.lock .c1-row{opacity:.55;border-color:var(--hair);background:rgba(255,255,255,.015)}
+
+/* кнопка */
+.c1-btn{margin-top:12px;height:33px;border-radius:6px;position:relative;overflow:hidden;
+  display:grid;place-items:center;font-size:11.5px;font-weight:600;
+  background:#161C27;color:var(--dim);box-shadow:0 0 0 1px rgba(238,241,246,0);
+  transition:background-color .34s ease,color .34s ease,box-shadow .34s ease,transform .13s ease}
+.c1-btn.ready{background:#222A38;color:var(--ink);box-shadow:0 0 0 1px rgba(238,241,246,.10);
+  transform:translateY(-1px)}
+.c1-btn.press{transform:translateY(0) scale(.965);background:#1B2130}
+.c1-btn.done{background:#131926;color:var(--lime);box-shadow:0 0 0 1px rgba(205,255,79,.45);
+  transform:translateY(-1px)}
+.c1-lb2{transition:opacity .18s ease,transform .28s var(--e)}
+.c1-btn.done .c1-lb2{opacity:0;transform:translateY(-9px)}
+.c1-ok2{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:11.5px;font-weight:700;opacity:0;transform:translateY(9px);
+  transition:opacity .26s ease,transform .34s var(--e)}
+.c1-btn.done .c1-ok2{opacity:1;transform:none;transition-delay:.06s}
+.c1-ok2 svg{width:12px;height:12px;fill:none;stroke:var(--lime);stroke-width:2.6;
+  stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14;stroke-dashoffset:14;
+  transition:stroke-dashoffset .34s ease}
+.c1-btn.done .c1-ok2 svg{stroke-dashoffset:0;transition-delay:.24s}
+
+/* курсор и отклик клика */
+.c1-cur{position:absolute;left:0;top:0;width:13px;height:13px;z-index:7;opacity:0;
+  transform:translate(-26px,-26px);will-change:transform;pointer-events:none}
+.c1-cur-i{display:block;width:100%;height:100%;transform-origin:2px 2px;
+  transition:transform .12s cubic-bezier(.3,.1,.3,1)}
+.c1-cur.press .c1-cur-i{transform:scale(.84)}
+.c1-cur svg{display:block;width:100%;height:100%;fill:#fff;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.9))}
+.c1-ring{position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(238,241,246,.42);opacity:0;z-index:6;pointer-events:none}
+.c1-ring.go{animation:c1ring .5s cubic-bezier(.2,.72,.3,1) forwards}
+@keyframes c1ring{
+  from{opacity:.6;transform:translate(var(--rx,0),var(--ry,0)) scale(.28)}
+  to  {opacity:0; transform:translate(var(--rx,0),var(--ry,0)) scale(1.12)}}
+
+/* итог визита */
+.c1-conv{position:absolute;left:22px;bottom:11px;z-index:4;display:flex;align-items:center;gap:7px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;color:var(--dim);
+  transition:opacity .4s ease}
+.c1-conv .p{transition:opacity .4s ease}
+.c1-conv.done .p{opacity:.45}
+.c1-conv .arw{opacity:.45}
+.c1-conv .hit{color:var(--lime);transition:opacity .35s var(--e),transform .38s var(--e)}
+
+/* мгновенный сброс без перекраски */
+.card.c1-noanim *{transition:none!important;animation:none!important}
+
+
+/* ══════════════════════ 02 · ОКУПАЕМАЯ РЕКЛАМА ══════════════════════
+   Панель аналитики, которая заполняется данными по неделям. Каркас (ось,
+   сетка, номера недель, легенда) существует ДО анимации. Ось разносторонняя:
+   расход вниз шестью одинаковыми пеньками, выручка вверх колоннами.
+   Нижние 10,29px колонки выручки — приглушённый лайм: это то, что просто
+   вернуло вложенное. Яркий лайм остаётся только на прибыли. */
+
+.c2-panel{position:absolute;inset:0;padding:11px 16px 0}
+
+/* строка статуса: метрика · цель */
+.c2-head{display:flex;align-items:center;gap:11px;height:11px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;letter-spacing:.02em;
+  color:var(--dim);white-space:nowrap}
+.c2-head span{display:inline-flex;align-items:center;gap:4px}
+.c2-tick{width:8px;height:8px;flex:0 0 auto;display:block}
+.c2-tick path{stroke:var(--lime);stroke-width:2.4;fill:none;stroke-linecap:round;
+  stroke-linejoin:round;stroke-dasharray:13;stroke-dashoffset:0}
+
+/* KPI: отношение выручки к расходу */
+.c2-kpi{margin-top:9px;display:flex;align-items:center;gap:9px;height:22px}
+.c2-ratio{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;font-size:21px;
+  line-height:22px;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}
+.c2-sub{display:flex;flex-direction:column;justify-content:center;gap:1px;
+  font-size:8.5px;line-height:10px;color:var(--dim);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+
+/* график */
+.c2-plot{position:relative;height:84px;margin-top:10px}
+.c2-grid{position:absolute;left:0;right:0;height:1px;background:rgba(238,241,246,.035)}
+/* ось нуля идёт ПОВЕРХ колонок: без неё серый расход снизу и серый «возврат»
+   сверху слипаются в один пьедестал и разносторонность оси пропадает */
+.c2-axis{position:absolute;left:0;right:0;top:58px;height:1px;z-index:5;
+  background:rgba(238,241,246,.2)}
+/* линия окупаемости — ровно по верху «возвратной» части колонок */
+.c2-be{position:absolute;left:0;right:0;top:46.7px;height:1px;z-index:3;transform-origin:0 50%;
+  background:repeating-linear-gradient(90deg,rgba(238,241,246,.24) 0 2px,transparent 2px 5px)}
+.c2-cols{position:absolute;inset:0;display:flex;z-index:2}
+.c2-col{flex:1;position:relative}
+.c2-up{position:absolute;left:50%;margin-left:-7px;width:14px;bottom:27px;
+  border-radius:1.5px 1.5px 0 0;transform-origin:50% 100%;
+  background:linear-gradient(to top,
+    rgba(205,255,79,.26) 0,rgba(205,255,79,.26) 10.29px,var(--lime) 10.29px)}
+.c2-dn{position:absolute;left:50%;margin-left:-7px;width:14px;top:59px;height:10.29px;
+  border-radius:0 0 1.5px 1.5px;transform-origin:50% 0;background:#39404E}
+.c2-wk{position:absolute;top:72px;left:0;right:0;text-align:center;font-style:normal;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:6.5px;
+  color:rgba(238,241,246,.2)}
+
+/* легенда с деньгами */
+.c2-leg{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.c2-row{display:flex;align-items:center;font-size:10.5px;line-height:13px;color:var(--dim)}
+.c2-sw{width:10px;height:2px;border-radius:2px;margin-right:6px;flex:0 0 auto}
+.c2-val{margin-left:auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;
+  color:var(--txt);font-variant-numeric:tabular-nums}
+
+/* ── состояния. Всё выше — ФИНАЛЬНОЕ состояние: без JS класс .c2-live
+      не появится и карточка читается целиком. .c2-live прячет, .play играет. */
+.c2-live .c2-head{opacity:0}
+.c2-live .c2-tick path{stroke-dashoffset:13}
+.c2-live .c2-kpi{opacity:0;transform:translateY(4px)}
+.c2-live .c2-up,.c2-live .c2-dn{transform:scaleY(0)}
+.c2-live .c2-be{transform:scaleX(0)}
+
+.c2-live.play .c2-head{opacity:1;transition:opacity .3s ease .04s}
+.c2-live.play .c2-tick path{stroke-dashoffset:0;transition:stroke-dashoffset .26s ease .15s}
+.c2-live.play .c2-s2 .c2-tick path{transition-delay:.33s}
+.c2-live.play .c2-kpi{opacity:1;transform:none;
+  transition:opacity .32s ease .82s,transform .42s cubic-bezier(.22,1,.28,1) .82s}
+.c2-live.play .c2-up,.c2-live.play .c2-dn{transform:scaleY(1)}
+.c2-live.play .c2-be{transform:scaleX(1);
+  transition:transform .44s cubic-bezier(.22,1,.28,1) 2.16s}
+
+/* расход выходит первым, коротко и жёстко — бюджет фиксирован */
+.c2-live.play .c2-dn{transition:transform .23s cubic-bezier(.34,.86,.4,1)}
+.c2-live.play .c2-col:nth-child(1) .c2-dn{transition-delay:.560s}
+.c2-live.play .c2-col:nth-child(2) .c2-dn{transition-delay:.765s}
+.c2-live.play .c2-col:nth-child(3) .c2-dn{transition-delay:.970s}
+.c2-live.play .c2-col:nth-child(4) .c2-dn{transition-delay:1.175s}
+.c2-live.play .c2-col:nth-child(5) .c2-dn{transition-delay:1.380s}
+.c2-live.play .c2-col:nth-child(6) .c2-dn{transition-delay:1.585s}
+/* выручка отвечает через 90 мс и едет тем дольше, чем выше колонка */
+.c2-live.play .c2-up{transition:transform .30s cubic-bezier(.18,.86,.32,1)}
+.c2-live.play .c2-col:nth-child(1) .c2-up{transition-delay:.650s;transition-duration:.300s}
+.c2-live.play .c2-col:nth-child(2) .c2-up{transition-delay:.855s;transition-duration:.322s}
+.c2-live.play .c2-col:nth-child(3) .c2-up{transition-delay:1.060s;transition-duration:.344s}
+.c2-live.play .c2-col:nth-child(4) .c2-up{transition-delay:1.265s;transition-duration:.366s}
+.c2-live.play .c2-col:nth-child(5) .c2-up{transition-delay:1.470s;transition-duration:.388s}
+.c2-live.play .c2-col:nth-child(6) .c2-up{transition-delay:1.675s;transition-duration:.410s}
+
+
+/* ══════════════════════ 03 · МАРШРУТ ЗАЯВКИ ══════════════════════
+   Одна заявка: ствол → развилка → два разных по устройству приёмника
+   (чат и таблица). Секундомер идёт от нуля и замирает ровно тогда,
+   когда доехал второй адресат. Конечное состояние = разметка по умолчанию,
+   начальное включает сам скрипт классом .armed. */
+
+.c3{position:absolute;inset:0;padding:13px 16px 10px;display:flex;flex-direction:column}
+
+/* источник */
+.c3-chip{align-self:center;display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;
+  height:22px;padding:0 10px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(255,255,255,.024);font-size:10px;color:var(--txt);white-space:nowrap;
+  transition:opacity .34s ease,transform .52s var(--e3)}
+.c3.armed .c3-chip:not(.on){opacity:0;transform:translateY(6px);transition:none}
+.c3-dot{position:relative;width:5px;height:5px;border-radius:50%;flex:0 0 auto;
+  background:#3B4253;transition:background .55s ease}
+.c3-dot.hot{background:var(--lime);transition:background .12s ease}
+.c3-dot::after{content:'';position:absolute;inset:-1px;border-radius:50%;
+  border:1px solid rgba(205,255,79,.8);opacity:0}
+.c3-dot.hot::after{animation:c3ring .72s ease-out}
+@keyframes c3ring{from{opacity:.85;transform:scale(.6)}to{opacity:0;transform:scale(3.1)}}
+
+/* развилка */
+.c3-fork{flex:0 0 auto;height:54px;margin-top:4px}
+.c3-fork svg{display:block;width:100%;height:100%}
+.c3-rail{fill:none;stroke:rgba(238,241,246,.15);stroke-width:1.1;stroke-linecap:round;
+  transition:stroke .6s ease}
+.c3.armed .c3-rail:not(.lit){stroke:rgba(238,241,246,.05);transition:none}
+.c3-pk{fill:none;stroke:var(--lime);stroke-width:1.8;stroke-linecap:round;
+  stroke-dasharray:13 100;stroke-dashoffset:13}
+.c3-fork.go-tr .c3-pk-tr{stroke-dashoffset:-100;transition:stroke-dashoffset .122s cubic-bezier(.5,0,.6,1)}
+.c3-fork.go-tg .c3-pk-tg{stroke-dashoffset:-100;transition:stroke-dashoffset .285s cubic-bezier(.25,.55,.4,1)}
+.c3-fork.go-crm .c3-pk-crm{stroke-dashoffset:-100;transition:stroke-dashoffset .693s cubic-bezier(.34,.42,.42,1)}
+
+/* два адресата */
+.c3-dsts{flex:1 1 auto;min-height:0;display:flex;gap:10px}
+.c3-dst{flex:1 1 0;min-width:0;border:1px solid rgba(238,241,246,.14);border-radius:7px;
+  background:#141A27;padding:6px;display:flex;flex-direction:column;
+  transition:border-color .45s ease}
+.c3.armed .c3-dst:not(.hit){border-color:var(--hair);transition:none}
+.c3.armed .c3-dst.hit{animation:c3land .5s var(--e3out)}
+@keyframes c3land{0%{transform:translateY(3px)}55%{transform:translateY(-1.5px)}100%{transform:none}}
+.c3-dh{display:flex;align-items:center;gap:5px;flex:0 0 auto;height:12px;
+  font-size:9px;font-weight:600;color:var(--txt);letter-spacing:.01em}
+.c3-g{width:9px;height:9px;flex:0 0 auto;fill:none;stroke:var(--dim);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* Telegram — сообщение в чате */
+.c3-bub{margin-top:auto;background:#1B2231;border-radius:7px 7px 7px 3px;padding:5px 6px;
+  transition:opacity .3s ease,transform .46s var(--e3)}
+.c3.armed .c3-dst:not(.hit) .c3-bub{opacity:0;transform:translateY(7px) scale(.965);transition:none}
+.c3-l1{font-size:10px;line-height:12px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c3-l2{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:7.4px;line-height:9px;
+  color:var(--dim);letter-spacing:-.03em;white-space:nowrap}
+.c3-meta{height:8px;margin-top:1px;display:flex;align-items:center;justify-content:flex-end;gap:3px}
+.c3-ms{flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-size:7px;line-height:8px;color:var(--dim);letter-spacing:-.02em}
+.c3-dc{flex:0 0 auto;width:11px;height:7px;fill:none;stroke:var(--txt);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.c3-dc path{stroke-dasharray:13;stroke-dashoffset:0;transition:stroke-dashoffset .3s ease}
+.c3-dst.hit .c3-dc .a{transition-delay:.19s}
+.c3-dst.hit .c3-dc .b{transition-delay:.27s}
+.c3.armed .c3-dst:not(.hit) .c3-dc path{stroke-dashoffset:13;transition:none}
+
+/* CRM — строка в таблице */
+.c3-tbl{margin-top:auto;display:flex;flex-direction:column;gap:4px}
+.c3-r{height:17px;display:flex;align-items:center;gap:4px;padding:0 6px;border-radius:4px;
+  background:rgba(255,255,255,.035)}
+.c3-r b{font-size:9.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c3-r i{margin-left:auto;flex:0 0 auto;font-style:normal;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:7px;color:var(--dim);
+  letter-spacing:-.02em}
+.c3-r--new{transition:opacity .3s ease .09s,transform .44s var(--e3) .09s}
+.c3-r--old{background:rgba(255,255,255,.018);transition:transform .46s var(--e3out)}
+.c3-r--old b{color:var(--dim);font-weight:500}
+.c3.armed .c3-dst:not(.hit) .c3-r--new{opacity:0;transform:translateY(-5px);transition:none}
+.c3.armed .c3-dst:not(.hit) .c3-r--old{transform:translateY(-21px);transition:none}
+
+/* итог */
+.c3-sum{flex:0 0 auto;height:12px;margin-top:7px;display:flex;align-items:center;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.6px;color:var(--dim);
+  letter-spacing:-.01em}
+.c3-ok{width:9px;height:9px;margin-right:5px;flex:0 0 auto;fill:none;stroke:var(--txt);
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:12;stroke-dashoffset:0;transition:stroke-dashoffset .34s ease .12s}
+.c3.armed .c3-sum:not(.full) .c3-ok{stroke-dashoffset:12;transition:none}
+.c3-cn{color:var(--txt);font-weight:400}
+.c3-clock{margin-left:auto;flex:0 0 auto;display:inline-block;font-size:9.6px;color:var(--lime);
+  letter-spacing:-.02em;transform-origin:100% 50%;
+  transition:color .3s ease,transform .34s var(--e3)}
+.c3.armed .c3-clock:not(.done){color:var(--dim);transform:none;transition:none}
+.c3.armed .c3-clock.done{animation:c3settle .36s var(--e3)}
+@keyframes c3settle{0%{transform:scale(1.09)}100%{transform:none}}
+
+
+/* ══════════════════════ 04 · ДВА ПОСЕТИТЕЛЯ ══════════════════════
+   Два окна браузера и два курсора. Слева страница собирается за 0,8 с и
+   посетитель остаётся на кнопке. Справа три секунды пустота, полоса
+   загрузки не доходит до конца, человек закрывает вкладку на 3,0 с.
+   Уход вызывается финишем ИХ секундомера, а не отдельным таймером. */
+
+.c4{
+  --e:cubic-bezier(.22,1,.28,1);        /* мягкий выход, всё «приезжает» */
+  --dec:cubic-bezier(.4,0,.2,1);        /* решительное движение          */
+  --slow:cubic-bezier(.45,.05,.55,.95); /* вялое, нетерпеливое           */
+  position:absolute;left:18px;right:18px;top:34px;
+  display:flex;gap:12px;align-items:stretch;
+}
+.c4-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+
+/* подпись сверху */
+.c4-lab{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.2px;letter-spacing:.09em;
+  color:var(--dim);text-transform:uppercase;height:11px;line-height:11px;white-space:nowrap;
+  opacity:0;transform:translateY(-2px);transition:opacity .3s ease,transform .35s var(--e)}
+.card.play .c4-lab{opacity:1;transform:none}
+.card.play .c4-col--we .c4-lab{transition-delay:.06s}
+.card.play .c4-col--they .c4-lab{transition-delay:.14s}
+
+/* окно браузера */
+.c4-win{margin-top:6px;height:106px;border:1px solid var(--hair);border-radius:6px;
+  background:#0B1017;position:relative;overflow:hidden;
+  transition:border-color .55s ease,opacity .38s ease,transform .42s var(--dec)}
+.c4-win--we{transform-origin:50% 100%}
+.card.c4-won .c4-win--we{border-color:rgba(205,255,79,.2)}
+
+/* хром: вкладка + линия загрузки */
+.c4-bar{height:17px;border-bottom:1px solid rgba(238,241,246,.05);position:relative;
+  background:rgba(255,255,255,.022)}
+.c4-tab{position:absolute;left:4px;top:3px;width:62px;height:14px;border-radius:4px 4px 0 0;
+  background:rgba(238,241,246,.05);display:flex;align-items:center;padding:0 4px;gap:4px;
+  transform-origin:0 50%;transition:transform .26s cubic-bezier(.5,0,.9,.4),opacity .2s ease}
+.c4-favbox{position:relative;width:8px;height:8px;flex:0 0 auto}
+.c4-fav{position:absolute;inset:.5px;border-radius:2px;background:var(--lime);
+  opacity:0;transform:scale(.4);transition:opacity .18s ease,transform .34s var(--e)}
+.card.play .c4-win--we .c4-fav{opacity:1;transform:none;transition-delay:.86s}
+.c4-favghost{position:absolute;inset:.5px;border-radius:2px;border:1px solid rgba(238,241,246,.16)}
+.c4-tabname{height:3px;border-radius:2px;background:rgba(238,241,246,.13);flex:1 1 auto}
+.c4-win--they .c4-tabname{background:rgba(238,241,246,.08)}
+/* крестик вкладки — появляется, когда до него дотягивается курсор */
+.c4-x{width:8px;height:8px;flex:0 0 auto;opacity:0;transform:scale(.7);
+  transition:opacity .2s ease,transform .3s var(--e)}
+.c4-x svg{width:100%;height:100%;stroke:rgba(238,241,246,.72);stroke-width:2.2;
+  stroke-linecap:round;fill:none}
+.c4-x.c4-x--on{opacity:1;transform:none}
+
+/* линия загрузки под хромом */
+.c4-load{position:absolute;left:0;right:0;bottom:-1px;height:1.5px;transform-origin:0 50%;
+  transform:scaleX(0)}
+.c4-load--we{background:var(--lime);opacity:.55}
+.card.play .c4-load--we{animation:c4-sweep .74s var(--dec) .1s forwards}
+.c4-load--they{background:#39404E}
+.card.play .c4-load--they{animation:c4-crawl 3s linear .1s forwards}
+@keyframes c4-sweep{
+  0%{transform:scaleX(0);opacity:.55}
+  76%{transform:scaleX(1);opacity:.55}
+  100%{transform:scaleX(1);opacity:0}
+}
+@keyframes c4-crawl{           /* ступеньки и два застоя — как в жизни */
+  0%{transform:scaleX(0)}
+  7%{transform:scaleX(.21)}
+  13%{transform:scaleX(.25)}
+  27%{transform:scaleX(.27)}   /* застой первый */
+  34%{transform:scaleX(.39)}
+  62%{transform:scaleX(.42)}   /* застой второй, самый длинный */
+  80%{transform:scaleX(.5)}
+  100%{transform:scaleX(.54)}
+}
+
+/* тело окна */
+.c4-body{position:absolute;left:0;right:0;top:17px;bottom:0;padding:7px 7px 8px;
+  display:flex;flex-direction:column}
+
+/* наш сайт: страница собирается */
+.c4-h{font-size:9.3px;font-weight:700;letter-spacing:-.01em;color:var(--ink);white-space:nowrap;
+  clip-path:inset(0 100% 0 0);transition:clip-path .3s cubic-bezier(.2,.75,.3,1)}
+.card.play .c4-h{clip-path:inset(0 0 0 0);transition-delay:.14s}
+.c4-p{margin-top:4px;font-size:7.4px;line-height:1.55;color:var(--txt);white-space:nowrap;
+  opacity:0;transform:translateY(2.5px);transition:opacity .26s ease,transform .3s var(--e)}
+.card.play .c4-p{opacity:1;transform:none;transition-delay:.28s}
+.c4-meta{margin-top:3px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:6.6px;
+  color:var(--dim);letter-spacing:.03em;white-space:nowrap;opacity:0;transform:translateY(2px);
+  transition:opacity .24s ease,transform .28s var(--e)}
+.card.play .c4-meta{opacity:1;transform:none;transition-delay:.38s}
+.c4-btn{margin-top:auto;width:47px;height:13px;border-radius:3px;background:var(--lime);
+  color:#0A0E1A;font-size:7px;font-weight:700;letter-spacing:.01em;display:grid;place-items:center;
+  opacity:0;transform:scale(.9);transform-origin:0 50%;
+  transition:opacity .2s ease,transform .34s var(--e),filter .3s ease}
+.card.play .c4-btn{opacity:1;transform:none;transition-delay:.46s}
+.c4-btn.c4-hot{filter:brightness(1.08)}
+
+/* конструктор: пустота */
+.c4-ghost{height:4px;border-radius:2px;background:rgba(238,241,246,.055);
+  opacity:0;transition:opacity .5s ease}
+.c4-ghost--a{width:64%}
+.c4-ghost--b{width:37%;margin-top:5px}
+.card.play .c4-ghost--a{opacity:1;transition-delay:1.5s}
+.card.play .c4-ghost--b{opacity:1;transition-delay:2.35s}
+.c4-spinwrap{margin:auto;width:15px;height:15px;position:relative}
+.c4-spin{position:absolute;inset:0;border-radius:50%;border:1.4px solid rgba(238,241,246,.09);
+  border-top-color:rgba(238,241,246,.42);transition:opacity .4s ease}
+.card.play .c4-spin{animation:c4-rot .82s linear .1s infinite}
+@keyframes c4-rot{to{transform:rotate(360deg)}}
+
+/* курсоры */
+.c4-cur{position:absolute;left:0;top:0;width:12px;height:12px;z-index:6;opacity:0;
+  transition:opacity .25s ease,transform .6s var(--e)}
+.c4-cur svg{width:100%;height:100%;fill:#EEF1F6;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))}
+.c4-cur--we{transform:translate(64px,74px)}
+.card.play .c4-cur--we{opacity:1;transition:opacity .25s ease .95s,transform .6s var(--e)}
+.card.play .c4-cur--we.c4-go{transform:translate(25px,86px);
+  transition:opacity .25s ease .95s,transform .62s var(--dec)}
+.c4-cur--they{transform:translate(47px,57px)}
+.card.play .c4-cur--they{opacity:1;transition:opacity .25s ease 1.55s,transform .6s var(--e)}
+.card.play .c4-cur--they.c4-drift{transform:translate(40px,66px);
+  transition:opacity .25s ease 1.55s,transform .7s var(--slow)}
+.card.play .c4-cur--they.c4-tox{transform:translate(53px,11px);
+  transition:opacity .25s ease 1.55s,transform .38s var(--dec)}
+
+/* кольцо клика по крестику — строго серое, лайма у них нет */
+.c4-ring{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;
+  border:1px solid rgba(238,241,246,.45);opacity:0;pointer-events:none;z-index:5;
+  transform:translate(48px,0px)}
+.c4-ring.c4-pop{animation:c4-ring .46s ease-out}
+@keyframes c4-ring{
+  from{opacity:.75;transform:translate(48px,0px) scale(.3)}
+  to{opacity:0;transform:translate(48px,0px) scale(1.1)}
+}
+
+/* смерть вкладки: гаснет содержимое, но рама и застрявшая полоса
+   остаются уликой — до конца так и не догрузилось */
+.c4-win--they.c4-dead{opacity:.4;transform:translateY(3px) scale(.985);
+  border-color:rgba(238,241,246,.045)}
+.c4-win--they.c4-dead .c4-body{opacity:.4;transition:opacity .34s ease}
+.c4-win--they.c4-dead .c4-tab{transform:scaleX(0);opacity:.4}
+.c4-win--they.c4-dead .c4-spin{animation-play-state:paused}
+.c4-win--they.c4-dead .c4-load--they{animation-play-state:paused}
+.c4-win--they.c4-dead .c4-cur--they{opacity:0;transition-delay:.12s}
+
+/* мгновенный откат при повторе: окно не «оживает» плавно, а просто заново целое */
+.card.c4-nofx .c4-win--they,.card.c4-nofx .c4-win--they *,
+.card.c4-nofx .c4-cross,.card.c4-nofx .c4-time--they,
+.card.c4-nofx .c4-st{transition:none!important}
+
+/* аварийный финал: если .play так и не пришёл — кадр без движения */
+.card.c4-final .c4-load--we{animation:none;transform:scaleX(1);opacity:0}
+.card.c4-final .c4-load--they{animation:none;transform:scaleX(.42)}
+.card.c4-final .c4-spin{animation:none}
+
+/* нижняя строка: статус + секундомер */
+.c4-foot{margin-top:8px;height:12px;display:flex;align-items:baseline;justify-content:space-between;gap:5px}
+.c4-st{font-size:8.8px;letter-spacing:-.005em;white-space:nowrap;
+  opacity:0;transform:translateY(2px);transition:opacity .3s ease,transform .34s var(--e)}
+.c4-st--we{color:var(--txt)}
+.c4-st--they{color:var(--dim)}
+.card.play .c4-st--we.c4-on,.card.play .c4-st--they.c4-on{opacity:1;transform:none}
+.c4-time{position:relative;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.2px;
+  white-space:nowrap;opacity:0;transition:opacity .3s ease,color .35s ease}
+.card.play .c4-time{opacity:1;transition-delay:.1s}
+.c4-time--we{color:var(--lime)}
+.c4-time--they{color:var(--txt)}
+.c4-time--they.c4-cut{color:var(--dim)}
+.c4-cross{position:absolute;left:-1px;right:-1px;top:50%;height:1px;background:var(--dim);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .3s var(--dec)}
+.c4-time--they.c4-cut .c4-cross{transform:scaleX(1);transition-delay:.08s}
+
+
+/* ══════════════════════ БЕЗ ДВИЖЕНИЯ ══════════════════════
+   Свод из четырёх карточек: всё статично, конечные значения на месте. */
+@media (prefers-reduced-motion:reduce){
+  .card *,.card *::before,.card *::after{transition:none!important;animation:none!important}
+
+  /* 01 */
+  .c1-cur,.c1-ring{display:none!important}
+  .c1-spine i{transform:scaleY(1)!important}
+  .c1-src,.c1-conv,.c1-conv .hit{opacity:1!important;transform:none!important}
+  .c1-caret{opacity:0!important}
+
+  /* 02 */
+  .c2-live .c2-head{opacity:1}
+  .c2-live .c2-tick path{stroke-dashoffset:0}
+  .c2-live .c2-kpi{opacity:1;transform:none}
+  .c2-live .c2-up,.c2-live .c2-dn{transform:scaleY(1)}
+  .c2-live .c2-be{transform:scaleX(1)}
+
+  /* 03 */
+  .c3.armed .c3-chip:not(.on),
+  .c3.armed .c3-dst:not(.hit) .c3-bub,
+  .c3.armed .c3-dst:not(.hit) .c3-r--new{opacity:1!important;transform:none!important}
+  .c3.armed .c3-dst:not(.hit) .c3-r--old{transform:none!important}
+  .c3.armed .c3-dst:not(.hit){border-color:rgba(238,241,246,.14)!important}
+  .c3.armed .c3-rail:not(.lit){stroke:rgba(238,241,246,.15)!important}
+  .c3.armed .c3-dst:not(.hit) .c3-dc path,
+  .c3.armed .c3-sum:not(.full) .c3-ok{stroke-dashoffset:0!important}
+  .c3.armed .c3-clock:not(.done){color:var(--lime)!important}
+  .c3-pk{stroke-dashoffset:13!important}
+
+  /* 04 */
+  .c4-lab,.c4-time,.c4-p,.c4-meta,.c4-btn,.c4-ghost,.c4-st{opacity:1!important;transform:none!important}
+  .c4-h{clip-path:inset(0 0 0 0)!important}
+  .c4-fav{opacity:1!important;transform:none!important}
+  .c4-load--we{transform:scaleX(1);opacity:0}
+  .c4-load--they{transform:scaleX(.42)}
+  .c4-win--they{opacity:.4!important;transform:none!important}
+  .c4-win--they .c4-body{opacity:.4!important}
+  .c4-win--they .c4-tab{opacity:.4!important;transform:scaleX(0)!important}
+  .c4-win--we{border-color:rgba(205,255,79,.2)}
+  .c4-cur,.c4-ring{opacity:0!important}
+  .c4-time--they{color:var(--dim)!important}
+  .c4-time--they .c4-cross{transform:scaleX(1)!important}
+}
+
+/* ══════════════════════ УЗКИЕ ЭКРАНЫ ══════════════════════
+   Геометрия сцен рассчитана на карточку ~258px. При перестроении сетки
+   колонки не растягиваем, а центрируем — иначе поплывут фиксированные
+   координаты курсоров в карточке 04. */
+@media (max-width:1080px){
+  .grid{grid-template-columns:repeat(2,minmax(0,260px));justify-content:center}
+}
+@media (max-width:640px){
+  .grid{grid-template-columns:minmax(0,260px)}
+  h1{font-size:27px}
+  .wrap{padding:44px 20px 70px}
+}
+</style>
+
+<noscript><style>
+  /* карточка 04 задаёт в CSS кадр ДО анимации — без JS переводим её в финал */
+  .c4-lab,.c4-time,.c4-p,.c4-meta,.c4-btn,.c4-ghost,.c4-st{opacity:1!important;transform:none!important}
+  .c4-h{clip-path:inset(0 0 0 0)!important}
+  .c4-fav{opacity:1!important;transform:none!important}
+  .c4-load--we{transform:scaleX(1);opacity:0}
+  .c4-load--they{transform:scaleX(.42)}
+  .c4-win--they{opacity:.4}
+  .c4-win--they .c4-body{opacity:.4}
+  .c4-win--they .c4-tab{opacity:.4;transform:scaleX(0)}
+  .c4-win--we{border-color:rgba(205,255,79,.2)}
+  .c4-cur{opacity:0!important}
+  .c4-time--they{color:var(--dim)!important}
+  .c4-time--they .c4-cross{transform:scaleX(1)!important}
+</style></noscript>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Вы получаете<br>не просто сайт</h1>
+  <p class="lead">А инструмент, который превращает рекламный трафик в заявки и продажи.</p>
+  <p class="hint">Анимация запускается сама, цепочкой. Наведи на карточку — проиграется заново.</p>
+
+  <div class="grid" id="grid">
+
+    <!-- ══════════════════ 01 ══════════════════ -->
+    <div class="card" data-i="0" id="c1card">
+      <div class="stage" id="c1stage">
+        <div class="n">01</div>
+
+        <div class="c1-src" id="c1src"><i></i>трафик с рекламы</div>
+
+        <div class="c1-spine"><i id="c1spine"></i></div>
+
+        <div class="c1-form" id="c1form">
+          <div class="c1-row done" id="c1r1">
+            <span class="c1-lb">Имя</span><span class="c1-vl" id="c1v1">Виталий</span><span class="c1-caret"></span>
+            <span class="c1-chk"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg></span>
+          </div>
+          <div class="c1-row done" id="c1r2">
+            <span class="c1-lb">Телефон</span><span class="c1-vl mono" id="c1v2">+7 913 204-11-08</span><span class="c1-caret"></span>
+            <span class="c1-chk"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg></span>
+          </div>
+          <div class="c1-btn ready" id="c1btn">
+            <span class="c1-lb2">Отправить заявку</span>
+            <span class="c1-ok2"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>Заявка отправлена</span>
+          </div>
+        </div>
+
+        <span class="c1-ring" id="c1ring"></span>
+        <div class="c1-cur" id="c1cur"><span class="c1-cur-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6 1.6L10 20z"/></svg></span></div>
+
+        <div class="c1-conv" id="c1conv"><span class="p">просмотр</span><span class="arw">→</span><span class="hit" id="c1hit">заявка</span></div>
+      </div>
+
+      <div class="t">Заявки, а не просмотры</div>
+      <div class="d">Структура ведёт посетителя к действию — трафик превращается в обращения, а не в отказы.</div>
+    </div>
+
+    <!-- ══════════════════ 02 ══════════════════ -->
+    <div class="card" data-i="1" id="c2">
+      <div class="stage">
+        <div class="n">02</div>
+
+        <div class="c2-panel">
+
+          <div class="c2-head">
+            <span class="c2-s1">
+              <svg class="c2-tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>метрика
+            </span>
+            <span class="c2-s2">
+              <svg class="c2-tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>цель «заявка»
+            </span>
+          </div>
+
+          <div class="c2-kpi">
+            <div class="c2-ratio" id="c2-ratio">×3,4</div>
+            <div class="c2-sub">
+              <span>на каждый вложенный ₽</span>
+              <span id="c2-leads">47 заявок · 6 недель</span>
+            </div>
+          </div>
+
+          <div class="c2-plot">
+            <span class="c2-grid" style="top:22px"></span>
+            <span class="c2-grid" style="top:40px"></span>
+            <span class="c2-axis"></span>
+            <div class="c2-cols">
+              <div class="c2-col"><span class="c2-up" style="height:14.14px"></span><span class="c2-dn"></span><em class="c2-wk">1</em></div>
+              <div class="c2-col"><span class="c2-up" style="height:25.71px"></span><span class="c2-dn"></span><em class="c2-wk">2</em></div>
+              <div class="c2-col"><span class="c2-up" style="height:32.14px"></span><span class="c2-dn"></span><em class="c2-wk">3</em></div>
+              <div class="c2-col"><span class="c2-up" style="height:38.57px"></span><span class="c2-dn"></span><em class="c2-wk">4</em></div>
+              <div class="c2-col"><span class="c2-up" style="height:45.00px"></span><span class="c2-dn"></span><em class="c2-wk">5</em></div>
+              <div class="c2-col"><span class="c2-up" style="height:54.00px"></span><span class="c2-dn"></span><em class="c2-wk">6</em></div>
+            </div>
+            <span class="c2-be"></span>
+          </div>
+
+          <div class="c2-leg">
+            <div class="c2-row"><i class="c2-sw" style="background:#39404E"></i>расход<b class="c2-val" id="c2-spend">48 000 ₽</b></div>
+            <div class="c2-row"><i class="c2-sw" style="background:#CDFF4F"></i>выручка<b class="c2-val" id="c2-earn">163 000 ₽</b></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="t">Окупаемая реклама</div>
+      <div class="d">Готов под Яндекс Директ с первого дня: метрика и цели настроены — видно отдачу с каждого рубля.</div>
+    </div>
+
+    <!-- ══════════════════ 03 ══════════════════ -->
+    <div class="card" data-i="2" id="card3">
+      <div class="stage">
+        <div class="n">03</div>
+
+        <div class="c3" id="c3">
+
+          <div class="c3-chip" id="c3chip"><span class="c3-dot" id="c3dot"></span>новая заявка с сайта</div>
+
+          <div class="c3-fork" id="c3fork">
+            <svg viewBox="0 0 226 54" preserveAspectRatio="none" aria-hidden="true">
+              <path class="c3-rail" id="c3railTr"  vector-effect="non-scaling-stroke" d="M113,0 L113,17"/>
+              <path class="c3-rail" id="c3railTg"  vector-effect="non-scaling-stroke" d="M113,17 C113,34 88,34 54,54"/>
+              <path class="c3-rail" id="c3railCrm" vector-effect="non-scaling-stroke" d="M113,17 C113,38 146,32 172,54"/>
+              <path class="c3-pk c3-pk-tr"  vector-effect="non-scaling-stroke" pathLength="100" d="M113,0 L113,17"/>
+              <path class="c3-pk c3-pk-tg"  vector-effect="non-scaling-stroke" pathLength="100" d="M113,17 C113,34 88,34 54,54"/>
+              <path class="c3-pk c3-pk-crm" vector-effect="non-scaling-stroke" pathLength="100" d="M113,17 C113,38 146,32 172,54"/>
+            </svg>
+          </div>
+
+          <div class="c3-dsts">
+
+            <div class="c3-dst hit" id="c3tg">
+              <div class="c3-dh">
+                <svg class="c3-g" viewBox="0 0 24 24"><path d="M21.4 4.4 2.9 11.5l6.6 2.2 2.2 6.6z"/><path d="M9.5 13.7 21.4 4.4"/></svg>
+                <span>Telegram</span>
+              </div>
+              <div class="c3-bub">
+                <div class="c3-l1">Виталий</div>
+                <div class="c3-l2">+7 913 204-11-08</div>
+                <div class="c3-meta">
+                  <span class="c3-ms">0,20 с</span>
+                  <svg class="c3-dc" viewBox="0 0 14 9"><path class="a" d="M1 4.9 3.4 7.4 7.9 2.1"/><path class="b" d="M5.7 4.9 8.1 7.4 12.6 2.1"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="c3-dst hit" id="c3crm">
+              <div class="c3-dh">
+                <svg class="c3-g" viewBox="0 0 24 24"><rect x="2.7" y="3.7" width="18.6" height="16.6" rx="2.6"/><path d="M2.7 9.4h18.6M9.6 9.4v10.9"/></svg>
+                <span>CRM</span>
+              </div>
+              <div class="c3-tbl">
+                <div class="c3-r c3-r--new"><b>Виталий</b><i>0,40 с</i></div>
+                <div class="c3-r c3-r--old"><b>Марат</b><i>12 мин</i></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="c3-sum full" id="c3sum">
+            <svg class="c3-ok" viewBox="0 0 12 12"><path d="M2 6.3 4.6 8.9 10 3.4"/></svg>
+            <span>доставлено <b class="c3-cn" id="c3cn">2</b> / 2</span>
+            <span class="c3-clock done" id="c3clock">0,40 с</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="t">Ни одного потерянного лида</div>
+      <div class="d">Каждая заявка мгновенно в Telegram и CRM — вы отвечаете первым, пока клиент ещё горячий.</div>
+    </div>
+
+    <!-- ══════════════════ 04 ══════════════════ -->
+    <div class="card" data-i="3" id="card4">
+      <div class="stage">
+        <div class="n">04</div>
+
+        <div class="c4">
+
+          <!-- наш сайт -->
+          <div class="c4-col c4-col--we">
+            <div class="c4-lab">ваш сайт</div>
+
+            <div class="c4-win c4-win--we">
+              <div class="c4-bar">
+                <div class="c4-tab">
+                  <span class="c4-favbox">
+                    <span class="c4-favghost"></span>
+                    <span class="c4-fav"></span>
+                  </span>
+                  <span class="c4-tabname"></span>
+                </div>
+                <span class="c4-load c4-load--we"></span>
+              </div>
+
+              <div class="c4-body">
+                <div class="c4-h">«Немеция»</div>
+                <div class="c4-p">Ремонт, запчасти и ТО<br>VAG · BMW · Mercedes</div>
+                <div class="c4-meta">Минск · без выходных</div>
+                <div class="c4-btn">Записаться</div>
+              </div>
+
+              <span class="c4-cur c4-cur--we" id="c4-curWe">
+                <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg>
+              </span>
+            </div>
+
+            <div class="c4-foot">
+              <span class="c4-st c4-st--we" id="c4-stWe">остался</span>
+              <span class="c4-time c4-time--we"><span id="c4-numWe">0,8 c</span></span>
+            </div>
+          </div>
+
+          <!-- конструктор -->
+          <div class="c4-col c4-col--they">
+            <div class="c4-lab">на конструкторе</div>
+
+            <div class="c4-win c4-win--they" id="c4-winThey">
+              <div class="c4-bar">
+                <div class="c4-tab">
+                  <span class="c4-favbox"><span class="c4-favghost"></span></span>
+                  <span class="c4-tabname"></span>
+                  <span class="c4-x" id="c4-x">
+                    <svg viewBox="0 0 8 8"><path d="M1.6 1.6l4.8 4.8M6.4 1.6L1.6 6.4"/></svg>
+                  </span>
+                </div>
+                <span class="c4-load c4-load--they"></span>
+              </div>
+
+              <div class="c4-body">
+                <div class="c4-ghost c4-ghost--a"></div>
+                <div class="c4-ghost c4-ghost--b"></div>
+                <div class="c4-spinwrap"><span class="c4-spin"></span></div>
+              </div>
+
+              <span class="c4-ring" id="c4-ring"></span>
+              <span class="c4-cur c4-cur--they" id="c4-curThey">
+                <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg>
+              </span>
+            </div>
+
+            <div class="c4-foot">
+              <span class="c4-st c4-st--they" id="c4-stThey">закрыл вкладку</span>
+              <span class="c4-time c4-time--they" id="c4-timeThey"><span id="c4-numThey">3,0 c</span><i class="c4-cross"></i></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="t">Клиент, который не ушёл</div>
+      <div class="d">Сайт грузится мгновенно — никто не закрывает вкладку, не дождавшись загрузки.</div>
+    </div>
+
+  </div>
+
+  <p class="foot">Тексты не тронуты — изменилась только подача. В каждой карточке работает ровно то, о чём она говорит: курсор проходит форму от рекламного клика до подтверждения, панель аналитики заполняется данными по неделям и сама считает ×3,4, одна заявка раздваивается на маршруте и ложится в чат и в таблицу за 0,40 с, а справа человек закрывает вкладку, не дождавшись загрузки. Лайм — на долях процента площади, свечений нет, разделители сделаны зазором в один пиксель.</p>
+
+</div>
+
+<!-- ══════════════════ 01 · скрипт ══════════════════ -->
+<script>
+(function(){
+  'use strict';
+
+  var card  = document.getElementById('c1card'),
+      stage = document.getElementById('c1stage'),
+      src   = document.getElementById('c1src'),
+      spine = document.getElementById('c1spine'),
+      form  = document.getElementById('c1form'),
+      r1    = document.getElementById('c1r1'),
+      r2    = document.getElementById('c1r2'),
+      v1    = document.getElementById('c1v1'),
+      v2    = document.getElementById('c1v2'),
+      btn   = document.getElementById('c1btn'),
+      cur   = document.getElementById('c1cur'),
+      ring  = document.getElementById('c1ring'),
+      conv  = document.getElementById('c1conv'),
+      hit   = document.getElementById('c1hit');
+
+  if (!card) return;
+
+  var NAME  = 'Виталий',
+      DIG   = '79132041108',
+      PHONE = '+7 913 204-11-08';
+
+  var REDUCE = window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+
+  /* таймеры: всё состояние доезжает даже если rAF заморожен */
+  var timers = [];
+  function later(fn, ms){ var t = setTimeout(fn, ms); timers.push(t); return t; }
+  function clearAll(){ for (var i=0;i<timers.length;i++) clearTimeout(timers[i]); timers = []; }
+
+  /* маска телефона: разделители подставляются сами */
+  function fmt(n){
+    var out = '';
+    for (var i=0;i<n;i++){
+      out += DIG.charAt(i);
+      if (i === 0) out = '+' + out + ' ';
+      else if (i === 3) out += ' ';
+      else if (i === 6) out += '-';
+      else if (i === 8) out += '-';
+    }
+    return out;
+  }
+
+  /* easing */
+  function easeInOutCubic(t){ return t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+  function easeOutQuad(t){ return 1 - (1-t)*(1-t); }
+  function outBack(t){ var s = .13; t -= 1; return t*t*((s+1)*t + s) + 1; }
+
+  /* курсор по квадратичной дуге */
+  var pos = [-26,-26], token = 0;
+
+  function paint(x, y){
+    pos[0] = x; pos[1] = y;
+    cur.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+  }
+
+  function glide(to, dur, bow, ease, cb){
+    var x0 = pos[0], y0 = pos[1], x1 = to[0], y1 = to[1],
+        dx = x1-x0, dy = y1-y0,
+        len = Math.sqrt(dx*dx + dy*dy) || 1,
+        cx = (x0+x1)/2 - dy/len*bow,
+        cy = (y0+y1)/2 + dx/len*bow,
+        mine = ++token, t0 = 0, fin = false;
+
+    function finish(){
+      if (fin || mine !== token) return;
+      fin = true; paint(x1, y1); if (cb) cb();
+    }
+    function frame(ts){
+      if (fin || mine !== token) return;
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / dur);
+      if (p >= 1) { finish(); return; }
+      var u = ease(p), m = 1-u;
+      paint(m*m*x0 + 2*m*u*cx + u*u*x1, m*m*y0 + 2*m*u*cy + u*u*y1);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    later(finish, dur + 90);          /* страховка: фоновая вкладка */
+  }
+
+  /* точка внутри сцены */
+  function pt(el, fx, fy){
+    var s = stage.getBoundingClientRect(), b = el.getBoundingClientRect();
+    return [b.left - s.left + b.width*fx, b.top - s.top + b.height*fy];
+  }
+
+  /* спина структуры */
+  function fill(v, dur){
+    spine.style.transitionProperty = 'transform';
+    spine.style.transitionDuration = dur + 'ms';
+    spine.style.transitionTimingFunction = 'cubic-bezier(.22,1,.28,1)';
+    spine.style.transform = 'scaleY(' + v + ')';
+  }
+
+  /* печать с плавающей скоростью */
+  function typeName(cb){
+    var i = 0;
+    (function step(){
+      v1.textContent = NAME.slice(0, ++i);
+      if (i < NAME.length) later(step, 52 + Math.random()*63);
+      else if (cb) later(cb, 0);
+    })();
+  }
+  function typePhone(cb){
+    var n = 0;
+    (function step(){
+      v2.textContent = fmt(++n);
+      if (n < 11){
+        var brk = (n===1 || n===4 || n===7 || n===9);
+        later(step, brk ? 120 + Math.random()*68 : 44 + Math.random()*36);
+      } else if (cb) later(cb, 0);
+    })();
+  }
+
+  /* состояния */
+  function reset(){
+    clearAll(); token++;
+    card.classList.add('c1-noanim');
+
+    src.style.opacity = '0'; src.style.transform = 'translateX(-5px)';
+    conv.style.opacity = '0'; conv.classList.remove('done');
+    hit.style.opacity = '0'; hit.style.transform = 'translateY(4px)';
+
+    spine.style.transitionDuration = '0ms';
+    spine.style.transform = 'scaleY(0)';
+
+    r1.classList.remove('focus','typing','done');
+    r2.classList.remove('focus','typing','done');
+    v1.textContent = ''; v2.textContent = '';
+    form.classList.remove('lock');
+    btn.classList.remove('ready','press','done');
+
+    ring.classList.remove('go');
+    cur.classList.remove('press');
+    cur.style.opacity = '0';
+    paint(-26,-26);
+
+    void card.offsetWidth;                 /* сбросить переходы одним кадром */
+    card.classList.remove('c1-noanim');
+  }
+
+  var settled = false;
+  /* Аварийный доводчик. Срабатывает, только если сцена не доиграла сама
+     (фоновая вкладка режет и rAF, и таймеры). Сначала гасит остаток
+     цепочки — иначе отложенная печать перезапишет готовый результат. */
+  function finalize(){
+    if (settled) return;
+    settled = true;
+    clearAll(); token++;
+
+    /* доводим без переходов: в скрытой вкладке кадров нет и анимация
+       всё равно не проиграется — состояние должно быть верным сразу */
+    card.classList.add('c1-noanim');
+
+    if (stage.offsetWidth > 60){
+      var s = stage.getBoundingClientRect(), b = btn.getBoundingClientRect();
+      cur.style.opacity = '1';
+      paint(b.left - s.left + b.width*.55, b.top - s.top + b.height*.9);
+    } else {
+      cur.style.opacity = '0';
+    }
+    v1.textContent = NAME; v2.textContent = PHONE;
+    r1.classList.remove('focus','typing'); r1.classList.add('done');
+    r2.classList.remove('focus','typing'); r2.classList.add('done');
+    fill(1, 0);
+    btn.classList.remove('press'); btn.classList.add('ready','done');
+    form.classList.add('lock');
+    src.style.opacity = ''; src.style.transform = '';
+    conv.style.opacity = ''; conv.classList.add('done');
+    hit.style.opacity = ''; hit.style.transform = '';
+
+    void card.offsetWidth;
+    card.classList.remove('c1-noanim');
+  }
+
+  /* сцена */
+  function play(){
+    reset();
+    settled = false;
+    if (card.classList.contains('play') === false) card.classList.add('play');
+
+    if (REDUCE){ finalize(); return; }
+
+    var w = stage.offsetWidth;
+    if (!w || w < 60){ finalize(); return; }   /* нечего измерять — сразу итог */
+
+    var pScan = [Math.round(w*0.66), 31],
+        p1 = pt(r1, .40, .50),
+        p2 = pt(r2, .52, .50),
+        pB = pt(btn, .44, .54),
+        pB2 = [pB[0] + 9, pB[1] - 2];
+
+    /* аварийная страховка на весь эпизод */
+    later(finalize, 7600);
+
+    cur.style.opacity = '1';
+    paint(-18, -14);
+    later(function(){ src.style.opacity = ''; src.style.transform = ''; }, 90);
+
+    /* 1 · пришёл и осмотрелся */
+    later(function(){
+      glide(pScan, 720, 20, easeInOutCubic, function(){
+
+        /* 2 · структура забирает его в первое поле */
+        later(function(){
+          glide(p1, 400, -13, outBack, function(){
+            later(function(){
+              r1.classList.add('focus');
+              fill(.28, 420);
+              later(function(){
+                r1.classList.add('typing');
+                typeName(function(){
+                  r1.classList.remove('typing');
+
+                  /* 3 · поле проверено на вводе, каретка ещё в нём —
+                        фокус уходит только когда курсор доедет до второго поля */
+                  later(function(){ r1.classList.add('done'); }, 155);
+                  later(function(){
+                    glide(p2, 320, 11, outBack, function(){
+                      r1.classList.remove('focus');
+                      later(function(){
+                        r2.classList.add('focus');
+                        fill(.60, 380);
+                        later(function(){
+                          r2.classList.add('typing');
+                          typePhone(function(){
+                            r2.classList.remove('typing');
+
+                            /* 4 · форма собрана — кнопка оживает сама,
+                                  курсор в этот момент ещё стоит у поля */
+                            later(function(){
+                              r2.classList.add('done');
+                              btn.classList.add('ready');
+                              fill(.86, 460);
+                            }, 170);
+
+                            /* 5 · подход к кнопке и доводка прицела */
+                            later(function(){
+                              glide(pB, 420, 15, outBack, function(){
+                                later(function(){
+                                  glide(pB2, 150, 0, easeOutQuad, function(){
+
+                                    /* 6 · нажатие — фокус уходит из поля именно здесь */
+                                    later(function(){
+                                      r2.classList.remove('focus');
+                                      cur.classList.add('press');
+                                      btn.classList.add('press');
+                                      var s = stage.getBoundingClientRect(),
+                                          b = btn.getBoundingClientRect();
+                                      ring.style.setProperty('--rx',
+                                        (b.left - s.left + b.width/2 - 17).toFixed(1) + 'px');
+                                      ring.style.setProperty('--ry',
+                                        (b.top - s.top + b.height/2 - 17).toFixed(1) + 'px');
+                                      ring.classList.remove('go');
+                                      void ring.offsetWidth;
+                                      ring.classList.add('go');
+                                    }, 95);
+
+                                    /* 7 · отпустил — отправлено */
+                                    later(function(){
+                                      btn.classList.remove('press');
+                                      btn.classList.add('done');
+                                      cur.classList.remove('press');
+                                      fill(1, 520);
+                                    }, 230);
+
+                                    later(function(){ form.classList.add('lock'); }, 330);
+
+                                    /* 8 · рука уводит курсор, счёт визита сходится */
+                                    later(function(){
+                                      glide([pB2[0] + 17, pB2[1] + 15], 560, 7, easeInOutCubic);
+                                    }, 420);
+
+                                    later(function(){
+                                      hit.style.opacity = ''; hit.style.transform = '';
+                                      conv.classList.add('done');
+                                      settled = true;
+                                    }, 520);
+
+                                  });
+                                }, 235);
+                              });
+                            }, 340);
+
+                          });
+                        }, 120);
+                      }, 110);
+                    });
+                  }, 165);
+
+                });
+              }, 135);
+            }, 115);
+          });
+        }, 195);
+
+      });
+    }, 60);
+
+    later(function(){ conv.style.opacity = ''; }, 260);
+  }
+
+  /* синхронный сброс до первой отрисовки — вёрстка без JS остаётся читаемой */
+  reset();
+
+  window.playCard1 = play;
+
+  /* страховка: если общий скрипт не отработал и .play так и не пришёл —
+     карточка встаёт в финал без анимации, пустой формы не остаётся */
+  setTimeout(function(){
+    if (!card.classList.contains('play')) finalize();
+  }, 6000);
+})();
+</script>
+
+<!-- ══════════════════ 02 · скрипт ══════════════════ -->
+<script>
+(function(){
+  var card = document.getElementById('c2');
+  if (!card) return;
+
+  var elRatio = document.getElementById('c2-ratio'),
+      elLeads = document.getElementById('c2-leads'),
+      elSpend = document.getElementById('c2-spend'),
+      elEarn  = document.getElementById('c2-earn');
+
+  var NB = ' ';                                   /* неразрывный пробел в разрядах */
+  /* накопленные значения по неделям — те же, что рисуют колонки */
+  var SPEND = ['8'+NB+'000','16'+NB+'000','24'+NB+'000','32'+NB+'000','40'+NB+'000','48'+NB+'000'],
+      EARN  = ['11'+NB+'000','31'+NB+'000','56'+NB+'000','86'+NB+'000','121'+NB+'000','163'+NB+'000'],
+      RATIO = ['×1,4','×1,9','×2,3','×2,7','×3,0','×3,4'],
+      LEADS = [3,10,18,27,37,47];
+
+  function plural(n){
+    var d = n % 10, h = n % 100;
+    if (d === 1 && h !== 11) return 'заявка';
+    if (d >= 2 && d <= 4 && (h < 12 || h > 14)) return 'заявки';
+    return 'заявок';
+  }
+  function week(i){
+    elSpend.textContent = SPEND[i] + ' ₽';
+    elEarn.textContent  = EARN[i]  + ' ₽';
+    elRatio.textContent = RATIO[i];
+    elLeads.textContent = LEADS[i] + ' ' + plural(LEADS[i]) + ' · 6 недель';
+  }
+  function finish(){ week(5); }
+
+  card.classList.add('c2-live');
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if (reduce){
+    finish();
+    window.playCard2 = finish;
+    return;
+  }
+
+  function reset(){
+    elSpend.textContent = '0 ₽';
+    elEarn.textContent  = '0 ₽';
+    elRatio.textContent = '×0,0';
+    elLeads.textContent = '0 заявок · 6 недель';
+  }
+  reset();
+
+  var timers = [];
+  function T(fn, ms){ timers.push(setTimeout(fn, ms)); }
+  function stop(){ for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
+
+  /* Страховка от пустой панели: .c2-live уже спрятал колонки, а .play может
+     не прийти (не сработал наблюдатель, отключился общий скрипт).
+     Через 6 с просто снимаем .c2-live — карточка мгновенно в финале. */
+  var guard = setTimeout(function(){
+    if (!card.classList.contains('play')){ card.classList.remove('c2-live'); finish(); }
+  }, 6000);
+
+  /* Запуск: общий скрипт ставит .play и зовёт playCard2(). */
+  window.playCard2 = function(){
+    clearTimeout(guard);
+    card.classList.add('c2-live');
+    stop(); reset();
+    if (!card.classList.contains('play')) card.classList.add('play');
+    for (var i = 0; i < 6; i++){
+      (function(i){ T(function(){ week(i); }, 880 + i * 205); })(i);
+    }
+    /* доводчик: таймеры в фоновой вкладке троттлятся — итог выставляем безусловно */
+    T(finish, 2600);
+  };
+})();
+</script>
+
+<!-- ══════════════════ 03 · скрипт ══════════════════ -->
+<script>
+(function(){
+  var card  = document.getElementById('card3'),
+      chip  = document.getElementById('c3chip'),
+      dot   = document.getElementById('c3dot'),
+      fork  = document.getElementById('c3fork'),
+      rTr   = document.getElementById('c3railTr'),
+      rTg   = document.getElementById('c3railTg'),
+      rCrm  = document.getElementById('c3railCrm'),
+      tg    = document.getElementById('c3tg'),
+      crm   = document.getElementById('c3crm'),
+      sum   = document.getElementById('c3sum'),
+      cn    = document.getElementById('c3cn'),
+      clock = document.getElementById('c3clock'),
+      scene = document.getElementById('c3');
+
+  if (!card) return;
+
+  var TOTAL = 0.40,          /* итоговая задержка, с   */
+      DUR   = 815,           /* её экранная длительность, мс */
+      T = [], gen = 0, clockFin = null;
+
+  function at(fn, ms){ T.push(setTimeout(fn, ms)); }
+  function stop(){ for (var i = 0; i < T.length; i++) clearTimeout(T[i]); T = []; }
+  function fmt(v){ return v.toFixed(2).replace('.', ',') + ' с'; }
+
+  /* читаем настройку каждый раз: её могут переключить уже после загрузки */
+  function reduced(){
+    return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  /* конечное состояние = разметка по умолчанию */
+  function settle(){
+    scene.classList.remove('armed');
+    chip.classList.add('on');
+    dot.classList.remove('hot');
+    rTr.classList.add('lit'); rTg.classList.add('lit'); rCrm.classList.add('lit');
+    fork.classList.remove('go-tr','go-tg','go-crm');
+    tg.classList.add('hit'); crm.classList.add('hit');
+    sum.classList.add('full'); cn.textContent = '2';
+    clock.classList.add('done'); clock.textContent = fmt(TOTAL);
+  }
+
+  /* взвести сцену */
+  function arm(){
+    scene.classList.add('armed');
+    chip.classList.remove('on');
+    dot.classList.remove('hot');
+    rTr.classList.remove('lit'); rTg.classList.remove('lit'); rCrm.classList.remove('lit');
+    fork.classList.remove('go-tr','go-tg','go-crm');
+    tg.classList.remove('hit'); crm.classList.remove('hit');
+    sum.classList.remove('full'); cn.textContent = '0';
+    clock.classList.remove('done'); clock.textContent = fmt(0);
+    void card.offsetWidth;      /* сброс, чтобы keyframes отыгрались повторно */
+  }
+
+  /* секундомер: rAF для плавности + дубль по таймеру (фоновая вкладка) */
+  function runClock(g){
+    var t0 = 0, done = false;
+    clockFin = function(){
+      if (done || g !== gen) return;
+      done = true;
+      clock.textContent = fmt(TOTAL);
+    };
+    function frame(ts){
+      if (done || g !== gen) return;
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / DUR);
+      clock.textContent = fmt(TOTAL * p);
+      if (p < 1) requestAnimationFrame(frame); else clockFin();
+    }
+    requestAnimationFrame(frame);
+    at(clockFin, DUR + 160);
+  }
+
+  window.playCard3 = function(){
+    stop();
+    gen++;
+    if (reduced()){ settle(); return; }
+    var g = gen;
+    arm();
+
+    at(function(){ chip.classList.add('on'); }, 130);
+
+    /* отправка: точка вспыхивает, сигнал уходит по стволу, секундомер пошёл */
+    at(function(){
+      dot.classList.add('hot');
+      fork.classList.add('go-tr');
+      runClock(g);
+    }, 400);
+
+    /* развилка: один сигнал стал двумя, с разной скоростью */
+    at(function(){ rTr.classList.add('lit'); fork.classList.add('go-tg'); }, 522);
+    at(function(){ fork.classList.add('go-crm'); }, 534);
+
+    /* 0,20 с — Telegram */
+    at(function(){
+      rTg.classList.add('lit');
+      tg.classList.add('hit');
+      cn.textContent = '1';
+    }, 807);
+
+    /* 0,40 с — CRM, секундомер замирает на этом же значении */
+    at(function(){
+      rCrm.classList.add('lit');
+      crm.classList.add('hit');
+      cn.textContent = '2';
+      sum.classList.add('full');
+      if (clockFin) clockFin();
+      clock.classList.add('done');
+    }, 1215);
+
+    /* обе копии на месте — источнику больше нечего держать */
+    at(function(){ dot.classList.remove('hot'); }, 1560);
+  };
+
+  /* В сборке карточка ждёт своей очереди в цепочке, поэтому взводим её сразу:
+     иначе до своего шага она стояла бы в финале и потом прыгала в начало. */
+  if (!reduced()) arm();
+
+  /* страховка, как у 02: если .play так и не пришёл — финал без анимации */
+  setTimeout(function(){
+    if (!card.classList.contains('play')) settle();
+  }, 6000);
+})();
+</script>
+
+<!-- ══════════════════ 04 · скрипт ══════════════════ -->
+<script>
+(function(){
+  var card    = document.getElementById('card4'),
+      numWe   = document.getElementById('c4-numWe'),
+      numThey = document.getElementById('c4-numThey'),
+      timeThey= document.getElementById('c4-timeThey'),
+      curWe   = document.getElementById('c4-curWe'),
+      curThey = document.getElementById('c4-curThey'),
+      winThey = document.getElementById('c4-winThey'),
+      stWe    = document.getElementById('c4-stWe'),
+      stThey  = document.getElementById('c4-stThey'),
+      xBtn    = document.getElementById('c4-x'),
+      ring    = document.getElementById('c4-ring'),
+      btn     = card && card.querySelector('.c4-btn');
+
+  if (!card) return;
+
+  var timers = [];
+  function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
+  function clearAll(){ for (var i=0;i<timers.length;i++) clearTimeout(timers[i]); timers = []; }
+
+  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function sec(v){ return v.toFixed(1).replace('.', ',') + ' c'; }
+
+  /* секундомер: rAF + обязательная страховка таймером —
+     в фоновой вкладке rAF замораживается, финал должен дойти всё равно */
+  function clock(el, to, dur, delay, onEnd){
+    var done = false, t0 = 0;
+    function fin(){
+      if (done) return;
+      done = true;
+      el.textContent = sec(to);
+      if (onEnd) onEnd();
+    }
+    later(function(){
+      function frame(ts){
+        if (done) return;
+        if (!t0) t0 = ts;
+        var p = (ts - t0) / dur;
+        if (p >= 1) { fin(); return; }
+        el.textContent = sec(to * p);
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+      later(fin, dur + 140);
+    }, delay);
+  }
+
+  /* сброс всего, что ведёт JS. CSS-состояния сбрасывает снятие .play */
+  function reset(){
+    clearAll();
+    card.classList.add('c4-nofx');      /* откат мёртвого окна — без обратной анимации */
+    card.classList.remove('c4-won','c4-final');
+    btn.classList.remove('c4-hot');
+    curWe.classList.remove('c4-go');
+    curThey.classList.remove('c4-drift','c4-tox');
+    winThey.classList.remove('c4-dead');
+    timeThey.classList.remove('c4-cut');
+    xBtn.classList.remove('c4-x--on');
+    ring.classList.remove('c4-pop');
+    stWe.classList.remove('c4-on');
+    stThey.classList.remove('c4-on');
+    void card.offsetWidth;              /* фиксируем чистое состояние одним кадром */
+    card.classList.remove('c4-nofx');
+  }
+
+  /* финальный кадр — для prefers-reduced-motion и для аварийной страховки */
+  function finalFrame(){
+    numWe.textContent   = sec(0.8);
+    numThey.textContent = sec(3.0);
+    card.classList.add('c4-won');
+    winThey.classList.add('c4-dead');
+    timeThey.classList.add('c4-cut');
+    stWe.classList.add('c4-on');
+    stThey.classList.add('c4-on');
+  }
+
+  function leaves(){                       /* человек закрывает вкладку */
+    ring.classList.remove('c4-pop'); void ring.offsetWidth; ring.classList.add('c4-pop');
+    winThey.classList.add('c4-dead');
+    timeThey.classList.add('c4-cut');
+    later(function(){ stThey.classList.add('c4-on'); }, 190);
+    later(function(){ card.classList.add('c4-won'); }, 120);   /* рамка нашего окна теплеет */
+  }
+
+  window.playCard4 = function(){
+    reset();
+    card.classList.add('play');          /* страховка: без .play сцена осталась бы пустой */
+    if (RM){ finalFrame(); return; }
+
+    numWe.textContent = sec(0); numThey.textContent = sec(0);
+
+    /* наш: страница готова — секундомер останавливается сам */
+    clock(numWe, 0.8, 800, 100);
+
+    /* наш посетитель доезжает до кнопки и остаётся на ней */
+    later(function(){ curWe.classList.add('c4-go'); }, 1000);
+    later(function(){ btn.classList.add('c4-hot'); }, 1600);
+    later(function(){ stWe.classList.add('c4-on'); }, 1800);
+
+    /* их посетитель: скука → нетерпение → крестик */
+    later(function(){ curThey.classList.add('c4-drift'); }, 2150);
+    later(function(){ xBtn.classList.add('c4-x--on'); }, 2520);
+    later(function(){ curThey.classList.remove('c4-drift'); curThey.classList.add('c4-tox'); }, 2560);
+
+    /* их секундомер не финиширует, а обрывается — уход следует из ожидания */
+    clock(numThey, 3.0, 2900, 100, leaves);
+  };
+
+  /* страховка: если .play так и не пришёл — статичный финальный кадр,
+     без ползущей полосы и без крутящегося спиннера */
+  setTimeout(function(){
+    if (card.classList.contains('play')) return;
+    card.classList.add('c4-final','play');
+    finalFrame();
+  }, 6000);
+})();
+</script>
+
+<!-- ══════════════════ ОБЩИЙ ЗАПУСК ══════════════════ -->
+<script>
+(function(){
+  var grid  = document.getElementById('grid');
+  if (!grid) return;
+  var cards = [].slice.call(grid.querySelectorAll('.card'));
+  var STEP  = 750;
+  var queued = [];                         /* отложенные шаги цепочки */
+
+  function play(card){
+    var i = +card.dataset.i;
+    /* снять и вернуть .play одним кадром — иначе CSS-переходы и keyframes
+       карточек 02 и 04 не перезапустятся при повторе */
+    card.classList.remove('play');
+    void card.offsetWidth;
+    card.classList.add('play');
+    var fn = window['playCard' + (i + 1)];
+    if (typeof fn === 'function') fn();
+  }
+
+  function chain(){
+    for (var i = 0; i < queued.length; i++) clearTimeout(queued[i]);
+    queued = [];
+    cards.forEach(function(c, i){
+      queued[i] = setTimeout(function(){ play(c); }, i * STEP);
+    });
+  }
+
+  var started = false;
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      for (var i = 0; i < es.length; i++){
+        if (es[i].isIntersecting && !started){ started = true; io.disconnect(); chain(); }
+      }
+    }, {threshold:.3});
+    io.observe(grid);
+  } else {
+    chain();
+  }
+
+  /* повтор по наведению: свой шаг цепочки снимаем, чтобы карточка
+     не дёрнулась второй раз и повтор не выглядел сломанным */
+  cards.forEach(function(c){
+    c.addEventListener('mouseenter', function(){
+      var i = +c.dataset.i;
+      if (queued[i]) { clearTimeout(queued[i]); queued[i] = null; }
+      play(c);
+    });
+  });
+
+  /* для ручной проверки в консоли */
+  window.__playCard = play;
+  window.__chain = chain;
+})();
+</script>
+</body>
+</html>

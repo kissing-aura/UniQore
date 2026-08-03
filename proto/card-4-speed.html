@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Карточка 04 — Клиент, который не ушёл</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+════════════════════════════════════════════════════════════════════════
+  КАРТОЧКА 04 · «Клиент, который не ушёл»
+  Рассуждение: почему именно такой эффект
+════════════════════════════════════════════════════════════════════════
+
+  Что было. Две полосы-гонки с секундомерами (0,8 с против 4,2 с),
+  маленькое превью со скелетом, в конце подпись «в 5 раз быстрее».
+  Проблема ровно та, что назвал владелец: показана СКОРОСТЬ, а утверждение
+  карточки — про УХОД. Обе полосы доезжали до конца, то есть в обоих
+  случаях человек дожидался. Разница получалась количественная («быстрее
+  на столько-то»), а должна быть качественная: там открылось — тут ушли.
+
+  Что доказывает утверждение. Уход — это действие человека, а не цифра.
+  Значит на сцене должен быть человек и его решение. Поэтому:
+
+  1. Два окна браузера рядом. Слева — наш сайт, справа — конструктор.
+     Не абстрактные полосы, а то, что видит посетитель: слева страница
+     собирается на глазах, справа три секунды пустой прямоугольник.
+     Пустота работает лучше любой цифры: её видно, а не читаешь.
+
+  2. У каждого окна свой курсор — это два разных посетителя.
+     Слева курсор доезжает до кнопки «Записаться» и остаётся на ней.
+     Справа курсор сначала бесцельно дёргается вниз-влево (нетерпение,
+     медленный ease-in-out), потом резко идёт вверх к крестику вкладки
+     (решительный ease, вдвое быстрее) и закрывает её.
+
+  3. Правая полоса загрузки НИКОГДА не доходит до конца. Она ползёт
+     ступеньками с двумя застоями (26–34% и 43% — самый долгий), и в
+     момент закрытия замирает на 43–50%. Спиннер не исчезает и не гаснет —
+     он ЗАМИРАЕТ на том угле, где его застали (animation-play-state),
+     потому что процесс не закончился, а был прерван. Это та деталь,
+     которую замечаешь на второй раз.
+
+  4. Секундомеры устроены зеркально. Наш останавливается сам, потому что
+     страница готова (0,8 с, лайм). Их не останавливается, а обрывается
+     на 3,0 с, и по цифре проводится тонкая черта — время не засчитано,
+     страница так и не открылась. Именно обрыв, а не финиш.
+
+  5. Ожидание дают почувствовать паузой. С 0,9 с левая сторона полностью
+     закончена и неподвижна, а правая ещё две секунды крутит спиннер.
+     Эти две секунды тишины — и есть «я устал ждать». Ускорять их нельзя:
+     как только их сократишь, исчезает то самое чувство.
+
+  6. Реакция элементов друг на друга: смерть правого окна на 3,0 с не
+     назначена таймером «на всякий случай», а вызывается финишем ИХ
+     секундомера — то есть уход буквально следует из времени ожидания.
+     В тот же момент рамка нашего окна становится чуть теплее: остался
+     он у нас.
+
+  Лайм: кнопка «Записаться», фавикон 7×7 и наш секундомер. Вся правая
+  половина — строгая серая шкала, у неё нет права на акцент.
+
+  Техника: только transform / opacity / clip-path. Ни одного анимируемого
+  свойства, вызывающего layout. rAF-счётчики продублированы таймером
+  (фоновая вкладка). Базовое состояние CSS — состояние ДО анимации,
+  <noscript> переводит сцену в финальный кадр, prefers-reduced-motion
+  показывает тот же финальный кадр без единого движения.
+════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+/* ── демо-обвязка (в сборку не идёт) ────────────────────────────── */
+:root{
+  --bg:#0A0E1A; --card:#0E1320; --ink:#EEF1F6; --txt:#98A2B3; --dim:#68707F;
+  --lime:#CDFF4F; --hair:rgba(238,241,246,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:40px 20px}
+.demo-holder{width:260px;flex:0 0 auto;border:1px solid var(--hair);border-radius:10px;overflow:hidden}
+
+/* ── карточка ───────────────────────────────────────────────────── */
+.card{position:relative;background:var(--card);padding:0 0 20px;min-height:352px;
+  display:flex;flex-direction:column;transition:background .4s ease}
+.card:hover{background:#101728}
+.stage{position:relative;height:192px;overflow:hidden;border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg,rgba(255,255,255,.014),transparent)}
+.n{position:absolute;top:12px;right:14px;z-index:8;font-family:'Unbounded';font-weight:700;
+  font-size:15px;color:rgba(238,241,246,.2);letter-spacing:-.02em;transition:color .5s ease}
+.card.play .n{color:rgba(205,255,79,.7)}
+.t{margin:16px 18px 0;font-weight:600;font-size:15px;letter-spacing:-.015em}
+.d{margin:7px 18px 0;font-size:12.8px;line-height:1.5;color:var(--txt)}
+
+/* ══════════════════════════════════════════════════════════════════
+   04 · ДВА ПОСЕТИТЕЛЯ
+   ══════════════════════════════════════════════════════════════════ */
+.c4{
+  --e:cubic-bezier(.22,1,.28,1);      /* мягкий выход, всё «приезжает» */
+  --dec:cubic-bezier(.4,0,.2,1);      /* решительное движение          */
+  --slow:cubic-bezier(.45,.05,.55,.95); /* вялое, нетерпеливое         */
+  position:absolute;left:18px;right:18px;top:34px;
+  display:flex;gap:12px;align-items:stretch;
+}
+.c4-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+
+/* подпись сверху */
+.c4-lab{font-family:'JetBrains Mono',monospace;font-size:8.2px;letter-spacing:.09em;
+  color:var(--dim);text-transform:uppercase;height:11px;line-height:11px;white-space:nowrap;
+  opacity:0;transform:translateY(-2px);transition:opacity .3s ease,transform .35s var(--e)}
+.card.play .c4-lab{opacity:1;transform:none}
+.card.play .c4-col--we .c4-lab{transition-delay:.06s}
+.card.play .c4-col--they .c4-lab{transition-delay:.14s}
+
+/* окно браузера */
+.c4-win{margin-top:6px;height:106px;border:1px solid var(--hair);border-radius:6px;
+  background:#0B1017;position:relative;overflow:hidden;
+  transition:border-color .55s ease,opacity .38s ease,transform .42s var(--dec)}
+.c4-win--we{transform-origin:50% 100%}
+.card.c4-won .c4-win--we{border-color:rgba(205,255,79,.2)}
+
+/* хром: вкладка + линия загрузки */
+.c4-bar{height:17px;border-bottom:1px solid rgba(238,241,246,.05);position:relative;
+  background:rgba(255,255,255,.022)}
+.c4-tab{position:absolute;left:4px;top:3px;width:62px;height:14px;border-radius:4px 4px 0 0;
+  background:rgba(238,241,246,.05);display:flex;align-items:center;padding:0 4px;gap:4px;
+  transform-origin:0 50%;transition:transform .26s cubic-bezier(.5,0,.9,.4),opacity .2s ease}
+.c4-favbox{position:relative;width:8px;height:8px;flex:0 0 auto}
+.c4-fav{position:absolute;inset:.5px;border-radius:2px;background:var(--lime);
+  opacity:0;transform:scale(.4);transition:opacity .18s ease,transform .34s var(--e)}
+.card.play .c4-win--we .c4-fav{opacity:1;transform:none;transition-delay:.86s}
+.c4-favghost{position:absolute;inset:.5px;border-radius:2px;border:1px solid rgba(238,241,246,.16)}
+.c4-tabname{height:3px;border-radius:2px;background:rgba(238,241,246,.13);flex:1 1 auto}
+.c4-win--they .c4-tabname{background:rgba(238,241,246,.08)}
+/* крестик вкладки — появляется, когда до неё дотягивается курсор */
+.c4-x{width:8px;height:8px;flex:0 0 auto;opacity:0;transform:scale(.7);
+  transition:opacity .2s ease,transform .3s var(--e)}
+.c4-x svg{width:100%;height:100%;stroke:rgba(238,241,246,.72);stroke-width:2.2;
+  stroke-linecap:round;fill:none}
+.c4-x.c4-x--on{opacity:1;transform:none}
+
+/* линия загрузки под хромом */
+.c4-load{position:absolute;left:0;right:0;bottom:-1px;height:1.5px;transform-origin:0 50%;
+  transform:scaleX(0)}
+.c4-load--we{background:var(--lime);opacity:.55}
+.card.play .c4-load--we{animation:c4-sweep .74s var(--dec) .1s forwards}
+.c4-load--they{background:#39404E}
+.card.play .c4-load--they{animation:c4-crawl 3s linear .1s forwards}
+@keyframes c4-sweep{
+  0%{transform:scaleX(0);opacity:.55}
+  76%{transform:scaleX(1);opacity:.55}
+  100%{transform:scaleX(1);opacity:0}
+}
+@keyframes c4-crawl{           /* ступеньки и два застоя — как в жизни */
+  0%{transform:scaleX(0)}
+  7%{transform:scaleX(.21)}
+  13%{transform:scaleX(.25)}
+  27%{transform:scaleX(.27)}   /* застой первый */
+  34%{transform:scaleX(.39)}
+  62%{transform:scaleX(.42)}   /* застой второй, самый длинный */
+  80%{transform:scaleX(.5)}
+  100%{transform:scaleX(.54)}
+}
+
+/* тело окна */
+.c4-body{position:absolute;left:0;right:0;top:17px;bottom:0;padding:7px 7px 8px;
+  display:flex;flex-direction:column}
+
+/* — наш сайт: страница собирается — */
+.c4-h{font-size:9.3px;font-weight:700;letter-spacing:-.01em;color:var(--ink);white-space:nowrap;
+  clip-path:inset(0 100% 0 0);transition:clip-path .3s cubic-bezier(.2,.75,.3,1)}
+.card.play .c4-h{clip-path:inset(0 0 0 0);transition-delay:.14s}
+.c4-p{margin-top:4px;font-size:7.4px;line-height:1.55;color:var(--txt);white-space:nowrap;
+  opacity:0;transform:translateY(2.5px);transition:opacity .26s ease,transform .3s var(--e)}
+.card.play .c4-p{opacity:1;transform:none;transition-delay:.28s}
+.c4-meta{margin-top:3px;font-family:'JetBrains Mono',monospace;font-size:6.6px;color:var(--dim);
+  letter-spacing:.03em;white-space:nowrap;opacity:0;transform:translateY(2px);
+  transition:opacity .24s ease,transform .28s var(--e)}
+.card.play .c4-meta{opacity:1;transform:none;transition-delay:.38s}
+.c4-btn{margin-top:auto;width:47px;height:13px;border-radius:3px;background:var(--lime);
+  color:#0A0E1A;font-size:7px;font-weight:700;letter-spacing:.01em;display:grid;place-items:center;
+  opacity:0;transform:scale(.9);transform-origin:0 50%;
+  transition:opacity .2s ease,transform .34s var(--e),filter .3s ease}
+.card.play .c4-btn{opacity:1;transform:none;transition-delay:.46s}
+.c4-btn.c4-hot{filter:brightness(1.08)}
+
+/* — конструктор: пустота — */
+.c4-ghost{height:4px;border-radius:2px;background:rgba(238,241,246,.055);
+  opacity:0;transition:opacity .5s ease}
+.c4-ghost--a{width:64%}
+.c4-ghost--b{width:37%;margin-top:5px}
+.card.play .c4-ghost--a{opacity:1;transition-delay:1.5s}
+.card.play .c4-ghost--b{opacity:1;transition-delay:2.35s}
+.c4-spinwrap{margin:auto;width:15px;height:15px;position:relative}
+.c4-spin{position:absolute;inset:0;border-radius:50%;border:1.4px solid rgba(238,241,246,.09);
+  border-top-color:rgba(238,241,246,.42);transition:opacity .4s ease}
+.card.play .c4-spin{animation:c4-rot .82s linear .1s infinite}
+@keyframes c4-rot{to{transform:rotate(360deg)}}
+
+/* курсоры */
+.c4-cur{position:absolute;left:0;top:0;width:12px;height:12px;z-index:6;opacity:0;
+  transition:opacity .25s ease,transform .6s var(--e)}
+.c4-cur svg{width:100%;height:100%;fill:#EEF1F6;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))}
+.c4-cur--we{transform:translate(64px,74px)}
+.card.play .c4-cur--we{opacity:1;transition:opacity .25s ease .95s,transform .6s var(--e)}
+.card.play .c4-cur--we.c4-go{transform:translate(25px,86px);
+  transition:opacity .25s ease .95s,transform .62s var(--dec)}
+.c4-cur--they{transform:translate(47px,57px)}
+.card.play .c4-cur--they{opacity:1;transition:opacity .25s ease 1.55s,transform .6s var(--e)}
+.card.play .c4-cur--they.c4-drift{transform:translate(40px,66px);
+  transition:opacity .25s ease 1.55s,transform .7s var(--slow)}
+.card.play .c4-cur--they.c4-tox{transform:translate(53px,11px);
+  transition:opacity .25s ease 1.55s,transform .38s var(--dec)}
+
+/* кольцо клика по крестику — строго серое, лайма у них нет */
+.c4-ring{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;
+  border:1px solid rgba(238,241,246,.45);opacity:0;pointer-events:none;z-index:5;
+  transform:translate(48px,0px)}
+.c4-ring.c4-pop{animation:c4-ring .46s ease-out}
+@keyframes c4-ring{
+  from{opacity:.75;transform:translate(48px,0px) scale(.3)}
+  to{opacity:0;transform:translate(48px,0px) scale(1.1)}
+}
+
+/* смерть вкладки: гаснет содержимое, но рама и застрявшая полоса
+   остаются уликой — до конца так и не догрузилось */
+.c4-win--they.c4-dead{opacity:.4;transform:translateY(3px) scale(.985);
+  border-color:rgba(238,241,246,.045)}
+.c4-win--they.c4-dead .c4-body{opacity:.4;transition:opacity .34s ease}
+.c4-win--they.c4-dead .c4-tab{transform:scaleX(0);opacity:.4}
+.c4-win--they.c4-dead .c4-spin{animation-play-state:paused}
+.c4-win--they.c4-dead .c4-load--they{animation-play-state:paused}
+.c4-win--they.c4-dead .c4-cur--they{opacity:0;transition-delay:.12s}
+
+/* мгновенный откат при повторе: окно не «оживает» плавно, а просто заново целое */
+.card.c4-nofx .c4-win--they,.card.c4-nofx .c4-win--they *,
+.card.c4-nofx .c4-cross,.card.c4-nofx .c4-time--they,
+.card.c4-nofx .c4-st{transition:none!important}
+
+/* нижняя строка: статус + секундомер */
+.c4-foot{margin-top:8px;height:12px;display:flex;align-items:baseline;justify-content:space-between;gap:5px}
+.c4-st{font-size:8.8px;letter-spacing:-.005em;white-space:nowrap;
+  opacity:0;transform:translateY(2px);transition:opacity .3s ease,transform .34s var(--e)}
+.c4-st--we{color:var(--txt)}
+.c4-st--they{color:var(--dim)}
+.card.play .c4-st--we.c4-on,.card.play .c4-st--they.c4-on{opacity:1;transform:none}
+.c4-time{position:relative;font-family:'JetBrains Mono',monospace;font-size:9.2px;
+  white-space:nowrap;opacity:0;transition:opacity .3s ease,color .35s ease}
+.card.play .c4-time{opacity:1;transition-delay:.1s}
+.c4-time--we{color:var(--lime)}
+.c4-time--they{color:var(--txt)}
+.c4-time--they.c4-cut{color:var(--dim)}
+.c4-cross{position:absolute;left:-1px;right:-1px;top:50%;height:1px;background:var(--dim);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .3s var(--dec)}
+.c4-time--they.c4-cut .c4-cross{transform:scaleX(1);transition-delay:.08s}
+
+/* ── финальный кадр без JS ─────────────────────────────────────── */
+</style>
+<noscript><style>
+  .c4-lab,.c4-time,.c4-p,.c4-meta,.c4-btn,.c4-ghost,.c4-st{opacity:1!important;transform:none!important}
+  .c4-h{clip-path:inset(0 0 0 0)!important}
+  .c4-fav{opacity:1!important;transform:none!important}
+  .c4-load--we{transform:scaleX(1);opacity:0}
+  .c4-load--they{transform:scaleX(.42)}
+  .c4-win--they{opacity:.4}
+  .c4-win--they .c4-body{opacity:.4}
+  .c4-win--they .c4-tab{opacity:.4;transform:scaleX(0)}
+  .c4-win--we{border-color:rgba(205,255,79,.2)}
+  .c4-cur{opacity:0!important}
+  .c4-time--they{color:var(--dim)!important}
+  .c4-time--they .c4-cross{transform:scaleX(1)!important}
+</style></noscript>
+<style>
+/* ── без движения ──────────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  .card *,.card *::before,.card *::after{transition:none!important;animation:none!important}
+  .c4-lab,.c4-time,.c4-p,.c4-meta,.c4-btn,.c4-ghost,.c4-st{opacity:1!important;transform:none!important}
+  .c4-h{clip-path:inset(0 0 0 0)!important}
+  .c4-fav{opacity:1!important;transform:none!important}
+  .c4-load--we{transform:scaleX(1);opacity:0}
+  .c4-load--they{transform:scaleX(.42)}
+  .c4-win--they{opacity:.4!important;transform:none!important}
+  .c4-win--they .c4-body{opacity:.4!important}
+  .c4-win--they .c4-tab{opacity:.4!important;transform:scaleX(0)!important}
+  .c4-win--we{border-color:rgba(205,255,79,.2)}
+  .c4-cur,.c4-ring{opacity:0!important}
+  .c4-time--they{color:var(--dim)!important}
+  .c4-time--they .c4-cross{transform:scaleX(1)!important}
+}
+</style>
+</head>
+<body>
+
+<div class="demo-holder">
+  <div class="card" id="card4">
+    <div class="stage">
+      <div class="n">04</div>
+
+      <div class="c4">
+
+        <!-- ── наш сайт ───────────────────────────────────────── -->
+        <div class="c4-col c4-col--we">
+          <div class="c4-lab">ваш сайт</div>
+
+          <div class="c4-win c4-win--we">
+            <div class="c4-bar">
+              <div class="c4-tab">
+                <span class="c4-favbox">
+                  <span class="c4-favghost"></span>
+                  <span class="c4-fav"></span>
+                </span>
+                <span class="c4-tabname"></span>
+              </div>
+              <span class="c4-load c4-load--we"></span>
+            </div>
+
+            <div class="c4-body">
+              <div class="c4-h">«Немеция»</div>
+              <div class="c4-p">Ремонт, запчасти и ТО<br>VAG · BMW · Mercedes</div>
+              <div class="c4-meta">Минск · без выходных</div>
+              <div class="c4-btn">Записаться</div>
+            </div>
+
+            <span class="c4-cur c4-cur--we" id="c4-curWe">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg>
+            </span>
+          </div>
+
+          <div class="c4-foot">
+            <span class="c4-st c4-st--we" id="c4-stWe">остался</span>
+            <span class="c4-time c4-time--we"><span id="c4-numWe">0,8 c</span></span>
+          </div>
+        </div>
+
+        <!-- ── конструктор ────────────────────────────────────── -->
+        <div class="c4-col c4-col--they">
+          <div class="c4-lab">на конструкторе</div>
+
+          <div class="c4-win c4-win--they" id="c4-winThey">
+            <div class="c4-bar">
+              <div class="c4-tab">
+                <span class="c4-favbox"><span class="c4-favghost"></span></span>
+                <span class="c4-tabname"></span>
+                <span class="c4-x" id="c4-x">
+                  <svg viewBox="0 0 8 8"><path d="M1.6 1.6l4.8 4.8M6.4 1.6L1.6 6.4"/></svg>
+                </span>
+              </div>
+              <span class="c4-load c4-load--they"></span>
+            </div>
+
+            <div class="c4-body">
+              <div class="c4-ghost c4-ghost--a"></div>
+              <div class="c4-ghost c4-ghost--b"></div>
+              <div class="c4-spinwrap"><span class="c4-spin"></span></div>
+            </div>
+
+            <span class="c4-ring" id="c4-ring"></span>
+            <span class="c4-cur c4-cur--they" id="c4-curThey">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg>
+            </span>
+          </div>
+
+          <div class="c4-foot">
+            <span class="c4-st c4-st--they" id="c4-stThey">закрыл вкладку</span>
+            <span class="c4-time c4-time--they" id="c4-timeThey"><span id="c4-numThey">3,0 c</span><i class="c4-cross"></i></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="t">Клиент, который не ушёл</div>
+    <div class="d">Сайт грузится мгновенно — никто не закрывает вкладку, не дождавшись загрузки.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var card    = document.getElementById('card4'),
+      numWe   = document.getElementById('c4-numWe'),
+      numThey = document.getElementById('c4-numThey'),
+      timeThey= document.getElementById('c4-timeThey'),
+      curWe   = document.getElementById('c4-curWe'),
+      curThey = document.getElementById('c4-curThey'),
+      winThey = document.getElementById('c4-winThey'),
+      stWe    = document.getElementById('c4-stWe'),
+      stThey  = document.getElementById('c4-stThey'),
+      xBtn    = document.getElementById('c4-x'),
+      ring    = document.getElementById('c4-ring'),
+      btn     = card.querySelector('.c4-btn');
+
+  var timers = [];
+  function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
+  function clearAll(){ for (var i=0;i<timers.length;i++) clearTimeout(timers[i]); timers = []; }
+
+  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function sec(v){ return v.toFixed(1).replace('.', ',') + ' c'; }
+
+  /* секундомер: rAF + обязательная страховка таймером —
+     в фоновой вкладке rAF замораживается, финал должен дойти всё равно */
+  function clock(el, to, dur, delay, onEnd){
+    var done = false, t0 = 0;
+    function fin(){
+      if (done) return;
+      done = true;
+      el.textContent = sec(to);
+      if (onEnd) onEnd();
+    }
+    later(function(){
+      function frame(ts){
+        if (done) return;
+        if (!t0) t0 = ts;
+        var p = (ts - t0) / dur;
+        if (p >= 1) { fin(); return; }
+        el.textContent = sec(to * p);
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+      later(fin, dur + 140);
+    }, delay);
+  }
+
+  /* сброс всего, что ведёт JS. CSS-состояния сбрасывает снятие .play */
+  function reset(){
+    clearAll();
+    card.classList.add('c4-nofx');      /* откат мёртвого окна — без обратной анимации */
+    card.classList.remove('c4-won');
+    btn.classList.remove('c4-hot');
+    curWe.classList.remove('c4-go');
+    curThey.classList.remove('c4-drift','c4-tox');
+    winThey.classList.remove('c4-dead');
+    timeThey.classList.remove('c4-cut');
+    xBtn.classList.remove('c4-x--on');
+    ring.classList.remove('c4-pop');
+    stWe.classList.remove('c4-on');
+    stThey.classList.remove('c4-on');
+    void card.offsetWidth;              /* фиксируем чистое состояние одним кадром */
+    card.classList.remove('c4-nofx');
+  }
+
+  /* финальный кадр — для prefers-reduced-motion */
+  function finalFrame(){
+    numWe.textContent   = sec(0.8);
+    numThey.textContent = sec(3.0);
+    card.classList.add('c4-won');
+    winThey.classList.add('c4-dead');
+    timeThey.classList.add('c4-cut');
+    stWe.classList.add('c4-on');
+    stThey.classList.add('c4-on');
+  }
+
+  function leaves(){                       /* человек закрывает вкладку */
+    ring.classList.remove('c4-pop'); void ring.offsetWidth; ring.classList.add('c4-pop');
+    winThey.classList.add('c4-dead');
+    timeThey.classList.add('c4-cut');
+    later(function(){ stThey.classList.add('c4-on'); }, 190);
+    later(function(){ card.classList.add('c4-won'); }, 120);   /* рамка нашего окна теплеет */
+  }
+
+  window.playCard4 = function(){
+    reset();
+    card.classList.add('play');          /* страховка: без .play сцена осталась бы пустой */
+    if (RM){ finalFrame(); return; }
+
+    numWe.textContent = sec(0); numThey.textContent = sec(0);
+
+    /* наш: страница готова — секундомер останавливается сам */
+    clock(numWe, 0.8, 800, 100);
+
+    /* наш посетитель доезжает до кнопки и остаётся на ней */
+    later(function(){ curWe.classList.add('c4-go'); }, 1000);
+    later(function(){ btn.classList.add('c4-hot'); }, 1600);
+    later(function(){ stWe.classList.add('c4-on'); }, 1800);
+
+    /* их посетитель: скука → нетерпение → крестик */
+    later(function(){ curThey.classList.add('c4-drift'); }, 2150);
+    later(function(){ xBtn.classList.add('c4-x--on'); }, 2520);
+    later(function(){ curThey.classList.remove('c4-drift'); curThey.classList.add('c4-tox'); }, 2560);
+
+    /* их секундомер не финиширует, а обрывается — уход следует из ожидания */
+    clock(numThey, 3.0, 2900, 100, leaves);
+  };
+
+  /* ── демо-обвязка: автозапуск + повтор по наведению ───────────── */
+  function play(){
+    card.classList.remove('play'); void card.offsetWidth; card.classList.add('play');
+    window.playCard4();
+  }
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      for (var i=0;i<es.length;i++) if (es[i].isIntersecting){ io.disconnect(); play(); }
+    }, {threshold:.35});
+    io.observe(card);
+  } else { play(); }
+  card.addEventListener('mouseenter', play);
+})();
+</script>
+</body>
+</html>

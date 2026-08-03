@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Карточка 02 · Окупаемая реклама</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════════
+  КАРТОЧКА 02 · «Окупаемая реклама» — рассуждение
+
+  ЧТО БЫЛО НЕ ТАК
+  Предыдущая версия — декоративная кривая. Она рисуется одним махом
+  (stroke-dashoffset), значит это не данные, а росчерк. Расход и выручка —
+  две линии в одной полуплоскости, разрыв между ними надо ВЫЧИСЛЯТЬ глазом.
+  «×3,4» приезжает готовым ярлыком в тултипе: подпись, а не результат.
+  Галочки Метрики висят внизу отдельным блоком и ни с чем не связаны.
+
+  ЧТО ДОКАЗЫВАЕТ УТВЕРЖДЕНИЕ
+  Утверждение: вложили мало — получили много, и это ВИДНО, потому что цели
+  настроены. Значит эффект должен быть не «график», а панель аналитики,
+  которая ЗАПОЛНЯЕТСЯ данными. Три решения:
+
+  1. РАЗНОСТОРОННЯЯ ОСЬ. Расход уходит ВНИЗ от нуля, выручка — ВВЕРХ.
+     Разрыв больше не надо вычислять: снизу шесть одинаковых серых пеньков
+     по 10,3px, сверху лаймовые колонны до 54px. Асимметрия читается
+     за долю секунды, ещё до того как мозг прочтёт легенду.
+     Важная поправка после первой сборки: серый расход снизу и серый
+     «возврат» сверху слипались в один пьедестал. Лечится линией нуля
+     ПОВЕРХ колонок (z-index 5) плюс зазор 1px с каждой стороны.
+
+  2. ЦВЕТОВОЙ РАЗДЕЛ ВНУТРИ КОЛОНКИ. Нижние 10,3px каждой колонки выручки
+     идут приглушённым лаймом (26%) и точно повторяют высоту пенька расхода
+     под осью, — это часть, которая просто вернула вложенное. Яркий лайм
+     остаётся только на прибыли. На 1-й неделе яркая шапка всего 3,9px —
+     «едва отбились»; к 6-й неделе яркий лайм занимает 80% колонки —
+     «разгон». История рампапа зашита в цвет, а не рассказана текстом.
+     Пунктирная линия окупаемости дорисовывается ПОСЛЕ данных — как вывод,
+     а не как разметка.
+     (Первая версия красила «возврат» тем же серым, что и расход: снизу и
+     сверху от оси получался один слипшийся пьедестал.)
+
+  3. ×3,4 — ВЫЧИСЛЯЕТСЯ. Данные приходят по неделям (6 шагов), и на каждом
+     шаге пересчитывается накопленное отношение: ×1,4 → ×1,9 → ×2,3 → ×2,7
+     → ×3,0 → ×3,4. Это уже не подпись, а показатель, который на глазах
+     доезжает до итога. Деньги в легенде тоже идут ступенями (8→16→…→48 и
+     11→31→…→163 тыс.), а не плавным твином: пачками, как выгрузка отчёта.
+
+  ЦЕЛИ МЕТРИКИ ПРИВЯЗАНЫ К ГРАФИКУ ДВАЖДЫ:
+  — по времени: галочки ставятся ПЕРВЫМИ (0,15 и 0,33 с), и только потом
+    начинают приходить данные. Порядок сам объясняет: сначала настроили —
+    поэтому и видно.
+  — по числу: счётчик «47 заявок» растёт синхронно с колонками
+    (3→10→18→27→37→47). Достижения цели — источник этой выручки.
+
+  МИКРО-ДЕТАЛИ (замечаешь со второго раза)
+  · колонка расхода каждую неделю выходит на 90 мс РАНЬШЕ своей выручки —
+    деньги сначала уходят, потом возвращаются;
+  · расход и выручка на разных easing: расход короткий и жёсткий (230 мс,
+    бюджет фиксирован), выручка длиннее и мягче, и чем колонка выше — тем
+    дольше едет (300 + i·22 мс);
+  · KPI-блок не лежит готовым — он появляется ровно в момент первых данных;
+  · каркас панели (ось, сетка, номера недель, подписи легенды) существует
+    ДО анимации: панель есть всегда, наполняются только данные;
+  · правильное склонение: «3 заявки», но «47 заявок».
+
+  ТЕХНИКА
+  · анимируются только transform (scaleY/scaleX), opacity и
+    stroke-dashoffset. Высоты колонок — статичный inline px, layout не
+    трогается. Числа меняются в моно-шрифте с tabular-nums и в собственной
+    строке с margin-left:auto — соседи не переливаются;
+  · ноль rAF: только setTimeout + финальный «доводчик» на 2600 мс, который
+    безусловно выставляет итоговые значения (защита от троттлинга таймеров
+    в фоновой вкладке);
+  · без JS класс .c2-live не ставится → карточка сразу в финальном
+    состоянии: колонки на месте, ×3,4 и рубли в разметке. Если JS есть,
+    а .play так и не пришёл — через 6 с .c2-live снимается сам, пустой
+    панели не остаётся ни при каком раскладе;
+  · prefers-reduced-motion: всё статично, конечные значения на месте;
+  · лайм: прибыльная часть колонок + две галочки. Больше нигде.
+    Свечений нет.
+═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+/* ── переменные и оболочка демо (при сборке берутся из общего файла) ── */
+:root{
+  --bg:#0A0E1A; --card:#0E1320; --ink:#EEF1F6; --txt:#98A2B3; --dim:#68707F;
+  --lime:#CDFF4F; --hair:rgba(238,241,246,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;display:grid;place-items:center;min-height:100vh;padding:40px}
+.c2-shell{width:258px;border:1px solid var(--hair);border-radius:10px;overflow:hidden}
+
+/* ══════════════════ КАРТОЧКА ══════════════════ */
+.c2-card{position:relative;background:var(--card);padding:0 0 20px;min-height:352px;
+  display:flex;flex-direction:column;transition:background .4s ease}
+.c2-card:hover{background:#101728}
+.c2-stage{position:relative;height:192px;overflow:hidden;border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg,rgba(255,255,255,.014),transparent)}
+.c2-n{position:absolute;top:12px;right:14px;z-index:8;font-family:'Unbounded',system-ui,sans-serif;
+  font-weight:700;font-size:15px;color:rgba(238,241,246,.2);letter-spacing:-.02em;
+  transition:color .5s ease}
+.c2-card.play .c2-n{color:rgba(205,255,79,.7)}
+.c2-t{margin:16px 18px 0;font-weight:600;font-size:15px;letter-spacing:-.015em}
+.c2-d{margin:7px 18px 0;font-size:12.8px;line-height:1.5;color:var(--txt)}
+
+/* ── общая раскладка сцены ── */
+.c2-panel{position:absolute;inset:0;padding:11px 16px 0}
+
+/* ── строка статуса: метрика · цель ── */
+.c2-head{display:flex;align-items:center;gap:11px;height:11px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;letter-spacing:.02em;
+  color:var(--dim);white-space:nowrap}
+.c2-head span{display:inline-flex;align-items:center;gap:4px}
+.c2-tick{width:8px;height:8px;flex:0 0 auto;display:block}
+.c2-tick path{stroke:var(--lime);stroke-width:2.4;fill:none;stroke-linecap:round;
+  stroke-linejoin:round;stroke-dasharray:13;stroke-dashoffset:0}
+
+/* ── KPI: отношение выручки к расходу ── */
+.c2-kpi{margin-top:9px;display:flex;align-items:center;gap:9px;height:22px}
+.c2-ratio{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;font-size:21px;
+  line-height:22px;letter-spacing:-.03em;color:var(--ink);font-variant-numeric:tabular-nums}
+.c2-sub{display:flex;flex-direction:column;justify-content:center;gap:1px;
+  font-size:8.5px;line-height:10px;color:var(--dim);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+
+/* ── график ── */
+.c2-plot{position:relative;height:84px;margin-top:10px}
+.c2-grid{position:absolute;left:0;right:0;height:1px;background:rgba(238,241,246,.035)}
+/* ось нуля идёт ПОВЕРХ колонок: без неё серый расход снизу и серый «возврат»
+   сверху слипаются в один пьедестал и разносторонность оси пропадает */
+.c2-axis{position:absolute;left:0;right:0;top:58px;height:1px;z-index:5;
+  background:rgba(238,241,246,.2)}
+/* линия окупаемости — ровно по верху «возвратной» части колонок */
+.c2-be{position:absolute;left:0;right:0;top:46.7px;height:1px;z-index:3;transform-origin:0 50%;
+  background:repeating-linear-gradient(90deg,rgba(238,241,246,.24) 0 2px,transparent 2px 5px)}
+.c2-cols{position:absolute;inset:0;display:flex;z-index:2}
+.c2-col{flex:1;position:relative}
+.c2-up{position:absolute;left:50%;margin-left:-7px;width:14px;bottom:27px;
+  border-radius:1.5px 1.5px 0 0;transform-origin:50% 100%;
+  /* нижние 10,29px = ровно то, что вернуло расход: приглушённый лайм.
+     Серым его делать нельзя — слипается с пеньком расхода под осью. */
+  background:linear-gradient(to top,
+    rgba(205,255,79,.26) 0,rgba(205,255,79,.26) 10.29px,var(--lime) 10.29px)}
+.c2-dn{position:absolute;left:50%;margin-left:-7px;width:14px;top:59px;height:10.29px;
+  border-radius:0 0 1.5px 1.5px;transform-origin:50% 0;background:#39404E}
+.c2-wk{position:absolute;top:72px;left:0;right:0;text-align:center;font-style:normal;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:6.5px;
+  color:rgba(238,241,246,.2)}
+
+/* ── легенда с деньгами ── */
+.c2-leg{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.c2-row{display:flex;align-items:center;font-size:10.5px;line-height:13px;color:var(--dim)}
+.c2-sw{width:10px;height:2px;border-radius:2px;margin-right:6px;flex:0 0 auto}
+.c2-val{margin-left:auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;
+  color:var(--txt);font-variant-numeric:tabular-nums}
+
+/* ══════════════════ СОСТОЯНИЯ АНИМАЦИИ ══════════════════
+   Всё выше — ФИНАЛЬНОЕ состояние. Без JS класс .c2-live не появится,
+   карточка читается целиком. .c2-live прячет, .play проигрывает. */
+.c2-live .c2-head{opacity:0}
+.c2-live .c2-tick path{stroke-dashoffset:13}
+.c2-live .c2-kpi{opacity:0;transform:translateY(4px)}
+.c2-live .c2-up,.c2-live .c2-dn{transform:scaleY(0)}
+.c2-live .c2-be{transform:scaleX(0)}
+
+.c2-live.play .c2-head{opacity:1;transition:opacity .3s ease .04s}
+.c2-live.play .c2-tick path{stroke-dashoffset:0;transition:stroke-dashoffset .26s ease .15s}
+.c2-live.play .c2-s2 .c2-tick path{transition-delay:.33s}
+.c2-live.play .c2-kpi{opacity:1;transform:none;
+  transition:opacity .32s ease .82s,transform .42s cubic-bezier(.22,1,.28,1) .82s}
+.c2-live.play .c2-up,.c2-live.play .c2-dn{transform:scaleY(1)}
+.c2-live.play .c2-be{transform:scaleX(1);
+  transition:transform .44s cubic-bezier(.22,1,.28,1) 2.16s}
+
+/* расход выходит первым, коротко и жёстко — бюджет фиксирован */
+.c2-live.play .c2-dn{transition:transform .23s cubic-bezier(.34,.86,.4,1)}
+.c2-live.play .c2-col:nth-child(1) .c2-dn{transition-delay:.560s}
+.c2-live.play .c2-col:nth-child(2) .c2-dn{transition-delay:.765s}
+.c2-live.play .c2-col:nth-child(3) .c2-dn{transition-delay:.970s}
+.c2-live.play .c2-col:nth-child(4) .c2-dn{transition-delay:1.175s}
+.c2-live.play .c2-col:nth-child(5) .c2-dn{transition-delay:1.380s}
+.c2-live.play .c2-col:nth-child(6) .c2-dn{transition-delay:1.585s}
+/* выручка отвечает через 90 мс и едет тем дольше, чем выше колонка */
+.c2-live.play .c2-up{transition:transform .30s cubic-bezier(.18,.86,.32,1)}
+.c2-live.play .c2-col:nth-child(1) .c2-up{transition-delay:.650s;transition-duration:.300s}
+.c2-live.play .c2-col:nth-child(2) .c2-up{transition-delay:.855s;transition-duration:.322s}
+.c2-live.play .c2-col:nth-child(3) .c2-up{transition-delay:1.060s;transition-duration:.344s}
+.c2-live.play .c2-col:nth-child(4) .c2-up{transition-delay:1.265s;transition-duration:.366s}
+.c2-live.play .c2-col:nth-child(5) .c2-up{transition-delay:1.470s;transition-duration:.388s}
+.c2-live.play .c2-col:nth-child(6) .c2-up{transition-delay:1.675s;transition-duration:.410s}
+
+@media (prefers-reduced-motion:reduce){
+  .c2-card *,.c2-card *::before,.c2-card *::after{
+    transition:none!important;animation:none!important}
+  .c2-live .c2-head{opacity:1}
+  .c2-live .c2-tick path{stroke-dashoffset:0}
+  .c2-live .c2-kpi{opacity:1;transform:none}
+  .c2-live .c2-up,.c2-live .c2-dn{transform:scaleY(1)}
+  .c2-live .c2-be{transform:scaleX(1)}
+}
+</style>
+</head>
+<body>
+
+<div class="c2-shell">
+  <div class="c2-card" id="c2">
+    <div class="c2-stage">
+      <div class="c2-n">02</div>
+
+      <div class="c2-panel">
+
+        <div class="c2-head">
+          <span class="c2-s1">
+            <svg class="c2-tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>метрика
+          </span>
+          <span class="c2-s2">
+            <svg class="c2-tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>цель «заявка»
+          </span>
+        </div>
+
+        <div class="c2-kpi">
+          <div class="c2-ratio" id="c2-ratio">×3,4</div>
+          <div class="c2-sub">
+            <span>на каждый вложенный ₽</span>
+            <span id="c2-leads">47 заявок · 6 недель</span>
+          </div>
+        </div>
+
+        <div class="c2-plot">
+          <span class="c2-grid" style="top:22px"></span>
+          <span class="c2-grid" style="top:40px"></span>
+          <span class="c2-axis"></span>
+          <div class="c2-cols">
+            <div class="c2-col"><span class="c2-up" style="height:14.14px"></span><span class="c2-dn"></span><em class="c2-wk">1</em></div>
+            <div class="c2-col"><span class="c2-up" style="height:25.71px"></span><span class="c2-dn"></span><em class="c2-wk">2</em></div>
+            <div class="c2-col"><span class="c2-up" style="height:32.14px"></span><span class="c2-dn"></span><em class="c2-wk">3</em></div>
+            <div class="c2-col"><span class="c2-up" style="height:38.57px"></span><span class="c2-dn"></span><em class="c2-wk">4</em></div>
+            <div class="c2-col"><span class="c2-up" style="height:45.00px"></span><span class="c2-dn"></span><em class="c2-wk">5</em></div>
+            <div class="c2-col"><span class="c2-up" style="height:54.00px"></span><span class="c2-dn"></span><em class="c2-wk">6</em></div>
+          </div>
+          <span class="c2-be"></span>
+        </div>
+
+        <div class="c2-leg">
+          <div class="c2-row"><i class="c2-sw" style="background:#39404E"></i>расход<b class="c2-val" id="c2-spend">48 000 ₽</b></div>
+          <div class="c2-row"><i class="c2-sw" style="background:#CDFF4F"></i>выручка<b class="c2-val" id="c2-earn">163 000 ₽</b></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="c2-t">Окупаемая реклама</div>
+    <div class="c2-d">Готов под Яндекс Директ с первого дня: метрика и цели настроены — видно отдачу с каждого рубля.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var card = document.getElementById('c2');
+  if (!card) return;
+
+  var elRatio = document.getElementById('c2-ratio'),
+      elLeads = document.getElementById('c2-leads'),
+      elSpend = document.getElementById('c2-spend'),
+      elEarn  = document.getElementById('c2-earn');
+
+  var NB = ' ';                                   /* неразрывный пробел в разрядах */
+  /* накопленные значения по неделям — те же, что рисуют колонки */
+  var SPEND = ['8'+NB+'000','16'+NB+'000','24'+NB+'000','32'+NB+'000','40'+NB+'000','48'+NB+'000'],
+      EARN  = ['11'+NB+'000','31'+NB+'000','56'+NB+'000','86'+NB+'000','121'+NB+'000','163'+NB+'000'],
+      RATIO = ['×1,4','×1,9','×2,3','×2,7','×3,0','×3,4'],
+      LEADS = [3,10,18,27,37,47];
+
+  function plural(n){
+    var d = n % 10, h = n % 100;
+    if (d === 1 && h !== 11) return 'заявка';
+    if (d >= 2 && d <= 4 && (h < 12 || h > 14)) return 'заявки';
+    return 'заявок';
+  }
+  function week(i){
+    elSpend.textContent = SPEND[i] + ' ₽';
+    elEarn.textContent  = EARN[i]  + ' ₽';
+    elRatio.textContent = RATIO[i];
+    elLeads.textContent = LEADS[i] + ' ' + plural(LEADS[i]) + ' · 6 недель';
+  }
+  function finish(){ week(5); }
+
+  card.classList.add('c2-live');
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if (reduce){
+    finish();
+    window.playCard2 = finish;
+    return;
+  }
+
+  function reset(){
+    elSpend.textContent = '0 ₽';
+    elEarn.textContent  = '0 ₽';
+    elRatio.textContent = '×0,0';
+    elLeads.textContent = '0 заявок · 6 недель';
+  }
+  reset();
+
+  var timers = [];
+  function T(fn, ms){ timers.push(setTimeout(fn, ms)); }
+  function stop(){ for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
+
+  /* Страховка от пустой панели: .c2-live уже спрятал колонки, а .play может
+     не прийти (не сработал наблюдатель родителя, отключился его скрипт).
+     Через 6 с просто снимаем .c2-live — карточка мгновенно в финале. */
+  var guard = setTimeout(function(){
+    if (!card.classList.contains('play')){ card.classList.remove('c2-live'); finish(); }
+  }, 6000);
+
+  /* Запуск: родитель ставит .play и зовёт playCard2().
+     Отдельно тоже работает — класс поставим сами, если его нет. */
+  window.playCard2 = function(){
+    clearTimeout(guard);
+    card.classList.add('c2-live');
+    stop(); reset();
+    if (!card.classList.contains('play')) card.classList.add('play');
+    for (var i = 0; i < 6; i++){
+      (function(i){ T(function(){ week(i); }, 880 + i * 205); })(i);
+    }
+    /* доводчик: таймеры в фоновой вкладке троттлятся — итог выставляем безусловно */
+    T(finish, 2600);
+  };
+
+  /* ─── ниже только обвязка автономного файла ─── */
+  function replay(){
+    card.classList.remove('play');
+    void card.offsetWidth;
+    card.classList.add('play');
+    window.playCard2();
+  }
+  card.addEventListener('mouseenter', replay);
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ io.disconnect(); replay(); } });
+    }, {threshold:.4});
+    io.observe(card);
+  } else { replay(); }
+})();
+</script>
+</body>
+</html>

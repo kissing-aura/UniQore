@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Карточка 03 — Ни одного потерянного лида</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<!--
+════════════════════════════════════════════════════════════════════════════
+  КАРТОЧКА 03 · «Ни одного потерянного лида»
+  Утверждение: заявка мгновенно в Telegram И в CRM, вы отвечаете первым.
+
+  ЧТО БЫЛО НЕ ТАК В ПРЕДЫДУЩЕЙ ВЕРСИИ
+  1. Лента из трёх уведомлений доказывает «у вас много заявок», а не «заявка
+     не теряется и приходит мгновенно». Тезис и картинка расходятся.
+  2. Слово «мгновенно» ничем не подтверждено: времени на сцене нет вообще.
+  3. Второй адресат (CRM) не показан — половина утверждения без картинки.
+  4. Три уведомления приезжают с равным шагом 640 мс и одинаковой анимацией.
+     Это и «три одинаковых элемента в ряд», и неправда: реальные события
+     приходят вразнобой.
+
+  ЧТО ДОКАЗЫВАЕТ УТВЕРЖДЕНИЕ ЛУЧШЕ ВСЕГО
+  Маршрут, а не лента. Одна заявка с сайта → сигнал уходит вниз по стволу →
+  на развилке раздваивается → два разных интерфейса (чат и таблица) получают
+  ОДИН И ТОТ ЖЕ лид. Секундомер идёт от нуля с момента отправки и замирает
+  ровно в тот миг, когда доехал второй адресат.
+    · «мгновенно»       — секундомер, который останавливается на 0,40 с;
+    · «и Telegram и CRM» — два разных по устройству приёмника, не близнецы;
+    · «ни одного потерянного» — счётчик 2 / 2: копия лежит в двух местах,
+       терять нечего, даже если один канал отвалится;
+    · «отвечаете первым» — 0,20 с до чата: уведомление уже у вас в кармане,
+       пока человек ещё не закрыл вкладку.
+
+  ЧЕСТНАЯ АРИФМЕТИКА СЦЕНЫ (внутренняя согласованность — её замечают на
+  второй раз): анимация — это замедленная съёмка, 1 реальная секунда = 2040 мс
+  на экране. Ствол = 0,06 с, ветка в чат = ещё 0,14 с (итого 0,20 с — ровно то,
+  что написано в чате), ветка в CRM = ещё 0,34 с (итого 0,40 с — ровно то, что
+  написано в строке CRM). Секундомер идёт линейно и в момент прилёта чата
+  показывает 0,20, в момент прилёта CRM — 0,40 и замирает. Ни одна цифра на
+  сцене не противоречит другой.
+
+  МИКРО-ДЕТАЛИ (список — в JSON-ответе)
+  Разные длины веток и разные easing; ствол один, веток две; рельсы навсегда
+  светлеют после прохода сигнала; строка «Марат» в CRM съезжает вниз, уступая
+  место новой записи (записи не перетираются); галочки доставки в чате
+  дорисовываются через 180 мс после самого сообщения и не одновременно друг
+  с другом; точка-источник гаснет, когда обе копии на месте; телефон и имя —
+  те же, что печатает курсор в карточке 01.
+
+  ТЕХНИКА
+  · Только transform / opacity / stroke-dashoffset / stroke / border-color.
+    Ни одного свойства, вызывающего layout.
+  · Конечное состояние сцены = состояние по умолчанию в разметке. Начальное
+    («взведённое») состояние включает сам скрипт классом .armed в момент
+    запуска. Без JS, при ошибке JS и до первого запуска сцена показана
+    целиком: ни один элемент не может залипнуть в opacity:0.
+  · Секундомер на rAF + дубль финального значения таймером (фоновая вкладка).
+  · Пути помечены pathLength="100" — дуга нормирована, dashoffset считается
+    в процентах, геометрию можно править не трогая анимацию.
+  · vector-effect="non-scaling-stroke" — карточка в сетке шире 258 px,
+    SVG растягивается, толщина линий не плывёт.
+  · Лайм: точка-источник 5 px, два бегущих сигнала, финальная цифра. Всё.
+════════════════════════════════════════════════════════════════════════════
+-->
+<style>
+:root{
+  --bg:#0A0E1A; --card:#0E1320; --ink:#EEF1F6; --txt:#98A2B3; --dim:#68707F;
+  --lime:#CDFF4F; --hair:rgba(238,241,246,.06);
+  --e3:cubic-bezier(.22,1,.28,1);
+  --e3out:cubic-bezier(.2,.9,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.holder{width:258px;margin:70px auto;border:1px solid var(--hair);border-radius:10px;overflow:hidden}
+
+/* ── оболочка карточки (общая для блока, не моя часть) ── */
+.card{position:relative;background:var(--card);padding:0 0 20px;min-height:352px;
+  display:flex;flex-direction:column;transition:background .4s ease}
+.card:hover{background:#101728}
+.stage{position:relative;height:192px;overflow:hidden;border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg,rgba(255,255,255,.014),transparent)}
+.n{position:absolute;top:12px;right:14px;z-index:8;font-family:'Unbounded';font-weight:700;
+  font-size:15px;color:rgba(238,241,246,.2);letter-spacing:-.02em;transition:color .5s ease}
+.card.play .n{color:rgba(205,255,79,.7)}
+.t{margin:16px 18px 0;font-weight:600;font-size:15px;letter-spacing:-.015em}
+.d{margin:7px 18px 0;font-size:12.8px;line-height:1.5;color:var(--txt)}
+
+/* ══════════════════ 03 · МАРШРУТ ЗАЯВКИ ══════════════════ */
+.c3{position:absolute;inset:0;padding:13px 16px 10px;display:flex;flex-direction:column}
+
+/* — источник — */
+.c3-chip{align-self:center;display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;
+  height:22px;padding:0 10px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(255,255,255,.024);font-size:10px;color:var(--txt);white-space:nowrap;
+  transition:opacity .34s ease,transform .52s var(--e3)}
+.c3.armed .c3-chip:not(.on){opacity:0;transform:translateY(6px);transition:none}
+.c3-dot{position:relative;width:5px;height:5px;border-radius:50%;flex:0 0 auto;
+  background:#3B4253;transition:background .55s ease}
+.c3-dot.hot{background:var(--lime);transition:background .12s ease}
+.c3-dot::after{content:'';position:absolute;inset:-1px;border-radius:50%;
+  border:1px solid rgba(205,255,79,.8);opacity:0}
+.c3-dot.hot::after{animation:c3ring .72s ease-out}
+@keyframes c3ring{from{opacity:.85;transform:scale(.6)}to{opacity:0;transform:scale(3.1)}}
+
+/* — развилка — */
+.c3-fork{flex:0 0 auto;height:54px;margin-top:4px}
+.c3-fork svg{display:block;width:100%;height:100%}
+.c3-rail{fill:none;stroke:rgba(238,241,246,.15);stroke-width:1.1;stroke-linecap:round;
+  transition:stroke .6s ease}
+.c3.armed .c3-rail:not(.lit){stroke:rgba(238,241,246,.05);transition:none}
+.c3-pk{fill:none;stroke:var(--lime);stroke-width:1.8;stroke-linecap:round;
+  stroke-dasharray:13 100;stroke-dashoffset:13}
+.c3-fork.go-tr .c3-pk-tr{stroke-dashoffset:-100;transition:stroke-dashoffset .122s cubic-bezier(.5,0,.6,1)}
+.c3-fork.go-tg .c3-pk-tg{stroke-dashoffset:-100;transition:stroke-dashoffset .285s cubic-bezier(.25,.55,.4,1)}
+.c3-fork.go-crm .c3-pk-crm{stroke-dashoffset:-100;transition:stroke-dashoffset .693s cubic-bezier(.34,.42,.42,1)}
+
+/* — два адресата — */
+.c3-dsts{flex:1 1 auto;min-height:0;display:flex;gap:10px}
+.c3-dst{flex:1 1 0;min-width:0;border:1px solid rgba(238,241,246,.14);border-radius:7px;
+  background:#141A27;padding:6px;display:flex;flex-direction:column;
+  transition:border-color .45s ease}
+.c3.armed .c3-dst:not(.hit){border-color:var(--hair);transition:none}
+.c3.armed .c3-dst.hit{animation:c3land .5s var(--e3out)}
+@keyframes c3land{0%{transform:translateY(3px)}55%{transform:translateY(-1.5px)}100%{transform:none}}
+.c3-dh{display:flex;align-items:center;gap:5px;flex:0 0 auto;height:12px;
+  font-size:9px;font-weight:600;color:var(--txt);letter-spacing:.01em}
+.c3-g{width:9px;height:9px;flex:0 0 auto;fill:none;stroke:var(--dim);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* Telegram — сообщение в чате */
+.c3-bub{margin-top:auto;background:#1B2231;border-radius:7px 7px 7px 3px;padding:5px 6px;
+  transition:opacity .3s ease,transform .46s var(--e3)}
+.c3.armed .c3-dst:not(.hit) .c3-bub{opacity:0;transform:translateY(7px) scale(.965);transition:none}
+.c3-l1{font-size:10px;line-height:12px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c3-l2{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:7.4px;line-height:9px;
+  color:var(--dim);letter-spacing:-.03em;white-space:nowrap}
+.c3-meta{height:8px;margin-top:1px;display:flex;align-items:center;justify-content:flex-end;gap:3px}
+.c3-ms{flex:0 0 auto;font-family:'JetBrains Mono',ui-monospace,monospace;
+  font-size:7px;line-height:8px;color:var(--dim);letter-spacing:-.02em}
+.c3-dc{flex:0 0 auto;width:11px;height:7px;fill:none;stroke:var(--txt);stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.c3-dc path{stroke-dasharray:13;stroke-dashoffset:0;transition:stroke-dashoffset .3s ease}
+.c3-dst.hit .c3-dc .a{transition-delay:.19s}
+.c3-dst.hit .c3-dc .b{transition-delay:.27s}
+.c3.armed .c3-dst:not(.hit) .c3-dc path{stroke-dashoffset:13;transition:none}
+
+/* CRM — строка в таблице */
+.c3-tbl{margin-top:auto;display:flex;flex-direction:column;gap:4px}
+.c3-r{height:17px;display:flex;align-items:center;gap:4px;padding:0 6px;border-radius:4px;
+  background:rgba(255,255,255,.035)}
+.c3-r b{font-size:9.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c3-r i{margin-left:auto;flex:0 0 auto;font-style:normal;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:7px;color:var(--dim);
+  letter-spacing:-.02em}
+.c3-r--new{transition:opacity .3s ease .09s,transform .44s var(--e3) .09s}
+.c3-r--old{background:rgba(255,255,255,.018);transition:transform .46s var(--e3out)}
+.c3-r--old b{color:var(--dim);font-weight:500}
+.c3.armed .c3-dst:not(.hit) .c3-r--new{opacity:0;transform:translateY(-5px);transition:none}
+.c3.armed .c3-dst:not(.hit) .c3-r--old{transform:translateY(-21px);transition:none}
+
+/* — итог — */
+.c3-sum{flex:0 0 auto;height:12px;margin-top:7px;display:flex;align-items:center;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.6px;color:var(--dim);
+  letter-spacing:-.01em}
+.c3-ok{width:9px;height:9px;margin-right:5px;flex:0 0 auto;fill:none;stroke:var(--txt);
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:12;stroke-dashoffset:0;transition:stroke-dashoffset .34s ease .12s}
+.c3.armed .c3-sum:not(.full) .c3-ok{stroke-dashoffset:12;transition:none}
+.c3-cn{color:var(--txt);font-weight:400}
+.c3-clock{margin-left:auto;flex:0 0 auto;display:inline-block;font-size:9.6px;color:var(--lime);
+  letter-spacing:-.02em;transform-origin:100% 50%;
+  transition:color .3s ease,transform .34s var(--e3)}
+.c3.armed .c3-clock:not(.done){color:var(--dim);transform:none;transition:none}
+.c3.armed .c3-clock.done{animation:c3settle .36s var(--e3)}
+@keyframes c3settle{0%{transform:scale(1.09)}100%{transform:none}}
+
+/* — статика при выключенной анимации — */
+@media (prefers-reduced-motion:reduce){
+  .c3,.c3 *{transition:none!important;animation:none!important}
+  .c3.armed .c3-chip:not(.on),
+  .c3.armed .c3-dst:not(.hit) .c3-bub,
+  .c3.armed .c3-dst:not(.hit) .c3-r--new{opacity:1!important;transform:none!important}
+  .c3.armed .c3-dst:not(.hit) .c3-r--old{transform:none!important}
+  .c3.armed .c3-dst:not(.hit){border-color:rgba(238,241,246,.14)!important}
+  .c3.armed .c3-rail:not(.lit){stroke:rgba(238,241,246,.15)!important}
+  .c3.armed .c3-dst:not(.hit) .c3-dc path,
+  .c3.armed .c3-sum:not(.full) .c3-ok{stroke-dashoffset:0!important}
+  .c3.armed .c3-clock:not(.done){color:var(--lime)!important}
+  .c3-pk{stroke-dashoffset:13!important}
+}
+</style>
+</head>
+<body>
+
+<div class="holder">
+  <div class="card" id="card3" data-i="2">
+    <div class="stage">
+      <div class="n">03</div>
+
+      <div class="c3" id="c3">
+
+        <div class="c3-chip" id="c3chip"><span class="c3-dot" id="c3dot"></span>новая заявка с сайта</div>
+
+        <div class="c3-fork" id="c3fork">
+          <svg viewBox="0 0 226 54" preserveAspectRatio="none" aria-hidden="true">
+            <path class="c3-rail" id="c3railTr"  vector-effect="non-scaling-stroke" d="M113,0 L113,17"/>
+            <path class="c3-rail" id="c3railTg"  vector-effect="non-scaling-stroke" d="M113,17 C113,34 88,34 54,54"/>
+            <path class="c3-rail" id="c3railCrm" vector-effect="non-scaling-stroke" d="M113,17 C113,38 146,32 172,54"/>
+            <path class="c3-pk c3-pk-tr"  vector-effect="non-scaling-stroke" pathLength="100" d="M113,0 L113,17"/>
+            <path class="c3-pk c3-pk-tg"  vector-effect="non-scaling-stroke" pathLength="100" d="M113,17 C113,34 88,34 54,54"/>
+            <path class="c3-pk c3-pk-crm" vector-effect="non-scaling-stroke" pathLength="100" d="M113,17 C113,38 146,32 172,54"/>
+          </svg>
+        </div>
+
+        <div class="c3-dsts">
+
+          <div class="c3-dst hit" id="c3tg">
+            <div class="c3-dh">
+              <svg class="c3-g" viewBox="0 0 24 24"><path d="M21.4 4.4 2.9 11.5l6.6 2.2 2.2 6.6z"/><path d="M9.5 13.7 21.4 4.4"/></svg>
+              <span>Telegram</span>
+            </div>
+            <div class="c3-bub">
+              <div class="c3-l1">Виталий</div>
+              <div class="c3-l2">+7 913 204-11-08</div>
+              <div class="c3-meta">
+                <span class="c3-ms">0,20 с</span>
+                <svg class="c3-dc" viewBox="0 0 14 9"><path class="a" d="M1 4.9 3.4 7.4 7.9 2.1"/><path class="b" d="M5.7 4.9 8.1 7.4 12.6 2.1"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="c3-dst hit" id="c3crm">
+            <div class="c3-dh">
+              <svg class="c3-g" viewBox="0 0 24 24"><rect x="2.7" y="3.7" width="18.6" height="16.6" rx="2.6"/><path d="M2.7 9.4h18.6M9.6 9.4v10.9"/></svg>
+              <span>CRM</span>
+            </div>
+            <div class="c3-tbl">
+              <div class="c3-r c3-r--new"><b>Виталий</b><i>0,40 с</i></div>
+              <div class="c3-r c3-r--old"><b>Марат</b><i>12 мин</i></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="c3-sum full" id="c3sum">
+          <svg class="c3-ok" viewBox="0 0 12 12"><path d="M2 6.3 4.6 8.9 10 3.4"/></svg>
+          <span>доставлено <b class="c3-cn" id="c3cn">2</b> / 2</span>
+          <span class="c3-clock done" id="c3clock">0,40 с</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="t">Ни одного потерянного лида</div>
+    <div class="d">Каждая заявка мгновенно в Telegram и CRM — вы отвечаете первым, пока клиент ещё горячий.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var card  = document.getElementById('card3'),
+      chip  = document.getElementById('c3chip'),
+      dot   = document.getElementById('c3dot'),
+      fork  = document.getElementById('c3fork'),
+      rTr   = document.getElementById('c3railTr'),
+      rTg   = document.getElementById('c3railTg'),
+      rCrm  = document.getElementById('c3railCrm'),
+      tg    = document.getElementById('c3tg'),
+      crm   = document.getElementById('c3crm'),
+      sum   = document.getElementById('c3sum'),
+      cn    = document.getElementById('c3cn'),
+      clock = document.getElementById('c3clock'),
+      scene = document.getElementById('c3');
+
+  if (!card) return;
+
+  var TOTAL = 0.40,          /* итоговая задержка, с   */
+      DUR   = 815,           /* её экранная длительность, мс */
+      T = [], gen = 0, clockFin = null;
+
+  function at(fn, ms){ T.push(setTimeout(fn, ms)); }
+  function stop(){ for (var i = 0; i < T.length; i++) clearTimeout(T[i]); T = []; }
+  function fmt(v){ return v.toFixed(2).replace('.', ',') + ' с'; }
+
+  /* читаем настройку каждый раз: её могут переключить уже после загрузки */
+  function reduced(){
+    return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  /* конечное состояние = разметка по умолчанию */
+  function settle(){
+    scene.classList.remove('armed');
+    chip.classList.add('on');
+    dot.classList.remove('hot');
+    rTr.classList.add('lit'); rTg.classList.add('lit'); rCrm.classList.add('lit');
+    fork.classList.remove('go-tr','go-tg','go-crm');
+    tg.classList.add('hit'); crm.classList.add('hit');
+    sum.classList.add('full'); cn.textContent = '2';
+    clock.classList.add('done'); clock.textContent = fmt(TOTAL);
+  }
+
+  /* взвести сцену */
+  function arm(){
+    scene.classList.add('armed');
+    chip.classList.remove('on');
+    dot.classList.remove('hot');
+    rTr.classList.remove('lit'); rTg.classList.remove('lit'); rCrm.classList.remove('lit');
+    fork.classList.remove('go-tr','go-tg','go-crm');
+    tg.classList.remove('hit'); crm.classList.remove('hit');
+    sum.classList.remove('full'); cn.textContent = '0';
+    clock.classList.remove('done'); clock.textContent = fmt(0);
+    void card.offsetWidth;      /* сброс, чтобы keyframes отыгрались повторно */
+  }
+
+  /* секундомер: rAF для плавности + дубль по таймеру (фоновая вкладка) */
+  function runClock(g){
+    var t0 = 0, done = false;
+    clockFin = function(){
+      if (done || g !== gen) return;
+      done = true;
+      clock.textContent = fmt(TOTAL);
+    };
+    function frame(ts){
+      if (done || g !== gen) return;
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / DUR);
+      clock.textContent = fmt(TOTAL * p);
+      if (p < 1) requestAnimationFrame(frame); else clockFin();
+    }
+    requestAnimationFrame(frame);
+    at(clockFin, DUR + 160);
+  }
+
+  window.playCard3 = function(){
+    stop();
+    gen++;
+    if (reduced()){ settle(); return; }
+    var g = gen;
+    arm();
+
+    at(function(){ chip.classList.add('on'); }, 130);
+
+    /* отправка: точка вспыхивает, сигнал уходит по стволу, секундомер пошёл */
+    at(function(){
+      dot.classList.add('hot');
+      fork.classList.add('go-tr');
+      runClock(g);
+    }, 400);
+
+    /* развилка: один сигнал стал двумя, с разной скоростью */
+    at(function(){ rTr.classList.add('lit'); fork.classList.add('go-tg'); }, 522);
+    at(function(){ fork.classList.add('go-crm'); }, 534);
+
+    /* 0,20 с — Telegram */
+    at(function(){
+      rTg.classList.add('lit');
+      tg.classList.add('hit');
+      cn.textContent = '1';
+    }, 807);
+
+    /* 0,40 с — CRM, секундомер замирает на этом же значении */
+    at(function(){
+      rCrm.classList.add('lit');
+      crm.classList.add('hit');
+      cn.textContent = '2';
+      sum.classList.add('full');
+      if (clockFin) clockFin();
+      clock.classList.add('done');
+    }, 1215);
+
+    /* обе копии на месте — источнику больше нечего держать */
+    at(function(){ dot.classList.remove('hot'); }, 1560);
+  };
+
+  /* автозапуск + повтор по наведению (в блоке этим управляет общий скрипт) */
+  function play(){
+    card.classList.remove('play'); void card.offsetWidth; card.classList.add('play');
+    window.playCard3();
+  }
+  if ('IntersectionObserver' in window){
+    var started = false;
+    var io = new IntersectionObserver(function(es){
+      for (var i = 0; i < es.length; i++){
+        if (es[i].isIntersecting && !started){ started = true; play(); io.disconnect(); }
+      }
+    }, {threshold:.35});
+    io.observe(card);
+  } else { play(); }
+  card.addEventListener('mouseenter', play);
+})();
+</script>
+</body>
+</html>

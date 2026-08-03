@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Карточка 01 — Заявки, а не просмотры</title>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+
+<!--
+═══════════════════════════════════════════════════════════════════════
+  КАРТОЧКА 01 · «Заявки, а не просмотры»
+  Утверждение: структура ведёт посетителя к действию — трафик
+  превращается в обращения, а не в отказы.
+
+  ЧТО ДОКАЗЫВАЕТ ЭФФЕКТ (и почему именно так)
+  ---------------------------------------------------------------
+  Форма сама по себе ничего не доказывает — форма есть у всех.
+  Доказательство утверждения — это ПУТЬ: незнакомый человек пришёл
+  с рекламы, ни разу не задумался, куда нажимать, и дошёл до отправки.
+  Поэтому сцена — это не «анимированная форма», а запись экрана
+  одного визита, от перехода до подтверждения.
+
+  Четыре решения, на которых всё держится:
+
+  1. ИСТОЧНИК. Курсор входит из-за левого верхнего угла (его там
+     не было — он пришёл), рядом проявляется подпись «трафик
+     с рекламы». Одна строка 8,5px, без чипа и иконок. Зритель
+     понимает: это не абстрактный юзер, это оплаченный клик.
+
+  2. СПИНА СТРУКТУРЫ. Слева от формы — волосяная линия 1px
+     во всю высоту блока. По мере продвижения посетителя она
+     заполняется лаймом: 0 → 28% → 60% → 86% → 100%.
+     Это буквальная визуализация фразы «структура ведёт»:
+     линия не украшает, она показывает, сколько пути пройдено
+     до действия. 1px × 114px = 0,2% площади сцены.
+
+  3. ПРИЧИНА → СЛЕДСТВИЕ. Кнопка выключена, пока форма пустая.
+     Когда посетитель дописывает телефон, кнопка оживает САМА,
+     в момент, когда курсор ещё стоит у поля. Это та деталь,
+     которую замечают на второй раз: элементы реагируют друг
+     на друга, а не проигрывают каждый свой таймлайн.
+
+  4. ФИЗИКА ЖИВОГО ЭКРАНА:
+     • курсор идёт по квадратичной дуге (перпендикулярный вынос
+       контрольной точки), с разгоном, торможением и лёгким
+       перелётом ~4% — outBack(s=0.13);
+     • у каждого движения свой характер: приход и осмотр —
+       медленный easeInOutCubic; переход к полю — решительный
+       outBack; доводка перед кликом — короткий easeOutQuad
+       на 9px (человек всегда доцеливается);
+     • печать с плавающей скоростью: имя 52–115мс на знак,
+       телефон — быстрые серии внутри группы (44–80мс) и паузы
+       120–190мс на границах групп;
+     • маска подставляет пробел и дефис САМА, без нажатия —
+       «+7 913 204-» появляется на седьмой цифре. Так ведёт себя
+       настоящее поле ввода, и это дешевле опечатки с откатом,
+       которая читалась бы как сбой;
+     • каретка мигает только в простое, во время печати — сплошная
+       (так делают все реальные текстовые поля);
+     • после отправки поля гаснут до 55% — форма заблокирована,
+       а не «просто перекрасилась».
+
+  ЧЕГО СОЗНАТЕЛЬНО НЕТ
+     • лайм-заливки кнопки: успех — тёмная кнопка + кольцо 1px
+       и лаймовая галочка. Лайм в сцене только на: каретка (1px),
+       спина (1px), контур и текст подтверждения, слово «заявка».
+     • свечений box-shadow 0 0 Npx;
+     • анимации width/height/top/left. Всё на transform / opacity /
+       stroke-dashoffset. Единственный layout — перетекание текста
+       внутри поля 218×30 при печати, он изолирован contain:layout.
+
+  БЕЗ JS вёрстка отдаёт осмысленное конечное состояние: форма
+  заполнена, кнопка активна. JS синхронно обнуляет её при загрузке,
+  до первой отрисовки — поэтому вспышки нет.
+═══════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+:root{
+  --bg:#0A0E1A; --card:#0E1320; --ink:#EEF1F6; --txt:#98A2B3; --dim:#68707F;
+  --lime:#CDFF4F; --hair:rgba(238,241,246,.06);
+  --e:cubic-bezier(.22,1,.28,1);
+}
+
+/* ─────────── карточка ─────────── */
+.c1-card{position:relative;background:var(--card);padding:0 0 20px;min-height:352px;
+  display:flex;flex-direction:column;transition:background .4s ease}
+.c1-card:hover{background:#101728}
+.c1-stage{position:relative;height:192px;overflow:hidden;border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg,rgba(255,255,255,.014),transparent)}
+.c1-n{position:absolute;top:12px;right:14px;z-index:8;font-family:'Unbounded',system-ui,sans-serif;
+  font-weight:700;font-size:15px;color:rgba(238,241,246,.2);letter-spacing:-.02em;
+  transition:color .55s ease}
+.c1-card.play .c1-n{color:rgba(205,255,79,.7)}
+.c1-t{margin:16px 18px 0;font-weight:600;font-size:15px;letter-spacing:-.015em}
+.c1-d{margin:7px 18px 0;font-size:12.8px;line-height:1.5;color:var(--txt)}
+
+/* ─────────── откуда пришёл ─────────── */
+.c1-src{position:absolute;left:22px;top:12px;z-index:4;display:flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;letter-spacing:.055em;
+  color:var(--dim);white-space:nowrap;
+  transition:opacity .45s ease,transform .55s var(--e)}
+.c1-src i{display:block;width:9px;height:1px;background:currentColor;opacity:.65;flex:0 0 auto}
+
+/* ─────────── спина структуры ─────────── */
+.c1-spine{position:absolute;left:9px;top:40px;width:1px;height:114px;background:var(--hair);
+  border-radius:1px;overflow:hidden;z-index:3}
+/* заливка светлеет к переднему краю: ярко там, где посетитель сейчас */
+.c1-spine i{position:absolute;inset:0;display:block;
+  background:linear-gradient(180deg,rgba(205,255,79,.16),rgba(205,255,79,.5) 55%,var(--lime));
+  transform-origin:top center;transform:scaleY(1);will-change:transform}
+
+/* ─────────── форма ─────────── */
+.c1-form{position:absolute;left:22px;right:18px;top:40px;z-index:2}
+.c1-row{height:30px;border:1px solid var(--hair);border-radius:6px;
+  background:rgba(255,255,255,.02);display:flex;align-items:center;padding:0 9px;
+  font-size:11px;color:var(--dim);contain:layout;
+  transition:border-color .28s ease,background-color .28s ease,opacity .4s ease}
+.c1-row+.c1-row{margin-top:9px}
+.c1-row.focus{border-color:rgba(238,241,246,.24);background:rgba(238,241,246,.045)}
+.c1-lb{flex:0 0 auto;transition:color .3s ease}
+.c1-row.focus .c1-lb{color:var(--txt)}
+.c1-vl{color:var(--ink);margin-left:6px;white-space:nowrap}
+.c1-vl.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.2px;letter-spacing:-.01em}
+.c1-caret{flex:0 0 auto;width:1px;height:12px;background:var(--lime);margin-left:1.5px;opacity:0}
+.c1-row.focus .c1-caret{opacity:1;animation:c1blink 1.05s steps(1) .45s infinite}
+.c1-row.focus.typing .c1-caret{animation:none;opacity:1}
+@keyframes c1blink{50%{opacity:0}}
+.c1-chk{margin-left:auto;width:11px;height:11px;flex:0 0 auto;opacity:1;transform:none;
+  transition:opacity .25s ease,transform .32s var(--e)}
+.c1-row:not(.done) .c1-chk{opacity:0;transform:scale(.75)}
+.c1-chk svg{width:100%;height:100%;fill:none;stroke:rgba(238,241,246,.5);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14;stroke-dashoffset:0;
+  transition:stroke-dashoffset .34s ease .06s}
+.c1-row:not(.done) .c1-chk svg{stroke-dashoffset:14;transition-delay:0s}
+.c1-form.lock .c1-row{opacity:.55;border-color:var(--hair);background:rgba(255,255,255,.015)}
+
+/* ─────────── кнопка ─────────── */
+.c1-btn{margin-top:12px;height:33px;border-radius:6px;position:relative;overflow:hidden;
+  display:grid;place-items:center;font-size:11.5px;font-weight:600;
+  background:#161C27;color:var(--dim);box-shadow:0 0 0 1px rgba(238,241,246,0);
+  transition:background-color .34s ease,color .34s ease,box-shadow .34s ease,transform .13s ease}
+.c1-btn.ready{background:#222A38;color:var(--ink);box-shadow:0 0 0 1px rgba(238,241,246,.10);
+  transform:translateY(-1px)}
+.c1-btn.press{transform:translateY(0) scale(.965);background:#1B2130}
+.c1-btn.done{background:#131926;color:var(--lime);box-shadow:0 0 0 1px rgba(205,255,79,.45);
+  transform:translateY(-1px)}
+.c1-lb2{transition:opacity .18s ease,transform .28s var(--e)}
+.c1-btn.done .c1-lb2{opacity:0;transform:translateY(-9px)}
+.c1-ok2{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:11.5px;font-weight:700;opacity:0;transform:translateY(9px);
+  transition:opacity .26s ease,transform .34s var(--e)}
+.c1-btn.done .c1-ok2{opacity:1;transform:none;transition-delay:.06s}
+.c1-ok2 svg{width:12px;height:12px;fill:none;stroke:var(--lime);stroke-width:2.6;
+  stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:14;stroke-dashoffset:14;
+  transition:stroke-dashoffset .34s ease}
+.c1-btn.done .c1-ok2 svg{stroke-dashoffset:0;transition-delay:.24s}
+
+/* ─────────── курсор и отклик клика ─────────── */
+.c1-cur{position:absolute;left:0;top:0;width:13px;height:13px;z-index:7;opacity:0;
+  transform:translate(-26px,-26px);will-change:transform;pointer-events:none}
+.c1-cur-i{display:block;width:100%;height:100%;transform-origin:2px 2px;
+  transition:transform .12s cubic-bezier(.3,.1,.3,1)}
+.c1-cur.press .c1-cur-i{transform:scale(.84)}
+.c1-cur svg{display:block;width:100%;height:100%;fill:#fff;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.9))}
+.c1-ring{position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(238,241,246,.42);opacity:0;z-index:6;pointer-events:none}
+.c1-ring.go{animation:c1ring .5s cubic-bezier(.2,.72,.3,1) forwards}
+@keyframes c1ring{
+  from{opacity:.6;transform:translate(var(--rx,0),var(--ry,0)) scale(.28)}
+  to  {opacity:0; transform:translate(var(--rx,0),var(--ry,0)) scale(1.12)}}
+
+/* ─────────── итог визита ─────────── */
+.c1-conv{position:absolute;left:22px;bottom:11px;z-index:4;display:flex;align-items:center;gap:7px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9.5px;color:var(--dim);
+  transition:opacity .4s ease}
+.c1-conv .p{transition:opacity .4s ease}
+.c1-conv.done .p{opacity:.45}
+.c1-conv .arw{opacity:.45}
+.c1-conv .hit{color:var(--lime);transition:opacity .35s var(--e),transform .38s var(--e)}
+
+/* ─────────── мгновенный сброс без перекраски ─────────── */
+.c1-card.c1-noanim *{transition:none!important;animation:none!important}
+
+/* ─────────── статика ─────────── */
+@media (prefers-reduced-motion:reduce){
+  .c1-card *{transition:none!important;animation:none!important}
+  .c1-cur,.c1-ring{display:none!important}
+  .c1-spine i{transform:scaleY(1)!important}
+  .c1-src,.c1-conv,.c1-conv .hit{opacity:1!important;transform:none!important}
+  .c1-caret{opacity:0!important}
+}
+
+/* ─────────── стенд (в сборку не едет) ─────────── */
+body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;margin:0;padding:60px 24px 90px}
+*{box-sizing:border-box}
+.bench{max-width:1120px;margin:0 auto}
+.bench h1{font-family:'Unbounded',system-ui,sans-serif;font-weight:800;font-size:26px;
+  letter-spacing:-.03em;margin:0 0 8px}
+.bench p{color:var(--dim);font-size:13px;margin:0 0 26px}
+.cell{width:258px;border:1px solid var(--hair);border-radius:10px;overflow:hidden}
+.bench button{margin-top:22px;background:#161C27;color:var(--txt);border:1px solid var(--hair);
+  border-radius:6px;padding:8px 14px;font:inherit;font-size:12px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="bench">
+  <h1>01 · Заявки, а не просмотры</h1>
+  <p>Наведи на карточку — визит проиграется заново.</p>
+
+  <div class="cell">
+    <!-- ══════════ КАРТОЧКА 01 ══════════ -->
+    <div class="c1-card" id="c1card">
+      <div class="c1-stage" id="c1stage">
+        <div class="c1-n">01</div>
+
+        <div class="c1-src" id="c1src"><i></i>трафик с рекламы</div>
+
+        <div class="c1-spine"><i id="c1spine"></i></div>
+
+        <div class="c1-form" id="c1form">
+          <div class="c1-row done" id="c1r1">
+            <span class="c1-lb">Имя</span><span class="c1-vl" id="c1v1">Виталий</span><span class="c1-caret"></span>
+            <span class="c1-chk"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg></span>
+          </div>
+          <div class="c1-row done" id="c1r2">
+            <span class="c1-lb">Телефон</span><span class="c1-vl mono" id="c1v2">+7 913 204-11-08</span><span class="c1-caret"></span>
+            <span class="c1-chk"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg></span>
+          </div>
+          <div class="c1-btn ready" id="c1btn">
+            <span class="c1-lb2">Отправить заявку</span>
+            <span class="c1-ok2"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>Заявка отправлена</span>
+          </div>
+        </div>
+
+        <span class="c1-ring" id="c1ring"></span>
+        <div class="c1-cur" id="c1cur"><span class="c1-cur-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6 1.6L10 20z"/></svg></span></div>
+
+        <div class="c1-conv" id="c1conv"><span class="p">просмотр</span><span class="arw">→</span><span class="hit" id="c1hit">заявка</span></div>
+      </div>
+
+      <div class="c1-t">Заявки, а не просмотры</div>
+      <div class="c1-d">Структура ведёт посетителя к действию — трафик превращается в обращения, а не в отказы.</div>
+    </div>
+    <!-- ══════════ /КАРТОЧКА 01 ══════════ -->
+  </div>
+
+  <button type="button" onclick="window.playCard1()">проиграть заново</button>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var card  = document.getElementById('c1card'),
+      stage = document.getElementById('c1stage'),
+      src   = document.getElementById('c1src'),
+      spine = document.getElementById('c1spine'),
+      form  = document.getElementById('c1form'),
+      r1    = document.getElementById('c1r1'),
+      r2    = document.getElementById('c1r2'),
+      v1    = document.getElementById('c1v1'),
+      v2    = document.getElementById('c1v2'),
+      btn   = document.getElementById('c1btn'),
+      cur   = document.getElementById('c1cur'),
+      ring  = document.getElementById('c1ring'),
+      conv  = document.getElementById('c1conv'),
+      hit   = document.getElementById('c1hit');
+
+  if (!card) return;
+
+  var NAME  = 'Виталий',
+      DIG   = '79132041108',
+      PHONE = '+7 913 204-11-08';
+
+  var REDUCE = window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+
+  /* ── таймеры: всё состояние доезжает даже если rAF заморожен ── */
+  var timers = [];
+  function later(fn, ms){ var t = setTimeout(fn, ms); timers.push(t); return t; }
+  function clearAll(){ for (var i=0;i<timers.length;i++) clearTimeout(timers[i]); timers = []; }
+
+  /* ── маска телефона: разделители подставляются сами ── */
+  function fmt(n){
+    var out = '';
+    for (var i=0;i<n;i++){
+      out += DIG.charAt(i);
+      if (i === 0) out = '+' + out + ' ';
+      else if (i === 3) out += ' ';
+      else if (i === 6) out += '-';
+      else if (i === 8) out += '-';
+    }
+    return out;
+  }
+
+  /* ── easing ── */
+  function easeInOutCubic(t){ return t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+  function easeOutQuad(t){ return 1 - (1-t)*(1-t); }
+  function outBack(t){ var s = .13; t -= 1; return t*t*((s+1)*t + s) + 1; }
+
+  /* ── курсор по квадратичной дуге ── */
+  var pos = [-26,-26], token = 0;
+
+  function paint(x, y){
+    pos[0] = x; pos[1] = y;
+    cur.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+  }
+
+  function glide(to, dur, bow, ease, cb){
+    var x0 = pos[0], y0 = pos[1], x1 = to[0], y1 = to[1],
+        dx = x1-x0, dy = y1-y0,
+        len = Math.sqrt(dx*dx + dy*dy) || 1,
+        cx = (x0+x1)/2 - dy/len*bow,
+        cy = (y0+y1)/2 + dx/len*bow,
+        mine = ++token, t0 = 0, fin = false;
+
+    function finish(){
+      if (fin || mine !== token) return;
+      fin = true; paint(x1, y1); if (cb) cb();
+    }
+    function frame(ts){
+      if (fin || mine !== token) return;
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / dur);
+      if (p >= 1) { finish(); return; }
+      var u = ease(p), m = 1-u;
+      paint(m*m*x0 + 2*m*u*cx + u*u*x1, m*m*y0 + 2*m*u*cy + u*u*y1);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    later(finish, dur + 90);          /* страховка: фоновая вкладка */
+  }
+
+  /* ── точка внутри сцены ── */
+  function pt(el, fx, fy){
+    var s = stage.getBoundingClientRect(), b = el.getBoundingClientRect();
+    return [b.left - s.left + b.width*fx, b.top - s.top + b.height*fy];
+  }
+
+  /* ── спина структуры ── */
+  function fill(v, dur){
+    spine.style.transitionProperty = 'transform';
+    spine.style.transitionDuration = dur + 'ms';
+    spine.style.transitionTimingFunction = 'cubic-bezier(.22,1,.28,1)';
+    spine.style.transform = 'scaleY(' + v + ')';
+  }
+
+  /* ── печать с плавающей скоростью ── */
+  function typeName(cb){
+    var i = 0;
+    (function step(){
+      v1.textContent = NAME.slice(0, ++i);
+      if (i < NAME.length) later(step, 52 + Math.random()*63);
+      else if (cb) later(cb, 0);
+    })();
+  }
+  function typePhone(cb){
+    var n = 0;
+    (function step(){
+      v2.textContent = fmt(++n);
+      if (n < 11){
+        var brk = (n===1 || n===4 || n===7 || n===9);
+        later(step, brk ? 120 + Math.random()*68 : 44 + Math.random()*36);
+      } else if (cb) later(cb, 0);
+    })();
+  }
+
+  /* ── состояния ── */
+  function reset(){
+    clearAll(); token++;
+    card.classList.add('c1-noanim');
+
+    src.style.opacity = '0'; src.style.transform = 'translateX(-5px)';
+    conv.style.opacity = '0'; conv.classList.remove('done');
+    hit.style.opacity = '0'; hit.style.transform = 'translateY(4px)';
+
+    spine.style.transitionDuration = '0ms';
+    spine.style.transform = 'scaleY(0)';
+
+    r1.classList.remove('focus','typing','done');
+    r2.classList.remove('focus','typing','done');
+    v1.textContent = ''; v2.textContent = '';
+    form.classList.remove('lock');
+    btn.classList.remove('ready','press','done');
+
+    ring.classList.remove('go');
+    cur.classList.remove('press');
+    cur.style.opacity = '0';
+    paint(-26,-26);
+
+    void card.offsetWidth;                 /* сбросить переходы одним кадром */
+    card.classList.remove('c1-noanim');
+  }
+
+  var settled = false;
+  /* Аварийный доводчик. Срабатывает, только если сцена не доиграла сама
+     (фоновая вкладка режет и rAF, и таймеры). Сначала гасит остаток
+     цепочки — иначе отложенная печать перезапишет готовый результат. */
+  function finalize(){
+    if (settled) return;
+    settled = true;
+    clearAll(); token++;
+
+    /* доводим без переходов: в скрытой вкладке кадров нет и анимация
+       всё равно не проиграется — состояние должно быть верным сразу */
+    card.classList.add('c1-noanim');
+
+    if (stage.offsetWidth > 60){
+      var s = stage.getBoundingClientRect(), b = btn.getBoundingClientRect();
+      cur.style.opacity = '1';
+      paint(b.left - s.left + b.width*.55, b.top - s.top + b.height*.9);
+    } else {
+      cur.style.opacity = '0';
+    }
+    v1.textContent = NAME; v2.textContent = PHONE;
+    r1.classList.remove('focus','typing'); r1.classList.add('done');
+    r2.classList.remove('focus','typing'); r2.classList.add('done');
+    fill(1, 0);
+    btn.classList.remove('press'); btn.classList.add('ready','done');
+    form.classList.add('lock');
+    src.style.opacity = ''; src.style.transform = '';
+    conv.style.opacity = ''; conv.classList.add('done');
+    hit.style.opacity = ''; hit.style.transform = '';
+
+    void card.offsetWidth;
+    card.classList.remove('c1-noanim');
+  }
+
+  /* ── сцена ── */
+  function play(){
+    reset();
+    settled = false;
+    if (card.classList.contains('play') === false) card.classList.add('play');
+
+    if (REDUCE){ finalize(); return; }
+
+    var w = stage.offsetWidth;
+    if (!w || w < 60){ finalize(); return; }   /* нечего измерять — сразу итог */
+
+    var pScan = [Math.round(w*0.66), 31],
+        p1 = pt(r1, .40, .50),
+        p2 = pt(r2, .52, .50),
+        pB = pt(btn, .44, .54),
+        pB2 = [pB[0] + 9, pB[1] - 2];
+
+    /* аварийная страховка на весь эпизод */
+    later(finalize, 7600);
+
+    cur.style.opacity = '1';
+    paint(-18, -14);
+    later(function(){ src.style.opacity = ''; src.style.transform = ''; }, 90);
+
+    /* 1 · пришёл и осмотрелся */
+    later(function(){
+      glide(pScan, 720, 20, easeInOutCubic, function(){
+
+        /* 2 · структура забирает его в первое поле */
+        later(function(){
+          glide(p1, 400, -13, outBack, function(){
+            later(function(){
+              r1.classList.add('focus');
+              fill(.28, 420);
+              later(function(){
+                r1.classList.add('typing');
+                typeName(function(){
+                  r1.classList.remove('typing');
+
+                  /* 3 · поле проверено на вводе, каретка ещё в нём —
+                        фокус уходит только когда курсор доедет до второго поля */
+                  later(function(){ r1.classList.add('done'); }, 155);
+                  later(function(){
+                    glide(p2, 320, 11, outBack, function(){
+                      r1.classList.remove('focus');
+                      later(function(){
+                        r2.classList.add('focus');
+                        fill(.60, 380);
+                        later(function(){
+                          r2.classList.add('typing');
+                          typePhone(function(){
+                            r2.classList.remove('typing');
+
+                            /* 4 · форма собрана — кнопка оживает сама,
+                                  курсор в этот момент ещё стоит у поля */
+                            later(function(){
+                              r2.classList.add('done');
+                              btn.classList.add('ready');
+                              fill(.86, 460);
+                            }, 170);
+
+                            /* 5 · подход к кнопке и доводка прицела */
+                            later(function(){
+                              glide(pB, 420, 15, outBack, function(){
+                                later(function(){
+                                  glide(pB2, 150, 0, easeOutQuad, function(){
+
+                                    /* 6 · нажатие — фокус уходит из поля именно здесь */
+                                    later(function(){
+                                      r2.classList.remove('focus');
+                                      cur.classList.add('press');
+                                      btn.classList.add('press');
+                                      var s = stage.getBoundingClientRect(),
+                                          b = btn.getBoundingClientRect();
+                                      ring.style.setProperty('--rx',
+                                        (b.left - s.left + b.width/2 - 17).toFixed(1) + 'px');
+                                      ring.style.setProperty('--ry',
+                                        (b.top - s.top + b.height/2 - 17).toFixed(1) + 'px');
+                                      ring.classList.remove('go');
+                                      void ring.offsetWidth;
+                                      ring.classList.add('go');
+                                    }, 95);
+
+                                    /* 7 · отпустил — отправлено */
+                                    later(function(){
+                                      btn.classList.remove('press');
+                                      btn.classList.add('done');
+                                      cur.classList.remove('press');
+                                      fill(1, 520);
+                                    }, 230);
+
+                                    later(function(){ form.classList.add('lock'); }, 330);
+
+                                    /* 8 · рука уводит курсор, счёт визита сходится */
+                                    later(function(){
+                                      glide([pB2[0] + 17, pB2[1] + 15], 560, 7, easeInOutCubic);
+                                    }, 420);
+
+                                    later(function(){
+                                      hit.style.opacity = ''; hit.style.transform = '';
+                                      conv.classList.add('done');
+                                      settled = true;
+                                    }, 520);
+
+                                  });
+                                }, 235);
+                              });
+                            }, 340);
+
+                          });
+                        }, 120);
+                      }, 110);
+                    });
+                  }, 165);
+
+                });
+              }, 135);
+            }, 115);
+          });
+        }, 195);
+
+      });
+    }, 60);
+
+    later(function(){ conv.style.opacity = ''; }, 260);
+  }
+
+  /* синхронный сброс до первой отрисовки — вёрстка без JS остаётся читаемой */
+  reset();
+
+  window.playCard1 = play;
+
+  /* автозапуск и повтор по наведению (в сборке этим управляет общий скрипт) */
+  var started = false;
+  function kick(){ if (started) return; started = true; card.classList.add('play'); play(); }
+
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      for (var i=0;i<es.length;i++){
+        if (es[i].isIntersecting){ io.disconnect(); kick(); }
+      }
+    }, {threshold:.35});
+    io.observe(card);
+  } else {
+    later(kick, 300);
+  }
+
+  card.addEventListener('mouseenter', function(){ card.classList.add('play'); play(); });
+})();
+</script>
+</body>
+</html>
