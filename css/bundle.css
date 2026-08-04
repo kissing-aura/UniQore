@@ -5732,3 +5732,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   .faq { overflow: hidden; }            /* старые браузеры: вёрстка целая, липкости нет */
   .faq__header { position: static; transform: none; }
 }
+
+/* overflow-x:hidden на body (reset + мобильный медиазапрос) делает сам body
+   контейнером прокрутки — из-за этого position:sticky не работает нигде на
+   странице. overflow-x:clip защищает от горизонтального разъезда так же, но
+   контейнер прокрутки не создаёт. */
+html, body { overflow-x: clip; }
+@supports not (overflow: clip) {
+  html, body { overflow-x: hidden; }
+}
