@@ -37,9 +37,12 @@ p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-t
 
 /* Струна: тонкий лаймовый путь + кружок (сам двигается) */
 .slc__svg{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:visible}
-.slc__string{fill:none;stroke:var(--lime);stroke-width:2;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(205,255,79,.6))}
-.slc__knob{fill:var(--lime);filter:drop-shadow(0 6px 18px rgba(205,255,79,.55))}
-.slc__glow{fill:none;stroke:var(--lime);stroke-width:9;opacity:.16;stroke-linecap:round}
+/* Струна: тонкая, приглушённо-белая. Никакого лайма. */
+.slc__string{fill:none;stroke:rgba(233,240,251,.72);stroke-width:1.4;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(0,0,0,.55))}
+/* Кружок: только контур, r=5, без свечения — присутствует, но не «кричит» */
+.slc__knob{fill:transparent;stroke:rgba(233,240,251,.55);stroke-width:1.2}
+/* «Ореол» больше не нужен: без лайма линия и так читается. Оставил слабую тёмную тень выше. */
+.slc__glow{display:none}
 
 .cap{text-align:center;color:var(--mut);font-size:13.5px;max-width:70ch}
 .cap b{color:#e9f0fb}
@@ -82,13 +85,22 @@ p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-t
       glow = document.getElementById('glow'),
       knob = document.getElementById('knob');
 
-  // Состояние: target — куда «хочет» струна, cur — где сейчас (пружина).
+  // Настоящая пружина (stiffness + damping), не голый lerp.
+  // Дают лёгкое качание при возврате в центр и мягкое следование за курсором.
+  var STIFF = 0.055, DAMP = 0.82;      // pos + kyR
+  var BEND_STIFF = 0.12, BEND_DAMP = 0.72;
+  // Магнит: до какой дистанции от слайдера курсор ещё тянет струну.
+  // За пределом MAGNET_PX сила падает до 0 → струна свободно возвращается.
+  var MAGNET_PX = 380;
+
   var W = 0, H = 0;
-  var posT = 0.5, posC = 0.5;   // положение струны по X (0..1 от ширины)
-  var bendT = 0, bendC = 0;      // изгиб control-point в px, знак = сторона
-  var kyT = 0.5, kyC = 0.5;      // положение knob по Y (0..1)
-  var pointerIn = false;
-  var pointerX = 0, pointerY = 0;
+  var posT = 0.5, posC = 0.5, posV = 0;   // X-центр струны (0..1) + скорость
+  var kyT  = 0.5, kyC  = 0.5, kyV  = 0;   // Y точки максимального прогиба (0..1)
+  var bendT = 0,  bendC = 0,  bendV = 0;  // изгиб control-point (px, со знаком)
+
+  // Глобальный курсор — работает и когда мышь ушла за пределы слайдера.
+  // null означает «мышь ещё не двигалась в сессии» — струна стоит в центре.
+  var gx = null, gy = null;
 
   function resize(){
     var r = slc.getBoundingClientRect();
@@ -100,46 +112,57 @@ p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-t
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(slc);
   window.addEventListener('resize', resize);
 
-  slc.addEventListener('pointerenter', function(){ pointerIn = true; });
-  slc.addEventListener('pointerleave', function(){ pointerIn = false; });
-  slc.addEventListener('pointermove', function(e){
-    var r = slc.getBoundingClientRect();
-    pointerX = e.clientX - r.left;
-    pointerY = e.clientY - r.top;
-  });
+  // Слушаем движение курсора глобально — струна продолжает реагировать,
+  // даже когда мышь ушла за границу слайдера. Резкого отпускания больше нет.
+  window.addEventListener('pointermove', function(e){
+    gx = e.clientX; gy = e.clientY;
+  }, {passive:true});
 
-  // Мобилка: touch — двигает как раньше
+  // Мобилка: touch — трекаем пока палец на экране, отпустил — возврат.
   slc.addEventListener('touchmove', function(e){
-    var r = slc.getBoundingClientRect();
     var t = e.touches[0];
-    pointerIn = true;
-    pointerX = t.clientX - r.left;
-    pointerY = t.clientY - r.top;
+    gx = t.clientX; gy = t.clientY;
     e.preventDefault();
   }, {passive:false});
-  slc.addEventListener('touchend', function(){ pointerIn = false; });
+  slc.addEventListener('touchend', function(){
+    // мягко «отпускаем»: центр вернётся сам через магнит, поставив gx далеко
+    gx = null; gy = null;
+  });
 
   function step(){
-    // ── целевые значения ──
-    if (pointerIn && W > 0){
-      // pos следует за X курсора, но с притяжением к центру когда курсор далеко от струны
-      var pxN = pointerX / W;
-      posT = pxN;
-      kyT = pointerY / H;
-      // изгиб зависит от того, насколько курсор ушёл от линии;
-      // сама pos тянется медленнее — струна физически прогибается.
-      var lag = pxN - posC; // ширина «отставания» струны от курсора, доля
-      bendT = lag * W * 0.55; // максимум ~30% ширины при полном рывке
-    } else {
-      posT = 0.5; bendT = 0; kyT = 0.5;
-    }
+    if (W > 0){
+      // ── целевые значения с учётом магнита ──
+      // Курсор ещё не двигался — покой в центре.
+      if (gx == null){
+        posT = 0.5; kyT = 0.5;
+      } else {
+        var r = slc.getBoundingClientRect();
+        // ближайшая к курсору точка внутри прямоугольника слайдера
+        var ix = Math.max(r.left, Math.min(r.right,  gx));
+        var iy = Math.max(r.top,  Math.min(r.bottom, gy));
+        // расстояние курсора до прямоугольника (0 если внутри)
+        var dx = gx - ix, dy = gy - iy;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        // сила магнита: 1 внутри, плавно падает до 0 при dist=MAGNET_PX
+        var pull = Math.max(0, 1 - dist / MAGNET_PX);
+        // мягкая кривая: pull² — тяга становится ощутимо слабее при удалении
+        pull = pull * pull;
+        var pxN = (ix - r.left) / r.width;
+        var pyN = (iy - r.top)  / r.height;
+        // интерполируем от центра к позиции курсора по силе pull
+        posT = 0.5 + (pxN - 0.5) * pull;
+        kyT  = 0.5 + (pyN - 0.5) * pull;
+      }
 
-    // ── пружины (критически недодемпфированные) ──
-    // pos — среднежёсткая, чтобы линия тянулась заметно
-    posC += (posT - posC) * 0.14;
-    // bend — быстрее, чтобы прогиб чувствовался мгновенно
-    bendC += (bendT - bendC) * 0.22;
-    kyC   += (kyT   - kyC)   * 0.20;
+      // ── пружины (stiffness + damping = природное качание) ──
+      posV += (posT - posC) * STIFF;  posV *= DAMP;  posC += posV;
+      kyV  += (kyT  - kyC ) * STIFF;  kyV  *= DAMP;  kyC  += kyV;
+
+      // Изгиб — производный: следит за отставанием линии от цели.
+      // Даёт «тетивную» кривизну именно в момент броска / возврата.
+      bendT = (posT - posC) * W * 0.42;
+      bendV += (bendT - bendC) * BEND_STIFF;  bendV *= BEND_DAMP;  bendC += bendV;
+    }
 
     render();
     requestAnimationFrame(step);
