@@ -130,6 +130,8 @@
     @keyframes rcaseIn { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
     .rcase.play { animation: rcaseIn .8s cubic-bezier(.16,1,.3,1) both; }
     @media (prefers-reduced-motion: reduce) { .rcase.play { animation: none; } }
+    /* SINKOV — только мобилка, для симметрии сетки на узких экранах (04.08) */
+    @media (min-width: 769px) { .rcase--mobile-only { display: none !important; } }
   </style>
   <!-- Google Analytics 4 — подключается ТОЛЬКО после явного «Принять» в баннере cookie -->
   <script>
@@ -395,6 +397,10 @@
           <a class="rcase" href="https://avalink.ru" target="_blank" rel="noopener noreferrer">
             <div class="rcase__shot"><span class="rcase__live">живой сайт</span><img src="/keysy/cases/case-avalink.jpg?v=20260720d" alt="Сайт мультибрендового автосервиса AVALINK, Москва" loading="lazy"></div>
             <div class="rcase__cap"><h3>AVALINK</h3><span>Автосервис · Москва</span></div>
+          </a>
+          <a class="rcase rcase--mobile-only" href="https://sinkoveco.ru" target="_blank" rel="noopener noreferrer">
+            <div class="rcase__shot"><span class="rcase__live">живой сайт</span><img src="/keysy/cases/case-sinkov.jpg?v=20260804a" alt="Сайт студии ландшафтной архитектуры SINKOV, Москва" loading="lazy"></div>
+            <div class="rcase__cap"><h3>SINKOV</h3><span>Ландшафтная архитектура · Москва</span></div>
           </a>
         </div>
       </div>
