@@ -225,6 +225,27 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
+
+/* ── Фаза 6: живые кейсы — реальный proof, скрины/ссылки те же, что на /keysy/ ── */
+.up__cases{margin-top:56px}
+.up__cases__h{font-family:'Unbounded',sans-serif;font-weight:800;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.02em}
+.up__cases__sub{color:var(--mut);font-size:14px;margin-top:8px;max-width:60ch}
+.up__cases__grid{margin-top:26px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.up__case{display:block;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:rgba(255,255,255,.02);text-decoration:none;color:inherit;transition:transform .3s cubic-bezier(.22,1,.36,1),border-color .3s}
+.up__case:hover{transform:translateY(-3px);border-color:rgba(205,255,79,.3)}
+.up__case__shot{aspect-ratio:16/10;overflow:hidden;background:#0a0a0a;position:relative}
+.up__case__shot img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;transition:transform .5s ease}
+.up__case:hover .up__case__shot img{transform:scale(1.04)}
+.up__case__live{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(10,12,11,.65);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);font-family:'JetBrains Mono',monospace;font-size:10px;color:#eafff2}
+.up__case__live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+.up__case__cap{padding:12px 14px 14px}
+.up__case__cap b{display:block;font-family:'Unbounded',sans-serif;font-size:14px;letter-spacing:-.01em}
+.up__case__cap span{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut2);margin-top:3px}
+/* мягкая подсказка «в похожем стиле» — только там где реально соответствует, не на всех тарифах */
+.up__rad__like{display:block;margin-top:6px;font-size:10px;color:var(--mut2)}
+.up__rad__like a{color:var(--amber);text-decoration:none;border-bottom:1px dashed rgba(242,184,75,.4)}
+@media(max-width:720px){.up__cases__grid{grid-template-columns:1fr 1fr;gap:12px}}
+@media(max-width:480px){.up__cases__grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -291,6 +312,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
         <label class="up__rad up__rad--premium" data-p="770" data-n="Авторский" data-id="premium" data-v="ведущий дизайнер с нуля, кастомные 3D-анимации, 3 круга правок" title="ведущий дизайнер с нуля, кастомные 3D-анимации, 3 круга правок">
           <span class="up__rad__badge">премиум</span>
           <input type="radio" name="base"><div class="n">Авторский</div><div class="p">$770</div><div class="d">дизайн с нуля · 10–14 дней</div>
+          <span class="up__rad__like">в похожем стиле: <a href="https://sinkoveco.ru" target="_blank" rel="noopener noreferrer">SINKOV →</a></span>
         </label>
       </div>
 
@@ -413,6 +435,37 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
         <span>0 ₽ сейчас — платите, когда увидите готовый макет</span>
         <span>оплата только после утверждения макета</span>
       </div>
+    </div>
+  </div>
+
+  <div class="up__cases">
+    <div class="up__cases__h">Это не рендеры — реальные работы</div>
+    <p class="up__cases__sub">6 живых сайтов, которые уже работают у клиентов. Кликните — откроется вживую, можно потыкать.</p>
+    <div class="up__cases__grid">
+      <a class="up__case" href="https://sinkoveco.ru" target="_blank" rel="noopener noreferrer">
+        <div class="up__case__shot"><span class="up__case__live">живой сайт</span><img src="/keysy/cases/case-sinkov-1024.webp" alt="Сайт студии ландшафтной архитектуры SINKOV, Москва" loading="lazy"></div>
+        <div class="up__case__cap"><b>SINKOV</b><span>Ландшафтная архитектура · Москва</span></div>
+      </a>
+      <a class="up__case" href="https://milladesign.ru" target="_blank" rel="noopener noreferrer">
+        <div class="up__case__shot"><span class="up__case__live">живой сайт</span><img src="/keysy/cases/case-milla-1024.webp" alt="Сайт студии дизайна интерьера MILLA Design, Самара" loading="lazy"></div>
+        <div class="up__case__cap"><b>MILLA Design</b><span>Дизайн интерьера · Самара</span></div>
+      </a>
+      <a class="up__case" href="https://granat.me" target="_blank" rel="noopener noreferrer">
+        <div class="up__case__shot"><span class="up__case__live">живой сайт</span><img src="/keysy/cases/case-granat-1024.webp" alt="Сайт ресторана «Гранат», Воронеж" loading="lazy"></div>
+        <div class="up__case__cap"><b>Гранат</b><span>Ресторан · Воронеж</span></div>
+      </a>
+      <a class="up__case" href="https://banilab.ru" target="_blank" rel="noopener noreferrer">
+        <div class="up__case__shot"><span class="up__case__live">живой сайт</span><img src="/keysy/cases/case-banilab-1024.webp" alt="Сайт BaniLab — строительство бань под ключ, Москва" loading="lazy"></div>
+        <div class="up__case__cap"><b>BaniLab</b><span>Бани под ключ · Москва</span></div>
+      </a>
+      <a class="up__case" href="https://xn--e1aajod1d6c.xn--p1ai/" target="_blank" rel="noopener noreferrer">
+        <div class="up__case__shot"><span class="up__case__live">живой сайт</span><img src="/keysy/cases/case-nemecia-1024.webp" alt="Сайт автосервиса Немеция, Омск" loading="lazy"></div>
+        <div class="up__case__cap"><b>Немеция</b><span>Автосервис · Омск</span></div>
+      </a>
+      <a class="up__case" href="https://avalink.ru" target="_blank" rel="noopener noreferrer">
+        <div class="up__case__shot"><span class="up__case__live">живой сайт</span><img src="/keysy/cases/case-avalink.jpg" alt="Сайт мультибрендового автосервиса AVALINK, Москва" loading="lazy"></div>
+        <div class="up__case__cap"><b>AVALINK</b><span>Автосервис · Москва</span></div>
+      </a>
     </div>
   </div>
 </section>
