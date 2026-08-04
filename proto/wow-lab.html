@@ -137,7 +137,29 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 /* ═══════════════════════════════════════════════════════════
    [2] АПСЕЛЛ-КОНФИГУРАТОР — растит средний чек
    ═══════════════════════════════════════════════════════════ */
-.up{margin-top:44px;display:grid;grid-template-columns:1.35fr 1fr;gap:24px;align-items:start}
+
+/* Быстрый старт: 3 пресета над конфигуратором */
+.up__presets{margin-top:40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.up__preset{appearance:none;-webkit-appearance:none;font:inherit;text-align:left;position:relative;padding:18px 18px 16px;border-radius:14px;background:#0f131f;border:1px solid var(--line);color:var(--ink);cursor:pointer;transition:transform .2s ease,border-color .2s ease,background .2s ease}
+.up__preset:hover{transform:translateY(-2px);border-color:rgba(205,255,79,.32)}
+.up__preset:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+.up__preset.on{border-color:var(--lime);background:rgba(205,255,79,.07);box-shadow:0 0 0 3px rgba(205,255,79,.10)}
+.up__preset[data-preset="ads"]{border-color:rgba(49,224,176,.20)}
+.up__preset[data-preset="ads"]:hover{border-color:rgba(49,224,176,.4)}
+.up__preset[data-preset="ads"].on{border-color:var(--mint);background:rgba(49,224,176,.08);box-shadow:0 0 0 3px rgba(49,224,176,.12)}
+.up__preset[data-preset="full"]{background:linear-gradient(155deg,rgba(205,255,79,.07),rgba(49,224,176,.05) 60%,#0f131f 100%)}
+.up__preset .k{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut2)}
+.up__preset[data-preset="ads"] .k{color:var(--mint)}
+.up__preset .nm{font-family:'Unbounded',sans-serif;font-weight:700;font-size:16.5px;margin-top:7px;letter-spacing:-.01em;display:block}
+.up__preset .ds{font-size:12px;color:var(--mut);margin-top:5px;line-height:1.4;display:block}
+.up__preset .fr{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mut2);display:block}
+.up__preset .fr b{color:var(--lime);font-weight:700;font-size:13.5px;font-variant-numeric:tabular-nums}
+.up__preset[data-preset="ads"] .fr b{color:var(--mint)}
+
+@keyframes pktIn{0%{opacity:.35;transform:translateY(5px) scale(.97)}100%{opacity:1;transform:none}}
+.pkt-in{animation:pktIn .38s cubic-bezier(.22,1,.36,1)}
+
+.up{margin-top:26px;display:grid;grid-template-columns:1.35fr 1fr;gap:24px;align-items:start}
 
 /* Левая колонка: выбор */
 .up__col{background:#0f131f;border:1px solid var(--line);border-radius:18px;padding:26px}
@@ -149,46 +171,62 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__rad{position:relative;padding:14px 14px 14px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);cursor:pointer;transition:all .2s ease;text-align:center}
 .up__rad input{position:absolute;opacity:0;pointer-events:none}
 .up__rad:hover{border-color:rgba(205,255,79,.3)}
+.up__rad:focus-within{outline:2px solid var(--lime);outline-offset:3px}
 .up__rad.on{background:rgba(205,255,79,.08);border-color:var(--lime);box-shadow:0 0 0 3px rgba(205,255,79,.06)}
 .up__rad .n{font-weight:600;font-size:13.5px;color:#e9f0fb}
 .up__rad .p{font-family:'Unbounded',sans-serif;font-weight:700;font-size:17px;color:var(--lime);letter-spacing:-.01em;margin-top:4px;font-variant-numeric:tabular-nums}
 .up__rad .d{font-size:11px;color:var(--mut);margin-top:4px;line-height:1.35}
 
-/* Допы (checkbox) */
+/* Допы (checkbox), сгруппированные по категориям */
 .up__addH{margin-top:26px;display:flex;justify-content:space-between;align-items:baseline}
 .up__addH .l{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
 .up__addH .r{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut2)}
-.up__adds{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.up__add{position:relative;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);cursor:pointer;transition:all .2s ease;display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:center}
+.up__adds{margin-top:6px}
+.up__cat{margin-top:20px}
+.up__cat__h{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.up__cat__h i{width:6px;height:6px;border-radius:50%;background:var(--lime);flex:0 0 auto}
+.up__cat__h span{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut2)}
+.up__cat__h::after{content:"";flex:1;height:1px;background:var(--line)}
+.up__cat[data-cat="content"] .up__cat__h i{background:var(--lav)}
+.up__cat[data-cat="tech"] .up__cat__h i{background:var(--amber)}
+.up__cat__grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.up__cat__grid>.up__add:last-child:nth-child(odd){grid-column:1 / -1}
+.up__add{position:relative;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);cursor:pointer;transition:all .2s ease;display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:start}
 .up__add:hover{border-color:rgba(205,255,79,.3);background:rgba(255,255,255,.05)}
+.up__add:focus-within{outline:2px solid var(--lime);outline-offset:3px}
 .up__add.on{background:rgba(205,255,79,.08);border-color:var(--lime)}
 .up__add input{position:absolute;opacity:0;pointer-events:none}
-.up__add .chk{width:18px;height:18px;border-radius:5px;border:2px solid rgba(255,255,255,.22);flex:0 0 auto;position:relative;transition:all .2s;grid-column:1}
+.up__add .chk{width:18px;height:18px;border-radius:5px;border:2px solid rgba(255,255,255,.22);flex:0 0 auto;position:relative;transition:all .2s;grid-column:1;margin-top:1px}
 .up__add.on .chk{background:var(--lime);border-color:var(--lime);box-shadow:0 0 0 3px rgba(205,255,79,.15)}
 .up__add.on .chk::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:2.4px solid #08130a;border-top:0;border-left:0;transform:rotate(45deg)}
 .up__add .tt{grid-column:2;font-size:13.5px}
 .up__add .tt b{display:block;font-weight:600;color:#e9f0fb;line-height:1.2}
-.up__add .tt span{font-size:11.5px;color:var(--mut);margin-top:3px;display:block;line-height:1.4}
+.up__add .tt .d{font-size:11.5px;color:var(--mut);margin-top:3px;display:block;line-height:1.4}
+.up__add .tt .val{font-size:11px;color:var(--mint);margin-top:5px;display:block;line-height:1.4;font-weight:600}
 .up__add .pp{grid-column:3;font-family:'Unbounded',sans-serif;font-weight:700;font-size:14px;color:var(--lime);letter-spacing:-.01em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .up__add .fav{position:absolute;top:-7px;right:11px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--bg);background:var(--lime);padding:2px 7px;border-radius:999px;letter-spacing:.04em;font-weight:700}
 
-/* Правая колонка: чек */
+/* Правая колонка: чек — финансовый, премиальный вид */
 .up__bill{position:sticky;top:24px;background:linear-gradient(180deg,#101527 0%,#0d1220 100%);border:1px solid var(--line);border-radius:18px;padding:26px;overflow:hidden}
 .up__bill::before{content:"";position:absolute;top:0;left:0;right:0;height:60%;background:radial-gradient(120% 100% at 0% 0%,rgba(205,255,79,.09),transparent 60%);pointer-events:none}
+.up__bill::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--lime),var(--mint));opacity:.85}
 .up__bill__lbl{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:.06em;text-transform:uppercase;position:relative}
 .up__bill__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;margin-top:6px;letter-spacing:-.015em;position:relative}
-.up__lines{margin-top:18px;display:flex;flex-direction:column;gap:6px;position:relative}
-.up__line{display:flex;justify-content:space-between;font-size:13.5px;color:#c7ccd6;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.06);align-items:baseline;gap:12px}
+.up__lines{margin-top:18px;display:flex;flex-direction:column;position:relative}
+.up__line{display:flex;flex-direction:column;gap:3px;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.07)}
 .up__line:last-child{border-bottom:0}
-.up__line .n{color:#e9f0fb;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.up__line .p{font-family:'JetBrains Mono',monospace;color:var(--lime);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-.up__line--empty{color:var(--mut);font-style:italic}
-.up__line--empty .p{color:var(--mut2);font-style:normal}
-.up__disc{display:flex;justify-content:space-between;padding:8px 0;color:var(--mint);font-size:13px;border-top:1px dashed rgba(49,224,176,.24);margin-top:4px}
+.up__line__row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.up__line__row .n{color:#e9f0fb;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px}
+.up__line__row .p{font-family:'JetBrains Mono',monospace;color:var(--lime);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:13.5px}
+.up__line__val{font-size:11px;color:var(--mint);font-style:italic;opacity:.9;line-height:1.3}
+.up__line--empty .up__line__row .n{color:var(--mut);font-style:italic}
+.up__line--empty .up__line__row .p{color:var(--mut2);font-style:normal}
+.up__disc{display:flex;justify-content:space-between;padding:9px 12px;color:var(--mint);font-size:12.5px;background:rgba(49,224,176,.08);border:1px solid rgba(49,224,176,.22);border-radius:10px;margin-top:8px}
 .up__disc .p{font-family:'JetBrains Mono',monospace;font-weight:700;font-variant-numeric:tabular-nums}
 .up__total{margin-top:16px;padding:20px 22px;border-radius:14px;background:linear-gradient(120deg,rgba(205,255,79,.14),rgba(49,224,176,.06));border:1px solid rgba(205,255,79,.32);display:flex;justify-content:space-between;align-items:baseline;position:relative}
-.up__total .l{font-size:13px;color:#c7ccd6}
+.up__total .l{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
 .up__total .v{font-family:'Unbounded',sans-serif;font-weight:800;font-size:42px;color:var(--lime);letter-spacing:-.02em;font-variant-numeric:tabular-nums;transition:transform .3s;transform-origin:right center;line-height:1}
+.up__total .v .cur{font-size:.5em;font-weight:700;opacity:.8;margin-right:2px}
 .up__total .v.bump{animation:upbump .35s ease}
 @keyframes upbump{50%{transform:scale(1.10)}}
 .up__level{margin-top:18px;position:relative}
@@ -198,7 +236,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__level__labels span.on{color:var(--lime)}
 .up__cta{margin-top:20px;display:block;width:100%;padding:14px 20px;border-radius:12px;background:var(--lime);color:#08130a;font-family:'Unbounded',sans-serif;font-weight:700;font-size:14px;text-align:center;text-decoration:none;letter-spacing:-.005em;border:0;cursor:pointer;transition:transform .2s ease}
 .up__cta:hover{transform:translateY(-2px)}
-.up__note{margin-top:14px;font-size:11.5px;color:var(--mut2);text-align:center;line-height:1.5}
+.up__cta:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+.up__cta__sub{display:block;margin-top:10px;text-align:center;font-size:11.5px;color:var(--mint);font-weight:600}
+.up__note{margin-top:10px;font-size:11.5px;color:var(--mut2);text-align:center;line-height:1.5}
 
 /* ═══════════════════════════════════════════════════════════
    Адаптив
@@ -208,7 +248,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
   .b1,.b2,.b3,.b4{grid-column:span 1;grid-row:auto;min-height:280px}
   .up{grid-template-columns:1fr}
   .up__base{grid-template-columns:1fr}
-  .up__adds{grid-template-columns:1fr}
+  .up__presets{grid-template-columns:1fr}
+  .up__cat__grid{grid-template-columns:1fr}
+  .up__cat__grid>.up__add:last-child:nth-child(odd){grid-column:auto}
   .up__bill{position:static}
   .up__total .v{font-size:34px}
   .wl-sec{padding:44px 20px 70px}
@@ -317,8 +359,30 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 <section class="wl-sec" id="faqv">
   <div class="wl-sec__num">02 · растит средний чек</div>
   <h2 class="wl-sec__h">Собери проект — увидь<br>цену вживую</h2>
-  <p class="wl-sec__sub">Не «сколько стоит?» с ответом-стеной, а конфигуратор: базовый уровень + допы. Каждая галочка = ощутимый плюс к чеку, пакетная скидка от 3-х фич. Клиент сам выбирает состав — и сам видит итог.</p>
+  <p class="wl-sec__sub">Три готовых пакета одним кликом — или собери сам: базовый уровень + допы по категориям. У каждой галочки не просто цена, а понятная польза. Пакетная скидка −10% от 3-х допов.</p>
   <p class="wl-sec__meta">место в продакшене: <b>/sayty/ #faq</b>, <b>/tseny/</b> · плюс: средний чек растёт, клиенту виден полный набор возможностей</p>
+
+  <!-- Быстрый старт: 3 пресета -->
+  <div class="up__presets" id="upPresets">
+    <button class="up__preset" type="button" data-preset="start" data-base="landing" data-adds="design">
+      <span class="k">минимум</span>
+      <span class="nm">Стартовый</span>
+      <span class="ds">Лендинг с брендовым дизайном — без рекламы и интеграций</span>
+      <span class="fr">пакет · <b data-calc>$0</b></span>
+    </button>
+    <button class="up__preset" type="button" data-preset="ads" data-base="multi" data-adds="crm,ads,bot">
+      <span class="k">с рекламой</span>
+      <span class="nm">Рекламный</span>
+      <span class="ds">CRM + реклама + Telegram-бот — ни один лид не потеряется</span>
+      <span class="fr">пакет · <b data-calc>$0</b></span>
+    </button>
+    <button class="up__preset" type="button" data-preset="full" data-base="crmsite" data-adds="crm,ads,design,bot,texts,seo,speed,support">
+      <span class="k">всё включено</span>
+      <span class="nm">Полный</span>
+      <span class="ds">Сайт, CRM, реклама, SEO, скорость и поддержка на год</span>
+      <span class="fr">пакет · <b data-calc>$0</b></span>
+    </button>
+  </div>
 
   <div class="up">
     <!-- ЛЕВО: выбор -->
@@ -327,64 +391,82 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       <div class="up__h">С чего начинаем</div>
 
       <div class="up__base" id="upBase">
-        <label class="up__rad" data-p="150" data-n="Лендинг">
+        <label class="up__rad" data-p="150" data-n="Лендинг" data-id="landing" data-v="хватит на 1 рекламную кампанию, готов за 3 дня">
           <input type="radio" name="base"><div class="n">Лендинг</div><div class="p">$150</div><div class="d">1 страница · 3 дня</div>
         </label>
-        <label class="up__rad on" data-p="420" data-n="Многостраничный">
+        <label class="up__rad on" data-p="420" data-n="Многостраничный" data-id="multi" data-v="каталог, услуги и блог — работает и на SEO-трафик">
           <input type="radio" name="base" checked><div class="n">Многостраничный</div><div class="p">$420</div><div class="d">услуги, каталог, блог · 5 дней</div>
         </label>
-        <label class="up__rad" data-p="500" data-n="Сайт + CRM">
+        <label class="up__rad" data-p="500" data-n="Сайт + CRM" data-id="crmsite" data-v="заявки видно сразу в CRM, ничего не теряется">
           <input type="radio" name="base"><div class="n">Сайт + CRM</div><div class="p">$500</div><div class="d">заявки в CRM · до 7 дней</div>
         </label>
       </div>
 
       <div class="up__addH">
-        <span class="l">02 · допы</span>
+        <span class="l">02 · допы по категориям</span>
         <span class="r">по галочке за раз, скидка при 3+</span>
       </div>
+
       <div class="up__adds" id="upAdds">
-        <label class="up__add" data-p="180" data-n="CRM-интеграция">
-          <input type="checkbox"><span class="chk"></span>
-          <span class="tt"><b>CRM-интеграция</b><span>Заявки в вашу CRM: статусы, история, ответственный</span></span>
-          <span class="pp">+$180</span>
-          <span class="fav">частый выбор</span>
-        </label>
-        <label class="up__add" data-p="120" data-n="Метрика + Директ">
-          <input type="checkbox"><span class="chk"></span>
-          <span class="tt"><b>Метрика + Директ</b><span>Настройка целей, Вебвизор, первая рекламная кампания</span></span>
-          <span class="pp">+$120</span>
-          <span class="fav">частый выбор</span>
-        </label>
-        <label class="up__add" data-p="150" data-n="Дизайн под бренд">
-          <input type="checkbox"><span class="chk"></span>
-          <span class="tt"><b>Дизайн под бренд</b><span>Не шаблон, а айдентика: цвет, шрифт, фото-подбор</span></span>
-          <span class="pp">+$150</span>
-        </label>
-        <label class="up__add" data-p="130" data-n="Telegram-бот">
-          <input type="checkbox"><span class="chk"></span>
-          <span class="tt"><b>Telegram-бот</b><span>Не только уведомления — чат-бот с прогревом лида</span></span>
-          <span class="pp">+$130</span>
-        </label>
-        <label class="up__add" data-p="110" data-n="Тексты под нишу">
-          <input type="checkbox"><span class="chk"></span>
-          <span class="tt"><b>Тексты под нишу</b><span>Редакторские, не тайтлы «под ключ» — с фактами клиента</span></span>
-          <span class="pp">+$110</span>
-        </label>
-        <label class="up__add" data-p="100" data-n="SEO-стартер">
-          <input type="checkbox"><span class="chk"></span>
-          <span class="tt"><b>SEO-стартер</b><span>Метаданные, sitemap, Search Console, семантика 20 запросов</span></span>
-          <span class="pp">+$100</span>
-        </label>
-        <label class="up__add" data-p="80" data-n="Мобильная скорость 95+">
-          <input type="checkbox"><span class="chk"></span>
-          <span class="tt"><b>Мобильная скорость 95+</b><span>Оптимизация под 3G: WebP, lazy-load, sprite-svg</span></span>
-          <span class="pp">+$80</span>
-        </label>
-        <label class="up__add" data-p="150" data-n="Годовая поддержка">
-          <input type="checkbox"><span class="chk"></span>
-          <span class="tt"><b>Год поддержки</b><span>Мелкие правки без счёта, отчёт раз в месяц</span></span>
-          <span class="pp">+$150</span>
-        </label>
+        <div class="up__cat" data-cat="sales">
+          <div class="up__cat__h"><i></i><span>продажи</span></div>
+          <div class="up__cat__grid">
+            <label class="up__add" data-p="180" data-n="CRM-интеграция" data-id="crm">
+              <input type="checkbox"><span class="chk"></span>
+              <span class="tt"><b>CRM-интеграция</b><span class="d">Заявки автоматически попадают в CRM: статус, история, ответственный</span><span class="val">→ ни одна заявка не потеряется в переписке</span></span>
+              <span class="pp">+$180</span>
+              <span class="fav">частый выбор</span>
+            </label>
+            <label class="up__add" data-p="120" data-n="Метрика + Директ" data-id="ads">
+              <input type="checkbox"><span class="chk"></span>
+              <span class="tt"><b>Метрика + Директ</b><span class="d">Настройка целей, Вебвизор, первая рекламная кампания</span><span class="val">→ видно, с какой рекламы приходят деньги</span></span>
+              <span class="pp">+$120</span>
+              <span class="fav">частый выбор</span>
+            </label>
+            <label class="up__add" data-p="130" data-n="Telegram-бот" data-id="bot">
+              <input type="checkbox"><span class="chk"></span>
+              <span class="tt"><b>Telegram-бот</b><span class="d">Не только уведомления — чат-бот с прогревом лида</span><span class="val">→ отвечает клиенту 24/7, даже ночью</span></span>
+              <span class="pp">+$130</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="up__cat" data-cat="content">
+          <div class="up__cat__h"><i></i><span>дизайн и контент</span></div>
+          <div class="up__cat__grid">
+            <label class="up__add" data-p="150" data-n="Дизайн под бренд" data-id="design">
+              <input type="checkbox"><span class="chk"></span>
+              <span class="tt"><b>Дизайн под бренд</b><span class="d">Не шаблон, а айдентика: цвет, шрифт, фото-подбор</span><span class="val">→ не путают с шаблонным сайтом конкурента</span></span>
+              <span class="pp">+$150</span>
+            </label>
+            <label class="up__add" data-p="110" data-n="Тексты под нишу" data-id="texts">
+              <input type="checkbox"><span class="chk"></span>
+              <span class="tt"><b>Тексты под нишу</b><span class="d">Редакторские, не тайтлы «под ключ» — с фактами клиента</span><span class="val">→ дочитывают до конца, не закрывают на 3-й секунде</span></span>
+              <span class="pp">+$110</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="up__cat" data-cat="tech">
+          <div class="up__cat__h"><i></i><span>технологии</span></div>
+          <div class="up__cat__grid">
+            <label class="up__add" data-p="100" data-n="SEO-стартер" data-id="seo">
+              <input type="checkbox"><span class="chk"></span>
+              <span class="tt"><b>SEO-стартер</b><span class="d">Метаданные, sitemap, Search Console, семантика 20 запросов</span><span class="val">→ находят вас в Google без рекламы</span></span>
+              <span class="pp">+$100</span>
+            </label>
+            <label class="up__add" data-p="80" data-n="Мобильная скорость 95+" data-id="speed">
+              <input type="checkbox"><span class="chk"></span>
+              <span class="tt"><b>Мобильная скорость 95+</b><span class="d">Оптимизация под 3G: WebP, lazy-load, sprite-svg</span><span class="val">→ −1 сек загрузки = −7% конверсии</span></span>
+              <span class="pp">+$80</span>
+            </label>
+            <label class="up__add" data-p="150" data-n="Годовая поддержка" data-id="support">
+              <input type="checkbox"><span class="chk"></span>
+              <span class="tt"><b>Год поддержки</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ сайт не остаётся без присмотра</span></span>
+              <span class="pp">+$150</span>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -397,7 +479,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
         <!-- строки чека рендерятся JS -->
       </div>
 
-      <div class="up__total"><span class="l">итого</span><span class="v" id="upTotal">$420</span></div>
+      <div class="up__total"><span class="l">итого</span><span class="v" id="upTotal"><span class="cur">$</span><span class="num">420</span></span></div>
 
       <div class="up__level">
         <div class="up__level__bar"><i id="upLevelBar" style="width:20%"></i></div>
@@ -409,6 +491,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       </div>
 
       <button class="up__cta">Оформить проект</button>
+      <span class="up__cta__sub">ответим в Telegram в течение 15 минут</span>
       <p class="up__note">оплата после утверждения макета, 0 ₽ предоплаты</p>
     </div>
   </div>
@@ -572,19 +655,46 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 (function(){
   var rads = document.querySelectorAll('#upBase .up__rad');
   var adds = document.querySelectorAll('#upAdds .up__add');
+  var presets = document.querySelectorAll('#upPresets .up__preset');
   var linesBox = document.getElementById('upLines');
   var totalEl = document.getElementById('upTotal');
+  var totalNum = totalEl ? totalEl.querySelector('.num') : null;
   var bar = document.getElementById('upLevelBar');
   var L1 = document.getElementById('upL1'), L2 = document.getElementById('upL2'), L3 = document.getElementById('upL3');
   if (!rads.length) return;
 
+  // ── цена позиции по её data-id (нужно для расчёта пресетов)
+  function priceOf(list, id){
+    for (var i = 0; i < list.length; i++){
+      if (list[i].getAttribute('data-id') === id) return +list[i].getAttribute('data-p');
+    }
+    return 0;
+  }
+  // ── итог пакета base+допы по той же формуле, что в render() — без побочных эффектов на UI
+  function calcTotal(baseId, addIds){
+    var base = priceOf(rads, baseId);
+    var sum = addIds.reduce(function(s, id){ return s + priceOf(adds, id); }, 0);
+    var pre = base + sum;
+    var disc = addIds.length >= 3 ? Math.round(pre * 0.10) : 0;
+    return pre - disc;
+  }
+  // ── короткая анимация «пакет собрался» на карточке
+  function pulse(el){
+    if (!el) return;
+    el.classList.remove('pkt-in');
+    void el.offsetWidth;
+    el.classList.add('pkt-in');
+    setTimeout(function(){ el.classList.remove('pkt-in'); }, 420);
+  }
+
   function currentBase(){
     var r = document.querySelector('#upBase .up__rad.on');
-    return r ? { name: r.getAttribute('data-n'), price: +r.getAttribute('data-p') } : { name:'—', price:0 };
+    return r ? { name: r.getAttribute('data-n'), price: +r.getAttribute('data-p'), val: r.getAttribute('data-v') || '' } : { name:'—', price:0, val:'' };
   }
   function currentAdds(){
     return Array.prototype.map.call(document.querySelectorAll('#upAdds .up__add.on'), function(a){
-      return { name: a.getAttribute('data-n'), price: +a.getAttribute('data-p') };
+      var v = a.querySelector('.val');
+      return { name: a.getAttribute('data-n'), price: +a.getAttribute('data-p'), val: v ? v.textContent.replace(/^→\s*/, '') : '' };
     });
   }
 
@@ -598,23 +708,25 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     var disc = picks.length >= 3 ? Math.round(pre * 0.10) : 0;
     var total = pre - disc;
 
-    // ── лента-чек
+    // ── лента-чек: цена + краткая польза курсивом под каждой строкой
     linesBox.innerHTML = '';
     var b = document.createElement('div');
     b.className = 'up__line';
-    b.innerHTML = '<span class="n">' + base.name + '</span><span class="p">$' + base.price + '</span>';
+    b.innerHTML = '<div class="up__line__row"><span class="n">' + base.name + '</span><span class="p">$' + base.price + '</span></div>' +
+      (base.val ? '<div class="up__line__val">' + base.val + '</div>' : '');
     linesBox.appendChild(b);
 
     if (picks.length === 0){
       var e = document.createElement('div');
       e.className = 'up__line up__line--empty';
-      e.innerHTML = '<span class="n">+ допы (пока пусто)</span><span class="p">$0</span>';
+      e.innerHTML = '<div class="up__line__row"><span class="n">+ допы (пока пусто)</span><span class="p">$0</span></div>';
       linesBox.appendChild(e);
     } else {
       picks.forEach(function(p){
         var el = document.createElement('div');
         el.className = 'up__line';
-        el.innerHTML = '<span class="n">+ ' + p.name + '</span><span class="p">$' + p.price + '</span>';
+        el.innerHTML = '<div class="up__line__row"><span class="n">+ ' + p.name + '</span><span class="p">+$' + p.price + '</span></div>' +
+          (p.val ? '<div class="up__line__val">' + p.val + '</div>' : '');
         linesBox.appendChild(el);
       });
     }
@@ -626,12 +738,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     }
 
     // ── total с bump-анимацией
-    totalEl.textContent = '$' + total;
+    if (totalNum) { totalNum.textContent = total; } else { totalEl.textContent = '$' + total; }
     totalEl.classList.remove('bump');
     void totalEl.offsetWidth;
     totalEl.classList.add('bump');
 
-    // ── уровень: базовый (0 фич) → рекламный (Метрика+Директ ИЛИ Реклама-адды) → полный (5+)
+    // ── уровень: базовый (0-1 доп) → рекламный (2-4) → полный (5+)
     var lvl = 1;
     if (picks.length >= 2) lvl = 2;
     if (picks.length >= 5) lvl = 3;
@@ -646,6 +758,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     r.addEventListener('click', function(){
       rads.forEach(function(x){ x.classList.remove('on'); });
       r.classList.add('on');
+      presets.forEach(function(p){ p.classList.remove('on'); }); // ручной выбор — пресет больше не активен
       render();
     });
   });
@@ -654,9 +767,42 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       // не даём двойного тоггла (label→input)
       e.preventDefault();
       a.classList.toggle('on');
+      if (a.classList.contains('on')) pulse(a);
+      presets.forEach(function(p){ p.classList.remove('on'); }); // ручной выбор — пресет больше не активен
       render();
     });
   });
+
+  // ── пресеты: один клик проставляет базу + нужные галочки
+  presets.forEach(function(btn){
+    var baseId = btn.getAttribute('data-base');
+    var addIds = (btn.getAttribute('data-adds') || '').split(',').filter(Boolean);
+
+    // реальная цена пакета на кнопке — считаем по актуальным ценам, ничего не хардкодим
+    var calc = btn.querySelector('[data-calc]');
+    if (calc) calc.textContent = '$' + calcTotal(baseId, addIds);
+
+    btn.addEventListener('click', function(){
+      presets.forEach(function(p){ p.classList.remove('on'); });
+      btn.classList.add('on');
+
+      rads.forEach(function(r){ r.classList.toggle('on', r.getAttribute('data-id') === baseId); });
+
+      var onList = [];
+      adds.forEach(function(a){
+        var shouldOn = addIds.indexOf(a.getAttribute('data-id')) !== -1;
+        a.classList.toggle('on', shouldOn);
+        if (shouldOn) onList.push(a);
+      });
+
+      // «packet forming» — подсветка базы + каскадная анимация допов пакета
+      pulse(document.querySelector('#upBase .up__rad.on'));
+      onList.forEach(function(a, i){ setTimeout(function(){ pulse(a); }, i * 45); });
+
+      render();
+    });
+  });
+
   render();
 })();
 </script>
