@@ -5705,8 +5705,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
    Поэтому скобки по краям бокса и висели в воздухе. Сажаем их по чернилам
    с одинаковым зазором .06em сверху и снизу — значения в em, так что
    попадание сохраняется на любом кегле и на мобильных размерах. */
-.section-title em::before, .hero__title em::before { top: .35em;    left: -.06em; }
-.section-title em::after,  .hero__title em::after  { bottom: -.21em; right: -.06em; }
+/* Точные позиции считает js/brackets.js по фактическим чернилам слова:
+   у «без вас» нет заглавных и хвостов, у «можно открыть» есть descender —
+   одни и те же em-значения давали разброс до 20px. Значения ниже остаются
+   запасными на случай, если скрипт не отработал. */
+.section-title em::before, .hero__title em::before { top: var(--brk-top, .35em);       left: -.06em; }
+.section-title em::after,  .hero__title em::after  { bottom: var(--brk-bottom, -.21em); right: -.06em; }
 
 /* 5 · FAQ: заголовок едет вместе со списком и стоит по центру экрана.
    Только там, где колонки две — в одну колонку липкость мешает. */
