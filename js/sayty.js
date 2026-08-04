@@ -213,17 +213,27 @@
       all.sort(function (a, b) { return (b.offsetWidth * b.offsetHeight) - (a.offsetWidth * a.offsetHeight) || (localPos(a).y - localPos(b).y); });
       return all[0];
     }
-    function moveCursor() {
+    /* Движение только когда цель СМЕНИЛАСЬ (при смене ниши движок пересобирает
+       разметку — кнопка становится новым элементом). Раньше позиция переписывалась
+       каждые 500 мс, а клик жил своим таймером на 2600 мс: курсор подёргивался и
+       щёлкал в воздухе, не доехав. Теперь один осмысленный жест на нишу:
+       подвёл → доехал → нажал. */
+    var lastBtn = null, clickTimer = null;
+    function moveCursor(force) {
       if (!cursorView.clientHeight) return;
       var b = primaryBtn();
-      if (!b) return;
+      if (!b || (b === lastBtn && !force)) return;
+      lastBtn = b;
       var p = localPos(b);
       cursor.style.transform = 'translate(' + Math.round(p.x + b.offsetWidth / 2) + 'px,' + Math.round(p.y + b.offsetHeight / 2) + 'px)';
+      clearTimeout(clickTimer);
+      clickTimer = setTimeout(function () {           // нажимаем, только когда доехали
+        cursor.classList.add('click');
+        setTimeout(function () { cursor.classList.remove('click'); }, 400);
+      }, 1500);                                       // чуть больше transition (1.4s)
     }
-    moveCursor();
-    setInterval(moveCursor, 500);
-    // клик по кнопке периодически
-    setInterval(function () { cursor.classList.add('click'); setTimeout(function () { cursor.classList.remove('click'); }, 400); }, 2600);
+    moveCursor(true);
+    setInterval(moveCursor, 400);                     // только сверяем цель, позицию зря не трогаем
   }
 
   /* ── portfolio filter ── */

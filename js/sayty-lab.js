@@ -4,9 +4,12 @@
 
    Идея: формат мокапа остаётся (браузер, курсор, «живой» экран — этого нет
    ни у одного из 14 конкурентов), но внутри него вместо выдуманной кофейни
-   lumen-coffee.ru показываются реальные сайты клиентов: курсор наводится на
-   настоящую кнопку настоящего сайта, «кликает» — и браузер «переходит» на
-   следующую работу. Кадр кликабельный: тап открывает живой сайт. */
+   показываются реальные сайты клиентов.
+
+   Курсор ведёт себя как рука, а не как таймер: пауза на осмотр → плавный подвод
+   к настоящей кнопке настоящего сайта → нажатие с откликом → и ИМЕННО от нажатия
+   браузер «переходит» на следующую работу (бежит полоса загрузки, меняется адрес).
+   Каждое движение имеет причину, ничего не дёргается само по себе. */
 (function () {
   'use strict';
 
@@ -26,7 +29,7 @@
   var view = document.querySelector('.sy-browser__view');
   var urlEl = document.getElementById('syUrl');
   var bar = document.querySelector('.sy-browser__bar');
-  var cursor = document.getElementById('syCursor');
+  var cursorSvg = document.getElementById('syCursor');
   var site = document.getElementById('sySite');
   if (!view || !urlEl) return;
 
@@ -82,6 +85,18 @@
   prog.className = 'lab-prog';
   if (bar) bar.appendChild(prog);
 
+  /* Курсор в обёртке: обёртка ОТВЕЧАЕТ ЗА ПЕРЕМЕЩЕНИЕ (долгий плавный transform),
+     сама стрелка — за нажатие (короткий scale). Одним элементом это не сделать:
+     transform там один, а движение и клик нужны с разной длительностью. */
+  var cur = document.createElement('span');
+  cur.className = 'lab-cur';
+  if (cursorSvg) { cursorSvg.parentNode.removeChild(cursorSvg); cur.appendChild(cursorSvg); }
+  view.appendChild(cur);
+
+  var ripple = document.createElement('span');
+  ripple.className = 'lab-ripple';
+  view.appendChild(ripple);
+
   var capName = document.getElementById('labCapName');
   var capDesc = document.getElementById('labCapDesc');
   var capLink = document.getElementById('labCapLink');
@@ -94,91 +109,89 @@
     var dw = c.w * s, dh = c.h * s;
     return { x: (vw - dw) / 2 + dw * c.cta[0] / 100, y: dh * c.cta[1] / 100 };
   }
-
-  function putCursor(x, y, animate) {
-    if (!cursor) return;
-    if (!animate) cursor.style.transition = 'none';
-    cursor.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';
-    if (!animate) {
-      // форсим reflow, иначе следующий кадр съест мгновенную установку вместе с анимацией
-      void cursor.offsetWidth;
-      cursor.style.transition = 'transform 1.05s cubic-bezier(.4,0,.2,1)';
-    }
+  /* откуда рука заходит: снизу-сбоку от кнопки, чтобы подвод читался как жест,
+     а не как телепорт. Заходим с той стороны, где больше места. */
+  function approachPoint(p) {
+    var vw = view.clientWidth, vh = view.clientHeight;
+    return { x: p.x > vw / 2 ? p.x - vw * 0.3 : p.x + vw * 0.3, y: Math.min(p.y + vh * 0.45, vh - 14) };
   }
+  function place(x, y) { cur.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)'; }
 
-  var idx = -1, timers = [];
+  var idx = -1, timers = [], stopped = false;
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
   function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
 
-  function show(i) {
-    clearTimers();
+  function paint(i) {
     var c = CASES[i];
-    var prev = idx;
-    idx = i;
-
     if (!imgs[i].src) imgs[i].src = c.img;
     imgs.forEach(function (im, k) { im.classList.toggle('is-on', k === i); });
-
     urlEl.textContent = c.url;
     shot.href = c.href;
     shot.setAttribute('aria-label', 'Открыть сайт ' + c.url);
     if (capName) capName.textContent = c.n;
     if (capDesc) capDesc.textContent = c.d;
     if (capLink) capLink.href = c.href;
+    // следующий кадр подгружаем заранее — переход не должен мигать пустотой
+    var nx = (i + 1) % CASES.length;
+    if (!imgs[nx].src) imgs[nx].src = CASES[nx].img;
+  }
 
-    if (prev !== -1 && prog) {
-      prog.classList.remove('is-run');
-      void prog.offsetWidth;
-      prog.classList.add('is-run');
-    }
+  /* Один осмысленный проход: смотрим сайт → рука подводит курсор к кнопке →
+     нажатие → от нажатия уходим на следующую работу. */
+  function cycle(i) {
+    if (stopped) return;
+    clearTimers();
+    idx = i;
+    paint(i);
 
-    if (reduce || !cursor) return;
+    if (reduce || !cursorSvg) return;      // без анимации просто показываем кадры
 
-    // курсор мгновенно уходит в стартовую точку, потом ведёт к кнопке и «жмёт»
-    var vw = view.clientWidth, vh = view.clientHeight;
-    putCursor(vw * 0.24, vh * 0.78, false);
-    later(function () {
-      var p = btnPoint(c);
-      putCursor(p.x, p.y, true);
-    }, 700);
-    later(function () {
-      cursor.classList.add('click');
-      later(function () { cursor.classList.remove('click'); }, 400);
-    }, 2150);
-    // следующий кадр подгружаем заранее, чтобы переход не мигал белым
-    later(function () {
-      var nx = (i + 1) % CASES.length;
-      if (!imgs[nx].src) imgs[nx].src = CASES[nx].img;
+    var p = btnPoint(CASES[i]), a = approachPoint(p);
+
+    cur.classList.remove('is-on', 'press');
+    cur.style.transition = 'none';          // появление без «прилёта» через весь экран
+    place(a.x, a.y);
+    void cur.offsetWidth;
+    cur.style.transition = '';
+
+    later(function () { cur.classList.add('is-on'); }, 850);          // рука появилась
+    later(function () { place(p.x, p.y); }, 1150);                    // плавный подвод к кнопке
+    later(function () {                                               // нажатие + отклик
+      cur.classList.add('press');
+      ripple.style.transform = 'translate(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px)';
+      ripple.classList.remove('go'); void ripple.offsetWidth; ripple.classList.add('go');
+    }, 2250);
+    later(function () { cur.classList.remove('press'); }, 2470);
+    later(function () {                                               // страница откликнулась на клик
+      prog.classList.remove('is-run'); void prog.offsetWidth; prog.classList.add('is-run');
+      cur.classList.remove('is-on');
     }, 2600);
+    later(function () { cycle((i + 1) % CASES.length); }, 3350);      // и перешли на следующую работу
   }
-
-  /* Цикл живёт только пока вкладку видно. В скрытой вкладке браузер замораживает
-     CSS-переходы: кадр застревает на opacity 0, и при возврате человек видит
-     чёрный прямоугольник вместо сайта. Заодно не жжём батарею в фоне. */
-  var loop = null;
-  function startLoop() {
-    if (loop || reduce) return;
-    loop = setInterval(function () { show((idx + 1) % CASES.length); }, 5200);
-  }
-  function stopLoop() { clearInterval(loop); loop = null; clearTimers(); }
 
   function start() {
-    show(0);
-    startLoop();
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) { stopLoop(); return; }
-      show(idx < 0 ? 0 : idx);   // перерисовываем текущий кадр: переход мог застыть
-      startLoop();
-    });
+    stopped = false;
+    cycle(idx < 0 ? 0 : idx);
   }
 
   if (imgs[0].complete) start();
   else { imgs[0].addEventListener('load', start, { once: true }); imgs[0].addEventListener('error', start, { once: true }); }
 
+  /* В скрытой вкладке браузер замораживает CSS-переходы, но таймеры тикают:
+     кадры успевают смениться, а их opacity застывает на полпути — при возврате
+     видно два сайта, наложенных друг на друга. Поэтому в фоне цикл стоит, а на
+     возврате состояние кадров сбрасывается жёстко, без переходов. */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { stopped = true; clearTimers(); return; }
+    imgs.forEach(function (im, k) { im.style.transition = 'none'; im.style.opacity = (k === idx ? '1' : '0'); });
+    void view.offsetWidth;
+    imgs.forEach(function (im) { im.style.transition = ''; im.style.opacity = ''; });
+    start();
+  });
+
   window.addEventListener('resize', function () {
-    if (reduce || !cursor || idx < 0) return;
-    var p = btnPoint(CASES[idx]);
-    putCursor(p.x, p.y, true);
+    if (reduce || idx < 0) return;
+    place(btnPoint(CASES[idx]).x, btnPoint(CASES[idx]).y);
   });
 
   /* ── cookie: на проде плашка 273px и закрывает единственную кнопку.

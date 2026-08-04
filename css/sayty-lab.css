@@ -81,8 +81,38 @@
   .sy-browser__bar { position: relative; }
   .sy-browser__url { transition: opacity .2s ease; }
 
-  /* курсор поверх кадра */
-  .sy-cursor { z-index: 6; }
+  /* ── курсор: обёртка ведёт (долгое плавное перемещение), стрелка нажимает
+       (короткий scale). Одним элементом нельзя — transform там один, а движение
+       и клик должны идти с разной длительностью и разным ускорением. ── */
+  .lab-cur {
+    position: absolute; left: 0; top: 0; z-index: 6; pointer-events: none;
+    opacity: 0;
+    /* ease-out как у руки: быстро стартует, мягко доводит к кнопке */
+    transition: transform 1.05s cubic-bezier(.22, .61, .36, 1), opacity .4s ease;
+  }
+  .lab-cur.is-on { opacity: 1; }
+  .lab-cur .sy-cursor {
+    position: static !important; display: block; transform: none;
+    transition: transform .16s cubic-bezier(.3, 0, .2, 1);
+  }
+  .lab-cur.press .sy-cursor { transform: scale(.78); }
+
+  /* отклик на нажатие — круг расходится из точки клика */
+  /* сам контейнер пустой и невидимый — круг существует только в момент клика,
+     иначе opacity:0 на родителе погасил бы и анимацию внутри него */
+  .lab-ripple {
+    position: absolute; left: 0; top: 0; z-index: 5; pointer-events: none;
+    width: 20px; height: 20px; margin: -10px 0 0 -10px;
+  }
+  .lab-ripple.go::after {
+    content: ''; position: absolute; inset: -2px; border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, .92);
+    animation: labRipple .58s cubic-bezier(.2, .7, .3, 1) both;
+  }
+  @keyframes labRipple {
+    0%   { transform: scale(.45); opacity: .95; }
+    100% { transform: scale(2.7);  opacity: 0; }
+  }
 
   /* ── подпись под мокапом: кто это и куда ведёт ── */
   .lab-cap { display: block; margin-top: 11px; width: 100%; }
