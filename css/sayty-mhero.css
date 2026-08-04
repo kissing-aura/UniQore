@@ -275,3 +275,10 @@
   .sy-price__grid.is-fold .sy-pcard:not(.sy-pcard--flag) { display: none !important; }
   .sy-price__grid.is-fold { gap: 0 !important; }
 }
+
+@media (max-width: 768px) {
+  /* Мокап качался по вертикали (syFloatY, ±8px) — из-за этого нижняя строка
+     hero то влезала в сгиб Safari (639), то выходила за него (663).
+     На мобилке качание не читается, а стабильная геометрия важнее. */
+  .sy-mock { animation: none !important; }
+}
