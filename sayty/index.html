@@ -722,6 +722,10 @@
     </section>
 
     <!-- ═══════ ДИЗАЙН-КОМАНДА (конструктор проекта, живая цена) ═══════ -->
+    <!-- #pricing — якорь для быстрой ссылки «Цены и тарифы» в объявлении Директа.
+         CSS (scroll-margin-top) для него уже был, а сам якорь в HTML отсутствовал:
+         оплаченный клик по ссылке уводил человека в верх страницы, а не к ценам. -->
+    <span id="pricing" aria-hidden="true"></span>
     <section class="sy-section sy-section--band" id="design-team">
       <div class="sy-container">
         <div class="sy-head">
