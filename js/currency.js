@@ -21,8 +21,11 @@
     return formatNum(val) + ' ' + sym;
   }
 
+  var current = 'USD';   // последняя применённая валюта — нужна публичному API ниже
+
   function apply(cur, persist) {
     if (!RATES[cur]) cur = 'USD';
+    current = cur;
     document.querySelectorAll('[data-usd]').forEach(function (el) {
       var usd = parseFloat(el.getAttribute('data-usd'));
       if (isNaN(usd)) return;
@@ -65,4 +68,14 @@
   } else {
     boot();
   }
+
+  /* Публичный API — нужен блокам, которые рисуют цены динамически (конфигуратор
+     проекта на /sayty/): после перерисовки они проставляют data-usd и просят
+     пересчитать, иначе свежие цифры остались бы в долларах при выбранных ₽/Br.
+     Логика выше не изменена — это только доступ к ней снаружи. */
+  window.UQ_CURRENCY = {
+    refresh: function () { apply(current, false); },   // перечитать все [data-usd] заново
+    render: function (usd) { return render(usd, current); },
+    current: function () { return current; }
+  };
 })();
