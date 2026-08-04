@@ -9,6 +9,18 @@
    следующую работу. Кадр кликабельный: тап открывает живой сайт. */
 (function () {
   'use strict';
+
+  /* Флаг считается один раз при загрузке. Если ширина потом переходит границу
+     768px (поворот телефона, изменение окна), CSS переключается, а движок — нет:
+     в мокапе остаётся выдуманный LUMEN, а подпись под ним уже от реального кейса.
+     Проще всего перечитать страницу — это превью, лишний reload не жалко. */
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(max-width:768px)');
+    var onChange = function () { location.reload(); };
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+  }
+
   if (!window.UQ_MOCK_OVERRIDE) return;
 
   var view = document.querySelector('.sy-browser__view');
