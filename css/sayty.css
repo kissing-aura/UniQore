@@ -2028,3 +2028,29 @@ h1 span+span{animation-delay:.06s}
   .dz__card:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.35)}
   .dz__card:hover::after{border-color:rgba(205,255,79,.35)}
 }
+
+/* Три плюса + «всегда входит» — заменили отдельную секцию «Прозрачные цены» */
+.q-trust{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0 20px}
+.q-trust__i{display:flex;flex-direction:column;gap:2px;padding:16px 18px;border:1px solid var(--sy-line);border-radius:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.006));
+  transition:border-color .3s,transform .35s cubic-bezier(.2,.7,.2,1)}
+.q-trust__i:hover{border-color:rgba(205,255,79,.28);transform:translateY(-2px)}
+.q-trust__i svg{width:22px;height:22px;color:var(--sy-l);margin-bottom:8px}
+.q-trust__i b{font-family:'Unbounded',sans-serif;font-weight:700;font-size:14.5px;color:var(--sy-txt);line-height:1.2;letter-spacing:-.005em}
+.q-trust__i span{font-size:12.5px;color:var(--sy-mut);line-height:1.35;margin-top:2px}
+
+.q-always{margin:6px 0 26px;padding:16px 18px;border:1px dashed rgba(205,255,79,.24);border-radius:16px;background:rgba(205,255,79,.03)}
+.q-always__t{display:inline-block;font-family:var(--font-mono,monospace);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sy-l);margin-bottom:10px}
+.q-always__list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,1fr);gap:8px 22px}
+.q-always__list li{display:flex;align-items:center;gap:8px;color:var(--sy-txt);font-size:13.5px;line-height:1.3}
+.q-always__list svg{width:14px;height:14px;color:var(--sy-l);flex:none}
+
+@media(max-width:768px){
+  .q-trust{grid-template-columns:1fr;gap:8px;margin:18px 0 14px}
+  .q-trust__i{padding:12px 14px;flex-direction:row;align-items:center;gap:12px}
+  .q-trust__i svg{margin:0;width:20px;height:20px}
+  .q-trust__i b{font-size:13.5px}
+  .q-trust__i span{margin:0;font-size:12px}
+  .q-always{margin:0 0 18px;padding:14px 14px 12px}
+  .q-always__list{grid-template-columns:1fr;gap:6px}
+}
