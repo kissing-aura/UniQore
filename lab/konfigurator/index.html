@@ -44,7 +44,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .wl-sec__meta b{color:var(--lime)}
 
 /* Быстрый старт: 3 пресета над конфигуратором */
-.up__presets{margin-top:40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.up__presets{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.up__preset--premium{background:linear-gradient(155deg,rgba(242,184,75,.10),rgba(205,255,79,.03) 60%,#0f131f 100%);border-color:rgba(242,184,75,.22)}
+.up__preset--premium:hover{border-color:rgba(242,184,75,.42)}
+.up__preset--premium.on{border-color:var(--amber);background:rgba(242,184,75,.10);box-shadow:0 0 0 3px rgba(242,184,75,.13)}
+.up__preset--premium .k{color:var(--amber)}
+.up__preset--premium .fr b{color:var(--amber)}
 .up__preset{appearance:none;-webkit-appearance:none;font:inherit;text-align:left;position:relative;padding:18px 18px 16px;border-radius:14px;background:#0f131f;border:1px solid var(--line);color:var(--ink);cursor:pointer;transition:transform .2s ease,border-color .2s ease,background .2s ease}
 .up__preset:hover{transform:translateY(-2px);border-color:rgba(205,255,79,.32)}
 .up__preset:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
@@ -71,13 +76,32 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__lbl{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
 .up__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;margin-top:6px;letter-spacing:-.015em;line-height:1.2}
 
-/* Базовый уровень (radio) */
-.up__base{margin-top:18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+/* Базовый уровень (radio) — 2×2, 4-й уровень «Авторский» премиум */
+.up__base{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .up__rad{position:relative;padding:14px 14px 14px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);cursor:pointer;transition:all .2s ease;text-align:center}
 .up__rad input{position:absolute;opacity:0;pointer-events:none}
 .up__rad:hover{border-color:rgba(205,255,79,.3)}
 .up__rad:focus-within{outline:2px solid var(--lime);outline-offset:3px}
 .up__rad.on{background:rgba(205,255,79,.08);border-color:var(--lime);box-shadow:0 0 0 3px rgba(205,255,79,.06)}
+.up__rad--premium{background:linear-gradient(155deg,rgba(242,184,75,.09),rgba(205,255,79,.03) 60%,rgba(255,255,255,.03) 100%);border-color:rgba(242,184,75,.24)}
+.up__rad--premium:hover{border-color:rgba(242,184,75,.48)}
+.up__rad--premium.on{border-color:var(--amber);background:rgba(242,184,75,.11);box-shadow:0 0 0 3px rgba(242,184,75,.13)}
+.up__rad--premium .p{color:var(--amber)}
+.up__rad__badge{position:absolute;top:-8px;right:10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--bg);background:var(--amber);padding:2px 8px;border-radius:999px;letter-spacing:.04em;font-weight:700}
+
+/* Сравнение уровней «что входит» — глубина работы, не количество страниц */
+.up__cmp{margin-top:18px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid var(--line)}
+.up__cmp__note{font-size:12.5px;color:var(--mut);line-height:1.55;margin-bottom:13px}
+.up__cmp__note b{color:var(--amber)}
+.up__cmp__grid{display:grid;gap:1px;background:var(--line);border-radius:9px;overflow:hidden}
+.up__cmp__row{display:grid;grid-template-columns:92px 1fr 1fr;gap:10px;background:#0d1119;padding:9px 12px;font-size:12px;align-items:center}
+.up__cmp__row--head{background:#0f131f;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+.up__cmp__row--head span:first-child{color:var(--mut2)}
+.up__cmp__row--head span:nth-child(2){color:var(--mut)}
+.up__cmp__row--head span:nth-child(3){color:var(--amber)}
+.up__cmp__row span:first-child{color:var(--mut2);font-weight:600;font-size:11.5px}
+.up__cmp__row span:nth-child(2){color:#aab2c0;line-height:1.4}
+.up__cmp__row span:nth-child(3){color:#e9f0fb;line-height:1.4}
 .up__rad .n{font-weight:600;font-size:13.5px;color:#e9f0fb}
 .up__rad .p{font-family:'Unbounded',sans-serif;font-weight:700;font-size:17px;color:var(--lime);letter-spacing:-.01em;margin-top:4px;font-variant-numeric:tabular-nums}
 .up__rad .d{font-size:11px;color:var(--mut);margin-top:4px;line-height:1.35}
@@ -151,6 +175,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
   .up__base{grid-template-columns:1fr}
   .up__adds{grid-template-columns:1fr}
   .up__presets{grid-template-columns:1fr}
+  .up__cmp__row{grid-template-columns:66px 1fr 1fr;font-size:11px;gap:6px;padding:8px 10px}
   .up__bill{position:static}
   .up__total .v{font-size:34px}
   .wl-sec{padding:30px 20px 70px}
@@ -197,6 +222,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       <span class="ds">Сайт, CRM, реклама, SEO, скорость и поддержка на год</span>
       <span class="fr">пакет · <b data-calc>$0</b></span>
     </button>
+    <button class="up__preset up__preset--premium" type="button" data-preset="premium" data-base="premium" data-adds="crm,ads,bot,seo,speed,support">
+      <span class="k">авторский, под ключ</span>
+      <span class="nm">Премиум</span>
+      <span class="ds">Ведущий дизайнер с нуля + все технические интеграции</span>
+      <span class="fr">пакет · <b data-calc>$0</b></span>
+    </button>
   </div>
 
   <div class="up">
@@ -215,6 +246,23 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
         <label class="up__rad" data-p="500" data-n="Сайт + CRM" data-id="crmsite" data-v="заявки видно сразу в CRM, ничего не теряется">
           <input type="radio" name="base"><div class="n">Сайт + CRM</div><div class="p">$500</div><div class="d">заявки в CRM · до 7 дней</div>
         </label>
+        <label class="up__rad up__rad--premium" data-p="770" data-n="Авторский" data-id="premium" data-v="ведущий дизайнер с нуля, кастомные 3D-анимации, 3 круга правок">
+          <span class="up__rad__badge">премиум</span>
+          <input type="radio" name="base"><div class="n">Авторский</div><div class="p">$770</div><div class="d">дизайн с нуля · 10–14 дней</div>
+        </label>
+      </div>
+
+      <div class="up__cmp">
+        <div class="up__cmp__note">Сайт от $150 — рабочий инструмент, заявки идут исправно. <b>Авторский</b> — когда сайт должен продавать сам бренд, а не только собирать заявки.</div>
+        <div class="up__cmp__grid">
+          <div class="up__cmp__row up__cmp__row--head"><span></span><span>стандарт</span><span>авторский</span></div>
+          <div class="up__cmp__row"><span>Дизайн</span><span>адаптируем проверенный каркас под бренд</span><span>рисуем с нуля — ведущий дизайнер</span></div>
+          <div class="up__cmp__row"><span>Интерактив</span><span>аккуратные стандартные переходы</span><span>кастомные 3D-сцены, микро-анимации</span></div>
+          <div class="up__cmp__row"><span>Тексты</span><span>пишем по вашему брифу</span><span>личное интервью — смыслы, не шаблон</span></div>
+          <div class="up__cmp__row"><span>Графика</span><span>ваши фото + подбор из стока</span><span>индивидуальные иллюстрации и рендеры</span></div>
+          <div class="up__cmp__row"><span>Правки</span><span>1 круг правок</span><span>3 круга + A/B-тест первого экрана</span></div>
+          <div class="up__cmp__row"><span>Срок</span><span>3–7 дней</span><span>10–14 дней</span></div>
+        </div>
       </div>
 
       <div class="up__addH">
