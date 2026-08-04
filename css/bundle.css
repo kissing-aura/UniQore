@@ -5741,3 +5741,69 @@ html, body { overflow-x: clip; }
 @supports not (overflow: clip) {
   html, body { overflow-x: hidden; }
 }
+
+/* ═══ Разбор аудита 05.08 ═══════════════════════════════════════════
+   1) Градиент по тексту + анимация слов. animations.js оборачивает каждое
+      слово .section-title в .word-reveal с will-change:opacity,transform —
+      это стековый контекст, куда фон родителя, обрезанный по буквам, не
+      попадает, а прозрачная заливка наследуется. Слова рисковали остаться
+      невидимыми. Отдаём градиент самим словам: он одинаков для каждого,
+      поэтому читается как единый отлив, а не полосами. */
+.section-title .word-reveal, .hero__title .word-reveal {
+  background-image: inherit;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.section-title em .word-reveal, .hero__title em .word-reveal,
+.section-title .word-reveal em, .hero__title .word-reveal em {
+  -webkit-text-fill-color: var(--color-accent); color: var(--color-accent);
+}
+/* браузер без background-clip:text — текст обязан остаться видимым */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .section-title, .hero__title, .section-title .word-reveal, .hero__title .word-reveal {
+    -webkit-text-fill-color: #eef2f8; color: #eef2f8;
+  }
+}
+
+/* 2) Hero: clamp(40px,5.9vw,66px) упирался в потолок только с 1404px, а на
+      1120–1400px давал +10…+25% к прежнему размеру — вместо «чуть меньше»
+      заголовок вырос. Ставим планку ниже прежней на всём диапазоне. */
+.hero__title { font-size: clamp(40px, 4.2vw, 60px); background-size: 100% 2.2em; background-repeat: no-repeat; }
+
+/* 3) Мобильные размеры: мой прежний блок перебивал выверенные значения и
+      увеличивал заголовки на 21% (секции) и 16.6% (FAQ). Возвращаем. */
+@media (max-width: 640px) {
+  .section-title { font-size: clamp(24px, 6.6vw, 30px); margin-bottom: 26px; }
+  .faq .section-title { font-size: clamp(24px, 6.6vw, 30px); }
+}
+
+/* 4) Карточки демо: padding уменьшили до 20px, а вылет скриншота остался
+      рассчитан на 26px — картинка вылезала на 6px за карточку и срезала
+      скругление. На мобилке при padding 16 наоборот утопала на 5px. */
+.demo-card__shot { margin: -20px -20px 3px; }
+@media (max-width: 640px) { .demo-card__shot { margin: -16px -16px 2px; } }
+
+/* 5) Скобки: запасные значения (на случай, если brackets.js не отработал)
+      резали буквы — .35em входит в глиф «б» на четверть кегля. Сажаем по
+      реальным метрикам Unbounded 700: ymax «б» .800, ymin «р» −.165.
+      Толщина фиксированная: .045em давала 1.4px на мобильных заголовках. */
+.section-title em::before, .hero__title em::before { top: var(--brk-top, .045em); }
+.section-title em::after,  .hero__title em::after  { bottom: var(--brk-bottom, -.09em); }
+.section-title em::before, .section-title em::after,
+.hero__title em::before,   .hero__title em::after { border-width: 2px; }
+/* боковой зазор был .26em против .07em сверху — рамка выходила приплюснутой */
+.section-title em, .hero__title em { padding: .04em .14em .02em; }
+.section-title em::before, .hero__title em::before { left: -.03em; }
+.section-title em::after,  .hero__title em::after  { right: -.03em; }
+
+/* 6) FAQ: sticky включался с 981px, а две колонки появляются только с 1025px —
+      в полосе 981–1024 заголовок ехал вверх на половину своей высоты без
+      всякой липкости. И transform смещал его даже когда он не прилип:
+      сверху накрывал первый вопрос, снизу оставлял дыру. Смещение убрано
+      в top, transform снят вместе с лишним композиторским слоем. */
+@media (min-width: 981px) and (max-width: 1024px) {
+  .faq__header { position: static; transform: none; }
+}
+@media (min-width: 1025px) {
+  .faq__header { position: sticky; top: clamp(96px, calc(50vh - 79px), 40vh); transform: none; will-change: auto; }
+}

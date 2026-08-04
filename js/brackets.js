@@ -13,7 +13,7 @@
   'use strict';
 
   var SEL = '.section-title em, .hero__title em, .sy-h2 em, .sy-hero__h1 em';
-  var GAP = 0.07;                 // зазор до чернил, в долях кегля
+  var GAP = 0.12;                 // зазор до чернил, в долях кегля
   var ctx = null;
 
   function measure(el) {
