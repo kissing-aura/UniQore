@@ -37,7 +37,7 @@
 
   /* cta — координаты главной кнопки НА САМОМ скриншоте, в % от кадра.
      Сняты с изображений: Немеция — «Запись на сервис» в шапке, Гранат —
-     «Забронировать», IDTuning — телефон в шапке (иной CTA в кадре нет),
+     «Забронировать», SINKOV — «Обсудить проект» в hero,
      MILLA — «Рассчитать проект и получить презентацию» по центру. */
   var CASES = [
     { n: 'Немеция',  d: 'Автокомплекс, Омск',        url: 'немеция.рф',
@@ -46,9 +46,9 @@
     { n: 'Гранат',   d: 'Ресторан, Воронеж',         url: 'granat.me',
       href: 'https://granat.me',
       img: '/keysy/cases/case-granat-1024.webp?v=20260802a',   w: 1024, h: 554, cta: [93, 5.5] },
-    { n: 'IDTuning', d: 'Тюнинг-ателье, Москва',     url: 'idtuning.ru',
-      href: 'https://idtuning.ru',
-      img: '/keysy/cases/case-idtuning-1024.webp?v=20260731a', w: 1024, h: 580, cta: [64, 4.5] },
+    { n: 'SINKOV',   d: 'Ландшафтная архитектура, Москва', url: 'sinkoveco.ru',
+      href: 'https://sinkoveco.ru',
+      img: '/keysy/cases/case-sinkov-1024.webp?v=20260804a',   w: 1024, h: 576, cta: [13, 79.5] },
     { n: 'MILLA',    d: 'Дизайн интерьеров, Самара', url: 'milladesign.ru',
       href: 'https://milladesign.ru',
       img: '/keysy/cases/case-milla-1024.webp?v=20260731a',    w: 1024, h: 583, cta: [50, 78] }
@@ -145,6 +145,10 @@
     paint(i);
 
     if (reduce || !cursorSvg) return;      // без анимации просто показываем кадры
+
+    // окно мокапа ещё не сверстано (бывает при первой отрисовке и в свёрнутой
+    // вкладке): без размеров точка кнопки считается в минус и курсор уезжает
+    if (view.clientWidth < 40 || view.clientHeight < 40) { later(function () { cycle(i); }, 300); return; }
 
     var p = btnPoint(CASES[i]), a = approachPoint(p);
 
