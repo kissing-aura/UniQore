@@ -2087,6 +2087,6 @@ h1 span+span{animation-delay:.06s}
    строчного бокса — верх скобки оказывался почти на полкегля выше букв.
    Приводим к той же геометрии, что на главной, и подключаем brackets.js,
    который сажает их по фактическим чернилам слова. */
-.sy-h2 em, .sy-hero__h1 em { display:inline-block; line-height:.96; padding:.04em .14em .02em; }
+.sy-h2 em, .sy-hero__h1 em { display:inline; line-height:inherit; padding:0 .14em; }
 .sy-h2 em::before, .sy-hero__h1 em::before { top: var(--brk-top, .045em); left:-.03em; border-width:2px; }
 .sy-h2 em::after,  .sy-hero__h1 em::after  { bottom: var(--brk-bottom, -.09em); right:-.03em; border-width:2px; }

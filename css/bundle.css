@@ -5693,8 +5693,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
    поэтому висели заметно выше капители и ниже базовой линии — «мимо» слова.
    Сажаем em на собственный inline-block с плотной строкой: теперь границы
    бокса совпадают с глифами, и скобки обнимают слово, а не воздух. */
+/* em остаётся ОБЫЧНЫМ inline: display:inline-block с укороченной строкой
+   раздувал строчный бокс, и на 768px строки заголовка наезжали друг на
+   друга на 16–21px. Плотный бокс был нужен, пока скобки считались в em от
+   его границ; теперь их позиции берёт brackets.js по чернилам слова —
+   геометрия бокса больше не важна. */
 .section-title em, .hero__title em {
-  display: inline-block; line-height: .96; padding: .04em .2em .02em;
+  display: inline; line-height: inherit; padding: 0 .14em;
 }
 .section-title em::before, .section-title em::after,
 .hero__title em::before,   .hero__title em::after {
@@ -5770,7 +5775,7 @@ html, body { overflow-x: clip; }
 .section-title em::before, .section-title em::after,
 .hero__title em::before,   .hero__title em::after { border-width: 2px; }
 /* боковой зазор был .26em против .07em сверху — рамка выходила приплюснутой */
-.section-title em, .hero__title em { padding: .04em .14em .02em; }
+.section-title em, .hero__title em { padding: 0 .14em; }
 .section-title em::before, .hero__title em::before { left: -.03em; }
 .section-title em::after,  .hero__title em::after  { right: -.03em; }
 
