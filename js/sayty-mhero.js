@@ -224,7 +224,18 @@
       btn.classList.toggle('is-open', open);
       btn.innerHTML = open ? 'Свернуть' + CHEV
                            : 'Показать ещё <b>' + hidden + '</b> ' + plural(hidden) + CHEV;
-      if (!open) grid.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      if (open) {
+        // каскад: работы проявляются по очереди, а не выпрыгивают все разом
+        Array.prototype.slice.call(cards, 3).forEach(function (c, k) {
+          c.classList.remove('is-in-fold');
+          void c.offsetWidth;
+          c.style.animationDelay = (k * 70) + 'ms';
+          c.classList.add('is-in-fold');
+        });
+      } else {
+        Array.prototype.slice.call(cards, 3).forEach(function (c) { c.classList.remove('is-in-fold'); });
+        grid.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
     });
 
     function plural(n) {
@@ -235,50 +246,36 @@
     }
   })();
 
-  /* Универсальная сворачивалка: прячет блок и ставит под ним кнопку.
-     Нужна там, где на мобилке целый экран уходит под то, что человек
-     смотрит по желанию: другие тарифы, сравнение, команда, конфигуратор. */
+  /* Сворачивалка с плавным раскрытием. Блок оборачивается в grid-контейнер
+     с 0fr→1fr: высота едет сама, без замеров и фиксированных max-height,
+     которые дёргаются, когда внутри картинки догружаются.
+
+     Прячем ТОЛЬКО текст. Конфигуратор, команда и тарифы — это графика и
+     выбор, за кнопку они не уходят: экран от этого читается хуже, а не лучше. */
   function fold(el, closedLabel, openLabel) {
     if (!el || el.dataset.folded) return;
     el.dataset.folded = '1';
-    el.style.display = 'none';
+
+    var wrap = document.createElement('div');
+    wrap.className = 'sy-foldw';
+    el.parentNode.insertBefore(wrap, el);
+    wrap.appendChild(el);
+
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'sy-more';
     btn.innerHTML = closedLabel + CHEV;
-    el.parentNode.insertBefore(btn, el.nextSibling);
+    wrap.parentNode.insertBefore(btn, wrap.nextSibling);
+
     btn.addEventListener('click', function () {
-      var open = el.style.display === 'none';
-      el.style.display = open ? '' : 'none';
+      var open = wrap.classList.toggle('is-open');
       btn.classList.toggle('is-open', open);
       btn.innerHTML = (open ? openLabel : closedLabel) + CHEV;
     });
   }
 
-  (function foldHeavyBlocks() {
-    // тарифы: виден «Хит», остальные по кнопке
-    var grid = document.querySelector('.sy-price__grid');
-    if (grid) {
-      var others = grid.querySelectorAll('.sy-pcard:not(.sy-pcard--flag)');
-      if (others.length) {
-        grid.classList.add('is-fold');
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'sy-more';
-        b.innerHTML = 'Другие тарифы · <b>' + others.length + '</b>' + CHEV;
-        grid.parentNode.insertBefore(b, grid.nextSibling);
-        b.addEventListener('click', function () {
-          var open = grid.classList.toggle('is-fold') === false;
-          b.classList.toggle('is-open', open);
-          b.innerHTML = (open ? 'Свернуть тарифы' : 'Другие тарифы · <b>' + others.length + '</b>') + CHEV;
-        });
-      }
-    }
-    fold(document.querySelector('.sy-cmp'), 'Сравнить со студией и фрилансером', 'Свернуть сравнение');
-    var team = document.querySelector('.sy-team__grid');
-    fold(team, 'Показать команду · <b>' + (team ? team.children.length : 0) + '</b>', 'Свернуть');
-    fold(document.querySelector('.q-config'), 'Собрать проект и увидеть цену', 'Свернуть конфигуратор');
-  })();
+  // единственное, что уходит под кнопку из тяжёлых блоков — таблица сравнения
+  fold(document.querySelector('.sy-cmp'), 'Сравнить со студией и фрилансером', 'Свернуть сравнение');
 
   (function foldPricing() {
     var cards = document.querySelectorAll('.sy-pcard');
@@ -286,13 +283,20 @@
       var list = card.querySelector('.sy-pcard__list');
       if (!list) return;
       var n = list.querySelectorAll('li').length;
+      // тот же приём 0fr→1fr: список выезжает, а не появляется рывком
+      var wrap = document.createElement('div');
+      wrap.className = 'sy-foldw';
+      list.parentNode.insertBefore(wrap, list);
+      wrap.appendChild(list);
+
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'sy-spoil';
       btn.innerHTML = 'Что входит · ' + n + CHEV;
-      list.parentNode.insertBefore(btn, list);
+      wrap.parentNode.insertBefore(btn, wrap);
       btn.addEventListener('click', function () {
-        var open = card.classList.toggle('is-open');
+        var open = wrap.classList.toggle('is-open');
+        card.classList.toggle('is-open', open);
         btn.innerHTML = (open ? 'Свернуть' : 'Что входит · ' + n) + CHEV;
       });
     });

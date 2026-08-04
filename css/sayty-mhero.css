@@ -219,8 +219,6 @@
        Список — под «что входит», кнопка остаётся только у «Хита» ── */
   .sy-pcard { padding: 18px 16px !important; }
   .sy-pcard__who { font-size: 12.5px !important; line-height: 1.35 !important; }
-  .sy-pcard__list { display: none; }
-  .sy-pcard.is-open .sy-pcard__list { display: block; }
   .sy-pcard:not(.sy-pcard--flag) .sy-pcard__cta { display: none !important; }
 
   .sy-spoil {
@@ -271,9 +269,23 @@
 }
 
 @media (max-width: 768px) {
-  /* тарифы: по умолчанию виден только «Хит» */
-  .sy-price__grid.is-fold .sy-pcard:not(.sy-pcard--flag) { display: none !important; }
-  .sy-price__grid.is-fold { gap: 0 !important; }
+  /* Раскрытие: grid 0fr→1fr. Высота едет сама, без max-height, который
+     дёргается, когда внутри догружаются картинки. */
+  .sy-foldw { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s cubic-bezier(.22, .61, .36, 1); }
+  .sy-foldw > * { overflow: hidden; min-height: 0; opacity: .001; transition: opacity .32s ease; }
+  .sy-foldw.is-open { grid-template-rows: 1fr; }
+  .sy-foldw.is-open > * { opacity: 1; transition-delay: .12s; }
+
+  /* Работы из-под кнопки проявляются каскадом, а не выпрыгивают разом */
+  .sy-pf.is-in-fold { animation: syCardIn .45s cubic-bezier(.2, .7, .2, 1) both; }
+  @keyframes syCardIn {
+    from { opacity: 0; transform: translateY(14px) scale(.97); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* Списки в тарифах и текст сравнения — без резких скачков */
+  .sy-pcard__list { display: block; margin: 0; }
+  .sy-spoil { margin-bottom: 2px; }
 }
 
 @media (max-width: 768px) {
@@ -281,4 +293,12 @@
      hero то влезала в сгиб Safari (639), то выходила за него (663).
      На мобилке качание не читается, а стабильная геометрия важнее. */
   .sy-mock { animation: none !important; }
+}
+
+@media (max-width: 768px) {
+  /* Команда снова на виду — это лица, а не текст. Но три в ряд вместо двух:
+     восемь человек в две колонки занимали 694px, в три укладываются вдвое короче. */
+  .sy-team__grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+  .sy-tm__name, .sy-tm__role { font-size: 11px !important; }
+  .sy-tm__role { line-height: 1.25 !important; }
 }
