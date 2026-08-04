@@ -2090,3 +2090,10 @@ h1 span+span{animation-delay:.06s}
 .sy-h2 em, .sy-hero__h1 em { display:inline; line-height:inherit; padding:0 .14em; }
 .sy-h2 em::before, .sy-hero__h1 em::before { top: var(--brk-top, .045em); left:-.03em; border-width:2px; }
 .sy-h2 em::after,  .sy-hero__h1 em::after  { bottom: var(--brk-bottom, -.09em); right:-.03em; border-width:2px; }
+
+/* Лента живых работ .sy-mfirst задумывалась для мобильного первого экрана и
+   включена до 960px. После переезда мобильного hero на мокап её скрывают
+   только до 768px — в полосе 769–960 она оставалась и вылезала за правый
+   край на 55px (карточки по 232px в колонке, которая уже стала уже).
+   На планшете эту роль играет мокап справа, лента там не нужна. */
+@media (min-width: 769px) and (max-width: 960px) { .sy-mfirst { display: none !important; } }
