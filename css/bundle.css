@@ -5663,15 +5663,15 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
   .section-title { font-size: clamp(30px, 8vw, 44px); margin-bottom: 32px; }
 }
 
-/* 2 · Плоский белый — скучно. Даём заголовкам холодный отлив, а лидам
-   чуть больше воздуха и мягкий цвет: текст перестаёт выглядеть «дефолтным». */
+/* 2 · Оживляем текст БЕЗ background-clip:text. Градиент по буквам давал
+   двоение заголовков: animations.js разбивает их на слова-слои, и обрезанный
+   по буквам фон родителя ложился поверх собственного текста слоёв. Вместо
+   градиента — мягкий небелый тон и акцент лаймом (он и так есть). */
 .section-title, .hero__title {
-  background: linear-gradient(178deg, #ffffff 42%, #c9d6e8 100%);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
+  background: none; -webkit-text-fill-color: currentColor; color: #eef2f8;
 }
-.section-title em, .hero__title em {
-  -webkit-text-fill-color: var(--color-accent); color: var(--color-accent);
+.section-title .word-reveal, .hero__title .word-reveal {
+  background: none; -webkit-text-fill-color: currentColor; color: inherit;
 }
 .section-sub, .faq__sub, .section-lead {
   color: #a8b4c6; line-height: 1.62; letter-spacing: .003em;
@@ -5742,29 +5742,7 @@ html, body { overflow-x: clip; }
   html, body { overflow-x: hidden; }
 }
 
-/* ═══ Разбор аудита 05.08 ═══════════════════════════════════════════
-   1) Градиент по тексту + анимация слов. animations.js оборачивает каждое
-      слово .section-title в .word-reveal с will-change:opacity,transform —
-      это стековый контекст, куда фон родителя, обрезанный по буквам, не
-      попадает, а прозрачная заливка наследуется. Слова рисковали остаться
-      невидимыми. Отдаём градиент самим словам: он одинаков для каждого,
-      поэтому читается как единый отлив, а не полосами. */
-.section-title .word-reveal, .hero__title .word-reveal {
-  background-image: inherit;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-}
-.section-title em .word-reveal, .hero__title em .word-reveal,
-.section-title .word-reveal em, .hero__title .word-reveal em {
-  -webkit-text-fill-color: var(--color-accent); color: var(--color-accent);
-}
-/* браузер без background-clip:text — текст обязан остаться видимым */
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-  .section-title, .hero__title, .section-title .word-reveal, .hero__title .word-reveal {
-    -webkit-text-fill-color: #eef2f8; color: #eef2f8;
-  }
-}
-
+/* ═══ Разбор аудита 05.08 ═══
 /* 2) Hero: clamp(40px,5.9vw,66px) упирался в потолок только с 1404px, а на
       1120–1400px давал +10…+25% к прежнему размеру — вместо «чуть меньше»
       заголовок вырос. Ставим планку ниже прежней на всём диапазоне. */
@@ -5807,3 +5785,14 @@ html, body { overflow-x: clip; }
 @media (min-width: 1025px) {
   .faq__header { position: sticky; top: clamp(96px, calc(50vh - 79px), 40vh); transform: none; will-change: auto; }
 }
+
+/* Фото офиса в карточке «Наш офис» — адрес без снимка читался как текст ради
+   текста. Кадр во всю ширину карточки сверху, как у карточек работ. */
+.legalx__card--photo { padding-top: 0; overflow: hidden; }
+.legalx__shot {
+  display: block; width: calc(100% + 2px); margin: -1px -1px 18px;
+  aspect-ratio: 16 / 10; object-fit: cover; object-position: center 30%;
+  border-radius: 18px 18px 0 0;
+  filter: saturate(.92) contrast(1.02);
+}
+@media (max-width: 640px) { .legalx__shot { margin-bottom: 14px; aspect-ratio: 16 / 9; } }
