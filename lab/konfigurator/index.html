@@ -482,6 +482,16 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
   var L1 = document.getElementById('upL1'), L2 = document.getElementById('upL2'), L3 = document.getElementById('upL3');
   var REDUCE_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // ── Фаза 7: честная статистика вместо выдуманной. Ничего не отправляет,
+  // если на странице нет реального счётчика Метрики (сейчас на /lab/ — нет,
+  // значит на черновике абсолютно безвредно). Как только страница переедет
+  // на прод (/sayty/ или /tseny/, где Метрика уже подключена — id 110585817,
+  // window.UQ_MID) — эти вызовы заработают сами, без единой правки кода.
+  // Список целей для создания в Метрике — см. NIGHT-PLAN.md, Фаза 7.
+  function track(goal, params){
+    try { if (window.ym && window.UQ_MID) ym(window.UQ_MID, 'reachGoal', goal, params); } catch (e){}
+  }
+
   // ── общая пружина: критически-недодемпфированная, с лёгким перелётом.
   // Используется для суммы в чеке (Анимация 02) — сумма не «дёргается» scale-кейфреймом,
   // а реально доезжает до значения с overshoot, как в Linear/Framer.
@@ -615,6 +625,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       rads.forEach(function(x){ x.classList.remove('on'); });
       r.classList.add('on');
       presets.forEach(function(p){ p.classList.remove('on'); }); // ручной выбор — пресет больше не активен
+      track('cfg_base_select', { id: r.getAttribute('data-id') });
       render();
     });
   });
@@ -625,6 +636,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       var turningOff = a.classList.contains('on');
       a.classList.toggle('on');
       presets.forEach(function(p){ p.classList.remove('on'); }); // ручной выбор — пресет больше не активен
+      track('cfg_add_toggle', { id: a.getAttribute('data-id'), on: !turningOff });
 
       if (turningOff){
         // endowment: мгновенная вспышка строки в чеке перед тем, как она исчезнет —
@@ -668,6 +680,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     btn.addEventListener('click', function(){
       presets.forEach(function(p){ p.classList.remove('on'); });
       btn.classList.add('on');
+      track('cfg_preset_click', { key: btn.getAttribute('data-preset') });
 
       rads.forEach(function(r){ r.classList.toggle('on', r.getAttribute('data-id') === baseId); });
 
@@ -685,6 +698,21 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       render();
     });
   });
+
+  // главная конверсионная цель — клик по «Оформить проект» с составом финального пакета.
+  // Считаем total той же формулой, что render() — не читаем текст с экрана: там может
+  // быть промежуточное значение spring-анимации (Анимация 02), если клик пришёлся
+  // на середину доводки суммы.
+  var ctaBtn = document.querySelector('.up__cta');
+  if (ctaBtn){
+    ctaBtn.addEventListener('click', function(){
+      var base = currentBase(), picks = currentAdds();
+      var addsSum = picks.reduce(function(s,x){ return s + x.price; }, 0);
+      var pre = base.price + addsSum;
+      var disc = picks.length >= 3 ? Math.round(pre * 0.10) : 0;
+      track('cfg_cta_click', { base: base.name, addsCount: picks.length, total: pre - disc });
+    });
+  }
 
   render();
 })();
