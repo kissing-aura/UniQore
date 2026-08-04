@@ -43,8 +43,18 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 /* ═══════════════════════════════════════════════════════════
    [1] BENTO «Вы получаете не просто сайт» — переделка uq-grid
    ═══════════════════════════════════════════════════════════ */
-.bento{margin-top:44px;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(220px,auto);gap:16px}
-.bento__card{position:relative;border-radius:18px;overflow:hidden;padding:22px;background:#0f131f;border:1px solid var(--line);transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;outline:none}
+.bento{margin-top:44px;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(220px,auto);gap:16px;perspective:1400px}
+.bento__card{position:relative;border-radius:18px;overflow:hidden;padding:22px;background:#0f131f;border:1px solid var(--line);transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;outline:none;transform-style:preserve-3d;--shx:0px;--shy:14px;box-shadow:var(--shx) var(--shy) 32px -16px rgba(0,0,0,.55)}
+/* entrance-каскад: скрыто до появления в вьюпорте, JS переключает классы */
+.bento__card.wl-pre{opacity:0;transform:rotateX(8deg) translateY(30px)}
+.bento__card.wl-in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1),border-color .35s ease,box-shadow .35s ease}
+/* тонкое зерно — текстура вместо плоской заливки */
+.bento__card::before{content:"";position:absolute;inset:0;z-index:0;opacity:.035;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:150px 150px}
+/* ambient-свет за курсором, обновляется JS через --mx/--my/--glow */
+.bento__card::after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;transition:opacity .3s ease;mix-blend-mode:screen;background:radial-gradient(360px 360px at var(--mx,50%) var(--my,50%),var(--glow,rgba(255,255,255,.3)),transparent 68%)}
+.bento__card.wl-glow::after{opacity:.6}
+/* внутренний слой с 3D-наклоном — тянет за собой параллакс-детей, сам двигается rAF-физикой */
+.bento__tilt{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
 .bento__card:hover{transform:translateY(-3px)}
 .bento__card:focus-visible{outline:2px solid rgba(255,255,255,.5);outline-offset:3px}
 .b1:hover,.b1:focus-visible{border-color:rgba(49,224,176,.5);box-shadow:0 16px 44px -20px rgba(49,224,176,.6)}
@@ -55,13 +65,13 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .b2:focus-visible{outline-color:var(--amber)}
 .b3:focus-visible{outline-color:var(--coral)}
 .b4:focus-visible{outline-color:var(--lav)}
-.bento__num{position:absolute;top:16px;right:18px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--mut2);z-index:2}
-.bento__lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-top:2px}
-.bento__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;letter-spacing:-.015em;margin-top:6px;line-height:1.15}
+.bento__num{position:absolute;top:16px;right:18px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--mut2);z-index:2;transform:translateZ(6px)}
+.bento__lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-top:2px;transform:translateZ(10px)}
+.bento__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;letter-spacing:-.015em;margin-top:6px;line-height:1.15;transform:translateZ(18px)}
 .bento__d{color:var(--mut);font-size:13.5px;margin-top:8px;line-height:1.5}
 
 /* ─── B1: живая лента заявок (мятная, 4×2 слева) ─── */
-.b1{grid-column:span 4;grid-row:span 2;background:radial-gradient(120% 100% at 0% 0%,rgba(49,224,176,.08),transparent 55%),linear-gradient(160deg,#0c1d18 0%,#0a0e17 60%);border-color:rgba(49,224,176,.18)}
+.b1{grid-column:span 4;grid-row:span 2;background:radial-gradient(120% 100% at 0% 0%,rgba(49,224,176,.08),transparent 55%),linear-gradient(160deg,#0c1d18 0%,#0a0e17 60%);border-color:rgba(49,224,176,.18);--glow:rgba(49,224,176,.32)}
 .b1 .bento__num{color:var(--mint)}
 .b1__top{position:absolute;top:56px;left:22px;right:22px;display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut2);letter-spacing:.06em;text-transform:uppercase}
 .b1__mix{display:flex;align-items:center;gap:5px}
@@ -87,7 +97,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 @keyframes b1out{to{opacity:0;transform:translateY(14px)}}
 .b1-foot{position:absolute;left:22px;right:22px;bottom:22px;font-size:12.5px;color:var(--mut);display:flex;justify-content:space-between;align-items:baseline}
 .b1-foot__num{display:flex;align-items:baseline;gap:9px}
-.b1-foot .cnt{font-family:'Unbounded',sans-serif;font-weight:800;font-size:20px;color:var(--mint);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.b1-foot .cnt{font-family:'Unbounded',sans-serif;font-weight:800;font-size:20px;color:var(--mint);font-variant-numeric:tabular-nums;letter-spacing:-.02em;display:inline-block;transform:translateZ(14px)}
 .b1-foot .cnt::after{content:" заявок";font-family:'Geist',sans-serif;font-weight:400;font-size:12.5px;color:var(--mut);letter-spacing:0}
 .b1-foot .ctx{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut2)}
 .b1-foot .ping{color:var(--mint);opacity:0;transition:opacity .5s}
@@ -99,28 +109,28 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 }
 
 /* ─── B2: ROI ×3.4 с растущим счётчиком и графиком (янтарная, 2×2) ─── */
-.b2{grid-column:span 2;grid-row:span 2;background:radial-gradient(140% 100% at 100% 0%,rgba(242,184,75,.10),transparent 60%),linear-gradient(160deg,#171003 0%,#0a0e17 65%);border-color:rgba(242,184,75,.20)}
+.b2{grid-column:span 2;grid-row:span 2;background:radial-gradient(140% 100% at 100% 0%,rgba(242,184,75,.10),transparent 60%),linear-gradient(160deg,#171003 0%,#0a0e17 65%);border-color:rgba(242,184,75,.20);--glow:rgba(242,184,75,.32)}
 .b2 .bento__num{color:var(--amber)}
 .b2__big{position:absolute;left:22px;top:56px;right:22px}
 .b2__row{display:flex;align-items:baseline;gap:8px}
-.b2__val{font-family:'Unbounded',sans-serif;font-weight:800;font-size:52px;line-height:.95;letter-spacing:-.04em;color:var(--amber);font-variant-numeric:tabular-nums}
+.b2__val{font-family:'Unbounded',sans-serif;font-weight:800;font-size:52px;line-height:.95;letter-spacing:-.04em;color:var(--amber);font-variant-numeric:tabular-nums;display:inline-block;transform:translateZ(24px)}
 .b2__trend{width:20px;height:20px;stroke:var(--mint);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transform:translateY(-6px)}
 .b2__big small{display:block;font-size:11px;font-weight:600;color:rgba(242,184,75,.7);letter-spacing:.05em;text-transform:uppercase;margin-top:8px;line-height:1.4}
 .b2__flow{position:absolute;left:22px;top:150px;right:22px;display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mut)}
 .b2__flow b{color:#e9f0fb;font-weight:600}
 .b2__flow .to{color:var(--amber)}
 .b2__chart{position:absolute;left:22px;right:22px;bottom:60px;height:72px;display:flex;align-items:flex-end;gap:5px}
-.b2-bar{flex:1;background:linear-gradient(180deg,var(--amber),rgba(242,184,75,.2));border-radius:3px 3px 0 0;position:relative;transform-origin:bottom;transform:scaleY(0);transition:filter .2s}
+.b2-bar{flex:1;background:linear-gradient(180deg,var(--amber),rgba(242,184,75,.2));border-radius:3px 3px 0 0;position:relative;transform-origin:bottom;transform:scaleY(0) translateZ(var(--z,0px));transition:filter .2s}
 .b2-bar:hover{filter:brightness(1.15)}
 .b2-bar.grow{animation:b2grow .8s cubic-bezier(.22,1,.36,1) forwards}
-@keyframes b2grow{to{transform:scaleY(1)}}
+@keyframes b2grow{to{transform:scaleY(1) translateZ(var(--z,0px))}}
 .b2-bar::after{content:attr(data-l);position:absolute;bottom:-16px;left:0;right:0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--mut2)}
 .b2-bar .spark{position:absolute;top:-22px;left:50%;transform:translate(-50%,4px);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--amber);white-space:nowrap;opacity:0;transition:transform .4s,opacity .4s}
 .b2-bar.hot .spark{opacity:1;transform:translate(-50%,0)}
 .b2__foot{position:absolute;left:22px;right:22px;bottom:22px;font-size:11.5px;color:var(--mut);text-align:center}
 
 /* ─── B3: гонка индикаторов (коралловая, 3×1) ─── */
-.b3{grid-column:span 3;grid-row:span 1;background:radial-gradient(140% 100% at 0% 100%,rgba(255,110,99,.08),transparent 60%),linear-gradient(160deg,#180b0d 0%,#0a0e17 65%);border-color:rgba(255,110,99,.16);padding-bottom:18px}
+.b3{grid-column:span 3;grid-row:span 1;background:radial-gradient(140% 100% at 0% 100%,rgba(255,110,99,.08),transparent 60%),linear-gradient(160deg,#180b0d 0%,#0a0e17 65%);border-color:rgba(255,110,99,.16);padding-bottom:18px;--glow:rgba(255,110,99,.30)}
 .b3 .bento__num{color:var(--coral)}
 .b3__race{position:absolute;left:22px;right:22px;bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .b3__lane{padding:10px 13px 12px;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);position:relative;transition:border-color .2s}
@@ -131,7 +141,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .b3__lane.them .head{color:var(--coral)}
 .b3__lane .who{display:inline-flex;align-items:center;gap:5px}
 .b3__lane .ic{width:12px;height:12px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.b3__lane .head .val{font-family:'Unbounded',sans-serif;font-weight:800;font-size:14px;color:#e9f0fb;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.b3__lane .head .val{font-family:'Unbounded',sans-serif;font-weight:800;font-size:14px;color:#e9f0fb;font-variant-numeric:tabular-nums;letter-spacing:-.02em;display:inline-block;transform:translateZ(12px)}
 .b3__lane.us .head .val{color:var(--mint)}
 .b3__lane.them .head .val{color:var(--coral)}
 .b3__track{height:5px;border-radius:3px;background:rgba(255,255,255,.05);position:relative;overflow:visible}
@@ -145,11 +155,23 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .b3__track .flag{position:absolute;right:-3px;top:50%;width:13px;height:13px;fill:var(--mint);transform:translateY(-50%) scale(.4);opacity:0;filter:drop-shadow(0 0 4px rgba(49,224,176,.7))}
 .b3__lane.us.run .b3__track .flag{animation:b3flag 5.5s ease-in-out infinite}
 @keyframes b3flag{0%,8%{opacity:0;transform:translateY(-50%) scale(.4)}11%,54%{opacity:1;transform:translateY(-50%) scale(1)}60%,100%{opacity:0;transform:translateY(-50%) scale(.4)}}
+/* след-трейл за бегунком, синхронизирован по времени с движением полосы */
+.b3__track .trail{position:absolute;top:-3px;bottom:-3px;left:0;width:24px;border-radius:50%;opacity:0;pointer-events:none;filter:blur(2px)}
+.b3__lane.us .b3__track .trail{background:radial-gradient(circle,rgba(255,255,255,.75),rgba(49,224,176,.25) 55%,transparent 75%)}
+.b3__lane.them .b3__track .trail{background:radial-gradient(circle,rgba(255,255,255,.55),rgba(255,110,99,.22) 55%,transparent 75%)}
+.b3__lane.us.run .b3__track .trail{animation:b3trailUs 5.5s ease-in-out infinite}
+.b3__lane.them.run .b3__track .trail{animation:b3trailThem 5.5s linear infinite}
+@keyframes b3trailUs{0%,8%{left:0%;opacity:0}9%{opacity:.95}54%{left:calc(100% - 24px);opacity:.95}55%{opacity:0}62%,100%{left:0%;opacity:0}}
+@keyframes b3trailThem{0%{left:0%;opacity:.7}100%{left:calc(42% - 24px);opacity:.7}}
+/* вспышка на финише — короткий импульс на дорожке лидера */
+.b3__lane.us .flash{position:absolute;inset:-5px;border-radius:15px;pointer-events:none;opacity:0}
+.b3__lane.us.run .flash{animation:b3flash 5.5s ease-in-out infinite}
+@keyframes b3flash{0%,50%{opacity:0;box-shadow:0 0 0 0 rgba(49,224,176,0)}54%{opacity:1;box-shadow:0 0 26px 3px rgba(49,224,176,.5)}62%,100%{opacity:0;box-shadow:0 0 0 0 rgba(49,224,176,0)}}
 .b3__hint{position:absolute;left:22px;right:22px;bottom:82px;font-size:11.5px;color:var(--mut)}
 .b3__hint b{color:var(--coral);font-weight:600}
 
 /* ─── B4: два PageSpeed-gauge (сиреневая, 3×1) ─── */
-.b4{grid-column:span 3;grid-row:span 1;background:radial-gradient(140% 100% at 100% 100%,rgba(167,139,250,.09),transparent 60%),linear-gradient(160deg,#12102a 0%,#0a0e17 60%);border-color:rgba(167,139,250,.18);padding-bottom:18px}
+.b4{grid-column:span 3;grid-row:span 1;background:radial-gradient(140% 100% at 100% 100%,rgba(167,139,250,.09),transparent 60%),linear-gradient(160deg,#12102a 0%,#0a0e17 60%);border-color:rgba(167,139,250,.18);padding-bottom:18px;--glow:rgba(167,139,250,.32)}
 .b4 .bento__num{color:var(--lav)}
 .b4__gauges{position:absolute;left:22px;right:22px;bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:flex-end}
 .b4__g{position:relative;text-align:center}
@@ -162,7 +184,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 @keyframes b4them{to{stroke-dashoffset:100}} /* 34/100 */
 .b4__g .scale circle{fill:var(--mut2);opacity:.4}
 .b4__g .scale text{font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--mut2);opacity:.55;text-anchor:middle}
-.b4__g .val{position:absolute;left:0;right:0;top:32%;font-family:'Unbounded',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#e9f0fb}
+/* стрелка-указатель, доезжает до значения через JS-пружину (rotate вокруг 60,60) */
+.b4__g .needle{stroke-width:2.6;stroke-linecap:round;transform-origin:60px 60px;transform:rotate(-90deg)}
+.b4__g .needle-pivot{opacity:.9}
+.b4__g.us .needle,.b4__g.us .needle-pivot{stroke:var(--mint);fill:var(--mint)}
+.b4__g.them .needle,.b4__g.them .needle-pivot{stroke:var(--coral);fill:var(--coral)}
+.b4__g .val{position:absolute;left:0;right:0;top:32%;font-family:'Unbounded',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#e9f0fb;display:inline-block;transform:translateZ(16px)}
 .b4__g.us .val{color:var(--mint)}
 .b4__g.them .val{color:var(--coral)}
 .b4__g .lbl{display:flex;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut);letter-spacing:.06em;margin-top:4px}
@@ -171,6 +198,17 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .b4__g.them .lbl{color:var(--coral);opacity:.8}
 .b4__hint{position:absolute;left:22px;right:22px;bottom:112px;font-size:11.5px;color:var(--mut);text-align:center}
 .b4__hint b{color:var(--lav);font-weight:600}
+
+/* ── bento: мобилка — нет мыши, тilt/ambient выключены, остаётся только entrance ── */
+@media(max-width:899px){
+  .bento__tilt{transform:none!important}
+  .bento__card::after{opacity:0!important}
+}
+/* ── bento: reduced-motion — статика, без наклона и свечения ── */
+@media(prefers-reduced-motion:reduce){
+  .bento__tilt{transform:none!important}
+  .bento__card::after{opacity:0!important}
+}
 
 /* ═══════════════════════════════════════════════════════════
    [2] АПСЕЛЛ-КОНФИГУРАТОР — растит средний чек
@@ -320,6 +358,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
   <div class="bento">
     <!-- B1: живая лента заявок с автопотоком -->
     <div class="bento__card b1" tabindex="0" role="group" aria-label="Лента заявок в реальном времени: 47 заявок и растёт">
+     <div class="bento__tilt">
       <span class="bento__num">01</span>
       <div class="bento__lbl">лента в реальном времени</div>
       <div class="bento__h">Заявки, а не просмотры</div>
@@ -338,10 +377,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
         </div>
         <span class="ping" id="b1ping">+1 в CRM</span>
       </div>
+     </div>
     </div>
 
     <!-- B2: ROI ×3.4 с растущим счётчиком и графиком -->
     <div class="bento__card b2" tabindex="0" role="group" aria-label="Рекламный ROI ×3,4, было ×1,2 в первый месяц">
+     <div class="bento__tilt">
       <span class="bento__num">02</span>
       <div class="bento__lbl">окупаемость рекламы</div>
       <div class="b2__big" id="b2big">
@@ -363,34 +404,39 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
         <div class="b2-bar" data-l="6" data-h="100" data-sp="+70к"><span class="spark">+70к</span></div>
       </div>
       <div class="b2__foot">47 заявок · Немеция, Омск</div>
+     </div>
     </div>
 
     <!-- B3: гонка индикаторов -->
     <div class="bento__card b3" tabindex="0" role="group" aria-label="Uniqore отвечает за 0,4 секунды, конкурент — за 12 минут">
+     <div class="bento__tilt">
       <span class="bento__num">03</span>
       <div class="bento__lbl">ни одного потерянного лида</div>
       <div class="bento__h">Отвечаете первым</div>
       <div class="b3__hint">пока конкурент проснулся — клиент уже у&nbsp;вас · <b>0</b> потерь за 30&nbsp;дней</div>
       <div class="b3__race" id="b3race">
         <div class="b3__lane us">
+          <span class="flash"></span>
           <div class="head">
             <span class="who"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Uniqore</span>
             <span class="val">0,4 с</span>
           </div>
-          <div class="b3__track"><i></i><svg class="flag" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="2" height="20" rx="1"/><path d="M6 3l13 4-13 4z"/></svg></div>
+          <div class="b3__track"><i></i><span class="trail"></span><svg class="flag" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="2" height="20" rx="1"/><path d="M6 3l13 4-13 4z"/></svg></div>
         </div>
         <div class="b3__lane them">
           <div class="head">
             <span class="who"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 3.5"/></svg>Конкурент</span>
             <span class="val">12 мин</span>
           </div>
-          <div class="b3__track"><i></i></div>
+          <div class="b3__track"><i></i><span class="trail"></span></div>
         </div>
       </div>
+     </div>
     </div>
 
     <!-- B4: два gauge PageSpeed -->
     <div class="bento__card b4" tabindex="0" role="group" aria-label="PageSpeed Uniqore 98 из 100 против 34 у конструктора">
+     <div class="bento__tilt">
       <span class="bento__num">04</span>
       <div class="bento__lbl">клиент не ушёл</div>
       <div class="bento__h">Мгновенная загрузка</div>
@@ -404,6 +450,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
               <circle cx="12" cy="60" r="1.6"/><circle cx="60" cy="12" r="1.6"/><circle cx="108" cy="60" r="1.6"/>
               <text x="12" y="68">0</text><text x="60" y="8">50</text><text x="108" y="68">100</text>
             </g>
+            <g class="needle-g"><line class="needle" data-v="98" x1="60" y1="60" x2="60" y2="20"/><circle class="needle-pivot" cx="60" cy="60" r="3"/></g>
           </svg>
           <div class="val">98</div>
           <div class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>Uniqore</div>
@@ -416,11 +463,13 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
               <circle cx="12" cy="60" r="1.6"/><circle cx="60" cy="12" r="1.6"/><circle cx="108" cy="60" r="1.6"/>
               <text x="12" y="68">0</text><text x="60" y="8">50</text><text x="108" y="68">100</text>
             </g>
+            <g class="needle-g"><line class="needle" data-v="34" x1="60" y1="60" x2="60" y2="20"/><circle class="needle-pivot" cx="60" cy="60" r="3"/></g>
           </svg>
           <div class="val">34</div>
           <div class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Конструктор</div>
         </div>
       </div>
+     </div>
     </div>
   </div>
 </section>
@@ -576,6 +625,98 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
    1) BENTO v2 — живые сценарии в каждой карточке
    ═══════════════════════════════════════════════════════════ */
 
+// ── общая физика: ОДИН rAF-тик на все карточки (3D-tilt + магнит + тень + spring-числа) ──
+var WL = (function(){
+  var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var desktop = !reduce && window.innerWidth >= 900 && !!(window.matchMedia && matchMedia('(hover:hover)').matches);
+  var springs = [], tilts = [], running = false, last = 0;
+
+  // универсальная пружина: from→to с overshoot, использует общий тик ниже
+  function spring(from, to, set, k, d){
+    var s = { v:from, vel:0, t:to, set:set, k:k||210, d:d||16 };
+    set(from);
+    springs.push(s);
+    kick();
+    return s;
+  }
+
+  function tick(now){
+    var dt = last ? Math.min(.032, (now - last) / 1000) : .016;
+    last = now;
+    for (var i = springs.length - 1; i >= 0; i--){
+      var s = springs[i];
+      var acc = s.k * (s.t - s.v) - s.d * s.vel;
+      s.vel += acc * dt;
+      s.v += s.vel * dt;
+      s.set(s.v);
+      if (Math.abs(s.t - s.v) < .002 && Math.abs(s.vel) < .01){ s.set(s.t); springs.splice(i, 1); }
+    }
+    for (var j = 0; j < tilts.length; j++){
+      var it = tilts[j];
+      it.rx  += (it.trx  - it.rx ) * .14;
+      it.ry  += (it.try_ - it.ry ) * .14;
+      it.mgx += (it.tmgx - it.mgx) * .14;
+      it.mgy += (it.tmgy - it.mgy) * .14;
+      it.shx += (it.tshx - it.shx) * .14;
+      it.shy += (it.tshy - it.shy) * .14;
+      it.tilt.style.transform = 'translate(' + it.mgx.toFixed(2) + 'px,' + it.mgy.toFixed(2) + 'px) rotateX(' + it.rx.toFixed(2) + 'deg) rotateY(' + it.ry.toFixed(2) + 'deg)';
+      it.card.style.setProperty('--shx', it.shx.toFixed(1) + 'px');
+      it.card.style.setProperty('--shy', it.shy.toFixed(1) + 'px');
+    }
+    if (springs.length || tilts.length){ requestAnimationFrame(tick); } else { running = false; }
+  }
+  function kick(){ if (!running){ running = true; last = 0; requestAnimationFrame(tick); } }
+
+  // 3D-tilt + магнит + динамическая тень — только там, где реально есть мышь
+  if (desktop){
+    Array.prototype.forEach.call(document.querySelectorAll('.bento__card'), function(card){
+      var tiltEl = card.querySelector('.bento__tilt');
+      if (!tiltEl) return;
+      var it = { card:card, tilt:tiltEl, rx:0, ry:0, mgx:0, mgy:0, shx:0, shy:14, trx:0, try_:0, tmgx:0, tmgy:0, tshx:0, tshy:14 };
+      tilts.push(it);
+      card.addEventListener('pointermove', function(e){
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+        it.trx = (0.5 - py) * 12;         // максимум ≈ ±6°
+        it.try_ = (px - 0.5) * 12;
+        it.tmgx = (px - 0.5) * 6;         // магнит-притяжение 2-4px
+        it.tmgy = (py - 0.5) * 6;
+        it.tshx = (0.5 - px) * 24;        // тень уходит в сторону, противоположную наклону
+        it.tshy = 14 - (0.5 - py) * 24;
+        card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+        card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+        card.classList.add('wl-glow');
+        kick();
+      });
+      card.addEventListener('pointerleave', function(){
+        it.trx = 0; it.try_ = 0; it.tmgx = 0; it.tmgy = 0; it.tshx = 0; it.tshy = 14;
+        card.classList.remove('wl-glow');
+        kick();
+      });
+    });
+  }
+
+  // entrance-каскад по IntersectionObserver: rotateX(8deg) translateY(30px) → none, шаг 80мс
+  if (!reduce && 'IntersectionObserver' in window){
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.bento__card'));
+    cards.forEach(function(c){ c.classList.add('wl-pre'); });
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if (!e.isIntersecting) return;
+        var idx = cards.indexOf(e.target);
+        setTimeout(function(){
+          e.target.classList.remove('wl-pre');
+          e.target.classList.add('wl-in');
+        }, Math.max(0, idx) * 80);
+        io.unobserve(e.target);
+      });
+    }, { threshold:.18 });
+    cards.forEach(function(c){ io.observe(c); });
+  }
+
+  return { spring:spring, reduce:reduce };
+})();
+
 // ── B1: автопоток заявок ──
 (function(){
   var body = document.getElementById('b1body');
@@ -650,9 +791,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       setTimeout(function(){ if(old.parentNode) old.parentNode.removeChild(old); }, 450);
     }
 
-    // счётчик
+    // счётчик — значение сразу, а масштаб отыгрывает пружиной с overshoot
     count++;
     cnt.textContent = count;
+    if (!WL.reduce){
+      WL.spring(.8, 1, function(v){ cnt.style.transform = 'translateZ(14px) scale(' + v.toFixed(3) + ')'; }, 300, 12);
+    }
 
     // ping «+1 в CRM»
     ping.classList.add('show');
@@ -682,17 +826,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       setTimeout(function(){ b.classList.remove('hot'); }, 80*i + 2100);
     });
 
-    // 0.0 → 3.4 счётчик
-    var target = 3.4, start = 0, dur = 1400, t0 = performance.now();
-    function tick(t){
-      var p = Math.min(1, (t - t0) / dur);
-      // ease-out cubic
-      p = 1 - Math.pow(1 - p, 3);
-      var v = (start + (target - start) * p).toFixed(1).replace('.', ',');
-      val.textContent = '×' + v;
-      if (p < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
+    // 0.0 → 3.4 — пружина с лёгким overshoot вместо линейного ease (общий rAF-тик WL)
+    function setVal(v){ val.textContent = '×' + Math.max(0, v).toFixed(1).replace('.', ','); }
+    if (WL.reduce){ setVal(3.4); } else { WL.spring(0, 3.4, setVal, 26, 6); }
 
     // Повтор эффекта каждые 8 сек — карточка остаётся живой
     setInterval(function(){
@@ -726,7 +862,20 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
   } else { start(); }
 })();
 
-// ── B4: gauge — CSS-анимации запускаются автоматом; ничего не нужно ──
+// ── B4: gauge — арки едут CSS-анимацией сами; стрелки доезжают пружиной с overshoot ──
+(function(){
+  var needles = document.querySelectorAll('.b4__g .needle');
+  if (!needles.length) return;
+  function angleFor(v){ return (v / 100) * 180 - 90; } // -90deg=0 · 0deg=50 · +90deg=100
+  Array.prototype.forEach.call(needles, function(n, i){
+    var target = angleFor(+n.getAttribute('data-v') || 0);
+    var delay = i * 300; // синхронно с .b4__g.them .arc{...forwards .3s}
+    setTimeout(function(){
+      if (WL.reduce){ n.style.transform = 'rotate(' + target + 'deg)'; return; }
+      WL.spring(-90, target, function(v){ n.style.transform = 'rotate(' + v.toFixed(2) + 'deg)'; }, 48, 7);
+    }, delay);
+  });
+})();
 
 /* ═══════════════════════════════════════════════════════════
    2) АПСЕЛЛ-КОНФИГУРАТОР
