@@ -52,6 +52,7 @@
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260731a">
   <link rel="stylesheet" href="/css/sayty.css?v=20260804c">
+  <link rel="stylesheet" href="/css/sayty-mhero.css?v=20260804e">
   <style>/* критический размер видео инлайном — держит вёрстку даже при устаревшем кэше внешнего CSS (защита от «гигант-лого») */
   .nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
   .nav__logo-vid{width:100%;height:100%;object-fit:cover;display:none}
@@ -416,10 +417,12 @@ addEventListener('load', function(){
               <span class="sy-pricepill">от <b data-usd="150">$150</b></span>
               <span class="sy-pricepill__note">Платите один раз — дальше сайт ваш, без ежемесячной платы. Цену фиксируем в договоре, оплата после того, как утвердите макет.</span>
             </div>
+            <div class="lab-price"><span class="lab-price__i"><b>от 11 700 ₽</b>одна страница</span><span class="lab-price__i"><b>от 32 800 ₽</b>многостраничник с дизайном</span></div>
             <div class="sy-hero__cta sy-rev" data-d="4">
               <a href="#zayavka" class="sy-btn sy-btn--main sy-btn--lg" data-mag>Рассчитать мой сайт <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
               <a href="#portfolio" class="sy-btn sy-btn--ghost sy-btn--lg">Посмотреть проекты</a>
             </div>
+            <div class="lab-guar">Год гарантии · оплата после макета · исходники ваши</div>
 
             <!-- Гарантия: есть у всех конкурентов (год у Korzilla, два у MWI,
                  пожизненная у Veonix) — её отсутствие читалось как брак. -->
@@ -452,6 +455,7 @@ addEventListener('load', function(){
           </div>
 
           <div class="sy-hero__right sy-rev" data-d="2">
+            <div class="lab-cap" id="labCap"><a class="lab-cap__l" id="labCapLink" href="https://xn--e1aajod1d6c.xn--p1ai/" target="_blank" rel="noopener noreferrer"><b id="labCapName">Немеция</b><span id="labCapDesc">Автокомплекс, Омск</span><span class="lab-cap__go">открыть сайт<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></div>
             <div class="sy-mock">
               <div class="sy-browser">
                 <div class="sy-browser__bar">
@@ -1366,7 +1370,9 @@ addEventListener('load', function(){
     window.addEventListener('scroll',function(){var n=document.getElementById('nav');if(n)n.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
   </script>
   <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
+  <script>window.UQ_MOCK_OVERRIDE=!!(window.matchMedia&&window.matchMedia('(max-width:768px)').matches);</script>
   <script src="/js/sayty.js?v=20260804c" defer></script>
+  <script src="/js/sayty-mhero.js?v=20260804e" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
   <script src="/js/cookie.js?v=20260730a" defer></script>
   <script>
