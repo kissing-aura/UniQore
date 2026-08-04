@@ -5801,3 +5801,13 @@ html, body { overflow-x: clip; }
   filter: saturate(.92) contrast(1.02);
 }
 @media (max-width: 640px) { .legalx__shot { margin-bottom: 14px; aspect-ratio: 16 / 9; } }
+
+/* Плавающие карточки hero висят на отрицательных отступах (left:-12% и -20%)
+   относительно мокапа. На широком мониторе они красиво заходят на текстовую
+   колонку, но при ширине окна около 1000px уходили за левый край экрана на
+   50–61px. Прижимаем внутрь на узких десктопах — на больших всё как было. */
+@media (min-width: 961px) and (max-width: 1200px) {
+  .hero__fcard--a { left: -2% !important; }
+  .hero__fcard--b { left: -4% !important; }
+  .hero__fcard--c { left: 2% !important; }
+}
