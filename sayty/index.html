@@ -51,8 +51,8 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260731a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260804f">
-  <link rel="stylesheet" href="/css/sayty-mhero.css?v=20260804m">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260804n">
+  <link rel="stylesheet" href="/css/sayty-mhero.css?v=20260804n">
   <style>/* критический размер видео инлайном — держит вёрстку даже при устаревшем кэше внешнего CSS (защита от «гигант-лого») */
   .nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
   .nav__logo-vid{width:100%;height:100%;object-fit:cover;display:none}
@@ -1037,7 +1037,7 @@ addEventListener('load', function(){
                 <div class="rc__scan"></div>
                 <span class="rc__b rc__b--tl"></span><span class="rc__b rc__b--tr"></span><span class="rc__b rc__b--bl"></span><span class="rc__b rc__b--br"></span>
                 <div class="rc__reticle"></div>
-                <div class="rc__hud"><i></i>SCAN · LOVI</div>
+                <svg class="rc__ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect class="rc__ring-l" x="1" y="1" width="98" height="98" rx="2.4" pathLength="1"/></svg><button type="button" class="rc__sound" id="reelSound" aria-label="Включить звук"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="rc__sound-x" d="M17 9l4 6M21 9l-4 6"/><path class="rc__sound-w" d="M16.5 8.5a5 5 0 010 7"/></svg><i>звук</i></button><div class="rc__hud"><i></i>SCAN · LOVI</div>
                 <div class="rc__play"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg></div>
                 <div class="rc__resume" id="reelResume"><svg viewBox="0 0 24 24" fill="#08130a" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg></div>
                 <div class="rc__ctrl" id="reelCtrl">
@@ -1104,6 +1104,38 @@ addEventListener('load', function(){
             vid.addEventListener('timeupdate',function(){ var d=vid.duration||0; if(fill)fill.style.width=(d?vid.currentTime/d*100:0)+'%'; if(timeEl)timeEl.textContent=fmt(vid.currentTime)+' / '+fmt(d); });
             if(pp) pp.addEventListener('click',function(e){ e.stopPropagation(); toggle(); });
             if(track) track.addEventListener('click',function(e){ e.stopPropagation(); var r=track.getBoundingClientRect(),d=vid.duration||0; if(d) vid.currentTime=Math.min(d,Math.max(0,(e.clientX-r.left)/r.width*d)); });
+            var ring=frame.querySelector('.rc__ring-l'), snd=document.getElementById('reelSound');
+            vid.addEventListener('timeupdate',function(){ var d=vid.duration||0; if(ring) ring.style.strokeDashoffset=String(1-(d?vid.currentTime/d:0)); });
+
+            /* Автозапуск, когда ролик доходит до экрана. Со звуком браузер это
+               запретит, поэтому стартуем без него и предлагаем включить кнопкой.
+               Ушёл с экрана — ставим на паузу, вернулся — продолжаем с того же места. */
+            var reduceM = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+            /* Ролик 5,8 МБ (1:34, 720p, 520 кбит/с). Автозапуск не должен съедать
+               мобильный трафик: на экономии трафика и на 2G/3G оставляем запуск
+               по клику, а сам файл тянем по ходу (metadata), а не целиком. */
+            var conn = navigator.connection || {};
+            var thrifty = conn.saveData || /(^|-)(2g|3g)$/.test(conn.effectiveType || '');
+            if('IntersectionObserver' in window && !reduceM && !thrifty){
+              var autoPaused=false;
+              new IntersectionObserver(function(es){
+                es.forEach(function(e){
+                  if(e.isIntersecting){
+                    if(!started){ vid.muted=true; vid.preload='metadata'; frame.classList.add('is-auto'); start(); }
+                    else if(vid.paused && autoPaused){ vid.play().catch(function(){}); autoPaused=false; }
+                  } else if(!vid.paused){ vid.pause(); autoPaused=true; }
+                });
+              },{threshold:.55}).observe(frame);
+            }
+            if(snd) snd.addEventListener('click',function(e){
+              e.stopPropagation();
+              vid.muted=!vid.muted;
+              frame.classList.toggle('is-muted', vid.muted);
+              snd.setAttribute('aria-label', vid.muted?'Включить звук':'Выключить звук');
+              if(vid.paused) vid.play().catch(function(){});
+            });
+            frame.classList.add('is-muted');
+
             if(stage&&window.matchMedia&&matchMedia('(hover:hover)').matches){
               var raf=0;
               stage.addEventListener('mousemove',function(e){ if(started) return; var r=stage.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;if(raf)return;raf=requestAnimationFrame(function(){raf=0;frame.style.transform='rotateY('+(px*10)+'deg) rotateX('+(-py*8)+'deg)';});});
@@ -1272,6 +1304,7 @@ addEventListener('load', function(){
             <img class="sy-tm__ph" src="/sayty/team/pm.webp?v=3" alt="Проджект-менеджер Uniqore" loading="lazy" width="520" height="640">
             <figcaption class="sy-tm__cap"><b>Проджект-менеджер</b></figcaption>
           </figure>
+            <figure class="sy-tm sy-rev"><img class="sy-tm__ph" src="/sayty/team/teamlead.webp?v=2" alt="Team Lead команды Uniqore" loading="lazy" width="520" height="640"><figcaption class="sy-tm__cap"><b>Team&nbsp;Lead</b></figcaption></figure>
         </div>
       </div>
     </section>
@@ -1380,8 +1413,8 @@ addEventListener('load', function(){
   </script>
   <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
   <script>window.UQ_MOCK_OVERRIDE=!!(window.matchMedia&&window.matchMedia('(max-width:768px)').matches);</script>
-  <script src="/js/sayty.js?v=20260804f" defer></script>
-  <script src="/js/sayty-mhero.js?v=20260804m" defer></script>
+  <script src="/js/sayty.js?v=20260804n" defer></script>
+  <script src="/js/sayty-mhero.js?v=20260804n" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
   <script src="/js/cookie.js?v=20260730a" defer></script>
   <script>
