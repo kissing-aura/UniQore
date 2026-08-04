@@ -87,8 +87,9 @@ p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-t
 
   // Настоящая пружина (stiffness + damping), не голый lerp.
   // Дают лёгкое качание при возврате в центр и мягкое следование за курсором.
-  var STIFF = 0.055, DAMP = 0.82;      // pos + kyR
-  var BEND_STIFF = 0.12, BEND_DAMP = 0.72;
+  // ~1.8–2.2 сек на успокоение, лёгкий over-shoot без «щелчка»
+  var STIFF = 0.032, DAMP = 0.87;
+  var BEND_STIFF = 0.075, BEND_DAMP = 0.82;
   // Магнит: до какой дистанции от слайдера курсор ещё тянет струну.
   // За пределом MAGNET_PX сила падает до 0 → струна свободно возвращается.
   var MAGNET_PX = 380;
@@ -145,8 +146,8 @@ p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-t
         var dist = Math.sqrt(dx*dx + dy*dy);
         // сила магнита: 1 внутри, плавно падает до 0 при dist=MAGNET_PX
         var pull = Math.max(0, 1 - dist / MAGNET_PX);
-        // мягкая кривая: pull² — тяга становится ощутимо слабее при удалении
-        pull = pull * pull;
+        // pull³ — переход в покой становится ещё плавнее (никакого «щелчка» на выходе)
+        pull = pull * pull * pull;
         var pxN = (ix - r.left) / r.width;
         var pyN = (iy - r.top)  / r.height;
         // интерполируем от центра к позиции курсора по силе pull
