@@ -64,6 +64,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__preset .ds{font-size:12px;color:var(--mut);margin-top:5px;line-height:1.4;display:block}
 .up__preset .fr{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mut2);display:block}
 .up__preset .fr b{color:var(--lime);font-weight:700;font-size:13.5px;font-variant-numeric:tabular-nums}
+.up__preset .fr s{color:var(--mut2);font-weight:400;text-decoration-color:rgba(255,110,99,.6)}
+.up__preset .fr i{color:var(--mint);font-style:normal;font-weight:600}
 .up__preset[data-preset="ads"] .fr b{color:var(--mint)}
 
 @keyframes pktIn{0%{opacity:.35;transform:translateY(5px) scale(.97)}100%{opacity:1;transform:none}}
@@ -87,7 +89,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__rad--premium:hover{border-color:rgba(242,184,75,.48)}
 .up__rad--premium.on{border-color:var(--amber);background:rgba(242,184,75,.11);box-shadow:0 0 0 3px rgba(242,184,75,.13)}
 .up__rad--premium .p{color:var(--amber)}
-.up__rad__badge{position:absolute;top:-8px;right:10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--bg);background:var(--amber);padding:2px 8px;border-radius:999px;letter-spacing:.04em;font-weight:700}
+.up__rad__badge{position:absolute;top:-8px;right:10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--bg);background:var(--lime);padding:2px 8px;border-radius:999px;letter-spacing:.04em;font-weight:700}
+.up__rad--premium .up__rad__badge{background:var(--amber)}
 
 /* Сравнение уровней «что входит» — глубина работы, не количество страниц */
 .up__cmp{margin-top:18px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid var(--line)}
@@ -130,6 +133,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__add.on .chk::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:2.4px solid #08130a;border-top:0;border-left:0;transform:rotate(45deg)}
 .up__add .tt{grid-column:2;font-size:13.5px}
 .up__add .tt b{display:block;font-weight:600;color:#e9f0fb;line-height:1.2}
+.up__add.on .tt b::after{content:" · в пакете";color:var(--mint);font-size:11px;font-weight:600}
 .up__add .tt .d{font-size:11.5px;color:var(--mut);margin-top:3px;display:block;line-height:1.4}
 .up__add .tt .val{font-size:11px;color:var(--mint);margin-top:5px;display:block;line-height:1.4;font-weight:600}
 .up__add .pp{grid-column:3;font-family:'Unbounded',sans-serif;font-weight:700;font-size:14px;color:var(--lime);letter-spacing:-.01em;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -150,6 +154,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__line__val{font-size:11px;color:var(--mint);font-style:italic;opacity:.9;line-height:1.3}
 .up__line--empty .up__line__row .n{color:var(--mut);font-style:italic}
 .up__line--empty .up__line__row .p{color:var(--mut2);font-style:normal}
+/* Мгновенная вспышка перед удалением строки — endowment: снятие ощущается как маленькая потеря, без доп. шагов на отказ */
+.up__line--removing{background:rgba(255,110,99,.10);border-radius:8px;transition:background .16s ease}
+.up__line--removing .up__line__row .p{color:var(--coral)!important;transition:color .16s ease}
 .up__disc{display:flex;justify-content:space-between;padding:9px 12px;color:var(--mint);font-size:12.5px;background:rgba(49,224,176,.08);border:1px solid rgba(49,224,176,.22);border-radius:10px;margin-top:8px}
 .up__disc .p{font-family:'JetBrains Mono',monospace;font-weight:700;font-variant-numeric:tabular-nums}
 .up__total{margin-top:16px;padding:20px 22px;border-radius:14px;background:linear-gradient(120deg,rgba(205,255,79,.14),rgba(49,224,176,.06));border:1px solid rgba(205,255,79,.32);display:flex;justify-content:space-between;align-items:baseline;position:relative}
@@ -167,7 +174,10 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__cta:hover{transform:translateY(-2px)}
 .up__cta:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
 .up__cta__sub{display:block;margin-top:10px;text-align:center;font-size:11.5px;color:var(--mint);font-weight:600}
-.up__note{margin-top:10px;font-size:11.5px;color:var(--mut2);text-align:center;line-height:1.5}
+/* Peak-end: последнее, что видит клиент перед кнопкой — тёплый чек-лист, не серый дисклеймер */
+.up__reassure{margin-top:14px;display:flex;flex-direction:column;gap:6px;font-size:11.5px;color:var(--mint);text-align:left}
+.up__reassure span{display:flex;align-items:baseline;gap:7px}
+.up__reassure span::before{content:"✓";flex:0 0 auto;font-weight:700}
 
 
 @media(max-width:900px){
@@ -199,7 +209,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 <section class="wl-sec" id="faqv">
   <div class="wl-sec__num">v4 · черновик, ещё не опубликован</div>
   <h2 class="wl-sec__h">Собери свой проект — увидь<br>цену вживую</h2>
-  <p class="wl-sec__sub">Три пакета одним кликом — или собери свой: база + допы по категориям. Скидка −10% от 3-х допов.</p>
+  <p class="wl-sec__sub">Три пакета одним кликом — или собери свой: база + допы по категориям. Скидка −10% от 3-х допов. Расчёт бесплатный и мгновенный — без звонка и почты.</p>
   <p class="wl-sec__meta">место в продакшене: <b>/sayty/ #faq</b>, <b>/tseny/</b> · плюс: средний чек растёт, клиенту виден полный набор возможностей</p>
 
   <!-- Быстрый старт: 3 пресета -->
@@ -237,16 +247,17 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       <div class="up__h">С чего начинаем</div>
 
       <div class="up__base" id="upBase">
-        <label class="up__rad" data-p="150" data-n="Лендинг" data-id="landing" data-v="запускаете 1 рекламную кампанию через 3 дня">
+        <label class="up__rad" data-p="150" data-n="Лендинг" data-id="landing" data-v="запускаете 1 рекламную кампанию через 3 дня" title="запускаете 1 рекламную кампанию через 3 дня">
           <input type="radio" name="base"><div class="n">Лендинг</div><div class="p">$150</div><div class="d">1 страница · 3 дня</div>
         </label>
-        <label class="up__rad on" data-p="420" data-n="Многостраничный" data-id="multi" data-v="каталог, услуги и блог — плюс трафик из поиска">
+        <label class="up__rad on" data-p="420" data-n="Многостраничный" data-id="multi" data-v="каталог, услуги и блог — плюс трафик из поиска" title="каталог, услуги и блог — плюс трафик из поиска">
+          <span class="up__rad__badge">оптимальный выбор</span>
           <input type="radio" name="base" checked><div class="n">Многостраничный</div><div class="p">$420</div><div class="d">услуги, каталог, блог за 5 дней</div>
         </label>
-        <label class="up__rad" data-p="500" data-n="Сайт + CRM" data-id="crmsite" data-v="заявки видно сразу в CRM, ничего не теряется">
+        <label class="up__rad" data-p="500" data-n="Сайт + CRM" data-id="crmsite" data-v="заявки видно сразу в CRM, ничего не теряется" title="заявки видно сразу в CRM, ничего не теряется">
           <input type="radio" name="base"><div class="n">Сайт + CRM</div><div class="p">$500</div><div class="d">ваши заявки в CRM · до 7 дней</div>
         </label>
-        <label class="up__rad up__rad--premium" data-p="770" data-n="Авторский" data-id="premium" data-v="ведущий дизайнер с нуля, кастомные 3D-анимации, 3 круга правок">
+        <label class="up__rad up__rad--premium" data-p="770" data-n="Авторский" data-id="premium" data-v="ведущий дизайнер с нуля, кастомные 3D-анимации, 3 круга правок" title="ведущий дизайнер с нуля, кастомные 3D-анимации, 3 круга правок">
           <span class="up__rad__badge">премиум</span>
           <input type="radio" name="base"><div class="n">Авторский</div><div class="p">$770</div><div class="d">дизайн с нуля · 10–14 дней</div>
         </label>
@@ -325,7 +336,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
             </label>
             <label class="up__add" data-p="150" data-n="Год поддержки" data-id="support">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>Год поддержки</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ мелкие правки закрываются без счёта и разборок</span></span>
+              <span class="tt"><b>Год поддержки</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ мелкие правки закрываются без счёта и разборок · $150/год ≈ $0,41 в день</span></span>
               <span class="pp">+$150</span>
             </label>
           </div>
@@ -354,8 +365,11 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       </div>
 
       <button class="up__cta">Оформить проект</button>
-      <span class="up__cta__sub">ответим в Telegram в течение 15 минут</span>
-      <p class="up__note">0 ₽ сейчас — платите, когда увидите готовый макет</p>
+      <div class="up__reassure">
+        <span>ответим в Telegram за 15 минут</span>
+        <span>0 ₽ сейчас — платите, когда увидите готовый макет</span>
+        <span>оплата только после утверждения макета</span>
+      </div>
     </div>
   </div>
 </section>
@@ -379,13 +393,15 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     }
     return 0;
   }
-  // ── итог пакета base+допы по той же формуле, что в render() — без побочных эффектов на UI
+  // ── итог пакета base+допы по той же формуле, что в render() — без побочных эффектов на UI.
+  // Возвращает разбивку {pre, disc, total}, а не только итог — нужно для bundling-сравнения
+  // «без пакета $X» на пресетах (Патч 10): цена «до скидки» строго из тех же чисел, не хардкод.
   function calcTotal(baseId, addIds){
     var base = priceOf(rads, baseId);
     var sum = addIds.reduce(function(s, id){ return s + priceOf(adds, id); }, 0);
     var pre = base + sum;
     var disc = addIds.length >= 3 ? Math.round(pre * 0.10) : 0;
-    return pre - disc;
+    return { pre: pre, disc: disc, total: pre - disc };
   }
   // ── короткая анимация «пакет собрался» на карточке
   function pulse(el){
@@ -475,9 +491,26 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     a.addEventListener('click', function(e){
       // не даём двойного тоггла (label→input)
       e.preventDefault();
+      var turningOff = a.classList.contains('on');
       a.classList.toggle('on');
-      if (a.classList.contains('on')) pulse(a);
       presets.forEach(function(p){ p.classList.remove('on'); }); // ручной выбор — пресет больше не активен
+
+      if (turningOff){
+        // endowment: мгновенная вспышка строки в чеке перед тем, как она исчезнет —
+        // ни одного лишнего клика, ни подтверждения, просто 160мс визуальной обратной связи
+        var name = a.getAttribute('data-n');
+        var line = Array.prototype.find.call(linesBox.querySelectorAll('.up__line'), function(l){
+          var n = l.querySelector('.up__line__row .n');
+          return n && n.textContent === '+ ' + name;
+        });
+        if (line){
+          line.classList.add('up__line--removing');
+          setTimeout(render, 160);
+          return;
+        }
+      } else {
+        pulse(a);
+      }
       render();
     });
   });
@@ -487,9 +520,19 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     var baseId = btn.getAttribute('data-base');
     var addIds = (btn.getAttribute('data-adds') || '').split(',').filter(Boolean);
 
-    // реальная цена пакета на кнопке — считаем по актуальным ценам, ничего не хардкодим
+    // реальная цена пакета на кнопке — считаем по актуальным ценам, ничего не хардкодим.
+    // Если есть пакетная скидка (3+ допов) — показываем зачёркнутую цену «без пакета»
+    // и экономию рядом: сумма арифметически та же, что и итог, просто видна выгода.
     var calc = btn.querySelector('[data-calc]');
-    if (calc) calc.textContent = '$' + calcTotal(baseId, addIds);
+    if (calc){
+      var c = calcTotal(baseId, addIds);
+      if (c.disc > 0){
+        calc.parentElement.innerHTML =
+          'пакет · <s>$' + c.pre + '</s> <b data-calc>$' + c.total + '</b> <i>−$' + c.disc + '</i>';
+      } else {
+        calc.textContent = '$' + c.total;
+      }
+    }
 
     btn.addEventListener('click', function(){
       presets.forEach(function(p){ p.classList.remove('on'); });
