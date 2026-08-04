@@ -965,6 +965,14 @@ textarea.sy-in{resize:vertical;min-height:84px}
 /* Компактная таблица сравнения студия vs — теперь внутри блока цен */
 .sy-cmp--mini{ margin-top:26px; }
 
+/* IDTuning показываем только на мобилке: на десктопе он выпирал из сетки
+   (там Dragon + 5 = ровно два ряда по три), а в двухколоночной мобильной
+   сетке без него последний ряд оставался наполовину пустым. */
+.sy-pf--mob{ display:none; }
+@media (max-width:768px){
+  .sy-pf--mob{ display:flex; }
+}
+
 @media (max-width:640px){
   /* Портфолио: 2 колонки вместо 1 — все 6 работ, вдвое короче. Dragon (live, --wide) на всю ширину. */
   .sy-pf__grid{ grid-template-columns:1fr 1fr; gap:11px; }
