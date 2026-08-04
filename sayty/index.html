@@ -51,8 +51,8 @@
   </script>
 
   <link rel="stylesheet" href="/css/bundle-page.css?v=20260731a">
-  <link rel="stylesheet" href="/css/sayty.css?v=20260804n">
-  <link rel="stylesheet" href="/css/sayty-mhero.css?v=20260804n">
+  <link rel="stylesheet" href="/css/sayty.css?v=20260804o">
+  <link rel="stylesheet" href="/css/sayty-mhero.css?v=20260804o">
   <style>/* критический размер видео инлайном — держит вёрстку даже при устаревшем кэше внешнего CSS (защита от «гигант-лого») */
   .nav__logo-3d{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 auto}
   .nav__logo-vid{width:100%;height:100%;object-fit:cover;display:none}
@@ -1045,6 +1045,7 @@ addEventListener('load', function(){
                   <div class="rc__track" id="reelTrack"><div class="rc__fill" id="reelFill"></div></div>
                   <span class="rc__time" id="reelTime">0:00 / 1:34</span>
                 </div>
+                <div class="rc__strip" id="reelStrip" aria-label="Перемотка ролика"><button type="button" data-t="6"  class="rc__thumb"><img src="/assets/reel/f6.webp"  alt="0:06" width="72" height="40" loading="lazy"><span>0:06</span></button><button type="button" data-t="26" class="rc__thumb"><img src="/assets/reel/f26.webp" alt="0:26" width="72" height="40" loading="lazy"><span>0:26</span></button><button type="button" data-t="46" class="rc__thumb"><img src="/assets/reel/f46.webp" alt="0:46" width="72" height="40" loading="lazy"><span>0:46</span></button><button type="button" data-t="66" class="rc__thumb"><img src="/assets/reel/f66.webp" alt="1:06" width="72" height="40" loading="lazy"><span>1:06</span></button><button type="button" data-t="86" class="rc__thumb"><img src="/assets/reel/f86.webp" alt="1:26" width="72" height="40" loading="lazy"><span>1:26</span></button></div>
               </div>
             </div>
           </div>
@@ -1105,7 +1106,15 @@ addEventListener('load', function(){
             if(pp) pp.addEventListener('click',function(e){ e.stopPropagation(); toggle(); });
             if(track) track.addEventListener('click',function(e){ e.stopPropagation(); var r=track.getBoundingClientRect(),d=vid.duration||0; if(d) vid.currentTime=Math.min(d,Math.max(0,(e.clientX-r.left)/r.width*d)); });
             var ring=frame.querySelector('.rc__ring-l'), snd=document.getElementById('reelSound');
-            vid.addEventListener('timeupdate',function(){ var d=vid.duration||0; if(ring) ring.style.strokeDashoffset=String(1-(d?vid.currentTime/d:0)); });
+            var strip=document.getElementById('reelStrip'), thumbs=strip?strip.querySelectorAll('.rc__thumb'):[];
+            if(strip){ strip.addEventListener('click',function(e){ var b=e.target.closest('.rc__thumb'); if(!b) return; if(!started) start(); vid.currentTime=parseFloat(b.dataset.t||0); vid.play().catch(function(){}); }); }
+            
+            vid.addEventListener('timeupdate',function(){
+              var d=vid.duration||0, k=d?vid.currentTime/d:0;
+              if(ring) ring.style.strokeDashoffset=String(1-k);
+              /* подсвечиваем последний пройденный кадр в ленте */
+              for(var i=thumbs.length-1;i>=0;i--){ if(vid.currentTime>=parseFloat(thumbs[i].dataset.t)){ for(var j=0;j<thumbs.length;j++) thumbs[j].classList.toggle('is-now', j===i); break; } }
+            });
 
             /* Автозапуск, когда ролик доходит до экрана. Со звуком браузер это
                запретит, поэтому стартуем без него и предлагаем включить кнопкой.
@@ -1413,8 +1422,8 @@ addEventListener('load', function(){
   </script>
   <script src="../js/nav-dropdown.js?v=20260720a" defer></script>
   <script>window.UQ_MOCK_OVERRIDE=!!(window.matchMedia&&window.matchMedia('(max-width:768px)').matches);</script>
-  <script src="/js/sayty.js?v=20260804n" defer></script>
-  <script src="/js/sayty-mhero.js?v=20260804n" defer></script>
+  <script src="/js/sayty.js?v=20260804o" defer></script>
+  <script src="/js/sayty-mhero.js?v=20260804o" defer></script>
   <script src="../js/currency.js?v=20260721a" defer></script>
   <script src="/js/cookie.js?v=20260730a" defer></script>
   <script>

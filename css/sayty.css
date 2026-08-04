@@ -2001,3 +2001,30 @@ h1 span+span{animation-delay:.06s}
 .rc__frame.is-muted.is-playing .rc__sound{animation:rcSoundPulse 2.8s ease-in-out infinite}
 @keyframes rcSoundPulse{0%,100%{box-shadow:0 0 0 0 rgba(205,255,79,.28)}55%{box-shadow:0 0 0 9px rgba(205,255,79,0)}}
 @media(prefers-reduced-motion:reduce){.rc__frame.is-muted.is-playing .rc__sound{animation:none}}
+
+/* Лента кадров под роликом. Клик — перемотка на этот момент, текущий
+   подсвечен лаймовой рамкой и лёгким подъёмом (та же линия, что и в
+   ring-прогрессе по кромке кадра). Прячем на 480px, чтобы не грузить
+   мобильный экран мелкими превью. */
+.rc__strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+.rc__thumb{position:relative;padding:0;border:1.5px solid rgba(255,255,255,.08);background:#0b0f1a;
+  border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .28s cubic-bezier(.2,.7,.2,1),border-color .25s,box-shadow .25s}
+.rc__thumb img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;filter:saturate(.9) brightness(.85);transition:filter .3s}
+.rc__thumb span{position:absolute;left:6px;bottom:5px;padding:2px 6px;border-radius:6px;
+  font:600 10px/1 var(--font-body,system-ui),sans-serif;color:#e7eaf0;background:rgba(8,13,22,.72);backdrop-filter:blur(4px);letter-spacing:.02em}
+.rc__thumb:hover{transform:translateY(-2px);border-color:rgba(205,255,79,.4)}
+.rc__thumb:hover img{filter:none}
+.rc__thumb.is-now{border-color:var(--sy-l);box-shadow:0 6px 22px rgba(205,255,79,.22),0 0 0 1px var(--sy-l) inset;transform:translateY(-2px)}
+.rc__thumb.is-now img{filter:none}
+.rc__thumb.is-now::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--sy-l);animation:rcThumbBar 1.2s ease-out}
+@keyframes rcThumbBar{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+@media(max-width:480px){.rc__strip{display:none}}
+
+/* Живые демо-плитки (dz-*) — на десктопе аккуратно проступают, чтобы читалось
+   как «работы отдела дизайна», а не набор gif-ок. */
+.dz__card{position:relative;overflow:hidden;border-radius:14px;isolation:isolate;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s}
+.dz__card::after{content:"";position:absolute;inset:0;border-radius:inherit;border:1px solid rgba(255,255,255,.06);pointer-events:none;transition:border-color .3s}
+@media(hover:hover){
+  .dz__card:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+  .dz__card:hover::after{border-color:rgba(205,255,79,.35)}
+}
