@@ -198,8 +198,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 
 <section class="wl-sec" id="faqv">
   <div class="wl-sec__num">v4 · черновик, ещё не опубликован</div>
-  <h2 class="wl-sec__h">Собери проект — увидь<br>цену вживую</h2>
-  <p class="wl-sec__sub">Три готовых пакета одним кликом — или собери сам: базовый уровень + допы по категориям. У каждой галочки не просто цена, а понятная польза. Пакетная скидка −10% от 3-х допов.</p>
+  <h2 class="wl-sec__h">Собери свой проект — увидь<br>цену вживую</h2>
+  <p class="wl-sec__sub">Три пакета одним кликом — или собери свой: база + допы по категориям. Скидка −10% от 3-х допов.</p>
   <p class="wl-sec__meta">место в продакшене: <b>/sayty/ #faq</b>, <b>/tseny/</b> · плюс: средний чек растёт, клиенту виден полный набор возможностей</p>
 
   <!-- Быстрый старт: 3 пресета -->
@@ -207,7 +207,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     <button class="up__preset" type="button" data-preset="start" data-base="landing" data-adds="design">
       <span class="k">минимум</span>
       <span class="nm">Стартовый</span>
-      <span class="ds">Лендинг с брендовым дизайном — без рекламы и интеграций</span>
+      <span class="ds">Лендинг под ваш бренд. Реклама и CRM — отдельно</span>
       <span class="fr">пакет · <b data-calc>$0</b></span>
     </button>
     <button class="up__preset" type="button" data-preset="ads" data-base="multi" data-adds="crm,ads,bot">
@@ -237,14 +237,14 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       <div class="up__h">С чего начинаем</div>
 
       <div class="up__base" id="upBase">
-        <label class="up__rad" data-p="150" data-n="Лендинг" data-id="landing" data-v="хватит на 1 рекламную кампанию, готов за 3 дня">
+        <label class="up__rad" data-p="150" data-n="Лендинг" data-id="landing" data-v="запускаете 1 рекламную кампанию через 3 дня">
           <input type="radio" name="base"><div class="n">Лендинг</div><div class="p">$150</div><div class="d">1 страница · 3 дня</div>
         </label>
-        <label class="up__rad on" data-p="420" data-n="Многостраничный" data-id="multi" data-v="каталог, услуги и блог — работает и на SEO-трафик">
-          <input type="radio" name="base" checked><div class="n">Многостраничный</div><div class="p">$420</div><div class="d">услуги, каталог, блог · 5 дней</div>
+        <label class="up__rad on" data-p="420" data-n="Многостраничный" data-id="multi" data-v="каталог, услуги и блог — плюс трафик из поиска">
+          <input type="radio" name="base" checked><div class="n">Многостраничный</div><div class="p">$420</div><div class="d">услуги, каталог, блог за 5 дней</div>
         </label>
         <label class="up__rad" data-p="500" data-n="Сайт + CRM" data-id="crmsite" data-v="заявки видно сразу в CRM, ничего не теряется">
-          <input type="radio" name="base"><div class="n">Сайт + CRM</div><div class="p">$500</div><div class="d">заявки в CRM · до 7 дней</div>
+          <input type="radio" name="base"><div class="n">Сайт + CRM</div><div class="p">$500</div><div class="d">ваши заявки в CRM · до 7 дней</div>
         </label>
         <label class="up__rad up__rad--premium" data-p="770" data-n="Авторский" data-id="premium" data-v="ведущий дизайнер с нуля, кастомные 3D-анимации, 3 круга правок">
           <span class="up__rad__badge">премиум</span>
@@ -267,7 +267,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 
       <div class="up__addH">
         <span class="l">02 · допы по категориям</span>
-        <span class="r">по галочке за раз, скидка при 3+</span>
+        <span class="r">жми галочки — от 3-х допов скидка</span>
       </div>
 
       <div class="up__adds" id="upAdds">
@@ -276,19 +276,19 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
           <div class="up__cat__grid">
             <label class="up__add" data-p="180" data-n="CRM-интеграция" data-id="crm">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>CRM-интеграция</b><span class="d">Заявки автоматически попадают в CRM: статус, история, ответственный</span><span class="val">→ ни одна заявка не потеряется в переписке</span></span>
+              <span class="tt"><b>CRM-интеграция</b><span class="d">Заявки автоматически попадают в CRM: статус, история, ответственный</span><span class="val">→ без CRM заявки тонут в WhatsApp — с ней остаются на виду</span></span>
               <span class="pp">+$180</span>
               <span class="fav">частый выбор</span>
             </label>
             <label class="up__add" data-p="120" data-n="Метрика + Директ" data-id="ads">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>Метрика + Директ</b><span class="d">Настройка целей, Вебвизор, первая рекламная кампания</span><span class="val">→ видно, с какой рекламы приходят деньги</span></span>
+              <span class="tt"><b>Метрика + Директ</b><span class="d">Настройка целей, Вебвизор, первая рекламная кампания</span><span class="val">→ видно, с какой рекламы приходят именно деньги, а не просто клики</span></span>
               <span class="pp">+$120</span>
               <span class="fav">частый выбор</span>
             </label>
             <label class="up__add" data-p="130" data-n="Telegram-бот" data-id="bot">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>Telegram-бот</b><span class="d">Не только уведомления — чат-бот с прогревом лида</span><span class="val">→ отвечает клиенту 24/7, даже ночью</span></span>
+              <span class="tt"><b>Telegram-бот</b><span class="d">Не только уведомления — чат-бот с прогревом лида</span><span class="val">→ ваш бот отвечает клиенту в 3 ночи, пока вы спите</span></span>
               <span class="pp">+$130</span>
             </label>
           </div>
@@ -299,33 +299,33 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
           <div class="up__cat__grid">
             <label class="up__add" data-p="150" data-n="Дизайн под бренд" data-id="design">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>Дизайн под бренд</b><span class="d">Не шаблон, а айдентика: цвет, шрифт, фото-подбор</span><span class="val">→ не путают с шаблонным сайтом конкурента</span></span>
+              <span class="tt"><b>Дизайн под бренд</b><span class="d">Не шаблон, а айдентика: цвет, шрифт, фото-подбор</span><span class="val">→ ваш сайт не спутают с шаблоном конкурента</span></span>
               <span class="pp">+$150</span>
             </label>
             <label class="up__add" data-p="110" data-n="Тексты под нишу" data-id="texts">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>Тексты под нишу</b><span class="d">Редакторские, не тайтлы «под ключ» — с фактами клиента</span><span class="val">→ дочитывают до конца, не закрывают на 3-й секунде</span></span>
+              <span class="tt"><b>Тексты под нишу</b><span class="d">Редакторские, не тайтлы «под ключ» — с фактами клиента</span><span class="val">→ без адаптации текст закрывают на 3-й секунде — с ней дочитывают</span></span>
               <span class="pp">+$110</span>
             </label>
           </div>
         </div>
 
         <div class="up__cat" data-cat="tech">
-          <div class="up__cat__h"><i></i><span>технологии</span></div>
+          <div class="up__cat__h"><i></i><span>техника</span></div>
           <div class="up__cat__grid">
             <label class="up__add" data-p="100" data-n="SEO-стартер" data-id="seo">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>SEO-стартер</b><span class="d">Метаданные, sitemap, Search Console, семантика 20 запросов</span><span class="val">→ находят вас в Google без рекламы</span></span>
+              <span class="tt"><b>SEO-стартер</b><span class="d">Метаданные, sitemap, Search Console, семантика 20 запросов</span><span class="val">→ вас находят в Google бесплатно — без рекламного бюджета</span></span>
               <span class="pp">+$100</span>
             </label>
             <label class="up__add" data-p="80" data-n="Мобильная скорость 95+" data-id="speed">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>Мобильная скорость 95+</b><span class="d">Оптимизация под 3G: WebP, lazy-load, sprite-svg</span><span class="val">→ −1 сек загрузки = −7% конверсии</span></span>
+              <span class="tt"><b>Мобильная скорость 95+</b><span class="d">Оптимизация под 3G: WebP, lazy-load, sprite-svg</span><span class="val">→ каждая лишняя секунда загрузки — минус 7% к продажам</span></span>
               <span class="pp">+$80</span>
             </label>
-            <label class="up__add" data-p="150" data-n="Годовая поддержка" data-id="support">
+            <label class="up__add" data-p="150" data-n="Год поддержки" data-id="support">
               <input type="checkbox"><span class="chk"></span>
-              <span class="tt"><b>Год поддержки</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ сайт не остаётся без присмотра</span></span>
+              <span class="tt"><b>Год поддержки</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ мелкие правки закрываются без счёта и разборок</span></span>
               <span class="pp">+$150</span>
             </label>
           </div>
@@ -347,15 +347,15 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       <div class="up__level">
         <div class="up__level__bar"><i id="upLevelBar" style="width:20%"></i></div>
         <div class="up__level__labels">
-          <span id="upL1" class="on">базовый</span>
-          <span id="upL2">рекламный</span>
-          <span id="upL3">полный</span>
+          <span id="upL1" class="on">минимум</span>
+          <span id="upL2">с рекламой</span>
+          <span id="upL3">всё включено</span>
         </div>
       </div>
 
       <button class="up__cta">Оформить проект</button>
       <span class="up__cta__sub">ответим в Telegram в течение 15 минут</span>
-      <p class="up__note">оплата после утверждения макета, 0 ₽ предоплаты</p>
+      <p class="up__note">0 ₽ сейчас — платите, когда увидите готовый макет</p>
     </div>
   </div>
 </section>
@@ -442,7 +442,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     if (disc > 0){
       var d = document.createElement('div');
       d.className = 'up__disc';
-      d.innerHTML = '<span class="n">пакет из ' + picks.length + ' допов · −10%</span><span class="p">−$' + disc + '</span>';
+      d.innerHTML = '<span class="n">скидка −10% за ' + picks.length + ' допов</span><span class="p">−$' + disc + '</span>';
       linesBox.appendChild(d);
     }
 
@@ -452,7 +452,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
     void totalEl.offsetWidth;
     totalEl.classList.add('bump');
 
-    // ── уровень: базовый (0-1 доп) → рекламный (2-4) → полный (5+)
+    // ── уровень: минимум (0-1 доп) → с рекламой (2-4) → всё включено (5+)
     var lvl = 1;
     if (picks.length >= 2) lvl = 2;
     if (picks.length >= 5) lvl = 3;
