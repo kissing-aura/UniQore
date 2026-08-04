@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Прототип: было/стало — струнный разделитель</title>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   ПРОТОТИП — струнный разделитель в «Было и стало».
+   Курсор рядом → струна тянется в его сторону, граница
+   «до/после» изгибается вместе с ней. Убрал курсор — струна
+   возвращается в центр с пружиной. Без drag'ов и кликов.
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  --lime:#CDFF4F; --bg:#0A0E1A; --ink:#EEF1F6; --mut:#8792a3;
+  --line:rgba(255,255,255,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:34px}
+.wrap{width:100%;max-width:900px;display:flex;flex-direction:column;align-items:center;gap:22px}
+
+h1{font-family:'Unbounded',system-ui,sans-serif;font-weight:800;font-size:clamp(28px,3.4vw,42px);line-height:1.05;letter-spacing:-.03em;text-align:center}
+p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-top:-14px}
+
+/* Сцена */
+.slc{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#0b0e15;box-shadow:0 30px 60px -30px rgba(0,0,0,.8);cursor:none}
+.slc__pane{position:absolute;inset:0;overflow:hidden}
+.slc__after{z-index:1}
+.slc__after img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.slc__before{z-index:2;/* clip-path задаётся из JS через path() */}
+.slc__before img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+
+.slc__lbl{position:absolute;top:12px;z-index:5;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:999px;font-weight:700;pointer-events:none}
+.slc__lbl--b{left:12px;background:rgba(16,20,28,.82);color:#c7ccd6;border:1px solid rgba(255,255,255,.16)}
+.slc__lbl--a{right:12px;background:var(--lime);color:#08130a}
+
+/* Струна: тонкий лаймовый путь + кружок (сам двигается) */
+.slc__svg{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:visible}
+.slc__string{fill:none;stroke:var(--lime);stroke-width:2;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(205,255,79,.6))}
+.slc__knob{fill:var(--lime);filter:drop-shadow(0 6px 18px rgba(205,255,79,.55))}
+.slc__glow{fill:none;stroke:var(--lime);stroke-width:9;opacity:.16;stroke-linecap:round}
+
+.cap{text-align:center;color:var(--mut);font-size:13.5px;max-width:70ch}
+.cap b{color:#e9f0fb}
+.hint{color:var(--mut);font-size:12px;text-align:center;font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+.hint b{color:var(--lime)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<h1>Струнный разделитель<br><span style="color:var(--lime)">без клика</span></h1>
+<p class="lead">Ведите курсор по картинке — струна натягивается за ним, граница «до/после» изгибается. Уводите курсор — возвращается в центр с пружиной.</p>
+
+<div class="slc" id="slc">
+  <div class="slc__pane slc__after">
+    <img src="/keysy/cases/case-nemecia-1024.webp?v=proto" alt="После">
+  </div>
+  <div class="slc__pane slc__before" id="beforePane">
+    <img src="/assets/before-nemecia.jpg?v=proto" alt="До">
+  </div>
+  <span class="slc__lbl slc__lbl--b">До</span>
+  <span class="slc__lbl slc__lbl--a">После · Uniqore</span>
+  <svg class="slc__svg" id="svg" width="100%" height="100%" preserveAspectRatio="none">
+    <path class="slc__glow"   id="glow"   d=""></path>
+    <path class="slc__string" id="string" d=""></path>
+    <circle class="slc__knob" id="knob" r="8"></circle>
+  </svg>
+</div>
+
+<p class="cap"><b>Автосервис «Немеция», Омск.</b> Слева — что было. Справа — что мы сделали.</p>
+<p class="hint">курсор рядом → струна тянется · курсор ушёл → струна возвращается</p>
+</div>
+
+<script>
+(function(){
+  var slc = document.getElementById('slc'),
+      pane = document.getElementById('beforePane'),
+      svg = document.getElementById('svg'),
+      path = document.getElementById('string'),
+      glow = document.getElementById('glow'),
+      knob = document.getElementById('knob');
+
+  // Состояние: target — куда «хочет» струна, cur — где сейчас (пружина).
+  var W = 0, H = 0;
+  var posT = 0.5, posC = 0.5;   // положение струны по X (0..1 от ширины)
+  var bendT = 0, bendC = 0;      // изгиб control-point в px, знак = сторона
+  var kyT = 0.5, kyC = 0.5;      // положение knob по Y (0..1)
+  var pointerIn = false;
+  var pointerX = 0, pointerY = 0;
+
+  function resize(){
+    var r = slc.getBoundingClientRect();
+    if (r.width < 20 || r.height < 20) return;   // layout ещё не готов — ждём ResizeObserver
+    W = r.width; H = r.height;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    render();
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(resize).observe(slc);
+  window.addEventListener('resize', resize);
+
+  slc.addEventListener('pointerenter', function(){ pointerIn = true; });
+  slc.addEventListener('pointerleave', function(){ pointerIn = false; });
+  slc.addEventListener('pointermove', function(e){
+    var r = slc.getBoundingClientRect();
+    pointerX = e.clientX - r.left;
+    pointerY = e.clientY - r.top;
+  });
+
+  // Мобилка: touch — двигает как раньше
+  slc.addEventListener('touchmove', function(e){
+    var r = slc.getBoundingClientRect();
+    var t = e.touches[0];
+    pointerIn = true;
+    pointerX = t.clientX - r.left;
+    pointerY = t.clientY - r.top;
+    e.preventDefault();
+  }, {passive:false});
+  slc.addEventListener('touchend', function(){ pointerIn = false; });
+
+  function step(){
+    // ── целевые значения ──
+    if (pointerIn && W > 0){
+      // pos следует за X курсора, но с притяжением к центру когда курсор далеко от струны
+      var pxN = pointerX / W;
+      posT = pxN;
+      kyT = pointerY / H;
+      // изгиб зависит от того, насколько курсор ушёл от линии;
+      // сама pos тянется медленнее — струна физически прогибается.
+      var lag = pxN - posC; // ширина «отставания» струны от курсора, доля
+      bendT = lag * W * 0.55; // максимум ~30% ширины при полном рывке
+    } else {
+      posT = 0.5; bendT = 0; kyT = 0.5;
+    }
+
+    // ── пружины (критически недодемпфированные) ──
+    // pos — среднежёсткая, чтобы линия тянулась заметно
+    posC += (posT - posC) * 0.14;
+    // bend — быстрее, чтобы прогиб чувствовался мгновенно
+    bendC += (bendT - bendC) * 0.22;
+    kyC   += (kyT   - kyC)   * 0.20;
+
+    render();
+    requestAnimationFrame(step);
+  }
+
+  function render(){
+    if (W <= 0) return;
+    var cx = posC * W;
+    var by = kyC * H;               // Y-точка максимального изгиба (там курсор)
+    var ctrl = cx + bendC;          // control X — сдвинут по знаку изгиба
+
+    // Cubic-подобный изгиб через квадратичный Bezier с control (ctrl, by).
+    // Струна: от (cx, 0) через (ctrl, by) в (cx, H). Реально даёт «упругую тетиву».
+    var d = 'M ' + cx.toFixed(1) + ' 0 Q ' + ctrl.toFixed(1) + ' ' + by.toFixed(1) + ' ' + cx.toFixed(1) + ' ' + H;
+    path.setAttribute('d', d);
+    glow.setAttribute('d', d);
+
+    // Knob — на самой струне, на высоте курсора: точка на кривой Bezier при t=(by/H)
+    // Для квадратичной кривой: P(t) = (1-t)^2*P0 + 2(1-t)t*P1 + t^2*P2
+    var t = Math.max(0.06, Math.min(0.94, by / H));
+    var mt = 1 - t;
+    var kx = mt*mt*cx + 2*mt*t*ctrl + t*t*cx;
+    var ky = mt*mt*0  + 2*mt*t*by   + t*t*H;
+    knob.setAttribute('cx', kx.toFixed(1));
+    knob.setAttribute('cy', ky.toFixed(1));
+
+    // clip-path для «before»-панели: замкнутая область слева от струны
+    // path: (0,0) → (cx,0) → Q ctrl,by → (cx,H) → (0,H) → close
+    var clip = 'path("M 0 0 L ' + cx.toFixed(1) + ' 0 Q ' + ctrl.toFixed(1) + ' ' + by.toFixed(1) + ' ' + cx.toFixed(1) + ' ' + H + ' L 0 ' + H + ' Z")';
+    pane.style.clipPath = clip;
+    pane.style.webkitClipPath = clip;
+  }
+
+  resize();
+  step();
+})();
+</script>
+
+</body>
+</html>
