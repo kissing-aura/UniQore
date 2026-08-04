@@ -123,7 +123,13 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__cat[data-cat="tech"] .up__cat__h i{background:var(--amber)}
 .up__cat__grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .up__cat__grid>.up__add:last-child:nth-child(odd){grid-column:1 / -1}
-.up__add{position:relative;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);cursor:pointer;transition:all .2s ease;display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:start}
+.up__add{position:relative;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);cursor:pointer;transition:all .2s ease;display:grid;grid-template-columns:20px 1fr auto;gap:12px;align-items:start;
+  transform-style:preserve-3d;will-change:transform}
+.up__add.tilting{transition:transform .06s linear,border-color .2s ease,background .2s ease}
+.up__add::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(180px 180px at var(--mx,50%) var(--my,50%),rgba(255,255,255,.10),transparent 60%);
+  opacity:0;transition:opacity .25s ease}
+.up__add.tilting::before{opacity:1}
 .up__add:hover{border-color:rgba(205,255,79,.3);background:rgba(255,255,255,.05)}
 .up__add:focus-within{outline:2px solid var(--lime);outline-offset:3px}
 .up__add.on{background:rgba(205,255,79,.08);border-color:var(--lime)}
@@ -131,6 +137,16 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__add .chk{width:18px;height:18px;border-radius:5px;border:2px solid rgba(255,255,255,.22);flex:0 0 auto;position:relative;transition:all .2s;grid-column:1;margin-top:1px}
 .up__add.on .chk{background:var(--lime);border-color:var(--lime);box-shadow:0 0 0 3px rgba(205,255,79,.15)}
 .up__add.on .chk::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:2.4px solid #08130a;border-top:0;border-left:0;transform:rotate(45deg)}
+/* Год поддержки — единственный доп с физическим тумблером вместо галочки (годовая услуга ощущается как «включить/выключить») */
+.up__toggle3d{width:34px!important;height:19px!important;border-radius:999px!important;
+  background:linear-gradient(180deg,#1a2030,#12161f)!important;border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.5),inset 0 -1px 0 rgba(255,255,255,.03)!important;transition:background .3s ease}
+.up__toggle3d::after{content:none!important}
+.up__toggle3d .knob{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;
+  background:linear-gradient(155deg,#fdfdfd,#c7cad1);box-shadow:0 1px 2px rgba(0,0,0,.4),inset 0 1px 1px rgba(255,255,255,.8);
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.up__add.on .up__toggle3d{background:linear-gradient(180deg,var(--mint),#1f9e79)!important;border-color:rgba(49,224,176,.5)!important}
+.up__add.on .up__toggle3d .knob{transform:translateX(15px) rotate(180deg)}
 .up__add .tt{grid-column:2;font-size:13.5px}
 .up__add .tt b{display:block;font-weight:600;color:#e9f0fb;line-height:1.2}
 .up__add.on .tt b::after{content:" · в пакете";color:var(--mint);font-size:11px;font-weight:600}
@@ -143,6 +159,13 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__bill{position:sticky;top:24px;background:linear-gradient(180deg,#101527 0%,#0d1220 100%);border:1px solid var(--line);border-radius:18px;padding:26px;overflow:hidden}
 .up__bill::before{content:"";position:absolute;top:0;left:0;right:0;height:60%;background:radial-gradient(120% 100% at 0% 0%,rgba(205,255,79,.09),transparent 60%);pointer-events:none}
 .up__bill::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--lime),var(--mint));opacity:.85}
+/* Ambient-градиент: два мягких пятна медленно «дышат» под контентом чека */
+.up__bill__amb{position:absolute;inset:-20% -30% auto -30%;height:75%;z-index:0;pointer-events:none;
+  background:radial-gradient(38% 45% at 20% 25%, rgba(205,255,79,.16), transparent 70%),
+             radial-gradient(32% 40% at 85% 15%, rgba(49,224,176,.13), transparent 70%);
+  filter:blur(30px);animation:ambDrift 16s ease-in-out infinite alternate}
+@keyframes ambDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,4%) scale(1.08)}100%{transform:translate(-2%,-3%) scale(1.02)}}
+.up__bill__lbl,.up__bill__h,.up__lines,.up__disc,.up__total,.up__level,.up__cta,.up__reassure{position:relative;z-index:1}
 .up__bill__lbl{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:.06em;text-transform:uppercase;position:relative}
 .up__bill__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;margin-top:6px;letter-spacing:-.015em;position:relative}
 .up__lines{margin-top:18px;display:flex;flex-direction:column;position:relative}
@@ -163,13 +186,21 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__total .l{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
 .up__total .v{font-family:'Unbounded',sans-serif;font-weight:800;font-size:42px;color:var(--lime);letter-spacing:-.02em;font-variant-numeric:tabular-nums;transition:transform .3s;transform-origin:right center;line-height:1}
 .up__total .v .cur{font-size:.5em;font-weight:700;opacity:.8;margin-right:2px}
-.up__total .v.bump{animation:upbump .35s ease}
-@keyframes upbump{50%{transform:scale(1.10)}}
 .up__level{margin-top:18px;position:relative}
 .up__level__bar{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;position:relative}
-.up__level__bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--lime),var(--mint));border-radius:3px;transition:width .5s cubic-bezier(.22,1,.36,1)}
+.up__level__bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--lime),var(--mint));border-radius:3px;transition:width .5s cubic-bezier(.22,1,.36,1);overflow:hidden}
+.up__level__bar i::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(115deg,rgba(255,255,255,0) 0 14px,rgba(255,255,255,.28) 14px 18px,rgba(255,255,255,0) 18px 32px);
+  background-size:200% 100%;animation:barWave 1.6s linear infinite;mix-blend-mode:overlay}
+@keyframes barWave{0%{background-position:0% 0}100%{background-position:-200% 0}}
 .up__level__labels{margin-top:8px;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mut2);letter-spacing:.05em}
 .up__level__labels span.on{color:var(--lime)}
+/* Бегущая строка честных фактов — реальные пункты, уже заявленные на /sayty/ (sy-trust__chips) */
+.up__marquee{margin-top:14px;overflow:hidden;border-top:1px dashed rgba(255,255,255,.07);border-bottom:1px dashed rgba(255,255,255,.07);padding:8px 0;position:relative;z-index:1}
+.up__marquee__track{display:flex;gap:36px;white-space:nowrap;width:max-content;animation:marq 22s linear infinite}
+.up__marquee__track span{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.03em;color:var(--mut2)}
+.up__marquee:hover .up__marquee__track{animation-play-state:paused}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .up__cta{margin-top:20px;display:block;width:100%;padding:14px 20px;border-radius:12px;background:var(--lime);color:#08130a;font-family:'Unbounded',sans-serif;font-weight:700;font-size:14px;text-align:center;text-decoration:none;letter-spacing:-.005em;border:0;cursor:pointer;transition:transform .2s ease}
 .up__cta:hover{transform:translateY(-2px)}
 .up__cta:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
@@ -335,7 +366,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
               <span class="pp">+$80</span>
             </label>
             <label class="up__add" data-p="150" data-n="Год поддержки" data-id="support">
-              <input type="checkbox"><span class="chk"></span>
+              <input type="checkbox"><span class="chk up__toggle3d"><i class="knob"></i></span>
               <span class="tt"><b>Год поддержки</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ мелкие правки закрываются без счёта и разборок · $150/год ≈ $0,41 в день</span></span>
               <span class="pp">+$150</span>
             </label>
@@ -346,6 +377,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 
     <!-- ПРАВО: чек -->
     <div class="up__bill">
+      <div class="up__bill__amb" aria-hidden="true"></div>
       <div class="up__bill__lbl">итоговый чек</div>
       <div class="up__bill__h">Ваш пакет</div>
 
@@ -361,6 +393,17 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
           <span id="upL1" class="on">минимум</span>
           <span id="upL2">с рекламой</span>
           <span id="upL3">всё включено</span>
+        </div>
+      </div>
+
+      <div class="up__marquee" aria-hidden="true">
+        <div class="up__marquee__track">
+          <span>работаем по договору</span>
+          <span>фиксированная цена — без доплат по ходу проекта</span>
+          <span>передаём исходники — сайт остаётся у вас</span>
+          <span>работаем по договору</span>
+          <span>фиксированная цена — без доплат по ходу проекта</span>
+          <span>передаём исходники — сайт остаётся у вас</span>
         </div>
       </div>
 
@@ -384,6 +427,29 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
   var totalNum = totalEl ? totalEl.querySelector('.num') : null;
   var bar = document.getElementById('upLevelBar');
   var L1 = document.getElementById('upL1'), L2 = document.getElementById('upL2'), L3 = document.getElementById('upL3');
+  var REDUCE_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── общая пружина: критически-недодемпфированная, с лёгким перелётом.
+  // Используется для суммы в чеке (Анимация 02) — сумма не «дёргается» scale-кейфреймом,
+  // а реально доезжает до значения с overshoot, как в Linear/Framer.
+  function animateSpring(from, to, opts, onFrame){
+    opts = opts || {};
+    if (REDUCE_MOTION){ onFrame(to); return; }
+    var stiffness = opts.stiffness || 210, damping = opts.damping || 18, mass = opts.mass || 1;
+    var pos = from, vel = 0, last = performance.now();
+    function tick(now){
+      var dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      var force = (to - pos) * stiffness;
+      var accel = (force - vel * damping) / mass;
+      vel += accel * dt;
+      pos += vel * dt;
+      onFrame(pos);
+      if (Math.abs(to - pos) > 0.5 || Math.abs(vel) > 2) requestAnimationFrame(tick);
+      else onFrame(to);
+    }
+    requestAnimationFrame(tick);
+  }
   if (!rads.length) return;
 
   // ── цена позиции по её data-id (нужно для расчёта пресетов)
@@ -462,11 +528,23 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       linesBox.appendChild(d);
     }
 
-    // ── total с bump-анимацией
-    if (totalNum) { totalNum.textContent = total; } else { totalEl.textContent = '$' + total; }
-    totalEl.classList.remove('bump');
-    void totalEl.offsetWidth;
-    totalEl.classList.add('bump');
+    // ── total: пружина с overshoot вместо scale-кейфрейма (Анимация 02)
+    if (totalNum){
+      var prevTotal = +(totalNum.textContent || 0);
+      if (prevTotal !== total){
+        animateSpring(prevTotal, total, { stiffness: 220, damping: 16 }, function(v){
+          totalNum.textContent = Math.round(v);
+        });
+        animateSpring(0, 1, { stiffness: 300, damping: 12 }, function(v){
+          var s = 1 + Math.sin(Math.min(v,1) * Math.PI) * 0.10;
+          totalEl.style.transform = 'scale(' + s.toFixed(3) + ')';
+        });
+      } else {
+        totalNum.textContent = total;
+      }
+    } else {
+      totalEl.textContent = '$' + total;
+    }
 
     // ── уровень: минимум (0-1 доп) → с рекламой (2-4) → всё включено (5+)
     var lvl = 1;
@@ -556,6 +634,33 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
   });
 
   render();
+})();
+
+// ── 3D-tilt на карточках допов (Анимация 01) — отдельный IIFE, не задевает апселл-логику выше
+(function(){
+  var cards = document.querySelectorAll('.up__add');
+  var canHover = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!canHover || reduce || !cards.length) return;
+
+  var MAX = 7; // градусы наклона — сдержанно
+  cards.forEach(function(el){
+    el.addEventListener('pointermove', function(e){
+      var r = el.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width;
+      var py = (e.clientY - r.top) / r.height;
+      var rx = (0.5 - py) * MAX * 2;
+      var ry = (px - 0.5) * MAX * 2;
+      el.classList.add('tilting');
+      el.style.transform = 'perspective(700px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateZ(4px)';
+      el.style.setProperty('--mx', (px*100).toFixed(1) + '%');
+      el.style.setProperty('--my', (py*100).toFixed(1) + '%');
+    });
+    el.addEventListener('pointerleave', function(){
+      el.classList.remove('tilting');
+      el.style.transform = '';
+    });
+  });
 })();
 </script>
 
