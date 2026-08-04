@@ -47,7 +47,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .bento__card{position:relative;border-radius:18px;overflow:hidden;padding:22px;background:#0f131f;border:1px solid var(--line);transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;outline:none;transform-style:preserve-3d;--shx:0px;--shy:14px;box-shadow:var(--shx) var(--shy) 32px -16px rgba(0,0,0,.55)}
 /* entrance-каскад: скрыто до появления в вьюпорте, JS переключает классы */
 .bento__card.wl-pre{opacity:0;transform:rotateX(8deg) translateY(30px)}
-.bento__card.wl-in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1),border-color .35s ease,box-shadow .35s ease}
+.bento__card.wl-in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .35s ease,border-color .35s ease,box-shadow .35s ease}
 /* тонкое зерно — текстура вместо плоской заливки */
 .bento__card::before{content:"";position:absolute;inset:0;z-index:0;opacity:.035;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:150px 150px}
 /* ambient-свет за курсором, обновляется JS через --mx/--my/--glow */
