@@ -2054,3 +2054,20 @@ h1 span+span{animation-delay:.06s}
   .q-always{margin:0 0 18px;padding:14px 14px 12px}
   .q-always__list{grid-template-columns:1fr;gap:6px}
 }
+
+/* Ролик стартует сам — панель воспроизведения не должна конкурировать с
+   контентом: ниже, тоньше, спокойнее. Раньше это была яркая лаймовая полоса
+   поверх кадра, читалась как главный элемент блока. */
+.rc__ctrl{padding:22px 12px 8px !important;
+  background:linear-gradient(0deg,rgba(7,11,18,.72),rgba(7,11,18,.18) 60%,transparent) !important;
+  opacity:.72;transition:opacity .3s ease}
+.rc__frame:hover .rc__ctrl{opacity:1}
+.rc__pp{width:26px !important;height:26px !important;background:rgba(205,255,79,.55) !important}
+.rc__pp svg{width:11px !important;height:11px !important}
+.rc__track{height:3px !important;background:rgba(255,255,255,.16) !important}
+.rc__fill{box-shadow:none !important;background:rgba(205,255,79,.75) !important}
+.rc__time{opacity:.65}
+
+/* Руководителя маркетинга на десктопе не показываем: там сетка в четыре
+   колонки, и восемь карточек дают два ровных ряда вместо девяти внахлёст. */
+@media (min-width: 769px){ .sy-tm--mobonly{ display:none !important; } }

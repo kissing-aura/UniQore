@@ -5650,3 +5650,66 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 @media (max-width: 560px) {
   .demo-grid { grid-template-columns: 1fr; gap: 14px; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Правки 04.08 (главная): типографика, карточки демо, визир-скобки, FAQ
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 1 · Заголовки были крупнее необходимого — сбавляем примерно на пятую часть */
+.section-title { font-size: clamp(36px, 4.5vw, 62px); margin-bottom: 52px; }
+.hero__title   { font-size: clamp(40px, 5.9vw, 66px); }
+.faq .section-title { font-size: clamp(30px, 3.3vw, 44px); }
+@media (max-width: 640px) {
+  .section-title { font-size: clamp(30px, 8vw, 44px); margin-bottom: 32px; }
+}
+
+/* 2 · Плоский белый — скучно. Даём заголовкам холодный отлив, а лидам
+   чуть больше воздуха и мягкий цвет: текст перестаёт выглядеть «дефолтным». */
+.section-title, .hero__title {
+  background: linear-gradient(178deg, #ffffff 42%, #c9d6e8 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.section-title em, .hero__title em {
+  -webkit-text-fill-color: var(--color-accent); color: var(--color-accent);
+}
+.section-sub, .faq__sub, .section-lead {
+  color: #a8b4c6; line-height: 1.62; letter-spacing: .003em;
+}
+
+/* 3 · Карточки «Шесть систем» — короче: плотнее отступы и описание
+   в две строки, чтобы высоты сравнялись и ряд читался одним взглядом */
+.demo-card { padding: 20px; gap: 10px; }
+.demo-card__title { font-size: 20px; }
+.demo-card__pp { gap: 6px; }
+.demo-card__pp p {
+  font-size: 13px; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.demo-card__cta { padding-top: 4px; font-size: 14px; }
+@media (max-width: 640px) { .demo-card { padding: 16px; } }
+
+/* 4 · Визир-скобки: были заданы от строчного бокса (line-height 1.04),
+   поэтому висели заметно выше капители и ниже базовой линии — «мимо» слова.
+   Сажаем em на собственный inline-block с плотной строкой: теперь границы
+   бокса совпадают с глифами, и скобки обнимают слово, а не воздух. */
+.section-title em, .hero__title em {
+  display: inline-block; line-height: .96; padding: .04em .2em .02em;
+}
+.section-title em::before, .section-title em::after,
+.hero__title em::before,   .hero__title em::after {
+  width: .3em; height: .3em; border-width: .045em;
+}
+.section-title em::before, .hero__title em::before { top: .02em; left: -.01em; }
+.section-title em::after,  .hero__title em::after  { bottom: .02em; right: -.01em; }
+
+/* 5 · FAQ: заголовок едет вместе со списком и стоит по центру экрана.
+   Только там, где колонки две — в одну колонку липкость мешает. */
+@media (min-width: 981px) {
+  .faq__inner { align-items: start; }
+  .faq__header {
+    position: sticky; top: 50vh; transform: translateY(-50%);
+    align-self: start; will-change: transform;
+  }
+  .faq__header .section-title { margin-bottom: 22px; }
+}
