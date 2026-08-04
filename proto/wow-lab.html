@@ -37,43 +37,11 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .wl-sec__meta{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mut2);letter-spacing:.04em}
 .wl-sec__meta b{color:var(--lime)}
 
-/* ═══════════════════════════════════════════════════════════
-   [1] КАРУСЕЛЬ НИШ — вместо текстового перечисления
-   ═══════════════════════════════════════════════════════════ */
-.niche{margin-top:44px}
-.niche-carousel{position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--line);background:linear-gradient(180deg,#0f1421 0%,#0a0e17 100%);height:520px}
-.niche-track{position:absolute;inset:0;display:flex;transition:transform .8s cubic-bezier(.22,1,.36,1)}
-.niche-slide{position:relative;flex:0 0 100%;height:100%;display:grid;grid-template-columns:1.3fr 1fr;gap:0;padding:44px}
-.niche-slide__frame{position:relative;border-radius:14px;overflow:hidden;background:#0b0e15;border:1px solid rgba(255,255,255,.08);box-shadow:0 40px 90px -40px rgba(0,0,0,.85)}
-.niche-slide__frame iframe{position:absolute;top:0;left:0;width:1366px;height:768.4px;transform:scale(var(--s,.51));transform-origin:top left;border:0;pointer-events:none;background:#0b0e15}
-.niche-slide__frame img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
-.niche-slide__live{position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(10,14,26,.86);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.05em;color:#eafff2}
-.niche-slide__live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint);animation:pulse 1.8s ease infinite}
+/* общая пульсация используется в bento */
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-.niche-slide__side{padding:24px 0 24px 44px;display:flex;flex-direction:column;justify-content:center}
-.niche-slide__tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:.08em;text-transform:uppercase}
-.niche-slide__h{font-family:'Unbounded',sans-serif;font-weight:800;font-size:32px;letter-spacing:-.02em;margin-top:10px;line-height:1.05}
-.niche-slide__d{color:var(--mut);font-size:14.5px;margin-top:14px;max-width:36ch}
-.niche-slide__feats{margin-top:22px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
-.niche-slide__feats span{display:flex;align-items:center;gap:9px;color:#c7ccd6}
-.niche-slide__feats span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--lime);flex:0 0 auto}
-
-.niche-nav{position:absolute;bottom:24px;left:44px;right:44px;display:flex;justify-content:space-between;align-items:center;z-index:5}
-.niche-dots{display:flex;gap:8px}
-.niche-dots button{width:26px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);border:0;cursor:pointer;transition:background .3s,width .3s}
-.niche-dots button.on{background:var(--lime);width:44px}
-.niche-arrows{display:flex;gap:10px}
-.niche-arrows button{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s}
-.niche-arrows button:hover{background:rgba(205,255,79,.12);border-color:rgba(205,255,79,.4);color:var(--lime)}
-.niche-arrows svg{width:18px;height:18px}
-
-.niche-chips{margin-top:26px;display:flex;flex-wrap:wrap;gap:9px}
-.niche-chips__lbl{width:100%;font-size:13px;color:var(--mut);margin-bottom:6px}
-.niche-chips a{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:#c7ccd6;text-decoration:none;font-size:13px;transition:all .2s ease}
-.niche-chips a:hover{background:rgba(205,255,79,.1);border-color:rgba(205,255,79,.3);color:var(--lime)}
 
 /* ═══════════════════════════════════════════════════════════
-   [2] BENTO «Вы получаете не просто сайт» — переделка uq-grid
+   [1] BENTO «Вы получаете не просто сайт» — переделка uq-grid
    ═══════════════════════════════════════════════════════════ */
 .bento{margin-top:44px;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:220px;gap:16px}
 .bento__card{position:relative;border-radius:18px;overflow:hidden;padding:22px;background:#0f131f;border:1px solid var(--line);transition:transform .35s ease,border-color .35s ease}
@@ -167,48 +135,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .b4__hint{position:absolute;left:22px;right:22px;bottom:112px;font-size:11.5px;color:var(--mut);text-align:center}
 
 /* ═══════════════════════════════════════════════════════════
-   [3] ТАЙМЛАЙН «Как проходит проект» v2 — компактнее+ярче
-   ═══════════════════════════════════════════════════════════ */
-.tl{margin-top:44px;background:linear-gradient(180deg,#0d1220 0%,#0a0e17 100%);border:1px solid var(--line);border-radius:20px;padding:44px 44px 56px;position:relative}
-.tl__rail{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:20px}
-.tl__rail::before{content:"";position:absolute;left:calc(100%/8);right:calc(100%/8);top:26px;height:2px;background:rgba(255,255,255,.06);z-index:0}
-.tl__rail::after{content:"";position:absolute;left:calc(100%/8);top:26px;height:2px;background:var(--lime);z-index:1;transition:width .8s cubic-bezier(.22,1,.36,1);width:0;box-shadow:0 0 12px rgba(205,255,79,.5)}
-.tl.step2 .tl__rail::after{width:calc(100%/4 * 1.33)}
-.tl.step3 .tl__rail::after{width:calc(100%/4 * 2.33)}
-.tl.step4 .tl__rail::after{width:calc(100%/4 * 3.33)}
-.tl__step{position:relative;padding:0 12px;display:flex;flex-direction:column;align-items:center;text-align:center;cursor:pointer;z-index:2}
-.tl__dot{width:54px;height:54px;border-radius:50%;background:#0a0e17;border:2px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--mut);transition:all .35s ease;position:relative}
-.tl__step.on .tl__dot{border-color:var(--lime);color:#08130a;background:var(--lime);box-shadow:0 0 0 6px rgba(205,255,79,.14),0 0 24px rgba(205,255,79,.4)}
-.tl__step.done .tl__dot{border-color:var(--lime);color:var(--lime);background:rgba(205,255,79,.08)}
-.tl__day{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut2);margin-top:12px;letter-spacing:.05em}
-.tl__step.on .tl__day, .tl__step.done .tl__day{color:var(--lime)}
-.tl__t{font-family:'Unbounded',sans-serif;font-weight:700;font-size:14.5px;margin-top:4px;line-height:1.2;letter-spacing:-.01em}
-.tl__preview{margin-top:36px;display:grid;grid-template-columns:1fr 1.6fr;gap:32px;align-items:center;padding:26px;background:rgba(255,255,255,.02);border-radius:14px;border:1px solid var(--line)}
-.tl__preview-side{}
-.tl__preview-side .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:.08em}
-.tl__preview-side h4{font-family:'Unbounded',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-top:8px;line-height:1.1}
-.tl__preview-side p{color:var(--mut);font-size:13.5px;margin-top:10px;line-height:1.55}
-.tl__preview-screen{position:relative;aspect-ratio:16/10;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:#0b0e15}
-.tl__preview-screen img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;transition:opacity .5s}
-.tl__preview-screen.morph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,26,.3),transparent 30%);pointer-events:none}
-
-/* Wire / type / paint / live overlays на прото-скрине */
-.tl__ov{position:absolute;inset:0;display:flex;flex-direction:column;padding:18px;gap:8px;opacity:0;transition:opacity .5s}
-.tl__ov.on{opacity:1}
-.tl__ov--wire div{background:rgba(255,255,255,.07);border-radius:4px}
-.tl__ov--wire .h{height:22px}
-.tl__ov--wire .hero{height:78px}
-.tl__ov--wire .row{display:flex;gap:10px;flex:1}
-.tl__ov--wire .row div{flex:1;background:rgba(255,255,255,.07)}
-.tl__ov--type{color:var(--ink)}
-.tl__ov--type .brand{font-family:'Unbounded',sans-serif;font-weight:700;font-size:13px}
-.tl__ov--type .h{font-family:'Unbounded',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-top:18px;line-height:1.05}
-.tl__ov--type .p{font-size:11.5px;color:var(--mut);margin-top:8px;max-width:32ch}
-.tl__ov--type .b{margin-top:auto;display:flex;gap:8px}
-.tl__ov--type .b div{flex:1;height:50px;border:1px solid var(--line);border-radius:6px}
-
-/* ═══════════════════════════════════════════════════════════
-   [4] АПСЕЛЛ-КОНФИГУРАТОР — растит средний чек
+   [2] АПСЕЛЛ-КОНФИГУРАТОР — растит средний чек
    ═══════════════════════════════════════════════════════════ */
 .up{margin-top:44px;display:grid;grid-template-columns:1.35fr 1fr;gap:24px;align-items:start}
 
@@ -277,15 +204,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
    Адаптив
    ═══════════════════════════════════════════════════════════ */
 @media(max-width:900px){
-  .niche-slide{grid-template-columns:1fr;padding:24px}
-  .niche-slide__side{padding:20px 0 0 0}
-  .niche-carousel{height:auto;min-height:520px}
   .bento{grid-template-columns:1fr}
   .b1,.b2,.b3,.b4{grid-column:span 1;grid-row:auto;min-height:280px}
-  .tl__preview{grid-template-columns:1fr;gap:20px}
-  .tl__rail{gap:6px}
-  .tl__t{font-size:11.5px}
-  .tl__dot{width:44px;height:44px;font-size:12px}
   .up{grid-template-columns:1fr}
   .up__base{grid-template-columns:1fr}
   .up__adds{grid-template-columns:1fr}
@@ -303,43 +223,16 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 
 <header class="wl-hero">
   <h1>Стенд <em>WOW-прототипов</em></h1>
-  <p>Четыре штуки, которые заменят стены текста и «однотипность» на графику и живую механику. Всё запускается — потыкай.</p>
+  <p>Два блока, которые растят конверсию и средний чек: живые метрики продукта и конфигуратор с накоплением ценности. Потыкай.</p>
   <div class="wl-tabs">
-    <a href="#niche">01 · Карусель ниш</a>
-    <a href="#bento">02 · Bento-карточки</a>
-    <a href="#timeline">03 · Таймлайн проекта</a>
-    <a href="#faqv">04 · Апселл-конфигуратор</a>
+    <a href="#bento">01 · Метрики продукта (bento)</a>
+    <a href="#faqv">02 · Апселл-конфигуратор</a>
   </div>
 </header>
 
-<!-- ═══════ [1] КАРУСЕЛЬ НИШ ═══════ -->
-<section class="wl-sec niche" id="niche">
-  <div class="wl-sec__num">01 · заменяет</div>
-  <h2 class="wl-sec__h">Мы делаем 16 ниш — вот как<br>это выглядит вживую</h2>
-  <p class="wl-sec__sub">Вместо перечисления «Стоматология · Автосервис · Ресторан…» — реальные интерфейсы в карусели. Стрелки/точки листают, каждый слайд — живая CRM.</p>
-  <p class="wl-sec__meta">место в продакшене: <b>главная</b>, блок «Решения» / <b>/keysy/</b> · плюс: моментальное доверие вместо wall of text</p>
-
-  <div class="niche-carousel" id="nicheCar">
-    <div class="niche-track" id="nicheTrack">
-      <!-- slides наполняются JS -->
-    </div>
-    <div class="niche-nav">
-      <div class="niche-dots" id="nicheDots"></div>
-      <div class="niche-arrows">
-        <button id="nichePrev" aria-label="Предыдущий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
-        <button id="nicheNext" aria-label="Следующий"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
-      </div>
-    </div>
-  </div>
-
-  <div class="niche-chips" id="nicheChips">
-    <span class="niche-chips__lbl">Ещё 10 ниш, для которых у нас готовые скелеты систем:</span>
-  </div>
-</section>
-
-<!-- ═══════ [2] BENTO 4 КАРТОЧКИ ═══════ -->
+<!-- ═══════ [1] BENTO 4 КАРТОЧКИ ═══════ -->
 <section class="wl-sec" id="bento">
-  <div class="wl-sec__num">02 · заменяет</div>
+  <div class="wl-sec__num">01 · метрики продукта</div>
   <h2 class="wl-sec__h">«Вы получаете не просто<br>сайт» — bento вместо 4-х<br>одинаковых карточек</h2>
   <p class="wl-sec__sub">Сейчас 4 плитки одного шаблона — читаются одинаково и тускло. Новая версия: ассиметричная сетка, у каждой свой цвет-акцент и главный жест (лента / график / дуэль / прогресс).</p>
   <p class="wl-sec__meta">место в продакшене: <b>/sayty/ #features</b> · плюс: каждая карточка «своя», взгляд задерживается</p>
@@ -420,46 +313,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
   </div>
 </section>
 
-<!-- ═══════ [3] ТАЙМЛАЙН ═══════ -->
-<section class="wl-sec" id="timeline">
-  <div class="wl-sec__num">03 · переделка</div>
-  <h2 class="wl-sec__h">Как проходит проект —<br>компактный горизонтальный<br>таймлайн</h2>
-  <p class="wl-sec__sub">Старая версия (build-live) занимала целый экран, шаги терялись. Новая: 4 точки на одной линии, клик → активная стадия анимируется + справа реальный превью-сайт клиента.</p>
-  <p class="wl-sec__meta">место в продакшене: <b>главная</b>, блок «От запроса до системы» / <b>/sayty/</b> · плюс: в 2 раза плотнее, «прогресс» вживую</p>
-
-  <div class="tl step2" id="tl">
-    <div class="tl__rail">
-      <div class="tl__step done" data-i="1"><div class="tl__dot">01</div><div class="tl__day">день 1</div><div class="tl__t">Структура<br>под заявку</div></div>
-      <div class="tl__step on"   data-i="2"><div class="tl__dot">02</div><div class="tl__day">день 2</div><div class="tl__t">Тексты<br>и типографика</div></div>
-      <div class="tl__step"      data-i="3"><div class="tl__dot">03</div><div class="tl__day">день 3-4</div><div class="tl__t">Дизайн<br>под нишу</div></div>
-      <div class="tl__step"      data-i="4"><div class="tl__dot">04</div><div class="tl__day">день 5</div><div class="tl__t">Заявки в<br>Telegram</div></div>
-    </div>
-    <div class="tl__preview">
-      <div class="tl__preview-side">
-        <div class="n" id="tlN">этап 02 из 4</div>
-        <h4 id="tlH">Тексты и типографика</h4>
-        <p id="tlP">Пишем сами — от вас нужны только факты о бизнесе. Дальше подбираем шрифты, ритм и заголовки под нишу.</p>
-      </div>
-      <div class="tl__preview-screen" id="tlScreen">
-        <div class="tl__ov tl__ov--wire" data-s="1">
-          <div class="h"></div><div class="hero"></div><div class="row"><div></div><div></div><div></div></div>
-        </div>
-        <div class="tl__ov tl__ov--type on" data-s="2">
-          <div class="brand">Bien Sûr</div>
-          <div class="h">Ресторан, куда<br>возвращаются</div>
-          <div class="p">Французское бистро на Мастерской. Бронь стола в два клика.</div>
-          <div class="b"><div></div><div></div><div></div></div>
-        </div>
-        <img data-s="3" src="/keysy/cases/case-biensur-1024.webp" alt="Готовый сайт" style="opacity:0;position:absolute;inset:0">
-        <img data-s="4" src="/keysy/cases/case-biensur-1024.webp" alt="Готовый сайт + заявка" style="opacity:0;position:absolute;inset:0">
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ [4] АПСЕЛЛ-КОНФИГУРАТОР ═══════ -->
+<!-- ═══════ [2] АПСЕЛЛ-КОНФИГУРАТОР ═══════ -->
 <section class="wl-sec" id="faqv">
-  <div class="wl-sec__num">04 · растит чек</div>
+  <div class="wl-sec__num">02 · растит средний чек</div>
   <h2 class="wl-sec__h">Собери проект — увидь<br>цену вживую</h2>
   <p class="wl-sec__sub">Не «сколько стоит?» с ответом-стеной, а конфигуратор: базовый уровень + допы. Каждая галочка = ощутимый плюс к чеку, пакетная скидка от 3-х фич. Клиент сам выбирает состав — и сам видит итог.</p>
   <p class="wl-sec__meta">место в продакшене: <b>/sayty/ #faq</b>, <b>/tseny/</b> · плюс: средний чек растёт, клиенту виден полный набор возможностей</p>
@@ -564,77 +420,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   1) КАРУСЕЛЬ НИШ
-   ═══════════════════════════════════════════════════════════ */
-(function(){
-  var slides = [
-    {tag:'Автосервис', title:'Немеция', desc:'Автокомплекс VAG/BMW/Mercedes в Омске. Запись, услуги по маркам, заявки в Telegram.', feats:['Онлайн-запись на любую услугу','История ремонта по каждому авто','Заявки в Telegram менеджеру'], img:'/keysy/cases/case-nemecia-1024.webp?v=wow'},
-    {tag:'Стоматология', title:'Дентакс', desc:'Live-CRM клиники с расписанием, картами пациентов и напоминаниями. Всё что нужно врачу.', feats:['Календарь визитов и врачей','Карта пациента с историей','AI-подсказки по назначениям'], iframe:'/demo/klinika/'},
-    {tag:'Ресторан', title:'Bien Sûr', desc:'Французское бистро с бронью столов в два клика и живым меню. Тонкая типографика под бренд.', feats:['Онлайн-бронь стола','Меню с сезонными позициями','Система лояльности'], img:'/keysy/cases/case-biensur-1024.webp?v=wow'},
-    {tag:'Стритвир', title:'Dragon Brand', desc:'Дроп-магазин одежды: каталог, лимитированные партии, приём заказов на iframe вживую.', feats:['Живой каталог с наличием','Drop-система лимиток','Приём заказов через ТГ'], iframe:'/demo/dragon/'},
-    {tag:'Недвижимость', title:'Квартал', desc:'Агентство: объекты, клиенты, показы, документы. Всё звено сделки в одной панели.', feats:['База объектов и клиентов','Календарь показов','Автогенерация документов'], iframe:'/demo/nedvizhka/'},
-    {tag:'Стройка', title:'Роман Титов', desc:'CRM субаренды и объектов в Москва-Сити: башни, договоры, заявки, счета.', feats:['Управление башнями и лотами','Автосчёт и договор по клику','Реальный клиент — работает'], iframe:'/demo/command/'}
-  ];
-  var chipsExtra = ['Посуточная аренда','Склад и импорт','Интернет-магазин','Салон красоты','Юридическая компания','Логистика и доставка','Клининговая компания','Турагентство','Фитнес-клуб','Детский центр'];
-
-  var track = document.getElementById('nicheTrack');
-  var dots = document.getElementById('nicheDots');
-  var cur = 0;
-
-  slides.forEach(function(s, i){
-    var el = document.createElement('div');
-    el.className = 'niche-slide';
-    var media = s.iframe
-      ? '<div class="niche-slide__frame"><span class="niche-slide__live">● живой сайт</span><iframe src="'+s.iframe+'" tabindex="-1" scrolling="no" title="'+s.title+'"></iframe></div>'
-      : '<div class="niche-slide__frame"><span class="niche-slide__live">● живой сайт</span><img src="'+s.img+'" alt="'+s.title+'"></div>';
-    el.innerHTML = media +
-      '<div class="niche-slide__side">' +
-      '<div class="niche-slide__tag">'+s.tag+'</div>' +
-      '<div class="niche-slide__h">'+s.title+'</div>' +
-      '<div class="niche-slide__d">'+s.desc+'</div>' +
-      '<div class="niche-slide__feats">' + s.feats.map(function(f){return '<span>'+f+'</span>'}).join('') + '</div>' +
-      '</div>';
-    track.appendChild(el);
-
-    var d = document.createElement('button');
-    d.setAttribute('aria-label','Слайд '+(i+1));
-    d.onclick = function(){ goTo(i); };
-    dots.appendChild(d);
-  });
-
-  function goTo(i){
-    cur = (i + slides.length) % slides.length;
-    track.style.transform = 'translateX(' + (-cur*100) + '%)';
-    Array.prototype.forEach.call(dots.children, function(d, k){ d.classList.toggle('on', k===cur); });
-    // масштаб iframe (при появлении в вьюпорте)
-    updateFrame();
-  }
-  function updateFrame(){
-    var f = document.querySelectorAll('.niche-slide__frame');
-    for (var i=0; i<f.length; i++){
-      var w = f[i].clientWidth;
-      if (w) f[i].style.setProperty('--s', (w/1366).toFixed(4));
-    }
-  }
-  document.getElementById('nichePrev').onclick = function(){ goTo(cur-1); };
-  document.getElementById('nicheNext').onclick = function(){ goTo(cur+1); };
-  window.addEventListener('resize', updateFrame);
-  setTimeout(updateFrame, 300);
-  goTo(0);
-
-  // авто-листалка
-  var auto = setInterval(function(){ goTo(cur+1); }, 6500);
-  document.getElementById('nicheCar').addEventListener('pointerenter', function(){ clearInterval(auto); });
-
-  // chips
-  var chipsBox = document.getElementById('nicheChips');
-  chipsExtra.forEach(function(c){
-    var a = document.createElement('a'); a.href='#'; a.textContent = c; chipsBox.appendChild(a);
-  });
-})();
-
-/* ═══════════════════════════════════════════════════════════
-   2) BENTO v2 — живые сценарии в каждой карточке
+   1) BENTO v2 — живые сценарии в каждой карточке
    ═══════════════════════════════════════════════════════════ */
 
 // ── B1: автопоток заявок ──
@@ -781,55 +567,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 // ── B4: gauge — CSS-анимации запускаются автоматом; ничего не нужно ──
 
 /* ═══════════════════════════════════════════════════════════
-   3) ТАЙМЛАЙН — переключение стадий
-   ═══════════════════════════════════════════════════════════ */
-(function(){
-  var tl = document.getElementById('tl');
-  var steps = tl.querySelectorAll('.tl__step');
-  var overlays = tl.querySelectorAll('.tl__ov, .tl__preview-screen [data-s]');
-  var titles = ['Структура под заявку','Тексты и типографика','Дизайн под нишу','Заявки в Telegram'];
-  var descs = [
-    'Собираем каркас: что где стоит и куда ведёт человека. От факта к целевому действию.',
-    'Пишем сами — от вас нужны только факты о бизнесе. Подбираем шрифты, ритм и заголовки под нишу.',
-    'Цвет, фото, детали под бренд. Не шаблон из конструктора — макет специально под ваше дело.',
-    'Метрика и цели настроены. Каждая заявка мгновенно в Telegram — видно отдачу с каждого ₽.'
-  ];
-
-  function setStep(i){
-    for (var k=0; k<steps.length; k++){
-      steps[k].classList.toggle('on',   k+1 === i);
-      steps[k].classList.toggle('done', k+1 <  i);
-    }
-    tl.className = 'tl step' + i;
-    document.getElementById('tlN').textContent = 'этап 0' + i + ' из 4';
-    document.getElementById('tlH').textContent = titles[i-1];
-    document.getElementById('tlP').textContent = descs[i-1];
-    // overlays
-    for (var j=0; j<overlays.length; j++){
-      var sN = +overlays[j].getAttribute('data-s');
-      var vis = sN === i;
-      overlays[j].style.opacity = vis ? '1' : '0';
-      overlays[j].classList.toggle('on', vis);
-    }
-  }
-
-  Array.prototype.forEach.call(steps, function(s){
-    s.addEventListener('click', function(){ setStep(+s.getAttribute('data-i')); });
-  });
-
-  // авто-прогон
-  var cur = 2, dir = 1;
-  var auto = setInterval(function(){
-    cur += dir;
-    if (cur >= 4) dir = -1;
-    if (cur <= 1) dir = 1;
-    setStep(cur);
-  }, 3500);
-  tl.addEventListener('pointerenter', function(){ clearInterval(auto); });
-})();
-
-/* ═══════════════════════════════════════════════════════════
-   4) АПСЕЛЛ-КОНФИГУРАТОР
+   2) АПСЕЛЛ-КОНФИГУРАТОР
    ═══════════════════════════════════════════════════════════ */
 (function(){
   var rads = document.querySelectorAll('#upBase .up__rad');
