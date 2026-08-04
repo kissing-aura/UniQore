@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>[черновик] 3D-hero — Uniqore</title>
+
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/unbounded-var-cyrillic.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
+<link rel="stylesheet" href="/css/fonts.css?v=20260731b">
+<link rel="stylesheet" href="/chernovik/hero/style.css?v=1">
+</head>
+<body>
+
+<div class="lab-note">черновик · не индексируется · <b>/chernovik/hero/</b></div>
+
+<section class="hero" id="hero">
+  <canvas class="hero__bg" id="bg" aria-hidden="true"></canvas>
+  <div class="hero__aurora" aria-hidden="true"></div>
+  <div class="hero__floor" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="hero__grid">
+
+      <!-- ── Левая колонка ── -->
+      <div class="hero__left">
+        <span class="eyebrow"><i></i>Сайт · CRM · реклама · автоматизация</span>
+
+        <h1 class="h1">
+          <span class="h1__l">Система,</span>
+          <span class="h1__l">которая работает</span>
+          <span class="h1__l"><em>без вас</em></span>
+        </h1>
+
+        <p class="lead">Собираем под процессы вашей ниши и передаём работающей.
+          Разработка — <b>4–6 дней</b>.</p>
+
+        <div class="price">
+          <span class="price__v">от 11 700 ₽</span>
+          <span class="price__n">Старт с любой услуги. Объём и цену фиксируем в договоре до старта.</span>
+        </div>
+
+        <div class="cta">
+          <a class="btn btn--main" href="#">Посмотреть, как это выглядит</a>
+          <a class="btn btn--ghost" href="#">Рассчитать стоимость</a>
+        </div>
+
+        <div class="assure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3z"/><path d="M9 12.5l2 2 4-4"/></svg>
+          Работаем по этапам: <b>не приняли этап — дальше не платите.</b>
+        </div>
+      </div>
+
+      <!-- ── Правая колонка: 3D-сцена ── -->
+      <div class="hero__right">
+        <div class="stage" id="stage">
+          <div class="scene" id="scene">
+
+            <!-- дальний слой: подсветка и «пыль» за панелью -->
+            <div class="layer layer--glow" aria-hidden="true"></div>
+
+            <!-- сама панель CRM -->
+            <div class="panel">
+              <div class="panel__bar">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span class="panel__url">crm.uniqore.pro</span>
+                <span class="panel__badge">демо</span>
+              </div>
+
+              <div class="panel__body">
+                <!-- рельс -->
+                <nav class="rail" aria-hidden="true">
+                  <span class="rail__logo"></span>
+                  <span class="rail__i is-on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>
+                  <span class="rail__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.4 4-5 7-5s5.8 1.6 7 5"/></svg></span>
+                  <span class="rail__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 11h18"/></svg></span>
+                  <span class="rail__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V9M10 19V5M16 19v-7M22 19h-20"/></svg></span>
+                </nav>
+
+                <div class="main">
+                  <header class="main__head">
+                    <div>
+                      <div class="main__t">Дашборд</div>
+                      <div class="main__s">за 8 недель</div>
+                    </div>
+                    <span class="chip">8 недель ▾</span>
+                  </header>
+
+                  <!-- KPI — вынесены ближе к зрителю -->
+                  <div class="kpis" data-depth="34">
+                    <div class="kpi"><span class="kpi__l">Выручка, тыс ₽</span><b class="kpi__n" data-count="2995">0</b><span class="kpi__d up">↑ 18%</span></div>
+                    <div class="kpi"><span class="kpi__l">Заявки</span><b class="kpi__n" data-count="184">0</b><span class="kpi__d up">↑ 12%</span></div>
+                    <div class="kpi"><span class="kpi__l">Прибыль, тыс ₽</span><b class="kpi__n" data-count="1919">0</b><span class="kpi__d up">↑ 22%</span></div>
+                    <div class="kpi"><span class="kpi__l">Конверсия</span><b class="kpi__n" data-count="67" data-suffix="%">0</b><span class="kpi__d up">↑ 4%</span></div>
+                  </div>
+
+                  <div class="cols">
+                    <!-- график -->
+                    <section class="card card--chart" data-depth="22">
+                      <div class="card__h"><span>Динамика выручки</span><span class="card__m">₽ / нед</span></div>
+                      <svg class="chart" viewBox="0 0 320 118" preserveAspectRatio="none" aria-hidden="true">
+                        <defs>
+                          <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#CDFF4F" stop-opacity=".34"/>
+                            <stop offset="100%" stop-color="#CDFF4F" stop-opacity="0"/>
+                          </linearGradient>
+                          <filter id="soft" x="-20%" y="-40%" width="140%" height="200%">
+                            <feGaussianBlur stdDeviation="3.4" result="b"/>
+                            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                          </filter>
+                        </defs>
+                        <g class="chart__grid">
+                          <line x1="0" y1="28" x2="320" y2="28"/><line x1="0" y1="58" x2="320" y2="58"/><line x1="0" y1="88" x2="320" y2="88"/>
+                        </g>
+                        <path class="chart__area" id="area" d=""/>
+                        <path class="chart__line" id="line" d="" filter="url(#soft)"/>
+                        <circle class="chart__dot" id="dot" r="4.2"/>
+                      </svg>
+                      <div class="chart__x"><span>н1</span><span>н2</span><span>н3</span><span>н4</span><span>н5</span><span>н6</span><span>н7</span><span>н8</span></div>
+                    </section>
+
+                    <!-- источники -->
+                    <section class="card card--src" data-depth="18">
+                      <div class="card__h"><span>Источники заявок</span></div>
+                      <ul class="src">
+                        <li><i style="--c:#CDFF4F"></i>Instagram<b>42%</b></li>
+                        <li><i style="--c:#31e0b0"></i>Telegram<b>28%</b></li>
+                        <li><i style="--c:#5b9dff"></i>Сайт<b>18%</b></li>
+                        <li><i style="--c:#8792a3"></i>Реклама<b>12%</b></li>
+                      </ul>
+                      <div class="src__bar" aria-hidden="true"><span style="--w:42%;--c:#CDFF4F"></span><span style="--w:28%;--c:#31e0b0"></span><span style="--w:18%;--c:#5b9dff"></span><span style="--w:12%;--c:#8792a3"></span></div>
+                    </section>
+                  </div>
+
+                  <!-- сделки -->
+                  <section class="card card--deals" data-depth="14">
+                    <div class="card__h"><span>Активные сделки</span><span class="card__m">24 всего</span></div>
+                    <ul class="deals">
+                      <li><span class="ava">М</span><span class="deals__n">Магазин «Стиль»</span><span class="deals__src">Instagram</span><b>187 000 ₽</b><span class="tag tag--on">активна</span></li>
+                      <li><span class="ava">R</span><span class="deals__n">Кофейня Roasters</span><span class="deals__src">Сайт</span><b>144 000 ₽</b><span class="tag tag--on">активна</span></li>
+                      <li><span class="ava">Д</span><span class="deals__n">Автосервис Драйв</span><span class="deals__src">Реклама</span><b>250 000 ₽</b><span class="tag tag--wait">ждёт</span></li>
+                    </ul>
+                  </section>
+                </div>
+              </div>
+
+              <!-- блик по стеклу -->
+              <span class="panel__sheen" aria-hidden="true"></span>
+            </div>
+
+            <!-- ── плавающие карточки: каждая на своей глубине и со своей фазой ── -->
+            <figure class="fcard fcard--a" data-depth="150" data-float="0">
+              <span class="fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 17l5-6 4 3 6-8"/><path d="M15 6h4v4"/></svg></span>
+              <figcaption><b>Заявки растут</b><small>из рекламы</small></figcaption>
+            </figure>
+
+            <figure class="fcard fcard--b" data-depth="190" data-float="1">
+              <span class="fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg></span>
+              <figcaption><b>Всё в одной системе</b><small>сайт · CRM · реклама</small></figcaption>
+            </figure>
+
+            <figure class="fcard fcard--c" data-depth="120" data-float="2">
+              <span class="fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 11h18"/></svg></span>
+              <figcaption><b>4–6 дней</b><small>на разработку</small></figcaption>
+            </figure>
+
+            <!-- отражение под сценой -->
+            <div class="reflect" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="/chernovik/hero/scene.js?v=1" defer></script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Черновик 3D-hero. Только эта страница, к прод-стилям отношения не имеет.
+
+   Идея: панель CRM — не картинка, а собранная сцена. Каждый блок живёт на
+   своей глубине по Z, поэтому при повороте они расходятся честным
+   параллаксом, дальние уходят в расфокус, а плавающие карточки идут
+   отдельными орбитами и не выглядят приклеенными.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root{
+  --bg:#080B14;
+  --ink:#EEF2F8;
+  --mut:#8792a3;
+  --line:rgba(255,255,255,.08);
+  --lime:#CDFF4F;
+  --mint:#31e0b0;
+  --font-d:'Unbounded',system-ui,sans-serif;
+  --font-b:'Geist',system-ui,sans-serif;
+  --font-m:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--font-b);
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+a{color:inherit;text-decoration:none}
+
+.lab-note{
+  position:fixed;left:14px;bottom:14px;z-index:99;
+  font:600 11px/1 var(--font-m);letter-spacing:.06em;color:var(--mut);
+  background:rgba(10,14,26,.8);border:1px solid var(--line);
+  padding:7px 11px;border-radius:999px;backdrop-filter:blur(8px);
+}
+.lab-note b{color:var(--lime)}
+
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,4vw,44px)}
+
+/* ── Сцена целиком ───────────────────────────────────────────────── */
+.hero{
+  position:relative;overflow:hidden;
+  padding:clamp(96px,12vh,150px) 0 clamp(70px,10vh,120px);
+  min-height:100svh;display:flex;align-items:center;
+}
+.hero__bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.65}
+
+/* мягкое северное сияние за панелью — источник света всей сцены */
+.hero__aurora{
+  position:absolute;z-index:0;pointer-events:none;
+  right:-8%;top:-14%;width:78%;height:118%;
+  background:
+    radial-gradient(46% 40% at 62% 34%, rgba(205,255,79,.16), transparent 68%),
+    radial-gradient(40% 46% at 78% 62%, rgba(49,224,176,.13), transparent 70%),
+    radial-gradient(60% 50% at 50% 50%, rgba(64,120,255,.07), transparent 72%);
+  filter:blur(28px);
+  animation:auroraDrift 22s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift{
+  from{transform:translate3d(0,0,0) scale(1)}
+  to{transform:translate3d(-3%,2%,0) scale(1.07)}
+}
+
+/* уходящая в перспективу сетка-пол: даёт сцене «низ» и ощущение объёма */
+.hero__floor{
+  position:absolute;left:0;right:0;bottom:0;height:44%;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size:60px 60px;
+  transform:perspective(520px) rotateX(66deg);
+  transform-origin:bottom center;
+  -webkit-mask-image:linear-gradient(180deg, transparent, #000 42%, transparent 92%);
+          mask-image:linear-gradient(180deg, transparent, #000 42%, transparent 92%);
+  opacity:.7;
+}
+
+.hero__grid{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  gap:clamp(28px,4vw,64px);align-items:center;
+}
+
+/* ── Левая колонка ───────────────────────────────────────────────── */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font:500 11.5px/1 var(--font-m);letter-spacing:.13em;text-transform:uppercase;
+  color:var(--mut);margin-bottom:22px;
+}
+.eyebrow i{
+  width:10px;height:10px;border-radius:50%;flex:none;
+  border:1px solid color-mix(in srgb,var(--lime) 55%,transparent);
+  background:
+    linear-gradient(var(--lime),var(--lime)) center/1.3px 5px no-repeat,
+    linear-gradient(var(--lime),var(--lime)) center/5px 1.3px no-repeat;
+}
+
+.h1{
+  font-family:var(--font-d);font-weight:800;
+  font-size:clamp(34px,4.4vw,60px);line-height:1.03;letter-spacing:-.035em;
+  margin-bottom:20px;
+}
+.h1__l{display:block;overflow:hidden}
+.h1__l span{display:block}
+.h1 em{font-style:normal;color:var(--lime);position:relative;padding:0 .12em}
+/* визир-скобки — те же, что на сайте, но здесь без JS: слово одно и известное */
+.h1 em::before,.h1 em::after{
+  content:"";position:absolute;width:.28em;height:.28em;border:2px solid var(--mint);
+  opacity:.9;pointer-events:none;
+}
+.h1 em::before{top:.06em;left:-.04em;border-right:0;border-bottom:0}
+.h1 em::after{bottom:-.02em;right:-.04em;border-left:0;border-top:0}
+
+.lead{color:#a8b4c6;font-size:clamp(15px,1.25vw,17.5px);line-height:1.6;max-width:46ch;margin-bottom:26px}
+.lead b{color:var(--ink);font-weight:600}
+
+.price{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+.price__v{font-family:var(--font-d);font-weight:800;font-size:clamp(22px,2.2vw,30px);color:var(--lime);letter-spacing:-.02em}
+.price__n{color:var(--mut);font-size:13px;line-height:1.45;max-width:34ch}
+
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:15px 26px;border-radius:14px;font-weight:600;font-size:15px;
+  transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s,background .3s,border-color .3s;
+}
+.btn--main{background:var(--lime);color:#08130a;box-shadow:0 14px 40px -16px rgba(205,255,79,.75)}
+.btn--main:hover{transform:translateY(-2px);box-shadow:0 20px 52px -16px rgba(205,255,79,.9)}
+.btn--ghost{border:1px solid var(--line);color:var(--ink)}
+.btn--ghost:hover{border-color:rgba(205,255,79,.4);transform:translateY(-2px)}
+
+.assure{display:flex;align-items:center;gap:9px;color:var(--mut);font-size:13.5px;line-height:1.4}
+.assure svg{width:17px;height:17px;color:var(--lime);flex:none}
+.assure b{color:var(--ink);font-weight:600}
+
+/* ── 3D-сцена ────────────────────────────────────────────────────── */
+.stage{
+  position:relative;
+  perspective:1500px;
+  perspective-origin:58% 44%;
+}
+.scene{
+  position:relative;
+  transform-style:preserve-3d;
+  /* стартовый разворот; дальше его крутит scene.js по мыши */
+  transform:rotateX(var(--rx,6deg)) rotateY(var(--ry,-15deg)) rotateZ(var(--rz,.6deg));
+  transition:transform .18s cubic-bezier(.22,.61,.36,1);
+  will-change:transform;
+}
+
+/* световое пятно ЗА панелью — сцена как будто подсвечена сзади */
+.layer--glow{
+  position:absolute;inset:-14% -10% -22%;
+  transform:translateZ(-140px) scale(1.06);
+  background:radial-gradient(52% 46% at 50% 46%, rgba(205,255,79,.2), transparent 70%);
+  filter:blur(38px);
+}
+
+/* ── Панель CRM ──────────────────────────────────────────────────── */
+.panel{
+  position:relative;transform-style:preserve-3d;
+  border-radius:20px;overflow:hidden;
+  background:linear-gradient(168deg,#141A28 0%,#0D1220 62%,#0B0F1B 100%);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:
+    0 60px 120px -50px rgba(0,0,0,.95),
+    0 24px 60px -30px rgba(0,0,0,.8),
+    0 0 0 1px rgba(255,255,255,.03) inset,
+    0 1px 0 rgba(255,255,255,.09) inset;
+}
+.panel__bar{
+  display:flex;align-items:center;gap:12px;padding:12px 15px;
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.dots{display:flex;gap:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:#2b3446}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.panel__url{flex:1;text-align:center;font:400 11px/1 var(--font-m);color:#7d8798;letter-spacing:.02em}
+.panel__badge{
+  font:600 9.5px/1 var(--font-m);letter-spacing:.12em;text-transform:uppercase;color:var(--lime);
+  border:1px solid color-mix(in srgb,var(--lime) 42%,transparent);border-radius:5px;padding:4px 7px;
+}
+
+.panel__body{display:flex;min-height:388px}
+
+/* рельс */
+.rail{
+  width:52px;flex:none;padding:14px 0;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008));
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.rail__logo{
+  width:26px;height:26px;border-radius:9px;margin-bottom:6px;
+  background:linear-gradient(140deg,var(--lime),var(--mint));
+  box-shadow:0 8px 20px -8px rgba(205,255,79,.8);
+}
+.rail__i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#6b7688}
+.rail__i svg{width:15px;height:15px}
+.rail__i.is-on{
+  color:var(--lime);background:rgba(205,255,79,.12);
+  box-shadow:0 0 0 1px rgba(205,255,79,.22) inset;
+}
+
+.main{flex:1;min-width:0;padding:16px 18px 18px;display:flex;flex-direction:column;gap:12px;transform-style:preserve-3d}
+.main__head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.main__t{font-family:var(--font-d);font-weight:700;font-size:16px;letter-spacing:-.01em}
+.main__s{color:#6f7a8c;font-size:11.5px;margin-top:3px;font-family:var(--font-m)}
+.chip{
+  font:500 11px/1 var(--font-m);color:#9aa5b7;
+  border:1px solid var(--line);border-radius:9px;padding:7px 10px;white-space:nowrap;
+}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.kpi{
+  padding:11px 12px 12px;border-radius:13px;
+  background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.014));
+  border:1px solid rgba(255,255,255,.075);
+  box-shadow:0 12px 26px -18px rgba(0,0,0,.9);
+}
+.kpi__l{display:block;font:400 9.5px/1.2 var(--font-m);letter-spacing:.05em;text-transform:uppercase;color:#6f7a8c}
+.kpi__n{display:block;font-family:var(--font-d);font-weight:800;font-size:19px;letter-spacing:-.02em;margin:7px 0 4px;font-variant-numeric:tabular-nums}
+.kpi__d{font-size:10.5px;font-weight:600}
+.kpi__d.up{color:var(--mint)}
+
+.cols{display:grid;grid-template-columns:1.55fr 1fr;gap:10px}
+.card{
+  border-radius:13px;padding:12px;
+  background:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.07);
+}
+.card__h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.card__h span{font-size:12px;font-weight:600}
+.card__m{color:#6f7a8c;font:400 10px/1 var(--font-m)!important;font-weight:400!important}
+
+/* график */
+.chart{display:block;width:100%;height:110px}
+.chart__grid line{stroke:rgba(255,255,255,.05);stroke-width:1}
+.chart__area{fill:url(#fill)}
+.chart__line{fill:none;stroke:var(--lime);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.chart__dot{fill:var(--lime);filter:drop-shadow(0 0 7px rgba(205,255,79,.9))}
+.chart__x{display:flex;justify-content:space-between;margin-top:6px;font:400 9px/1 var(--font-m);color:#5f6a7c}
+
+/* источники */
+.src{list-style:none;display:flex;flex-direction:column;gap:7px}
+.src li{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#c2ccd9}
+.src li i{width:8px;height:8px;border-radius:3px;background:var(--c);flex:none;box-shadow:0 0 10px -2px var(--c)}
+.src li b{margin-left:auto;font-variant-numeric:tabular-nums;font-size:11.5px}
+.src__bar{display:flex;gap:3px;margin-top:10px;height:5px}
+.src__bar span{width:var(--w);background:var(--c);border-radius:3px;opacity:.85}
+
+/* сделки */
+.deals{list-style:none;display:flex;flex-direction:column;gap:7px}
+.deals li{display:flex;align-items:center;gap:9px;font-size:11.5px;padding:7px 8px;border-radius:9px;background:rgba(255,255,255,.022)}
+.ava{width:22px;height:22px;border-radius:7px;flex:none;display:grid;place-items:center;font-size:10px;font-weight:700;color:#0b1018;background:linear-gradient(140deg,var(--lime),var(--mint))}
+.deals__n{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.deals__src{color:#6f7a8c;font:400 10px/1 var(--font-m);margin-left:auto;white-space:nowrap}
+.deals li b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{font:600 9px/1 var(--font-m);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:6px;white-space:nowrap}
+.tag--on{color:var(--mint);border:1px solid color-mix(in srgb,var(--mint) 40%,transparent)}
+.tag--wait{color:#febc2e;border:1px solid rgba(254,188,46,.4)}
+
+/* блик, медленно идущий по стеклу панели */
+.panel__sheen{
+  position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(104deg,transparent 34%,rgba(255,255,255,.07) 45%,rgba(255,255,255,.13) 50%,rgba(255,255,255,.06) 56%,transparent 68%);
+  transform:translateX(-120%);
+  animation:sheen 9s ease-in-out 2.2s infinite;
+}
+@keyframes sheen{0%{transform:translateX(-120%)}38%,100%{transform:translateX(120%)}}
+
+/* ── Плавающие карточки ──────────────────────────────────────────── */
+.fcard{
+  position:absolute;z-index:6;
+  display:flex;align-items:center;gap:11px;
+  padding:12px 16px 12px 14px;border-radius:16px;
+  background:linear-gradient(158deg,rgba(26,32,46,.96),rgba(13,17,26,.9));
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);
+  box-shadow:0 30px 64px -28px rgba(0,0,0,.95),0 8px 20px -12px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.08);
+  white-space:nowrap;
+  /* каждая карточка плавает своей орбитой — фаза и период разные */
+  animation:floatCard var(--dur,7s) ease-in-out var(--delay,0s) infinite;
+}
+.fcard::before{
+  content:"";position:absolute;left:0;top:13px;bottom:13px;width:2px;border-radius:2px;
+  background:linear-gradient(180deg,transparent,rgba(205,255,79,.8),transparent);
+}
+.fcard__ic{
+  width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;color:var(--lime);
+  background:linear-gradient(145deg,rgba(205,255,79,.22),rgba(205,255,79,.04));
+  box-shadow:0 0 0 1px rgba(205,255,79,.2),0 10px 22px -12px rgba(205,255,79,.7);
+}
+.fcard__ic svg{width:17px;height:17px}
+.fcard b{display:block;font-size:13px;font-weight:700;letter-spacing:-.01em}
+.fcard small{display:block;font-size:11px;color:#8792a3;margin-top:2px}
+
+.fcard--a{top:2%;left:-14%;--dur:7.5s;--delay:0s}
+.fcard--b{top:52%;left:-19%;--dur:8.6s;--delay:-2.4s}
+.fcard--c{bottom:4%;right:-8%;--dur:9.4s;--delay:-4.8s}
+
+@keyframes floatCard{
+  0%,100%{translate:0 0}
+  50%{translate:0 -14px}
+}
+
+/* отражение панели на «полу» */
+.reflect{
+  position:absolute;left:6%;right:6%;top:100%;height:32%;
+  transform:translateZ(-30px) scaleY(-1);
+  background:linear-gradient(180deg,rgba(205,255,79,.09),transparent 62%);
+  filter:blur(18px);opacity:.55;pointer-events:none;
+}
+
+/* ── Планшет и телефон ───────────────────────────────────────────── */
+@media (max-width:1080px){
+  .hero__grid{grid-template-columns:1fr;gap:44px}
+  .stage{perspective:1200px;perspective-origin:50% 40%}
+  .scene{transform:rotateX(4deg) rotateY(-7deg)}
+  .fcard--a{left:-4%}
+  .fcard--b{left:-6%}
+  .fcard--c{right:-2%}
+}
+@media (max-width:760px){
+  .hero{min-height:auto;padding:88px 0 56px}
+  /* на телефоне разворот убираем: наклон съедает читаемость мелких цифр */
+  .scene{transform:none}
+  .stage{perspective:none}
+  .panel__body{min-height:0}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .cols{grid-template-columns:1fr}
+  .rail{display:none}
+  .fcard{padding:9px 12px 9px 11px;border-radius:13px}
+  .fcard b{font-size:11.5px}.fcard small{font-size:10px}
+  .fcard__ic{width:28px;height:28px;border-radius:9px}
+  .fcard--a{top:-3%;left:-2%}
+  .fcard--b{display:none}
+  .fcard--c{bottom:-4%;right:-2%}
+  .reflect{display:none}
+  .hero__floor{height:30%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .fcard,.panel__sheen,.hero__aurora{animation:none}
+  .scene{transition:none}
+}
