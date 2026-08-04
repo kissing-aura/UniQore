@@ -1,0 +1,151 @@
+/* sayty-lab.css — ПРЕВЬЮ мобильного первого экрана /sayty/lab/.
+   Прод (/sayty/) не подключает этот файл. Десктоп здесь не трогаем:
+   новые элементы скрыты, мокап работает штатным движком (правило «десктоп не ломать»).
+
+   Что делает превью на ≤768px:
+   1. В мокапе браузера крутятся РЕАЛЬНЫЕ сайты клиентов вместо выдуманной кофейни.
+   2. Под мокапом — имя клиента, ниша, город и ссылка «открыть сайт».
+   3. Вилка цен двумя числами: стартовая (совпадает с рекламой) и реальный чек.
+   4. Строка гарантии — влезает в сгиб.
+   5. Cookie-плашка сжата: на проде она 273px и закрывает единственную кнопку. */
+
+.lab-cap, .lab-price, .lab-guar { display: none; }
+
+@media (max-width: 768px) {
+
+  /* ── порядок первого экрана ──────────────────────────────────
+     H1 → лид → мокап+подпись → цена → кнопка → гарантия      */
+  .sy-hero__h1   { order: 1; }
+  .sy-hero__lead { order: 2; margin-top: 10px !important; }
+  .sy-hero__right{ order: 3; margin-top: 18px !important; flex-direction: column; align-items: center; }
+  .lab-price     { order: 4; }
+  .sy-hero__cta  { order: 5; margin-top: 12px !important; }
+  .lab-guar      { order: 6; }
+
+  /* мокап и подпись внутри правой колонки */
+  /* ширина по колонке текста, а не фиксированные 500px: на 430px мокап был
+     уже заголовка и висел с полями по 40px. 100% внутри zoom-элемента уже
+     считается в его системе координат — делить на zoom не нужно. */
+  .sy-mock { order: 1; width: 100% !important; }
+  .lab-cap { order: 2; }
+
+  /* кадр кейса почти целиком: 1024×581 при ширине мокапа 500 → 284px,
+     срезаем низ до 270, чтобы строка гарантии осталась над сгибом Safari (659) */
+  .sy-browser__view { height: 270px !important; background: #0b0f1a; }
+
+  /* ── слой с реальным сайтом ── */
+  .lab-shot { position: absolute; inset: 0; z-index: 2; display: block; overflow: hidden; }
+  /* кадры лежат стопкой друг на друге: в потоке виден был бы только первый,
+     остальные уезжали бы за нижнюю границу окна браузера (overflow:hidden) */
+  .lab-shot img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover; object-position: top center;
+    display: block; opacity: 0;
+    /* уходящий кадр гаснет с задержкой — иначе между ними мелькает пустой чёрный */
+    transition: opacity .4s ease .16s;
+  }
+  .lab-shot img.is-on { opacity: 1; transition: opacity .4s ease; z-index: 2; }
+
+  /* метка «живой сайт» — в правом нижнем углу: слева вверху она садилась
+     ровно на логотип клиента и читалась как его собственный элемент */
+  .lab-live {
+    position: absolute; z-index: 4; right: 9px; bottom: 9px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: 999px;
+    background: rgba(10, 14, 26, .78); backdrop-filter: blur(6px);
+    border: 1px solid rgba(205, 255, 79, .34);
+    font: 700 11px/1 var(--font-body, system-ui), sans-serif;
+    color: var(--sy-l); letter-spacing: .01em; white-space: nowrap;
+  }
+  .lab-live i {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--sy-l);
+    box-shadow: 0 0 0 0 rgba(205, 255, 79, .55); animation: labPulse 2.4s ease-out infinite;
+  }
+  @keyframes labPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(205, 255, 79, .5); }
+    70%  { box-shadow: 0 0 0 7px rgba(205, 255, 79, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(205, 255, 79, 0); }
+  }
+
+  /* полоса загрузки в адресной строке — «перешли на следующий сайт» */
+  .lab-prog {
+    position: absolute; left: 0; bottom: -1px; height: 2px; width: 0;
+    background: var(--sy-l); opacity: 0; z-index: 5;
+  }
+  .lab-prog.is-run { animation: labLoad .62s cubic-bezier(.35, .7, .3, 1) both; }
+  @keyframes labLoad {
+    0%   { width: 0;    opacity: 1; }
+    82%  { width: 88%;  opacity: 1; }
+    100% { width: 100%; opacity: 0; }
+  }
+  .sy-browser__bar { position: relative; }
+  .sy-browser__url { transition: opacity .2s ease; }
+
+  /* курсор поверх кадра */
+  .sy-cursor { z-index: 6; }
+
+  /* ── подпись под мокапом: кто это и куда ведёт ── */
+  .lab-cap { display: block; margin-top: 11px; width: 100%; }
+  .lab-cap__l {
+    display: flex; align-items: baseline; gap: 7px; justify-content: center;
+    text-decoration: none; color: var(--sy-txt); font-size: 13px; line-height: 1.25;
+  }
+  .lab-cap__l b { font-weight: 700; letter-spacing: -.01em; }
+  .lab-cap__l span { color: var(--sy-mut); font-size: 12.5px; }
+  .lab-cap__go {
+    display: inline-flex; align-items: center; gap: 3px;
+    color: var(--sy-l) !important; font-size: 12px !important; font-weight: 600; white-space: nowrap;
+  }
+
+  /* ── вилка цен: стартовая как в рекламе + реальный чек ── */
+  .lab-price {
+    display: flex; flex-direction: column; gap: 5px;
+    margin-top: 15px; width: 100%;
+  }
+  .lab-price__i {
+    display: flex; align-items: baseline; gap: 8px;
+    font-size: 13px; color: var(--sy-mut); line-height: 1.2;
+  }
+  .lab-price__i b {
+    font-weight: 700; font-size: 15px; color: var(--sy-txt);
+    /* ₽ нет ни в одном нашем woff2 (проверено fontTools) — символ всё равно
+       рисуется системным шрифтом. Чуть уплотняем, чтобы стык не бросался. */
+    letter-spacing: -.015em; font-variant-numeric: tabular-nums;
+    min-width: 104px;
+  }
+
+  /* ── гарантия одной строкой ── */
+  .lab-guar {
+    display: block; order: 6; margin-top: 9px;
+    font-size: 11.5px; white-space: nowrap; color: var(--sy-mut2); line-height: 1.35;
+  }
+
+  /* кнопка на всю ширину — палец попадает без прицеливания */
+  .sy-hero__cta { width: 100%; }
+  .sy-hero__cta .sy-btn--main { width: 100%; justify-content: center; }
+
+  /* ── cookie: на проде 273px и закрывает единственную кнопку.
+       Логику согласия не трогаем — только габариты. ── */
+  .uq-cookie {
+    padding: 12px 14px !important; border-radius: 14px !important;
+    font-family: var(--font-body, system-ui), sans-serif !important;
+  }
+  .uq-cookie__text {
+    font-size: 12.5px !important; line-height: 1.4 !important; margin: 0 0 10px !important;
+  }
+  .uq-cookie__row { flex-wrap: nowrap !important; gap: 8px !important; }
+  .uq-cookie__btn {
+    padding: 9px 10px !important; font: 600 12.5px/1 var(--font-body, system-ui), sans-serif !important;
+  }
+}
+
+/* Узкие Android (360×640): при тех же размерах строка гарантии уезжала на 663
+   при сгибе 640. Отбираем 26px у кадра и отступов — порядок экрана не меняется. */
+@media (max-width: 374px) {
+  .sy-browser__view { height: 250px !important; }
+  .sy-hero__right   { margin-top: 12px !important; }
+  .sy-hero__lead    { font-size: 14px !important; }
+  .lab-price        { margin-top: 12px; }
+  .lab-cap          { margin-top: 9px; }
+  .lab-guar         { font-size: 11px; }
+}

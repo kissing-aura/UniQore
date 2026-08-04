@@ -154,7 +154,9 @@
     if (phone){ phone.style.setProperty('--ms-accent', v.accent); phone.style.setProperty('--ms-ink', v.ink); phone.innerHTML = buildMobile(v); }
   }
   var vi = 0;
-  if (site && scrollWrap) {
+  // UQ_MOCK_OVERRIDE ставит /sayty/lab/ — там мокап показывает реальные сайты
+  // клиентов и рулит своим скриптом. На проде флага нет, поведение не меняется.
+  if (site && scrollWrap && !window.UQ_MOCK_OVERRIDE) {
     paint(VARIANTS[0]);
     if (!reduce) setInterval(function () {
       vi = (vi + 1) % VARIANTS.length;
