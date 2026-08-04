@@ -5700,8 +5700,13 @@ input:focus-visible, textarea:focus-visible, select:focus-visible,
 .hero__title em::before,   .hero__title em::after {
   width: .3em; height: .3em; border-width: .045em;
 }
-.section-title em::before, .hero__title em::before { top: .02em; left: -.01em; }
-.section-title em::after,  .hero__title em::after  { bottom: .02em; right: -.01em; }
+/* Замер на живой странице (Unbounded 700, 62px): чернила глифов начинаются
+   на .41em ниже верха строчного бокса, а хвост «р» уходит на .15em НИЖЕ него.
+   Поэтому скобки по краям бокса и висели в воздухе. Сажаем их по чернилам
+   с одинаковым зазором .06em сверху и снизу — значения в em, так что
+   попадание сохраняется на любом кегле и на мобильных размерах. */
+.section-title em::before, .hero__title em::before { top: .35em;    left: -.06em; }
+.section-title em::after,  .hero__title em::after  { bottom: -.21em; right: -.06em; }
 
 /* 5 · FAQ: заголовок едет вместе со списком и стоит по центру экрана.
    Только там, где колонки две — в одну колонку липкость мешает. */
