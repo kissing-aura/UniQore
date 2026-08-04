@@ -68,7 +68,6 @@ p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-t
   <svg class="slc__svg" id="svg" width="100%" height="100%" preserveAspectRatio="none">
     <path class="slc__glow"   id="glow"   d=""></path>
     <path class="slc__string" id="string" d=""></path>
-    <circle class="slc__knob" id="knob" r="8"></circle>
   </svg>
 </div>
 
@@ -82,14 +81,14 @@ p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-t
       pane = document.getElementById('beforePane'),
       svg = document.getElementById('svg'),
       path = document.getElementById('string'),
-      glow = document.getElementById('glow'),
-      knob = document.getElementById('knob');
+      glow = document.getElementById('glow');
 
   // Настоящая пружина (stiffness + damping), не голый lerp.
   // Дают лёгкое качание при возврате в центр и мягкое следование за курсором.
-  // ~1.8–2.2 сек на успокоение, лёгкий over-shoot без «щелчка»
-  var STIFF = 0.032, DAMP = 0.87;
-  var BEND_STIFF = 0.075, BEND_DAMP = 0.82;
+  // ~3.5–4 сек на успокоение — линия расслабленно уплывает обратно,
+  // с ощутимым качанием на пару колебаний.
+  var STIFF = 0.017, DAMP = 0.905;
+  var BEND_STIFF = 0.045, BEND_DAMP = 0.86;
   // Магнит: до какой дистанции от слайдера курсор ещё тянет струну.
   // За пределом MAGNET_PX сила падает до 0 → струна свободно возвращается.
   var MAGNET_PX = 380;
@@ -180,15 +179,6 @@ p.lead{color:var(--mut);font-size:15px;text-align:center;max-width:60ch;margin-t
     var d = 'M ' + cx.toFixed(1) + ' 0 Q ' + ctrl.toFixed(1) + ' ' + by.toFixed(1) + ' ' + cx.toFixed(1) + ' ' + H;
     path.setAttribute('d', d);
     glow.setAttribute('d', d);
-
-    // Knob — на самой струне, на высоте курсора: точка на кривой Bezier при t=(by/H)
-    // Для квадратичной кривой: P(t) = (1-t)^2*P0 + 2(1-t)t*P1 + t^2*P2
-    var t = Math.max(0.06, Math.min(0.94, by / H));
-    var mt = 1 - t;
-    var kx = mt*mt*cx + 2*mt*t*ctrl + t*t*cx;
-    var ky = mt*mt*0  + 2*mt*t*by   + t*t*H;
-    knob.setAttribute('cx', kx.toFixed(1));
-    knob.setAttribute('cy', ky.toFixed(1));
 
     // clip-path для «before»-панели: замкнутая область слева от струны
     // path: (0,0) → (cx,0) → Q ctrl,by → (cx,H) → (0,H) → close
