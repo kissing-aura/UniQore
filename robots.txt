@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /proto/
+Disallow: /lab/
 
 Sitemap: https://uniqore.pro/sitemap.xml
