@@ -188,7 +188,11 @@
 .msm-strip span{font-size:8px;color:#9aa6bd;line-height:1.3}
 @media(max-width:1120px){.sy-phone{left:2%;width:29%}}
 @media(max-width:960px){.sy-phone{display:none}}
-.sy-cursor{position:absolute;z-index:6;width:22px;height:22px;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));transition:transform 1.4s cubic-bezier(.5,0,.2,1);transform:translate(40px,60px)}
+/* left/top:0 ОБЯЗАТЕЛЬНЫ: без них translate() отсчитывается от «статической» позиции,
+   а она у движков разная — Chromium ставил стрелку в угол окна, WebKit (Safari, весь
+   iOS) под весь контент, то есть за нижнюю кромку с overflow:hidden. В Safari курсора
+   не было видно вообще, при этом в Chromium всё выглядело правильно. */
+.sy-cursor{position:absolute;left:0;top:0;z-index:6;width:22px;height:22px;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));transition:transform 1.4s cubic-bezier(.5,0,.2,1);transform:translate(40px,60px)}
 .sy-cursor.click{animation:syClick .4s ease}
 @keyframes syClick{50%{transform:scale(.8)}}
 

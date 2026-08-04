@@ -184,11 +184,32 @@
     // offset-координаты (layout-пространство view, БЕЗ zoom) — надёжно на зумленном мокапе.
     function localPos(el) { var x = 0, y = 0, n = el; while (n && n !== cursorView) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x: x, y: y }; }
     function inView(b) { var p = localPos(b); return b.offsetWidth > 0 && p.y >= 2 && (p.y + b.offsetHeight) <= cursorView.clientHeight - 2; }
+    /* Кнопка годится, только если её видно ЦЕЛИКОМ. Мокап телефона (.sy-phone,
+       z-index 4) и стеклянные плашки (.sy-fcard, z-index 5) лежат поверх окна
+       браузера и срезают самую крупную кнопку в hero сбоку. Проверки «по центру»
+       мало: центр кнопки оставался правее телефона, кнопка считалась открытой,
+       а курсор вставал у самой кромки телефона и выглядел ткнувшимся в никуда. */
+    var covers = document.querySelectorAll('.sy-phone, .sy-fcard');
+    function unobstructed(b) {
+      var r = b.getBoundingClientRect();
+      if (!r.width) return true;
+      for (var i = 0; i < covers.length; i++) {
+        var c = covers[i];
+        if (!c.offsetWidth) continue;                       // скрыт (мобилка) — не мешает
+        var q = c.getBoundingClientRect();
+        var pad = 10;                                       // немного воздуха, чтобы курсор не липнул к кромке
+        if (r.left < q.right + pad && r.right > q.left - pad &&
+            r.top < q.bottom + pad && r.bottom > q.top - pad) return false;
+      }
+      return true;
+    }
     // держится на главной кнопке (крупнейшая видимая CTA/pill), сайт заморожен — стоит стабильно
     function primaryBtn() {
       var all = Array.prototype.slice.call(cursorView.querySelectorAll('[class*="-cta"],[class*="-pill"],[class*="-btn"]'))
         .filter(inView);
       if (!all.length) return null;
+      var open = all.filter(unobstructed);
+      if (open.length) all = open;
       all.sort(function (a, b) { return (b.offsetWidth * b.offsetHeight) - (a.offsetWidth * a.offsetHeight) || (localPos(a).y - localPos(b).y); });
       return all[0];
     }
