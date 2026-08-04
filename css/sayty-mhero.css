@@ -181,3 +181,97 @@
   .lab-cap          { margin-top: 9px; }
   .lab-guar         { font-size: 11px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   МОБИЛКА: сжатие полотна. Замер до правки — 21,3 экрана на 390px,
+   причём три самые длинные секции шли вообще без единой картинки.
+   Десктоп не трогаем ни в одном правиле ниже.
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── Портфолио: сразу видны Dragon + две работы, остальное по кнопке ── */
+  .sy-pf__grid.is-fold .sy-pf:nth-child(n+4) { display: none !important; }
+
+  .sy-more {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; margin-top: 14px; padding: 15px 18px;
+    border: 1px solid var(--sy-line); border-radius: 14px;
+    background: rgba(255, 255, 255, .03); color: var(--sy-txt);
+    font: 600 14px/1 var(--font-body, system-ui), sans-serif; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sy-more:active { background: rgba(255, 255, 255, .06); }
+  .sy-more b { color: var(--sy-l); font-weight: 700; }
+  .sy-more svg { transition: transform .3s cubic-bezier(.2, .7, .2, 1); }
+  .sy-more.is-open svg { transform: rotate(180deg); }
+
+  /* ── «Вы получаете»: было 4 карточки в столбик с абзацами описаний
+       (1,6 экрана, ноль графики) → плитки 2×2, иконка крупная, текст один ── */
+  .sy-get__grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .sy-get { padding: 15px 13px 16px !important; }
+  .sy-get__d { display: none !important; }
+  .sy-get__n { font-size: 11px !important; opacity: .5; }
+  .sy-get__ic { width: 34px !important; height: 34px !important; margin: 9px 0 10px !important; }
+  .sy-get__ic svg { width: 18px; height: 18px; }
+  .sy-get__t { font-size: 14px !important; line-height: 1.25 !important; }
+
+  /* ── Цены: у каждой карточки был список из пяти пунктов и своя кнопка.
+       Список — под «что входит», кнопка остаётся только у «Хита» ── */
+  .sy-pcard { padding: 18px 16px !important; }
+  .sy-pcard__who { font-size: 12.5px !important; line-height: 1.35 !important; }
+  .sy-pcard__list { display: none; }
+  .sy-pcard.is-open .sy-pcard__list { display: block; }
+  .sy-pcard:not(.sy-pcard--flag) .sy-pcard__cta { display: none !important; }
+
+  .sy-spoil {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+    background: none; border: 0; padding: 0; cursor: pointer;
+    color: var(--sy-l); font: 600 12.5px/1 var(--font-body, system-ui), sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sy-spoil svg { transition: transform .3s cubic-bezier(.2, .7, .2, 1); }
+  .sy-pcard.is-open .sy-spoil svg { transform: rotate(180deg); }
+}
+
+/* Воздух между секциями: на 390px переменные упирались в нижнюю границу clamp
+   и давали по 80px сверху и снизу на каждую из одиннадцати секций — 2,7 экрана
+   чистых отступов, больше чем весь первый экран. Плюс 44px под каждый заголовок. */
+@media (max-width: 768px) {
+  /* section-y на мобилке и так был 50px — трогать его смысла нет,
+     а вот 44px под каждым заголовком по всей странице стоили ~0,7 экрана */
+  .sy-head { margin-bottom: 28px !important; }
+  .sy-h2 { font-size: 25px !important; line-height: 1.12 !important; }
+  .sy-sub { font-size: 14px !important; line-height: 1.45 !important; }
+}
+
+/* Три блока, где на мобилке шёл сплошной текст без графики.
+   Режем типографику и воздух, содержание не трогаем. */
+@media (max-width: 768px) {
+
+  /* Эмо-блок перед формой — 576px одного текста */
+  .sy-emo { margin-bottom: 18px !important; }
+  .sy-emo__pain { gap: 8px !important; margin-bottom: 12px !important; }
+  .sy-emo__x { font-size: 12.5px !important; padding: 6px 11px !important; }
+  .sy-emo__turn { font-size: 14px !important; margin-bottom: 8px !important; }
+  .sy-emo__head { font-size: 21px !important; margin-bottom: 10px !important; }
+  .sy-emo__sub { font-size: 13.5px !important; line-height: 1.45 !important; margin-bottom: 14px !important; }
+  .sy-emo__proof { font-size: 12.5px !important; gap: 8px !important; margin-bottom: 12px !important; }
+  .sy-emo__funnel { height: 22px !important; margin-top: 14px !important; }
+
+  /* Карточки «наш офис» и «работаем по договору» */
+  .sy-real__card { padding: 16px 15px !important; }
+  .sy-real__title { font-size: 16.5px !important; margin-bottom: 9px !important; }
+  .sy-real__link { padding-top: 12px !important; font-size: 13px !important; }
+  .sy-real__grid { gap: 11px !important; margin-top: 24px !important; }
+
+  /* Карточки команды: портрет 13/16 давал по 204px на человека */
+  .sy-tm__ph { aspect-ratio: 1 / 1 !important; }
+  .sy-team__grid { margin-top: 22px !important; }
+  .sy-team__mid { margin-top: 26px !important; }
+}
+
+@media (max-width: 768px) {
+  /* тарифы: по умолчанию виден только «Хит» */
+  .sy-price__grid.is-fold .sy-pcard:not(.sy-pcard--flag) { display: none !important; }
+  .sy-price__grid.is-fold { gap: 0 !important; }
+}

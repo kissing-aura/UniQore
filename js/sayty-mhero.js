@@ -199,6 +199,105 @@
     place(btnPoint(CASES[idx]).x, btnPoint(CASES[idx]).y);
   });
 
+  /* ── Сжатие полотна на мобилке ─────────────────────────────────────
+     Портфолио сворачивается до трёх работ, списки в тарифах прячутся под
+     «что входит». Разметку не дублируем: кнопки создаёт скрипт, поэтому
+     на десктопе (где этот файл не активен) ничего лишнего в DOM нет. ── */
+  var CHEV = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>';
+
+  (function foldPortfolio() {
+    var grid = document.querySelector('.sy-pf__grid');
+    if (!grid) return;
+    var cards = grid.querySelectorAll('.sy-pf');
+    var hidden = cards.length - 3;
+    if (hidden < 1) return;
+    grid.classList.add('is-fold');
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'sy-more';
+    btn.innerHTML = 'Показать ещё <b>' + hidden + '</b> ' + plural(hidden) + CHEV;
+    grid.parentNode.insertBefore(btn, grid.nextSibling);
+
+    btn.addEventListener('click', function () {
+      var open = grid.classList.toggle('is-fold') === false;
+      btn.classList.toggle('is-open', open);
+      btn.innerHTML = open ? 'Свернуть' + CHEV
+                           : 'Показать ещё <b>' + hidden + '</b> ' + plural(hidden) + CHEV;
+      if (!open) grid.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+
+    function plural(n) {
+      var d = n % 10, dd = n % 100;
+      if (d === 1 && dd !== 11) return 'работу';
+      if (d >= 2 && d <= 4 && (dd < 10 || dd >= 20)) return 'работы';
+      return 'работ';
+    }
+  })();
+
+  /* Универсальная сворачивалка: прячет блок и ставит под ним кнопку.
+     Нужна там, где на мобилке целый экран уходит под то, что человек
+     смотрит по желанию: другие тарифы, сравнение, команда, конфигуратор. */
+  function fold(el, closedLabel, openLabel) {
+    if (!el || el.dataset.folded) return;
+    el.dataset.folded = '1';
+    el.style.display = 'none';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'sy-more';
+    btn.innerHTML = closedLabel + CHEV;
+    el.parentNode.insertBefore(btn, el.nextSibling);
+    btn.addEventListener('click', function () {
+      var open = el.style.display === 'none';
+      el.style.display = open ? '' : 'none';
+      btn.classList.toggle('is-open', open);
+      btn.innerHTML = (open ? openLabel : closedLabel) + CHEV;
+    });
+  }
+
+  (function foldHeavyBlocks() {
+    // тарифы: виден «Хит», остальные по кнопке
+    var grid = document.querySelector('.sy-price__grid');
+    if (grid) {
+      var others = grid.querySelectorAll('.sy-pcard:not(.sy-pcard--flag)');
+      if (others.length) {
+        grid.classList.add('is-fold');
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'sy-more';
+        b.innerHTML = 'Другие тарифы · <b>' + others.length + '</b>' + CHEV;
+        grid.parentNode.insertBefore(b, grid.nextSibling);
+        b.addEventListener('click', function () {
+          var open = grid.classList.toggle('is-fold') === false;
+          b.classList.toggle('is-open', open);
+          b.innerHTML = (open ? 'Свернуть тарифы' : 'Другие тарифы · <b>' + others.length + '</b>') + CHEV;
+        });
+      }
+    }
+    fold(document.querySelector('.sy-cmp'), 'Сравнить со студией и фрилансером', 'Свернуть сравнение');
+    var team = document.querySelector('.sy-team__grid');
+    fold(team, 'Показать команду · <b>' + (team ? team.children.length : 0) + '</b>', 'Свернуть');
+    fold(document.querySelector('.q-config'), 'Собрать проект и увидеть цену', 'Свернуть конфигуратор');
+  })();
+
+  (function foldPricing() {
+    var cards = document.querySelectorAll('.sy-pcard');
+    Array.prototype.forEach.call(cards, function (card) {
+      var list = card.querySelector('.sy-pcard__list');
+      if (!list) return;
+      var n = list.querySelectorAll('li').length;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sy-spoil';
+      btn.innerHTML = 'Что входит · ' + n + CHEV;
+      list.parentNode.insertBefore(btn, list);
+      btn.addEventListener('click', function () {
+        var open = card.classList.toggle('is-open');
+        btn.innerHTML = (open ? 'Свернуть' : 'Что входит · ' + n) + CHEV;
+      });
+    });
+  })();
+
   /* ── cookie: на проде плашка 273px и закрывает единственную кнопку.
        Габариты режет CSS, здесь укорачиваем сам текст. Кнопки и логика
        согласия (Метрика всегда, Вебвизор только по «Принять») не трогаются. ── */
