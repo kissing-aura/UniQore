@@ -42,7 +42,10 @@ a{color:inherit;text-decoration:none}
    горизонтали: «продукта больше, чем поместилось в кадр». */
 .grid{
   position:relative;z-index:3;width:100%;
-  display:grid;grid-template-columns:minmax(380px,500px) 1fr;
+  display:grid;grid-template-columns:minmax(380px,500px) minmax(0,1fr);
+  /* minmax(0,1fr) обязателен: иначе grid расширяет вторую колонку под
+     фиксированные 900px окна и ужимает текст, а окно перестаёт уходить
+     за край экрана — весь смысл приёма пропадает. */
   align-items:center;gap:56px;
   max-width:1560px;margin:0 auto;padding:0 0 0 max(24px,calc((100vw - 1240px)/2));
 }
@@ -172,12 +175,17 @@ a{color:inherit;text-decoration:none}
 .spark{position:absolute;right:12px;bottom:10px;width:66px;height:18px;color:rgba(205,255,79,.5)}
 .kpi:nth-child(3) .spark{color:rgba(240,121,107,.45)}
 
-.row{display:grid;grid-template-columns:1.62fr 1fr;gap:1px;background:rgba(255,255,255,.05);flex:1;min-height:0}
+.row{display:grid;grid-template-columns:1.5fr 1fr;gap:1px;background:rgba(255,255,255,.05);flex:1;min-height:0}
 .box{background:#0D0F12;padding:12px 14px;min-width:0}
 .box__h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
 .box__t{font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px}
 .box__m{font-size:11px;color:var(--dim2)}
-.col{display:grid;grid-template-rows:auto 1fr;gap:1px;background:rgba(255,255,255,.05);min-width:0}
+.col{
+  display:grid;grid-template-rows:auto minmax(0,1fr);gap:1px;
+  background:rgba(255,255,255,.05);min-width:0;
+}
+/* каждый блок обрезает своё содержимое сам, иначе нижний наезжает на верхний */
+.col > .box{overflow:hidden}
 
 /* таблица — главный носитель «плотности»: 12px, шесть строк, шесть колонок */
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
@@ -201,18 +209,51 @@ a{color:inherit;text-decoration:none}
 .st--wait{color:#f0b46b;background:rgba(240,180,107,.1)}
 .st--new{color:var(--lime);background:rgba(205,255,79,.12)}
 
-.src{list-style:none;display:flex;flex-direction:column;gap:8px}
-.src li{display:flex;align-items:center;gap:8px;font-size:11.5px}
-.src li i{width:7px;height:7px;border-radius:2px;background:var(--c);flex:none}
-.src li b{margin-left:auto;font-weight:500;font-variant-numeric:tabular-nums}
-.src li em{font-style:normal;color:var(--dim2);font-size:10.5px;min-width:58px;text-align:right}
 
+
+/* Источники: не список процентов, а полосы с абсолютными числами и
+   динамикой. У эталонов такие панели несут 3–4 показателя в строке —
+   именно плотность отличает рабочую панель от плашки «для красоты». */
+.src{list-style:none;display:flex;flex-direction:column;gap:7px}
+.src li{display:flex;align-items:center;gap:7px;font-size:11.5px;line-height:1}
+.src li i{width:6px;height:6px;border-radius:2px;background:var(--c);flex:none}
+.src__n{width:82px;flex:none;color:#c3cad4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src__bar{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.05);overflow:hidden;min-width:24px}
+.src__bar b{display:block;height:100%;width:var(--w);border-radius:3px;background:var(--c);opacity:.75}
+.src__v{width:22px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.src li em{width:26px;text-align:right;font-style:normal;font-size:10px;font-variant-numeric:tabular-nums}
+.src li em.up{color:var(--mint)}
+.src li em.down{color:#f0796b}
+.src__foot{
+  display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:9px;
+  border-top:1px solid rgba(255,255,255,.05);font-size:11px;color:var(--dim2);
+}
+.src__foot b{margin-left:auto;color:var(--ink);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.src__foot em{font-style:normal;font-size:10px}
+.src__foot em.down{color:var(--mint)}   /* дешевле — это хорошо */
+
+/* Требует внимания: иконка + два уровня текста + действие. Без действия
+   блок читается как статичный текст, а не как рабочее место. */
 .box--ai{border-top:0}
 .dotmini{width:6px;height:6px;border-radius:50%;background:var(--lime);flex:none}
-.ai{list-style:none;display:flex;flex-direction:column;gap:9px}
-.ai li{padding:8px 9px;border-radius:7px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
-.ai b{display:block;font-size:11.5px;font-weight:500;margin-bottom:2px}
-.ai span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.4}
+.ai{list-style:none;display:flex;flex-direction:column;gap:6px}
+.ai li{
+  display:flex;align-items:flex-start;gap:8px;padding:8px 9px;border-radius:7px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045);
+  transition:background-color .16s cubic-bezier(.25,.46,.45,.94);
+}
+.ai li:hover{background:rgba(255,255,255,.05)}
+.ai--hot{border-color:rgba(240,121,107,.22);background:rgba(240,121,107,.05)}
+.ai__ic{width:15px;height:15px;flex:none;color:var(--dim2);margin-top:1px}
+.ai--hot .ai__ic{color:#f0796b}
+.ai__ic svg{width:15px;height:15px}
+.ai__b{flex:1;min-width:0}
+.ai__b b{display:block;font-size:11.5px;font-weight:500;line-height:1.3;margin-bottom:2px}
+.ai__b span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.35}
+.ai__go{
+  flex:none;font-size:10px;color:#9099a6;border:1px solid rgba(255,255,255,.08);
+  border-radius:5px;padding:3px 7px;margin-top:1px;white-space:nowrap;
+}
 
 /* ── Вход: 4px и 0.4s, как внутри мокапа Linear ── */
 .pill,.h1,.sub,.cta,.marks,.app{animation:in .4s cubic-bezier(.25,.46,.45,.94) backwards}
@@ -221,7 +262,7 @@ a{color:inherit;text-decoration:none}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
 @media (max-width:1500px){
-  .grid{grid-template-columns:minmax(330px,430px) 1fr;gap:40px}
+  .grid{grid-template-columns:minmax(330px,430px) minmax(0,1fr);gap:40px}
   }
 @media (max-width:1240px){
   /* места слева не осталось — сателлиты заходят на окно, как мини-окна Attio */
