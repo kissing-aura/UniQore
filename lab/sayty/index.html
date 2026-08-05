@@ -1905,17 +1905,148 @@
         window.addEventListener('load', render);   // подстраховка, если порядок иной
       }
 
-      /* CTA — главная конверсионная цель. Итог считаем формулой, а не читаем
-         с экрана: там форматированная валюта, не число. */
-      var ctaEl = document.getElementById('upCta');
-      if (ctaEl){
-        ctaEl.addEventListener('click', function(){
-          var base = currentBase(), picks = currentAdds();
-          var pre = base.price + picks.reduce(function(x,p){ return x + p.price; }, 0);
-          var disc = picks.length >= 3 ? Math.round(pre * 0.10) : 0;
-          track('cfg_cta_click', { base: base.name, addsCount: picks.length, total: pre - disc });
+      /* ─── Три шага прямо в чеке: собрал → оставил контакт → готово ───
+         Раньше кнопка вела якорем на секцию заявки внизу страницы: человек
+         терял из вида собранный пакет, часть уходила по дороге.
+         Отправляем через штатную форму страницы (#sy-form): она уже умеет
+         валидацию, UTM, ClientID Метрики, черновики и ретраи. Свой запрос
+         означал бы копию ключей и вторую точку отказа. */
+      var ctaEl   = document.getElementById('upCta');
+      var step2El = document.getElementById('upStep2');
+      var doneEl  = document.getElementById('upDone');
+      var pkgEl   = document.getElementById('upStep2Pkg');
+      var nameEl  = document.getElementById('upName');
+      var contEl  = document.getElementById('upContact');
+      var errEl   = document.getElementById('upErr');
+      var sendEl  = document.getElementById('upSend');
+      var backEl  = document.getElementById('upBack');
+      var billEl  = document.querySelector('.up__bill');
+
+      function packageSummary(){
+        var base = currentBase(), picks = currentAdds();
+        var pre = base.price + picks.reduce(function(x,p){ return x + p.price; }, 0);
+        var disc = picks.length >= 3 ? Math.round(pre * 0.10) : 0;
+        var total = pre - disc;
+        var parts = [base.name].concat(picks.map(function(p){ return p.name; }));
+        return {
+          text: parts.join(' + ') + ' — ' + money(total) + (disc ? ' (со скидкой −10%)' : ''),
+          total: total, base: base.name, addsCount: picks.length
+        };
+      }
+
+      function showStep2(){
+        var sum = packageSummary();
+        if (pkgEl) pkgEl.textContent = sum.text;
+        if (step2El) step2El.hidden = false;
+        if (billEl) billEl.classList.add('is-step2');
+        if (ctaEl) ctaEl.style.display = 'none';
+        track('cfg_cta_click', { base: sum.base, addsCount: sum.addsCount, total: sum.total });
+        setTimeout(function(){ if (nameEl) nameEl.focus({preventScroll:true}); }, 260);
+      }
+      function backToBuild(){
+        if (step2El) step2El.hidden = true;
+        if (billEl) billEl.classList.remove('is-step2');
+        if (ctaEl) ctaEl.style.display = '';
+        if (errEl) errEl.classList.remove('show');
+      }
+      if (ctaEl) ctaEl.addEventListener('click', showStep2);
+      if (backEl) backEl.addEventListener('click', backToBuild);
+
+      /* Те же правила, что в основной форме, чтобы не расходились */
+      function validContact(v){
+        v = (v||'').trim();
+        var digits = v.replace(/\D/g,'');
+        if (digits.length >= 10 && digits.length <= 15) return true;
+        return /@[a-zA-Z0-9_]{3,}/.test(v) || /t\.me\//i.test(v) ||
+               (/^[a-zA-Z0-9_]{4,}$/.test(v) && /[a-zA-Z]/.test(v));
+      }
+
+      if (sendEl){
+        sendEl.addEventListener('click', function(){
+          var nm = (nameEl.value||'').trim();
+          var ct = (contEl.value||'').trim();
+          contEl.classList.remove('is-bad');
+
+          if (!validContact(ct)){
+            contEl.classList.add('is-bad');
+            errEl.textContent = 'Оставьте телефон или ник в Telegram — иначе не сможем ответить';
+            errEl.classList.add('show');
+            contEl.focus({preventScroll:true});
+            return;
+          }
+          errEl.classList.remove('show');
+
+          var mainForm = document.getElementById('sy-form');
+          if (!mainForm){
+            errEl.innerHTML = 'Форма недоступна — напишите нам в <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener" style="color:var(--mint)">Telegram</a>';
+            errEl.classList.add('show');
+            return;
+          }
+
+          var sum = packageSummary();
+          /* Переносим данные в штатную форму. Состав пакета кладём в поле
+             задачи — в CRM будет видно, что именно человек собрал. */
+          var mName = mainForm.querySelector('#sy-name');
+          var mCont = mainForm.querySelector('#sy-contact');
+          var mNiche = mainForm.querySelector('#sy-niche');
+          if (mName) mName.value = nm || 'Не указано';
+          if (mCont) mCont.value = ct;
+          if (mNiche && !mNiche.value) mNiche.value = 'из конфигуратора';
+
+          var hidden = mainForm.querySelector('#sy-comment');
+          if (!hidden){
+            hidden = document.createElement('input');
+            hidden.type = 'hidden'; hidden.id = 'sy-comment'; hidden.name = 'comment';
+            mainForm.appendChild(hidden);
+          }
+          hidden.value = 'Собрал в конфигураторе: ' + sum.text;
+
+          sendEl.disabled = true;
+          sendEl.textContent = 'Отправляем…';
+
+          /* Успех штатной формы = у #syFormOk появляется класс show.
+             Ловим его наблюдателем, чтобы показать подтверждение здесь же. */
+          var okPanel = document.getElementById('syFormOk');
+          var finished = false;
+          function finish(ok){
+            if (finished) return; finished = true;
+            if (obs) obs.disconnect();
+            clearTimeout(failTimer);
+            if (ok){
+              track('cfg_lead_sent', { total: sum.total, addsCount: sum.addsCount });
+              if (step2El) step2El.hidden = true;
+              if (doneEl) doneEl.hidden = false;
+              if (billEl){ billEl.classList.remove('is-step2'); billEl.classList.add('is-done'); }
+            } else {
+              sendEl.disabled = false;
+              sendEl.textContent = 'Отправить и получить расчёт';
+              errEl.innerHTML = 'Не отправилось — проверьте сеть или напишите в <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener" style="color:var(--mint)">Telegram</a>';
+              errEl.classList.add('show');
+            }
+          }
+          var obs = null;
+          if (okPanel && window.MutationObserver){
+            obs = new MutationObserver(function(){
+              if (okPanel.classList.contains('show')) finish(true);
+            });
+            obs.observe(okPanel, { attributes:true, attributeFilter:['class'] });
+          }
+          /* Если за 15с ни успеха, ни ошибки — не держим человека в подвешенном
+             состоянии, даём путь через Telegram. */
+          var failTimer = setTimeout(function(){ finish(false); }, 15000);
+
+          if (mainForm.requestSubmit) mainForm.requestSubmit();
+          else mainForm.dispatchEvent(new Event('submit', {cancelable:true, bubbles:true}));
         });
       }
+
+      /* Enter в полях = отправка */
+      [nameEl, contEl].forEach(function(el){
+        if (!el) return;
+        el.addEventListener('keydown', function(e){
+          if (e.key === 'Enter'){ e.preventDefault(); sendEl.click(); }
+        });
+      });
 
       /* Таблица сравнения: в разметке open (десктоп и no-JS видят её сразу),
          на узком экране сворачиваем — экономит ~350px первого экрана. */
