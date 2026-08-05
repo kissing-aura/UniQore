@@ -419,7 +419,10 @@ a{color:inherit;text-decoration:none}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
 @media (max-width:1500px){
-  .grid{grid-template-columns:minmax(330px,430px) minmax(0,1fr);gap:40px}
+  /* 470, а не 430: при 430 строка «работает без вас» (437px на кегле 54)
+     не влезала и «вас» повисало четвёртой строкой. На 470 заголовок
+     ложится в две строки — так он и должен читаться */
+  .grid{grid-template-columns:minmax(330px,470px) minmax(0,1fr);gap:40px}
   }
 @media (max-width:1000px){
   /* колонки складываются: сначала обещание, под ним продукт */
