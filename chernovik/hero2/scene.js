@@ -20,17 +20,20 @@
 
   /* ── 1. Переключение разделов ───────────────────────────────────────── */
 
-  /* Автопоказ гоняет только три главных раздела: шесть подряд растянули бы
-     цикл до сорока секунд, и человек не дождался бы повтора. Остальные три
-     открываются кликом — поэтому адреса заданы для всех шести. */
+  /* Автопоказ гоняет пять разделов: дашборд, сделки, аналитику — и ещё сайт
+     с рекламой, потому что делаем мы не только CRM. Показать их важнее, чем
+     держать цикл коротким: клиенты, задачи и настройки открываются кликом. */
   var РАЗДЕЛЫ = [
     { key: 'dash',  url: 'crm.uniqore.pro/dashboard', держать: 7000 },
     { key: 'deals', url: 'crm.uniqore.pro/deals',     держать: 6000 },
-    { key: 'stats', url: 'crm.uniqore.pro/analytics', держать: 6000 }
+    { key: 'stats', url: 'crm.uniqore.pro/analytics', держать: 6000 },
+    { key: 'site',  url: 'crm.uniqore.pro/site',      держать: 6000 },
+    { key: 'ads',   url: 'crm.uniqore.pro/ads',       держать: 6000 }
   ];
   var АДРЕСА = {
     dash: 'crm.uniqore.pro/dashboard', deals: 'crm.uniqore.pro/deals',
-    stats: 'crm.uniqore.pro/analytics', clients: 'crm.uniqore.pro/clients',
+    stats: 'crm.uniqore.pro/analytics', site: 'crm.uniqore.pro/site',
+    ads: 'crm.uniqore.pro/ads', clients: 'crm.uniqore.pro/clients',
     tasks: 'crm.uniqore.pro/tasks', setup: 'crm.uniqore.pro/settings'
   };
 
