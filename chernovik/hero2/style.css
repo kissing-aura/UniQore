@@ -475,10 +475,23 @@ a{color:inherit;text-decoration:none}
 .romi li b.down{color:#f0b46b}
 
 /* ── Вход: 4px и 0.4s, как внутри мокапа Linear ── */
-.pill,.h1,.sub,.cta,.marks,.proof,.app{animation:in .4s cubic-bezier(.25,.46,.45,.94) backwards}
-.h1{animation-delay:.04s}.sub{animation-delay:.08s}.cta{animation-delay:.12s}
-.marks{animation-delay:.16s}.proof{animation-delay:.2s}.app{animation-delay:.24s}
-@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.pill,.h1,.sub,.cta,.marks,.proof{animation:in .45s cubic-bezier(.25,.46,.45,.94) backwards}
+.h1{animation-delay:.05s}.sub{animation-delay:.1s}.cta{animation-delay:.15s}
+.marks{animation-delay:.2s}.proof{animation-delay:.25s}
+/* окно приезжает отдельно: чуть дальше и дольше остальных — это главный
+   объект кадра, на 4px за 0.4s его появление просто не читалось */
+.app{animation:inApp .58s cubic-bezier(.22,.61,.36,1) .22s backwards}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes inApp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* Значение, которое поменялось, коротко подсвечивается — так делают рабочие
+   панели, и это единственный способ заметить обновление, не глядя в упор */
+.kpi__v.is-fresh{animation:fresh .9s ease-out}
+@keyframes fresh{
+  0%{background:rgba(205,255,79,.16);box-shadow:0 0 0 4px rgba(205,255,79,.16)}
+  100%{background:transparent;box-shadow:0 0 0 4px rgba(205,255,79,0)}
+}
+.kpi__v{border-radius:4px}
 
 @media (max-width:1500px){
   /* 470, а не 430: при 430 строка «работает без вас» (437px на кегле 54)
@@ -613,7 +626,7 @@ a{color:inherit;text-decoration:none}
   .kpi__d{padding-right:0}
 }
 @media (prefers-reduced-motion:reduce){
-  .pill,.h1,.sub,.cta,.marks,.proof,.app{animation:none}
+  .pill,.h1,.sub,.cta,.marks,.proof,.app,.kpi__v{animation:none}
   /* переходы разделов, строк и карточек тоже должны замереть */
   .view,.tbl tbody tr,.kcard,.ai li,.side__i,.btn{transition-duration:.01ms!important}
 }

@@ -122,6 +122,10 @@
     время.textContent = 'Обновлено ' + мин + ' мин назад';
     if (конв && мин % 3 === 0) {
       конв.textContent = (34 + (Math.random() * 1.2 - .6)).toFixed(1).replace('.', ',') + '%';
+      /* перезапуск анимации: без снятия класса второй раз она не проиграет */
+      конв.classList.remove('is-fresh');
+      void конв.offsetWidth;
+      конв.classList.add('is-fresh');
     }
   }, 60000);
 
