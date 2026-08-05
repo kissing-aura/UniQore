@@ -658,6 +658,80 @@
   html,body.sy{overflow-x:clip}
 }
 </style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   КОНФИГУРАТОР — мягче, скруглённее, приятнее нажимать.
+   Было: резкие прямоугольники, дробные подписи, наклон карточек за
+   курсором (он и «ехал неприятно»), плотная сетка мелких блоков.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 1. Наклон карточек убран совсем — от него рябило и «ехало». Вместо него
+      честный подъём и мягкое свечение: понятно, что элемент нажимаемый. */
+.up__add{transform:none!important;transition:transform .22s cubic-bezier(.22,1,.36,1),
+  box-shadow .22s ease,border-color .22s ease,background .22s ease!important}
+.up__add.tilting{transition:transform .22s cubic-bezier(.22,1,.36,1)!important}
+.up__add::before{display:none}          /* блик от курсора — тоже лишний шум */
+
+/* 2. Скругления крупнее и единообразнее по всему блоку */
+.up__col,.up__bill{border-radius:22px}
+.up__add,.up__rad,.up__preset{border-radius:16px}
+.up__cmp{border-radius:18px}
+.up__cta{border-radius:14px}
+
+/* 3. Карточки допов: воздух внутри, мягкая граница, приятное нажатие */
+.up__add{padding:16px 18px;background:rgba(255,255,255,.022);
+  border:1px solid rgba(255,255,255,.07);box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
+.up__add:hover{transform:translateY(-2px);background:rgba(255,255,255,.045);
+  border-color:rgba(205,255,79,.28);box-shadow:0 10px 26px -14px rgba(0,0,0,.55)}
+.up__add:active{transform:translateY(0) scale(.995)}
+.up__add.on{background:linear-gradient(180deg,rgba(205,255,79,.10),rgba(205,255,79,.045));
+  border-color:rgba(205,255,79,.55);box-shadow:0 0 0 1px rgba(205,255,79,.18),0 12px 30px -16px rgba(205,255,79,.28)}
+.up__add.on:hover{transform:translateY(-2px)}
+
+/* 4. Галочка крупнее и мягче — в неё хочется попасть пальцем */
+.up__add .chk{width:20px;height:20px;border-radius:7px;border-width:2px;
+  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
+.up__add.on .chk{box-shadow:0 0 0 4px rgba(205,255,79,.14)}
+.up__add.on .chk::after{left:6px;top:2px}
+
+/* 5. Тарифы: те же правила, чтобы блок читался одной системой */
+.up__rad{padding:16px 14px;transition:transform .22s cubic-bezier(.22,1,.36,1),
+  box-shadow .22s ease,border-color .22s ease,background .22s ease}
+.up__rad:hover{transform:translateY(-2px);box-shadow:0 10px 26px -14px rgba(0,0,0,.5)}
+.up__rad:active{transform:translateY(0) scale(.995)}
+.up__rad.on{box-shadow:0 0 0 1px rgba(205,255,79,.2),0 12px 30px -16px rgba(205,255,79,.3)}
+
+/* 6. Пресеты — крупная мягкая кнопка вместо плоской плашки */
+.up__preset{padding:20px 20px 18px;transition:transform .22s cubic-bezier(.22,1,.36,1),
+  box-shadow .22s ease,border-color .22s ease,background .22s ease}
+.up__preset:hover{transform:translateY(-3px);box-shadow:0 14px 32px -16px rgba(0,0,0,.55)}
+.up__preset:active{transform:translateY(-1px) scale(.995)}
+
+/* 7. Строки чека — мягче, без жёстких пунктиров */
+.up__line{border-bottom:1px solid rgba(255,255,255,.05);padding:12px 0}
+.up__disc{border-top:1px solid rgba(49,224,176,.2);border-radius:12px;
+  background:rgba(49,224,176,.06);padding:10px 12px;margin-top:8px}
+.up__total{border-radius:18px;padding:22px}
+
+/* 8. Итоговая кнопка — крупнее и «мясистее», её видно как главное действие */
+.up__cta{padding:17px 22px;font-size:15px;box-shadow:0 10px 26px -12px rgba(205,255,79,.5);
+  transition:transform .2s ease,box-shadow .2s ease}
+.up__cta:hover{transform:translateY(-2px);box-shadow:0 16px 34px -14px rgba(205,255,79,.62)}
+.up__cta:active{transform:translateY(0)}
+
+@media(max-width:620px){
+  .up__col,.up__bill{border-radius:18px}
+  .up__add,.up__rad,.up__preset{border-radius:14px}
+  .up__add{padding:13px 14px}
+  .up__add .chk{width:19px;height:19px}
+  .up__preset{padding:14px}
+  .up__total{padding:18px;border-radius:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  .up__add,.up__rad,.up__preset,.up__cta{transition:none!important;transform:none!important}
+}
+</style>
 </head>
 <body class="sy">
 <div style="position:sticky;top:0;z-index:9999;background:linear-gradient(90deg,#1a1400,#0A0E1A);border-bottom:1px solid rgba(242,184,75,.35);padding:9px 16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#F2B84B;letter-spacing:.02em">
@@ -1371,7 +1445,35 @@
                 </div>
               </div>
 
-              <a href="#zayavka" class="up__cta" id="upCta" data-mag>Оформить проект</a>
+              <button type="button" class="up__cta" id="upCta">Продолжить</button>
+
+              <!-- Шаг 2: два поля прямо в чеке. Человек только что собрал пакет —
+                   уводить его на другую секцию значит терять половину заявок. -->
+              <div class="up__step2" id="upStep2" hidden>
+                <div class="up__step2__h">Куда прислать расчёт</div>
+                <div class="up__step2__pkg" id="upStep2Pkg"></div>
+                <label class="up__step2__f">
+                  <span>Как вас зовут</span>
+                  <input type="text" id="upName" autocomplete="name" placeholder="Алексей">
+                </label>
+                <label class="up__step2__f">
+                  <span>Телефон или Telegram</span>
+                  <input type="text" id="upContact" autocomplete="tel" placeholder="+7 999 000-00-00 или @nick" class="ym-record-keys">
+                </label>
+                <div class="up__step2__err" id="upErr"></div>
+                <button type="button" class="up__cta up__cta--send" id="upSend">Отправить и получить расчёт</button>
+                <button type="button" class="up__step2__back" id="upBack">← вернуться к сборке</button>
+                <p class="up__step2__note">Заполняя форму, вы соглашаетесь с <a href="/politika-konfidencialnosti/" target="_blank" rel="noopener">политикой конфиденциальности</a></p>
+              </div>
+
+              <!-- Шаг 3: подтверждение на месте, без прыжка по странице -->
+              <div class="up__done" id="upDone" hidden>
+                <div class="up__done__ring">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <div class="up__done__h">Расчёт уже собираем</div>
+                <p class="up__done__p">Ответим в Telegram в течение 15 минут. Если срочно — <a href="https://t.me/UniqoreManager" target="_blank" rel="noopener">напишите сами</a>.</p>
+              </div>
               <div class="up__reassure">
                 <span>ответим в Telegram за 15 минут</span>
                 <span>0 ₽ сейчас — платите, когда увидите готовый макет</span>
