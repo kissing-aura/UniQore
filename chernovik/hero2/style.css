@@ -226,12 +226,13 @@ a{color:inherit;text-decoration:none}
 .kpi{background:var(--surface-2);padding:12px 14px 11px;position:relative;overflow:hidden}
 .kpi__l{display:block;font-size:11px;color:var(--dim2);margin-bottom:6px}
 .kpi__v{display:block;font-size:18px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-/* правый отступ под спарклайн: подпись «+16,5% к прошлой неделе» — 135px
-   при ширине карточки 158, и текст ложился прямо на график */
-.kpi__d{display:block;margin-top:4px;font-size:11px;padding-right:72px}
+/* правый отступ под спарклайн — но не больше, чем нужно: на 72px подпись
+   переносилась на вторую строку, полоса KPI вырастала с 86 до 114px и
+   выдавливала последнюю строку таблицы за низ окна */
+.kpi__d{display:block;margin-top:4px;font-size:11px;padding-right:58px}
 .kpi__d.up{color:var(--mint)}
 .kpi__d.down{color:#f0796b}
-.spark{position:absolute;right:12px;bottom:10px;width:66px;height:18px;color:rgba(205,255,79,.5)}
+.spark{position:absolute;right:12px;bottom:10px;width:52px;height:18px;color:rgba(205,255,79,.5)}
 .kpi:nth-child(4) .spark{color:rgba(240,121,107,.45)}   /* средний чек падает */
 
 .row{display:grid;grid-template-columns:1.5fr 1fr;gap:1px;background:var(--border);flex:1;min-height:0;overflow:hidden}
