@@ -505,6 +505,9 @@ a{color:inherit;text-decoration:none}
   .st{font-size:0;padding:2px 6px}
   .st::before{content:attr(data-s);font-size:10px}
   .kcol__h em{display:none}
+  /* колонка доски тут 152px: «Автосервис «Драйв»» просил 116 при доступных
+     112 и обрезался многоточием — полкегля и трекинг возвращают его целиком */
+  .kcard__t{font-size:11px;letter-spacing:-.012em}
   /* кнопки действий съедали 50px ширины, заголовки переносились на вторую
      строку и блок вылезал на 27px за низ окна */
   .ai__go{display:none}
