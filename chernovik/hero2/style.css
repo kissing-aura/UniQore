@@ -1,0 +1,259 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Черновик 2. Собран не «как мне кажется красиво», а по замерам эталонов.
+
+   Что показала разведка Linear / Attio / Vercel / Framer / Clay / Stripe:
+   · наклон интерфейса — 0 из 8 сайтов. Все показывают UI фронтально;
+   · шрифт ВНУТРИ мокапа 10–14px, не крупнее. Крупный кегль = сразу фейк;
+   · тень — стек 4–5 слоёв по 2.5–6%, цвет сине-серый, а не чёрный;
+   · граница — хайрлайн 1px белым на 6–10%, не серая рамка;
+   · зерно обязательным слоем: тайл 96px, overlay, 5%;
+   · амплитуда движения 4–20px, длительности 0.16–0.4s;
+   · H1 54–88px, вес 500–600, трекинг −0.02…−0.04em, line-height 1.0;
+   · мокап обрезан сгибом — треть уходит вниз.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root{
+  --bg:#08090B;
+  --ink:#F7F8F8;
+  --dim:#8A8F98;
+  --dim2:#6b7280;
+  --lime:#CDFF4F;
+  --mint:#31e0b0;
+  --hair:rgba(255,255,255,.08);
+  --font:'Geist',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+
+.lab-note{
+  position:fixed;left:14px;bottom:14px;z-index:99;
+  font:500 11px/1 var(--mono);letter-spacing:.04em;color:var(--dim2);
+  background:rgba(10,12,16,.86);border:1px solid var(--hair);
+  padding:7px 11px;border-radius:999px;backdrop-filter:blur(8px);
+}
+.lab-note b{color:var(--lime)}
+
+.hero{position:relative;overflow:hidden;padding:132px 0 0;min-height:100svh}
+.wrap{position:relative;z-index:3;max-width:1120px;margin:0 auto;padding:0 24px;text-align:center}
+
+/* Фон: у Linear это radial + linear в два стопа, без «трёх пятен по вкусу» */
+.hero__bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(52% 58% at 50% 100%, rgba(8,9,11,0) 0%, rgba(8,9,11,.5) 100%),
+    linear-gradient(180deg, #08090B 10%, #14161A 100%);
+}
+/* Зерно: тайл 96px, отрисованный в 48 (2× плотность), overlay 5% — как у Framer */
+.hero__grain{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  mix-blend-mode:overlay;opacity:.05;
+  background-repeat:repeat;background-size:48px 48px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.pill{
+  display:inline-block;margin-bottom:26px;
+  font-size:13px;line-height:18px;color:var(--dim);
+  border:1px solid var(--hair);border-radius:13px;padding:5px 13px;
+}
+
+/* H1: 64px / вес 600 / трекинг −0.022em / line-height 1.0 — медиана эталонов */
+.h1{
+  font-size:64px;line-height:1;font-weight:600;letter-spacing:-1.408px;
+  color:var(--ink);max-width:15ch;margin:0 auto 20px;
+}
+.sub{
+  font-size:16px;line-height:24px;font-weight:400;color:var(--dim);
+  max-width:60ch;margin:0 auto 32px;
+}
+
+.cta{display:flex;gap:10px;justify-content:center;margin-bottom:64px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;
+  border-radius:10px;font-size:14px;font-weight:500;
+  transition:background-color .16s cubic-bezier(.25,.46,.45,.94),border-color .16s,color .16s;
+}
+/* теней у кнопок нет ни у Clay, ни у Framer, ни у Stripe */
+.btn--main{background:var(--lime);color:#0A1005}
+.btn--main:hover{background:#d9ff74}
+.btn--ghost{border:1px solid var(--hair);color:var(--ink)}
+.btn--ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+
+/* ── Мокап ────────────────────────────────────────────────────────────
+   Фиксированная ширина, как у Linear (--width:1320px): интерфейс не
+   тянется под экран, он показан в своём масштабе и обрезается сгибом. */
+.shell{
+  position:relative;z-index:2;
+  width:1240px;max-width:none;margin:0 auto;
+  padding:0 24px;
+}
+.app{
+  display:flex;height:620px;overflow:hidden;
+  border-radius:12px;
+  background:#0D0F12;
+  /* хайрлайн + стек теней: радиусы удваиваются, непрозрачность 2.5–6%,
+     цвет сине-серый #0b0d18, как у Attio — не чёрный */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.07),
+    0 1px 2px rgba(11,13,24,.28),
+    0 3px 6px rgba(11,13,24,.32),
+    0 8px 14px rgba(11,13,24,.36),
+    0 16px 28px rgba(11,13,24,.4),
+    0 28px 52px rgba(11,13,24,.44);
+}
+
+/* ── Сайдбар ── */
+.side{width:212px;flex:none;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;background:#0B0D10}
+.side__top{display:flex;align-items:center;gap:9px;padding:14px 14px 12px}
+.side__logo{width:20px;height:20px;border-radius:6px;background:linear-gradient(140deg,var(--lime),var(--mint));flex:none}
+.side__name{font-size:13px;font-weight:600;letter-spacing:-.01em}
+.side__nav{display:flex;flex-direction:column;gap:1px;padding:4px 8px}
+.side__i{
+  display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:6px;
+  font-size:12px;color:#9099a6;transition:background-color .16s,color .16s;
+}
+.side__i svg{width:14px;height:14px;flex:none;opacity:.85}
+.side__i b{margin-left:auto;font-size:11px;font-weight:500;color:#6b7280}
+.side__i b.is-hot{color:var(--lime)}
+.side__i.is-on{background:rgba(255,255,255,.06);color:var(--ink)}
+.side__foot{margin-top:auto;display:flex;align-items:center;gap:9px;padding:12px 14px;border-top:1px solid rgba(255,255,255,.05)}
+.side__me{display:flex;flex-direction:column;line-height:1.25}
+.side__me b{font-size:12px;font-weight:500}
+.side__me i{font-size:10.5px;color:var(--dim2);font-style:normal}
+
+/* ── Основная область ── */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:#0D0F12}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.05)}
+.top__t{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.top__b{display:block;margin-top:2px;font-size:11px;color:var(--dim2)}
+.top__r{display:flex;align-items:center;gap:8px}
+.seg{display:flex;border:1px solid var(--hair);border-radius:7px;overflow:hidden}
+.seg i{font-style:normal;font-size:11px;padding:5px 10px;color:#8a93a1}
+.seg i.is-on{background:rgba(255,255,255,.07);color:var(--ink)}
+.btn-s{font-size:11px;padding:6px 11px;border:1px solid var(--hair);border-radius:7px;color:#9099a6}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
+.kpi{background:#0D0F12;padding:12px 14px 11px;position:relative;overflow:hidden}
+.kpi__l{display:block;font-size:11px;color:var(--dim2);margin-bottom:6px}
+.kpi__v{display:block;font-size:18px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi__d{display:block;margin-top:4px;font-size:11px}
+.kpi__d.up{color:var(--mint)}
+.kpi__d.down{color:#f0796b}
+.spark{position:absolute;right:12px;bottom:10px;width:66px;height:18px;color:rgba(205,255,79,.5)}
+.kpi:nth-child(3) .spark{color:rgba(240,121,107,.45)}
+
+.row{display:grid;grid-template-columns:1.62fr 1fr;gap:1px;background:rgba(255,255,255,.05);flex:1;min-height:0}
+.box{background:#0D0F12;padding:12px 14px;min-width:0}
+.box__h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+.box__t{font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px}
+.box__m{font-size:11px;color:var(--dim2)}
+.col{display:grid;grid-template-rows:auto 1fr;gap:1px;background:rgba(255,255,255,.05);min-width:0}
+
+/* таблица — главный носитель «плотности»: 12px, шесть строк, шесть колонок */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{
+  text-align:left;font-weight:400;font-size:10.5px;color:var(--dim2);
+  padding:0 8px 7px 0;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;
+}
+.tbl td{padding:7px 8px 7px 0;border-bottom:1px solid rgba(255,255,255,.035);white-space:nowrap}
+.tbl tbody tr:last-child td{border-bottom:0}
+.tbl td:first-child{display:flex;align-items:center;gap:7px;font-weight:500}
+.tbl .num{font-variant-numeric:tabular-nums}
+.tbl .dim{color:var(--dim2);font-size:11px}
+.tbl tr.is-warn td{background:rgba(240,121,107,.05)}
+
+.ava{width:19px;height:19px;border-radius:5px;flex:none;display:grid;place-items:center;font-size:10px;font-weight:600;color:#0b1018;background:linear-gradient(140deg,var(--lime),var(--mint))}
+.ava--s{width:17px;height:17px;border-radius:50%;font-size:9px;background:linear-gradient(140deg,#5b9dff,#31e0b0);display:inline-grid;vertical-align:-4px;margin-right:5px}
+.ava--u{background:linear-gradient(140deg,#8b7bff,#5b9dff);border-radius:50%}
+
+.st{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.st--go{color:var(--mint);background:rgba(49,224,176,.1)}
+.st--wait{color:#f0b46b;background:rgba(240,180,107,.1)}
+.st--new{color:var(--lime);background:rgba(205,255,79,.12)}
+
+.src{list-style:none;display:flex;flex-direction:column;gap:8px}
+.src li{display:flex;align-items:center;gap:8px;font-size:11.5px}
+.src li i{width:7px;height:7px;border-radius:2px;background:var(--c);flex:none}
+.src li b{margin-left:auto;font-weight:500;font-variant-numeric:tabular-nums}
+.src li em{font-style:normal;color:var(--dim2);font-size:10.5px;min-width:58px;text-align:right}
+
+.box--ai{border-top:0}
+.dotmini{width:6px;height:6px;border-radius:50%;background:var(--lime);flex:none}
+.ai{list-style:none;display:flex;flex-direction:column;gap:9px}
+.ai li{padding:8px 9px;border-radius:7px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+.ai b{display:block;font-size:11.5px;font-weight:500;margin-bottom:2px}
+.ai span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.4}
+
+/* ── Сателлиты: как у Attio — куски системы, а не декоративные плашки ── */
+.sat{
+  position:absolute;width:236px;border-radius:10px;overflow:hidden;background:#101318;
+  box-shadow:0 0 0 1px rgba(255,255,255,.07),0 2px 5px rgba(11,13,24,.3),
+             0 8px 18px rgba(11,13,24,.36),0 20px 38px rgba(11,13,24,.42);
+}
+.sat--tg{left:-72px;top:214px}
+.sat--auto{right:-64px;top:392px;width:222px}
+.sat__h{display:flex;align-items:center;gap:7px;padding:9px 11px;font-size:11px;color:#9099a6;border-bottom:1px solid rgba(255,255,255,.05)}
+.sat__ic{width:17px;height:17px;border-radius:5px;display:grid;place-items:center;background:rgba(255,255,255,.07);color:#9099a6}
+.sat__ic svg{width:10px;height:10px}
+.sat__ic.tg{background:rgba(51,144,236,.16);color:#3390ec}
+.sat__b{padding:10px 11px;display:flex;flex-direction:column;gap:3px}
+.sat__b b{font-size:12px;font-weight:500}
+.sat__b span{font-size:11px;color:#9099a6}
+.sat__b .dim{color:var(--dim2);font-size:10.5px}
+.sat__log{padding:9px 11px;display:flex;flex-direction:column;gap:6px;font-size:10.5px;color:#9099a6}
+.sat__log span{display:flex;align-items:center;gap:7px}
+.sat__log em{margin-left:auto;font-style:normal;color:var(--dim2);font-variant-numeric:tabular-nums}
+.sat__log i{width:6px;height:6px;border-radius:50%;flex:none}
+.sat__log i.ok{background:var(--mint)}
+.sat__log i.run{background:var(--lime);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ── Вход: 4px и 0.4s, как внутри мокапа Linear ── */
+.pill,.h1,.sub,.cta,.app,.sat{animation:in .4s cubic-bezier(.25,.46,.45,.94) backwards}
+.h1{animation-delay:.04s}.sub{animation-delay:.08s}.cta{animation-delay:.12s}
+.app{animation-delay:.16s}.sat--tg{animation-delay:.3s}.sat--auto{animation-delay:.38s}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+@media (max-width:1420px){
+  /* места по бокам не осталось — сателлиты заходят на окно, как у Attio */
+  .sat--tg{left:-24px}
+  .sat--auto{right:-20px}
+}
+@media (max-width:1300px){
+  .shell{width:100%}
+  .app{height:560px}
+  .sat--tg{left:0}
+  .sat--auto{right:0}
+}
+@media (max-width:1000px){
+  .h1{font-size:48px;letter-spacing:-1.06px}
+  .app{height:480px}
+  .sat{display:none}
+  .side{width:180px}
+  .row{grid-template-columns:1fr}
+  .col{display:none}
+}
+@media (max-width:720px){
+  .hero{padding:96px 0 0}
+  .h1{font-size:34px;letter-spacing:-.75px;max-width:none}
+  .sub{font-size:15px}
+  .cta{flex-direction:column;margin-bottom:40px}
+  .btn{width:100%}
+  .shell{padding:0 16px}
+  .app{height:400px;border-radius:10px}
+  .side{display:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .tbl th:nth-child(3),.tbl td:nth-child(3),
+  .tbl th:nth-child(5),.tbl td:nth-child(5),
+  .tbl th:nth-child(6),.tbl td:nth-child(6){display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .pill,.h1,.sub,.cta,.app,.sat,.sat__log i.run{animation:none}
+}
+
+/* подсветка строки под курсором — 0.16s, как все состояния у Linear */
+.tbl tbody tr{transition:background-color .16s cubic-bezier(.25,.46,.45,.94)}
+.tbl tbody tr.is-hover td{background:rgba(255,255,255,.035)}
+.tbl tbody tr.is-warn.is-hover td{background:rgba(240,121,107,.08)}
