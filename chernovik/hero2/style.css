@@ -248,7 +248,10 @@ a{color:inherit;text-decoration:none}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);flex:none}
 .kpi{background:var(--surface-2);padding:12px 14px 11px;position:relative;overflow:hidden}
 .kpi__l{display:block;font-size:11px;color:var(--dim2);margin-bottom:6px}
-.kpi__v{display:block;font-size:18px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+/* inline-block, чтобы подсветка обновления обнимала само число, а не
+   растягивалась полосой на всю карточку; отрицательный отступ держит
+   число на прежнем месте */
+.kpi__v{display:inline-block;padding:1px 5px;margin:0 -5px;font-size:18px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 /* правый отступ под спарклайн — но не больше, чем нужно: на 72px подпись
    переносилась на вторую строку, полоса KPI вырастала с 86 до 114px и
    выдавливала последнюю строку таблицы за низ окна */
@@ -491,7 +494,7 @@ a{color:inherit;text-decoration:none}
   0%{background:rgba(205,255,79,.16);box-shadow:0 0 0 4px rgba(205,255,79,.16)}
   100%{background:transparent;box-shadow:0 0 0 4px rgba(205,255,79,0)}
 }
-.kpi__v{border-radius:4px}
+.kpi__v{border-radius:5px}
 
 @media (max-width:1500px){
   /* 470, а не 430: при 430 строка «работает без вас» (437px на кегле 54)
