@@ -142,6 +142,10 @@
 .up__cmp__row span:nth-child(2){color:#aab2c0;line-height:1.4}
 .up__cmp__row span:nth-child(3){color:#e9f0fb;line-height:1.4}
 
+/* дизайн в «Авторском» входит в базу — метка «включено» вместо цены */
+.up__add.is-included .pp{color:var(--mint)!important;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.03em}
+.up__add.is-included{border-color:rgba(49,224,176,.28)}
+
 /* ── endowment: «в пакете» у выбранного допа + вспышка при снятии ── */
 .up__add.on .tt b::after{content:" · в пакете";color:var(--mint);font-size:11px;font-weight:600}
 .up__line--removing{background:rgba(255,110,99,.10);border-radius:8px;transition:background .16s ease}
@@ -997,19 +1001,19 @@
               <span class="ds">Лендинг с брендовым дизайном — без рекламы и интеграций</span>
               <span class="fr">пакет · <b data-calc>$0</b></span>
             </button>
-            <button class="up__preset" type="button" data-preset="ads" data-base="multi" data-adds="crm,ads,bot">
+            <button class="up__preset" type="button" data-preset="ads" data-base="multi" data-adds="design,crm,ads,bot">
               <span class="k">с рекламой</span>
               <span class="nm">Рекламный</span>
               <span class="ds">CRM + реклама + Telegram-бот — ни один лид не потеряется</span>
               <span class="fr">пакет · <b data-calc>$0</b></span>
             </button>
-            <button class="up__preset" type="button" data-preset="full" data-base="crmsite" data-adds="crm,ads,design,bot,texts,seo,speed,support">
+            <button class="up__preset" type="button" data-preset="full" data-base="crmsite" data-adds="design,crm,ads,bot,brand,seo,speed,support">
               <span class="k">всё включено</span>
               <span class="nm">Полный</span>
               <span class="ds">Сайт, CRM, реклама, SEO, скорость и поддержка на год</span>
               <span class="fr">пакет · <b data-calc>$0</b></span>
             </button>
-            <button class="up__preset up__preset--premium" type="button" data-preset="premium" data-base="premium" data-adds="crm,ads,bot,seo,speed,support">
+            <button class="up__preset up__preset--premium" type="button" data-preset="premium" data-base="premium" data-adds="design,crm,ads,bot,seo,speed,support">
               <span class="k">авторский, под ключ</span>
               <span class="nm">Премиум</span>
               <span class="ds">Ведущий дизайнер с нуля + все технические интеграции</span>
@@ -1088,15 +1092,15 @@
                 <div class="up__cat" data-cat="content">
                   <div class="up__cat__h"><i></i><span>дизайн и контент</span></div>
                   <div class="up__cat__grid">
-                    <label class="up__add" data-p="150" data-n="Дизайн под бренд" data-id="design">
+                    <label class="up__add" data-p="100" data-n="Дизайн под бренд" data-id="design" data-price-map='{"landing":50,"multi":100,"crmsite":110,"premium":0}'>
                       <input type="checkbox"><span class="chk"></span>
                       <span class="tt"><b>Дизайн под бренд</b><span class="d">Не шаблон, а айдентика: цвет, шрифт, фото-подбор</span><span class="val">→ ваш сайт не спутают с шаблоном конкурента</span></span>
-                      <span class="pp" data-usd="150" data-prefix="+">+$150</span>
+                      <span class="pp" data-usd="100" data-prefix="+">+$100</span>
                     </label>
-                    <label class="up__add" data-p="110" data-n="Тексты под нишу" data-id="texts">
+                    <label class="up__add" data-p="80" data-n="Логотип и фирстиль" data-id="brand">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Тексты под нишу</b><span class="d">Редакторские, не тайтлы «под ключ» — с фактами клиента</span><span class="val">→ без адаптации текст закрывают на 3-й секунде — с ней дочитывают</span></span>
-                      <span class="pp" data-usd="110" data-prefix="+">+$110</span>
+                      <span class="tt"><b>Логотип и фирстиль</b><span class="d">Логотип в векторе, палитра, шрифтовая пара, правила использования — файлы остаются у вас</span><span class="val">→ один стиль на сайте, визитках и соцсетях — бизнес выглядит собранным</span></span>
+                      <span class="pp" data-usd="80" data-prefix="+">+$80</span>
                     </label>
                   </div>
                 </div>
@@ -1106,7 +1110,7 @@
                   <div class="up__cat__grid">
                     <label class="up__add" data-p="100" data-n="SEO-стартер" data-id="seo">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>SEO-стартер</b><span class="d">Метаданные, sitemap, Search Console, семантика 20 запросов</span><span class="val">→ вас находят в Google бесплатно — без рекламного бюджета</span></span>
+                      <span class="tt"><b>SEO-стартер</b><span class="d">Собираем 20 запросов, по которым вас ищут. Прописываем заголовки страниц, отдаём карту сайта Яндексу и Google, подключаем Вебмастер и Search Console</span><span class="val">→ сайт начинают показывать в поиске — трафик без оплаты за клик</span></span>
                       <span class="pp" data-usd="100" data-prefix="+">+$100</span>
                     </label>
                     <label class="up__add" data-p="80" data-n="Мобильная скорость 95+" data-id="speed">
@@ -1114,10 +1118,10 @@
                       <span class="tt"><b>Мобильная скорость 95+</b><span class="d">Оптимизация под 3G: WebP, lazy-load, sprite-svg</span><span class="val">→ каждая лишняя секунда загрузки — минус 7% к продажам</span></span>
                       <span class="pp" data-usd="80" data-prefix="+">+$80</span>
                     </label>
-                    <label class="up__add" data-p="150" data-n="Год поддержки" data-id="support">
+                    <label class="up__add" data-p="240" data-n="Поддержка" data-id="support">
                       <input type="checkbox"><span class="chk up__toggle3d"><i class="knob"></i></span>
-                      <span class="tt"><b>Год поддержки</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ мелкие правки закрываются без счёта и разборок · $150/год ≈ $0,41 в день</span></span>
-                      <span class="pp" data-usd="150" data-prefix="+">+$150</span>
+                      <span class="tt"><b>Поддержка · $20 в месяц</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ правки закрываются без счёта и разборок · $20 в месяц, год вперёд</span></span>
+                      <span class="pp" data-usd="240" data-prefix="+">+$240</span>
                     </label>
                   </div>
                 </div>
@@ -1357,7 +1361,39 @@
         });
       }
 
+      /* Дизайн есть в каждом пакете, но объём работы разный: лендинг — один
+         экран, многостраничник — система шаблонов, CRM — ещё и интерфейс.
+         Поэтому цена допа привязана к выбранному тарифу, а в «Авторском»
+         дизайн с нуля уже в базовой цене — там показываем «включено». */
+      function syncDesignPrice(){
+        var el = document.querySelector('#upAdds .up__add[data-price-map]');
+        if (!el) return;
+        var map; try { map = JSON.parse(el.getAttribute('data-price-map')); } catch(e){ return; }
+        var baseEl = document.querySelector('#upBase .up__rad.on');
+        var baseId = baseEl ? baseEl.getAttribute('data-id') : null;
+        if (!(baseId in map)) return;
+
+        var price = map[baseId];
+        el.setAttribute('data-p', price);
+        el.classList.toggle('is-included', price === 0);
+
+        var pp = el.querySelector('.pp');
+        if (pp){
+          if (price === 0){
+            pp.removeAttribute('data-usd');       // currency.js не должен его пересчитывать
+            pp.textContent = 'включено';
+          } else {
+            pp.setAttribute('data-usd', price);
+            pp.setAttribute('data-prefix', '+');
+            pp.innerHTML = money(price, '+');
+          }
+        }
+        /* в «Авторском» дизайн входит всегда — держим галочку проставленной */
+        if (price === 0) el.classList.add('on');
+      }
+
       function render(){
+        syncDesignPrice();
         var base = currentBase(), picks = currentAdds();
         var pre = base.price + picks.reduce(function(s,x){ return s + x.price; }, 0);
         var disc = picks.length >= 3 ? Math.round(pre * 0.10) : 0;
