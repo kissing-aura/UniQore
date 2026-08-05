@@ -341,8 +341,8 @@ a{color:inherit;text-decoration:none}
 .ai--hot .ai__ic{color:#f0796b}
 .ai__ic svg{width:15px;height:15px}
 .ai__b{flex:1;min-width:0}
-.ai__b b{display:block;font-size:11.5px;font-weight:500;line-height:1.3;margin-bottom:2px}
-.ai__b span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.35}
+.ai__b > b{display:block;font-size:11.5px;font-weight:500;line-height:1.3;margin-bottom:2px}
+.ai__b > span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.35}
 .ai__go{
   flex:none;font-size:10px;color:#9099a6;border:1px solid rgba(255,255,255,.08);
   border-radius:5px;padding:3px 7px;margin-top:1px;white-space:nowrap;
