@@ -730,8 +730,18 @@ a{color:inherit;text-decoration:none}
   .cli{grid-template-columns:repeat(2,1fr)}
   .cli__c:nth-child(n+7){display:none}
   .cli__f em{display:none}
+  .cli__c{padding:9px 10px;gap:2px}
+  .cli__n{font-size:11px}
+  .cli__c b{font-size:12px}
+  /* Показываем две первые группы целиком — «Просрочено» (1) и «Сегодня» (2).
+     Резать группу пополам нельзя: счётчик рядом с заголовком сразу выдал бы
+     несоответствие. Названия переносятся, а не обрезаются: места хватает. */
   .tsk{padding:8px 12px 0}
-  .tsk__i{padding:6px 8px}
+  .tsk__i{padding:7px 8px}
+  .tsk__g:nth-of-type(3),
+  .tsk__g:nth-of-type(3) ~ .tsk__i{display:none}
+  .tsk__b b{white-space:normal}
+  .tsk__b > span{white-space:normal}
   .tsk__m .ava--s{display:none}
   .intg__n{width:auto;flex:1}
   .intg__v{display:none}
