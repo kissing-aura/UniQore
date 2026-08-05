@@ -462,6 +462,9 @@ a{color:inherit;text-decoration:none}
      а не как «не поместилось»: у карточек всё равно нет места на детали */
   .kan{grid-template-columns:repeat(2,1fr)}
   .kcol:nth-child(3){display:none}
+  /* в 333px высоты влезает ровно три карточки (36 + 85×N); четвёртая
+     вылезала на 154px и обрезалась по низу окна */
+  .kcol > :nth-child(n+5){display:none}
   .kcol__h em{display:none}
   .top__r .seg{display:none}
 }
