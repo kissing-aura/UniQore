@@ -342,4 +342,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.5 });
   sections.forEach(s => sectionObserver.observe(s));
+
+  // ── Заход с якорем (/#uslugi из шапки внутренних страниц) ──
+  // Браузер отрабатывает фрагмент до того, как догрузится контент первого экрана,
+  // и остаётся наверху — клик «Услуги» приводил на hero, а не в раздел. Дожимаем сами.
+  if (location.hash.length > 1) {
+    let userScrolled = false;
+    const stop = () => { userScrolled = true; };
+    ['wheel', 'touchstart', 'keydown'].forEach(e => window.addEventListener(e, stop, { once: true, passive: true }));
+
+    const settleHash = () => {
+      if (userScrolled) return;
+      let target = null;
+      try { target = document.querySelector(location.hash); } catch (e) { return; }
+      if (!target) return;
+      if (Math.abs(target.getBoundingClientRect().top - 80) > 8) {
+        target.scrollIntoView({ block: 'start', behavior: 'instant' });
+      }
+    };
+    window.addEventListener('load', () => { settleHash(); setTimeout(settleHash, 400); });
+  }
 });
