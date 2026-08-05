@@ -38,6 +38,10 @@
    выравнивает верх по цифрам, отбивка .2em — типографская, вместо пробела
    (обычный пробел в Geist шире и рвал строку «187 000 ₽» при переносе). */
 .rub{
+  /* display:inline обязателен: в файле есть жадные селекторы вида
+     `.ai__b span{display:block}`, и они превращали каждый знак в блок —
+     строка «11 600 ₽ против 9 800 ₽ за заявку» разваливалась на пять */
+  display:inline;
   font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
   font-size:1.055em;font-weight:inherit;letter-spacing:0;
   margin-left:.2em;white-space:nowrap;
