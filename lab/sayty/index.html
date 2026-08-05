@@ -896,6 +896,98 @@
 .up__add .tt{min-width:0}
 .up__add .tt .d{hyphens:none;text-wrap:pretty}
 </style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   МАСШТАБ: было «бабушкин телефон» — элементы крупные, воздуха мало,
+   всё выглядит как увеличенный макет. Сжимаем плотно, как в Linear /
+   Stripe: мелкий уверенный текст, тонкие отступы, спокойные скругления.
+   Правим только десктоп — на мобилке компакт уже был.
+   ═══════════════════════════════════════════════════════════════════ */
+@media(min-width:901px){
+  /* панели */
+  .up__col,.up__bill{border-radius:16px;padding:20px}
+  .up__lbl{font-size:9.5px;letter-spacing:.09em}
+  .up__h{font-size:16px;margin-top:4px}
+
+  /* тарифы — компактная плитка, а не баннер */
+  .up__base{gap:8px;margin-top:14px}
+  .up__rad{padding:12px 11px;border-radius:12px}
+  .up__rad .n{font-size:12.5px}
+  .up__rad .p{font-size:16px;margin-top:4px}
+  .up__rad .d{font-size:9.5px;margin-top:3px;line-height:1.3}
+  .up__rad__badge{font-size:8.5px;padding:2px 7px;top:-7px}
+  .up__rad__like{font-size:9px;margin-top:4px}
+
+  /* пресеты */
+  .up__presets{gap:9px;margin-top:26px}
+  .up__preset{padding:13px 14px 12px;border-radius:13px}
+  .up__preset .k{font-size:8.5px}
+  .up__preset .nm{font-size:14px;margin-top:5px}
+  .up__preset .ds{font-size:10.5px;margin-top:4px;line-height:1.35}
+  .up__preset .fr{margin-top:10px}
+  .up__preset .fr b{font-size:14px}
+  .up__preset .fr s{font-size:10px}
+  .up__preset .fr i{font-size:9px;padding:1px 6px}
+
+  /* сравнение тарифов */
+  .up__cmp{margin-top:14px;padding:13px 14px;border-radius:13px}
+  .up__cmp__note{font-size:11.5px;margin-bottom:10px;line-height:1.5}
+  .up__cmp__row{padding:7px 10px;font-size:11px;gap:8px;grid-template-columns:80px 1fr 1fr}
+  .up__cmp__row span:first-child{font-size:10.5px}
+  .up__cmp__row--head{font-size:9px}
+
+  /* допы — самое важное: их восемь, они и делали блок огромным */
+  .up__addH{margin-top:20px}
+  .up__adds{gap:14px;margin-top:10px}
+  .up__cat__grid{gap:8px}
+  .up__add{padding:11px 12px;border-radius:12px;gap:10px;grid-template-columns:18px 1fr auto}
+  .up__add .chk{width:17px;height:17px;border-radius:6px}
+  .up__add.on .chk{box-shadow:0 0 0 3px rgba(205,255,79,.13)}
+  .up__add.on .chk::after{left:5px;top:1px;width:4px;height:9px;border-width:2px}
+  .up__add .tt{font-size:12.5px}
+  .up__add .tt b{font-size:12.5px;line-height:1.25}
+  .up__add.on .tt b::after{font-size:9px;margin-top:2px}
+  .up__add .tt .d{font-size:10.5px;margin-top:3px;line-height:1.4}
+  .up__add.on .tt .val{font-size:10px;margin-top:4px}
+  .up__add .pp{font-size:12.5px}
+  .up__add .fav{font-size:8.5px;padding:2px 6px;top:-6px;right:9px}
+
+  /* чек */
+  .up__bill__lbl{font-size:9.5px}
+  .up__bill__h{font-size:16px;margin-top:4px}
+  .up__lines{margin-top:14px}
+  .up__line{padding:9px 0}
+  .up__line__row .n{font-size:12.5px}
+  .up__line__row .p{font-size:12px}
+  .up__disc{font-size:11.5px;padding:9px 0 0}
+  .up__total{padding:14px 16px;border-radius:14px;margin-top:12px}
+  .up__total .l{font-size:9px}
+  .up__total .v{font-size:30px}
+  .up__level{margin-top:14px}
+  .up__level__labels{font-size:9px}
+  .up__marquee{margin-top:12px;padding:7px 0}
+  .up__marquee__track span{font-size:9.5px}
+  .up__marquee__track{gap:28px}
+  .up__cta{padding:13px 18px;font-size:13.5px;border-radius:12px;margin-top:16px}
+  .up__reassure{margin-top:12px;gap:5px;font-size:10.5px}
+
+  /* шаг с контактами */
+  .up__step2{margin-top:14px;padding-top:14px}
+  .up__step2__h{font-size:13.5px}
+  .up__step2__pkg{font-size:9.5px;padding:8px 10px;border-radius:10px;margin-top:7px}
+  .up__step2__f{margin-top:10px}
+  .up__step2__f span{font-size:10.5px;margin-bottom:4px}
+  .up__step2__f input{padding:10px 12px;font-size:13px;border-radius:11px}
+  .up__step2__back{font-size:11px;margin-top:8px}
+  .up__step2__note{font-size:9.5px;margin-top:8px}
+  .up__done{padding:18px 16px;border-radius:14px}
+  .up__done__ring{width:38px;height:38px}
+  .up__done__ring svg{width:18px;height:18px}
+  .up__done__h{font-size:14.5px;margin-top:10px}
+  .up__done__p{font-size:11.5px}
+}
+</style>
 </head>
 <body class="sy">
 <div style="position:sticky;top:0;z-index:9999;background:linear-gradient(90deg,#1a1400,#0A0E1A);border-bottom:1px solid rgba(242,184,75,.35);padding:9px 16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#F2B84B;letter-spacing:.02em">
