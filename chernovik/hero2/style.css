@@ -559,13 +559,15 @@ a{color:inherit;text-decoration:none}
 .intg{list-style:none;display:flex;flex-direction:column;gap:6px}
 .intg li{display:flex;align-items:center;gap:8px;font-size:11.5px;line-height:1}
 .intg li i{width:6px;height:6px;border-radius:2px;background:var(--c);flex:none}
-.intg__n{width:118px;flex:none;color:#c3cad4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intg__n{width:112px;flex:none;color:#c3cad4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .intg__v{font-size:10.5px;color:var(--dim2);font-variant-numeric:tabular-nums;white-space:nowrap}
 .intg--off .intg__n{color:var(--dim2)}
 /* переключатель: 26×14 — минимальный размер, при котором он читается
-   как переключатель, а не как полоска */
+   как переключатель, а не как полоска. Стоит сразу за названием, а не
+   прижат вправо: правый край окна срезан кромкой экрана, и там его
+   попросту не было видно — как раньше не было видно чисел в источниках */
 .sw{
-  width:26px;height:14px;flex:none;margin-left:auto;border-radius:8px;position:relative;
+  width:26px;height:14px;flex:none;border-radius:8px;position:relative;
   background:rgba(255,255,255,.09);transition:background-color .16s;
 }
 .sw::after{
@@ -581,7 +583,7 @@ a{color:inherit;text-decoration:none}
 }
 .set__ri{width:15px;height:15px;flex:none;color:var(--mint)}
 .set__ri svg{width:15px;height:15px}
-.set__rb{flex:1;min-width:0}
+.set__rb{flex:none;max-width:230px;min-width:0}
 .set__rb b{display:block;font-size:11.5px;font-weight:500;line-height:1.3}
 .set__rb span{display:block;font-size:10.5px;color:var(--dim2);margin-top:1px}
 
