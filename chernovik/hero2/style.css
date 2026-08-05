@@ -528,7 +528,7 @@ a{color:inherit;text-decoration:none}
   .an__side{display:none}
 }
 @media (max-width:720px){
-  .hero{padding:96px 0 0;display:block}
+  .hero{padding:84px 0 0;display:block}
   .grid{padding:0 16px}
   /* На телефоне мокап начинался на 709px, а реальный сгиб Safari ~659 —
      продукта на первом экране не было видно вообще. display:contents
@@ -540,12 +540,15 @@ a{color:inherit;text-decoration:none}
   .h1{order:2}
   .sub{order:3}
   .cta{order:4}
-  .marks{order:5;margin-bottom:34px}
+  .marks{order:5;margin-bottom:26px}
+  /* лид на телефоне подрос с 15 до 16px и утянул мокап на 41px вниз —
+     возвращаем запас отступами, чтобы окно осталось над сгибом Safari */
+  .pill{margin-bottom:18px}
   .shell{order:6}
   .proof{order:7;margin-top:30px}
   .h1{font-size:34px;letter-spacing:-.75px}
   .sub{font-size:16px;line-height:25px}
-  .cta{flex-direction:column;margin-bottom:22px}
+  .cta{flex-direction:column;margin-bottom:18px}
   .btn{width:100%}
   .shell{padding:0 16px}
   .app{height:430px;border-radius:10px}
