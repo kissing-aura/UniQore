@@ -547,6 +547,18 @@ a{color:inherit;text-decoration:none}
 .romi li b.is-down{color:#f0b46b}
 
 
+
+/* Списки в разделах «Сайт» и «Реклама» несут другие подписи, чем источники
+   заявок: имена форм длиннее, а значения — суммы в тысячах, а не штуки */
+[data-view="site"] .src__n{width:132px}
+[data-view="site"] .src__v{width:18px}
+[data-view="ads"] .src__v{width:34px}
+[data-view="ads"] .src li em{width:32px}
+[data-view="site"] .src__foot b,
+[data-view="ads"] .src__foot b{margin-left:auto}
+[data-view="site"] .ai__b b,
+[data-view="ads"] .ai__b b{font-size:11px}
+
 /* ══ Раздел «Клиенты» ══════════════════════════════════════════════════
    Сетка карточек, а не таблица: третий подряд табличный экран читался бы
    как один и тот же раздел. */
