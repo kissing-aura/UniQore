@@ -1,0 +1,1050 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Черновик 2. Собран не «как мне кажется красиво», а по замерам эталонов.
+
+   Что показала разведка Linear / Attio / Vercel / Framer / Clay / Stripe:
+   · наклон интерфейса — 0 из 8 сайтов. Все показывают UI фронтально;
+   · шрифт ВНУТРИ мокапа 10–14px, не крупнее. Крупный кегль = сразу фейк;
+   · тень — стек 4–5 слоёв по 2.5–6%, цвет сине-серый, а не чёрный;
+   · граница — хайрлайн 1px белым на 6–10%, не серая рамка;
+   · зерно обязательным слоем: тайл 96px, overlay, 5%;
+   · амплитуда движения 4–20px, длительности 0.16–0.4s;
+   · H1 54–88px, вес 500–600, трекинг −0.02…−0.04em, line-height 1.0;
+   · мокап обрезан сгибом — треть уходит вниз.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* Палитра Uniqore, не чёрный Linear: тёмно-синий Deep Tech + лайм + мята.
+     Синева в фоне важна — на чистом чёрном лайм выглядит кислотно, а на
+     #0A0E1A он садится в тон и читается как акцент системы. */
+  --bg:#0A0E1A;
+  --surface:#121826;
+  --surface-2:#0E1422;
+  --border:#1E2536;
+  --ink:#E7EAF0;
+  --dim:#949BA8;
+  /* #808c9f, не #7a8699: на чипе (белый 5% поверх поверхности) старый цвет
+     давал 4,42:1 при норме AA 4,5. Новый — 4,79 на чипе и 5,4 на панели */
+  --dim2:#808c9f;
+  --lime:#CDFF4F;
+  --lime-dim:#9BC22F;
+  --mint:#31e0b0;
+  --hair:rgba(255,255,255,.07);
+  --font:'Geist',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ₽ отсутствует во ВСЕХ наших шрифтах — проверено fontTools по шести woff2.
+   Символ всегда рисуется системным фолбэком, и без подгонки он садится ниже
+   строки: при кегле 18 высота чернил ₽ = 12.4 против 13.1 у цифры. 1.055em
+   выравнивает верх по цифрам, отбивка .2em — типографская, вместо пробела
+   (обычный пробел в Geist шире и рвал строку «187 000 ₽» при переносе). */
+.rub{
+  /* display:inline обязателен: в файле есть жадные селекторы вида
+     `.ai__b span{display:block}`, и они превращали каждый знак в блок —
+     строка «11 600 ₽ против 9 800 ₽ за заявку» разваливалась на пять */
+  display:inline;
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+  font-size:1.055em;font-weight:inherit;letter-spacing:0;
+  margin-left:.2em;white-space:nowrap;
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+
+.lab-note{
+  position:fixed;left:14px;bottom:14px;z-index:99;
+  font:500 11px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.04em;color:var(--dim2);
+  background:rgba(10,12,16,.86);border:1px solid var(--hair);
+  padding:7px 11px;border-radius:999px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.lab-note b{color:var(--lime)}
+
+/* min-height двумя строками: Safari до 15.4 не знает svh и пропустит
+   вторую — останется рабочая vh. Обратный порядок сломал бы новые. */
+.uqhero{position:relative;overflow:hidden;padding:104px 0 40px;min-height:100vh;min-height:100svh;display:flex;align-items:center}
+
+/* Две колонки: слева обещание, справа продукт. Правая колонка сознательно
+   шире экрана — мокап уходит за край, как за сгиб у Linear, только по
+   горизонтали: «продукта больше, чем поместилось в кадр». */
+.grid{
+  position:relative;z-index:3;width:100%;
+  display:grid;grid-template-columns:minmax(360px,440px) minmax(0,1fr);
+  /* minmax(0,1fr) обязателен: иначе grid расширяет вторую колонку под
+     фиксированные 900px окна и ужимает текст, а окно перестаёт уходить
+     за край экрана — весь смысл приёма пропадает. */
+  align-items:center;gap:36px;
+  max-width:1560px;margin:0 auto;
+  /* база 1380, а не 1240: на 1440 это даёт по 30px с каждой стороны, и
+     освободившиеся 140px уходят окну — иначе оно сжимается до 730 и
+     содержимое внутри начинает переноситься */
+  padding:0 max(20px,calc((min(100vw,1560px) - 1380px)/2));
+}
+.wrap{position:relative;z-index:3;text-align:left;padding-bottom:24px}
+
+/* Фон: у Linear это radial + linear в два стопа, без «трёх пятен по вкусу» */
+.uqhero__bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    /* лаймовое свечение за окном — источник света сцены, но приглушённый:
+       у эталонов подсветка едва заметна, вся работа на самом продукте */
+    radial-gradient(46% 52% at 74% 34%, rgba(205,255,79,.09), transparent 68%),
+    radial-gradient(38% 44% at 88% 62%, rgba(49,224,176,.065), transparent 70%),
+    radial-gradient(52% 58% at 50% 100%, rgba(10,14,26,0) 0%, rgba(10,14,26,.6) 100%),
+    linear-gradient(180deg, #0A0E1A 6%, #101728 100%);
+}
+/* Зерно: тайл 96px, отрисованный в 48 (2× плотность), overlay 5% — как у Framer */
+.uqhero__grain{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  mix-blend-mode:overlay;opacity:.05;
+  background-repeat:repeat;background-size:48px 48px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.pill{
+  display:inline-block;margin-bottom:24px;
+  font-size:13px;line-height:18px;color:var(--dim);
+  border:1px solid rgba(205,255,79,.18);border-radius:13px;padding:5px 13px;
+  background:rgba(205,255,79,.03);
+}
+
+/* H1: 64px / вес 600 / трекинг −0.022em / line-height 1.0 — медиана эталонов */
+.h1{
+  /* 54 на 1440: на 58 строка «работает без вас» не влезала в колонку и
+     «вас» повисало четвёртой строкой. Ниже 52 заголовок проигрывает окну
+     960×620 по весу и читается как подпись к картинке */
+  font-size:clamp(38px,3.5vw,50px);line-height:1.04;font-weight:600;letter-spacing:-.028em;
+  color:var(--ink);margin:0 0 22px;
+}
+/* Ступени кегля были 54 / 15,5 / 14 / 12,5 / 12,5 — четыре почти слитых
+   уровня, глаз не читает их как иерархию, и провал после заголовка в 3,5
+   раза. Стало 54 / 18 / 14,5 / 13 / 11: лид отделён, шаг ~1,25. У эталонов
+   лид при H1 54–64 идёт 18–21px. */
+.sub{font-size:18px;line-height:27px;font-weight:400;color:var(--dim);max-width:42ch;margin:0 0 30px}
+
+.cta{display:flex;gap:10px;justify-content:flex-start;margin-bottom:24px;flex-wrap:wrap}
+.uqhero-btn{
+  display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;
+  border-radius:10px;font-size:14.5px;font-weight:500;
+  transition:background-color .16s cubic-bezier(.25,.46,.45,.94),border-color .16s,color .16s;
+}
+/* теней у кнопок нет ни у Clay, ни у Framer, ни у Stripe */
+.uqhero-btn--main{background:var(--lime);color:#0A1005}
+.uqhero-btn--main:hover{background:#d9ff74}
+.uqhero-btn--ghost{border:1px solid var(--hair);color:var(--ink)}
+.uqhero-btn--ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+
+.marks{list-style:none;display:flex;flex-direction:column;gap:10px}
+/* мелкий Geist читается плотно — на 13px и ниже нужен положительный трекинг */
+.marks li{display:flex;align-items:center;gap:9px;font-size:13px;letter-spacing:.005em;color:var(--dim)}
+.marks svg{width:15px;height:15px;color:var(--mint);flex:none}
+
+/* Доказательство под обещанием: не «300+ клиентов», а имена систем, которые
+   можно проверить. Логотипов у нас нет — значит текстом, как логополоса. */
+.proof{margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+.proof__t{
+  display:block;font:400 10px/1 var(--mono);letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim2);margin-bottom:11px;
+}
+.proof__l{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:9px 18px}
+.proof__l li{display:flex;flex-direction:column;gap:2px;line-height:1.25}
+.proof__l b{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.proof__l i{font-style:normal;font-size:11px;letter-spacing:.005em;color:var(--dim2)}
+
+
+/* ══ Карусель продуктов ════════════════════════════════════════════════
+   Три дашборда в ряд: активный по центру и в фокусе, соседние выглядывают
+   краями. Край соседа — не декор, а сообщение «здесь есть ещё»: без него
+   человек не догадается, что можно листать, и увидит один продукт из трёх.
+   Ширина подглядывания 34px — меньше читается как случайная полоска,
+   больше начинает спорить с активной панелью за внимание. */
+.deck{
+  position:relative;width:100%;overflow:hidden;padding:26px 0 46px;
+  /* ширина панели = столько, сколько окну оставляет сетка, но не больше 908 */
+  --pw:min(908px, 100%);
+}
+.deck__rail{
+  display:flex;align-items:stretch;gap:22px;
+  transition:transform .62s cubic-bezier(.32,.72,.28,1);
+  will-change:transform;
+}
+.deck__p{
+  position:relative;flex:0 0 auto;width:var(--pw);
+  transition:opacity .5s ease,filter .5s ease,transform .62s cubic-bezier(.32,.72,.28,1);
+  opacity:.34;filter:saturate(.55);transform:scale(.955);transform-origin:center 60%;
+}
+.deck__p.is-on{opacity:1;filter:none;transform:scale(1)}
+/* соседние панели не перехватывают курсор — иначе пауза автопоказа
+   срабатывает от края, которого человек даже не заметил */
+.deck__p:not(.is-on){pointer-events:none}
+
+.deck__tag{
+  position:absolute;top:-26px;left:2px;
+  font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--dim2);transition:color .4s ease;
+}
+.deck__p.is-on .deck__tag{color:var(--lime)}
+
+/* Стрелки: круг со стеклом, не «шеврон на пустом месте». Держатся у краёв
+   активной панели, а не у краёв экрана — иначе теряются на широком мониторе. */
+.deck__arw{
+  position:absolute;top:calc(50% - 10px);z-index:6;
+  width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.1);
+  background:rgba(16,22,38,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  color:var(--ink);display:grid;place-items:center;cursor:pointer;
+  box-shadow:0 4px 14px rgba(6,9,18,.4), inset 0 1px 0 rgba(255,255,255,.07);
+  transition:background-color .18s,border-color .18s,transform .18s cubic-bezier(.22,.61,.36,1);
+}
+.deck__arw svg{width:20px;height:20px}
+.deck__arw:hover{background:rgba(24,32,52,.9);border-color:rgba(205,255,79,.34);transform:scale(1.07)}
+.deck__arw:active{transform:scale(.96)}
+/* стрелки прижаты к краям самой панели, а не экрана */
+.deck__arw--prev{left:-10px}
+.deck__arw--next{right:-10px}
+
+/* Точки-подписи вместо безымянных кружков: человек сразу видит, что там
+   не «слайд 2», а конкретная услуга */
+.deck__dots{
+  position:absolute;left:0;right:0;bottom:6px;z-index:6;
+  display:flex;justify-content:center;gap:8px;
+}
+.deck__dot{
+  display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  font-size:11.5px;color:var(--dim2);background:none;border:0;
+  padding:6px 12px;border-radius:999px;transition:color .2s,background-color .2s;
+}
+.deck__dot i{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.55;transition:opacity .2s,transform .2s}
+.deck__dot:hover{color:#c3cad4;background:rgba(255,255,255,.04)}
+.deck__dot.is-on{color:var(--ink);background:rgba(255,255,255,.06)}
+.deck__dot.is-on i{background:var(--lime);opacity:1;transform:scale(1.25)}
+
+/* Окно внутри панели больше не тянется резиной — ширину задаёт карусель */
+.deck__p .app{width:100%}
+
+/* ── Мокап ────────────────────────────────────────────────────────────
+   Фиксированная ширина, как у Linear (--width:1320px): интерфейс не
+   тянется под экран, он показан в своём масштабе и обрезается сгибом. */
+/* Окно помещается в кадр целиком. Раньше оно намеренно уходило за правый
+   край — приём «продукта больше, чем поместилось». На практике это читалось
+   не как продолжение, а как обрезанный, испорченный кадр: срезанные колонки
+   таблицы и обрубленный KPI. Теперь ширина резиновая с потолком 960. */
+.shell{position:relative;z-index:2;width:100%;margin:0;padding:0}
+.app{
+  /* 960×620 — это 1.55, пропорция реального ноутбучного экрана. Высота не
+     «на глаз»: ряду нужно 433px, чтобы правая колонка (источники + требует
+     внимания) уместилась целиком; 433 + 86 KPI + 63 шапка + 34 планка = 616.
+     Плюс 4px запаса. Больше нельзя — на экране 800px по высоте окно вместе
+     с отступами героя (144px) перестанет помещаться. */
+  position:relative;
+  display:flex;flex-direction:column;height:620px;overflow:hidden;
+  border-radius:12px;
+  /* isolation обязателен для WebKit: без своего стекового контекста
+     скруглённые углы не обрезают потомков с transform, и содержимое
+     вылезает за рамку окна в момент смены раздела */
+  isolation:isolate;
+  background:var(--surface-2);
+  /* хайрлайн + стек теней: радиусы удваиваются, непрозрачность 2.5–6%,
+     цвет сине-серый #0b0d18, как у Attio — не чёрный */
+  /* Глубина набирается тремя слоями, а не одной тенью:
+     1) хайрлайн-кант сверху светлее, снизу темнее — так ведёт себя реальная
+        кромка стекла под верхним светом;
+     2) стек падающих теней с удвоением радиуса;
+     3) внутренний блик по верхней грани (::before ниже).
+     Источник света — то же лаймовое свечение фона, поэтому кант отдаёт
+     в тёплый, а не в нейтрально-белый. */
+  box-shadow:
+    inset 0 1px 0 rgba(233,255,180,.09),
+    inset 0 -1px 0 rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.075),
+    0 1px 2px rgba(11,13,24,.3),
+    0 3px 6px rgba(11,13,24,.34),
+    0 8px 16px rgba(11,13,24,.38),
+    0 18px 34px rgba(11,13,24,.44),
+    0 36px 68px rgba(11,13,24,.5),
+    0 64px 120px rgba(6,8,16,.55);
+}
+
+
+/* Блик по верхней грани окна: узкая полоса света, стекающая от угла.
+   Не «глянец на всю панель» — только 90px сверху, иначе читается дёшево. */
+.app::before{
+  content:'';position:absolute;inset:0 0 auto;height:90px;pointer-events:none;z-index:4;
+  background:linear-gradient(168deg,
+    rgba(233,255,180,.055) 0%,
+    rgba(233,255,180,.018) 34%,
+    transparent 72%);
+}
+/* Мягкая опора под окном — рассеянный контакт с «поверхностью», без него
+   окно висит в пустоте. Отдельным слоем, чтобы не мешать теням выше. */
+.shell::after{
+  content:'';position:absolute;left:6%;right:6%;bottom:-26px;height:56px;z-index:-1;
+  background:radial-gradient(50% 100% at 50% 0%, rgba(6,9,18,.55), transparent 72%);
+  filter:blur(14px);pointer-events:none;
+}
+/* Свет от окна ложится на фон вокруг — это связывает мокап со сценой */
+.shell::before{
+  content:'';position:absolute;inset:-14% -10%;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(42% 46% at 32% 22%, rgba(205,255,79,.05), transparent 70%),
+    radial-gradient(46% 50% at 78% 74%, rgba(49,224,176,.038), transparent 72%);
+}
+
+/* Панель сайдбара чуть отступает от корпуса — грань между слоями видна */
+.side{box-shadow:inset -1px 0 0 rgba(0,0,0,.25), inset 1px 0 0 rgba(255,255,255,.02)}
+/* Планка окна как отдельная поверхность над содержимым */
+.chrome{box-shadow:0 1px 0 rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.045)}
+/* Карточки и блоки — тончайший внутренний кант, читается как стекло */
+.kcard,.ai li,.tsk__i,.set__rule{box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+.kpi{box-shadow:inset 0 1px 0 rgba(255,255,255,.022)}
+
+/* Планка окна: тонкая, 34px. У Framer рамка тоже почти не заметна —
+   1px hairline и radius 18px, вся работа на содержимом, а не на «шапке». */
+.chrome{
+  display:flex;align-items:center;gap:12px;height:34px;flex:none;
+  padding:0 12px;background:#0B111D;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.chrome__dots{display:flex;gap:6px}
+.chrome__dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
+.chrome__url{
+  flex:1;max-width:280px;margin:0 auto;text-align:center;
+  /* системный моноширинный, а не JetBrains: ради одной строки адреса
+     тянулся файл латиницы на 30,6 КБ. В имитации адресной строки браузера
+     системный шрифт к тому же выглядит достовернее */
+  font:400 10.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#767f8e;
+  background:rgba(255,255,255,.04);border-radius:6px;padding:5px 10px;
+}
+.chrome__side{display:flex;gap:6px}
+.chrome__side i{width:11px;height:2px;border-radius:2px;background:rgba(255,255,255,.14)}
+.app__body{display:flex;flex:1;min-height:0}
+
+/* ── Сайдбар ── */
+.side{width:184px;flex:none;border-right:1px solid var(--border);display:flex;flex-direction:column;background:#0B111D}
+.side__top{display:flex;align-items:center;gap:9px;padding:14px 14px 12px}
+.side__logo{width:20px;height:20px;border-radius:6px;background:linear-gradient(140deg,var(--lime),var(--mint));flex:none}
+.side__name{font-size:13px;font-weight:600;letter-spacing:-.01em}
+.side__nav{display:flex;flex-direction:column;gap:1px;padding:4px 8px}
+.side__i{
+  -webkit-appearance:none;appearance:none;background:none;border:0;font:inherit;text-align:left;width:100%;
+  display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:6px;
+  font-size:12px;color:#9099a6;transition:background-color .16s,color .16s;
+}
+.side__i svg{width:14px;height:14px;flex:none;opacity:.85}
+.side__i b{margin-left:auto;font-size:11px;font-weight:500;color:#767f8e}
+.side__i b.is-hot{color:var(--lime)}
+.side__i.is-on{background:rgba(255,255,255,.06);color:var(--ink)}
+/* состояние «курсор навёлся, сейчас кликнет» — держится 300мс перед сменой */
+.side__i.is-pre{background:rgba(255,255,255,.035);color:#c3cad4}
+.side__i:hover{background:rgba(255,255,255,.045);color:#c3cad4}
+.side__foot{margin-top:auto;display:flex;align-items:center;gap:9px;padding:12px 14px;border-top:1px solid rgba(255,255,255,.05)}
+.side__me{display:flex;flex-direction:column;line-height:1.25}
+.side__me b{font-size:12px;font-weight:500}
+.side__me i{font-size:10.5px;color:var(--dim2);font-style:normal}
+
+/* ── Основная область ── */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--surface-2)}
+
+/* Три раздела продукта в одном окне. Статичный скриншот показывает одну
+   страницу — а покупают систему целиком; поэтому разделы переключаются
+   сами, как будто в системе кто-то работает. Кроссфейд 0.26s + 6px —
+   ровно столько, сколько занимает смена таба у Linear. */
+.views{position:relative;flex:1;min-height:0}
+/* Уходящий и приходящий разведены по времени: простой кроссфейд показывал
+   оба экрана поверх друг друга 0.26s, и это читалось как каша, а не как
+   смена раздела. Старый гаснет за 0.13s, новый стартует на 0.1s позже —
+   перекрытие 0.03s, глазом не ловится. */
+.view{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px);
+  transition:opacity .13s ease,visibility 0s .13s,transform 0s .13s;
+}
+.view.is-on{
+  opacity:1;visibility:visible;pointer-events:auto;transform:none;
+  transition:opacity .24s cubic-bezier(.25,.46,.45,.94) .1s,
+             transform .3s cubic-bezier(.25,.46,.45,.94) .1s,
+             visibility 0s;
+}
+
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.05);flex:none}
+.top__t{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.top__b{display:block;margin-top:2px;font-size:11px;color:var(--dim2)}
+.top__r{display:flex;align-items:center;gap:8px}
+.seg{display:flex;border:1px solid var(--hair);border-radius:7px;overflow:hidden}
+.seg i{font-style:normal;font-size:11px;padding:5px 10px;color:#8a93a1}
+.seg i.is-on{background:rgba(255,255,255,.07);color:var(--ink)}
+.btn-s{font-size:11px;padding:6px 11px;border:1px solid var(--hair);border-radius:7px;color:#9099a6}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);flex:none}
+.kpi{background:var(--surface-2);padding:12px 14px 11px;position:relative;overflow:hidden}
+.kpi__l{display:block;font-size:11px;color:var(--dim2);margin-bottom:6px}
+/* inline-block, чтобы подсветка обновления обнимала само число, а не
+   растягивалась полосой на всю карточку; отрицательный отступ держит
+   число на прежнем месте */
+.kpi__v{display:inline-block;padding:1px 5px;margin:0 -5px;font-size:18px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+/* правый отступ под спарклайн — но не больше, чем нужно: на 72px подпись
+   переносилась на вторую строку, полоса KPI вырастала с 86 до 114px и
+   выдавливала последнюю строку таблицы за низ окна */
+.kpi__d{display:block;margin-top:4px;font-size:11px;padding-right:50px}
+.kpi__d.is-up{color:var(--mint)}
+.kpi__d.is-down{color:#f0796b}
+.spark{position:absolute;right:11px;bottom:10px;width:44px;height:18px;color:rgba(205,255,79,.5)}
+.kpi:nth-child(4) .spark{color:rgba(240,121,107,.45)}   /* средний чек падает */
+
+/* Колонки поменяны местами: окно уходит за правый край экрана, и раньше
+   под обрез попадали «Источники заявок» и «Требует внимания» — заголовки
+   рубились на полуслове («2 заявки без ответстве…»), блок читался как
+   сломанный. Таблица теряет от обреза только правые колонки, а это для
+   таблицы естественно: у неё продолжение вправо и так подразумевается. */
+.row{display:grid;grid-template-columns:1.12fr 1.5fr;gap:1px;background:var(--border);flex:1;min-height:0;overflow:hidden}
+.col{order:-1}
+/* grid-элементы по умолчанию min-height:auto и растягивают ряд под свой
+   контент — без этого правая колонка вылезала на 104px за низ окна */
+.row > *{min-height:0}
+/* без overflow строка таблицы, которая не влезла, режется пополам на границе
+   окна и читается как баг вёрстки, а не как «данных больше» */
+.box{background:var(--surface-2);padding:12px 14px;min-width:0;overflow:hidden}
+/* подпись идёт сразу за заголовком, а не прижата к правому краю: у узких
+   блоков правый край срезан кромкой экрана и подпись пропадала целиком */
+.box__h{display:flex;align-items:baseline;justify-content:flex-start;gap:9px;margin-bottom:9px}
+.box--table .box__h{justify-content:space-between}
+.box__t{font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px}
+.box__m{font-size:11px;color:var(--dim2)}
+.col{
+  display:grid;grid-template-rows:auto minmax(0,1fr);gap:1px;
+  background:var(--border);min-width:0;
+}
+/* каждый блок обрезает своё содержимое сам, иначе нижний наезжает на верхний */
+.col > .box{overflow:hidden}
+
+/* Колонок ровно столько, сколько влезает в бокс на данной ширине. Раньше
+   таблица просила 512px при доступных 421 и молча срезалась по правому
+   краю — у всех десяти строк, на всех раскладках включая 1440.
+   Порядок отказа: «Обновлено» (дублирует шапку) → «Ответственный»
+   (дублирует аватар) → «Источник». */
+
+/* таблица — главный носитель «плотности»: 12px, шесть строк, шесть колонок */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{
+  text-align:left;font-weight:400;font-size:10.5px;color:var(--dim2);
+  padding:0 7px 7px 0;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;
+}
+.tbl td{padding:7px 7px 7px 0;border-bottom:1px solid rgba(255,255,255,.035);white-space:nowrap}
+.tbl tbody tr:last-child td{border-bottom:0}
+.tbl td:first-child{display:flex;align-items:center;gap:7px;font-weight:500}
+.tbl .num{font-variant-numeric:tabular-nums}
+.tbl .dim{color:var(--dim2);font-size:11px}
+.tbl tr.is-warn td{background:rgba(240,121,107,.05)}
+/* «Кто» — только аватар. При окне 908 таблице достаётся 396px, а пяти
+   колонкам нужно 437: колонка ответственного уходит совсем, аватар и так
+   дублируется на канбане */
+.tbl th:nth-child(5),.tbl td:nth-child(5){display:none}
+.tbl .who{width:26px}
+.tbl .who .ava--s{margin-right:0}
+
+.ava{width:19px;height:19px;border-radius:5px;flex:none;display:grid;place-items:center;font-size:10px;font-weight:600;color:#0b1018;background:linear-gradient(140deg,var(--lime),var(--mint))}
+.ava--s{width:17px;height:17px;border-radius:50%;font-size:9px;background:linear-gradient(140deg,#5b9dff,#31e0b0);display:inline-grid;vertical-align:-4px;margin-right:5px}
+.ava--u{background:linear-gradient(140deg,#8b7bff,#5b9dff);border-radius:50%}
+
+.st{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.st--go{color:var(--mint);background:rgba(49,224,176,.1)}
+.st--wait{color:#f0b46b;background:rgba(240,180,107,.1)}
+.st--new{color:var(--lime);background:rgba(205,255,79,.12)}
+
+
+
+/* Источники: не список процентов, а полосы с абсолютными числами и
+   динамикой. У эталонов такие панели несут 3–4 показателя в строке —
+   именно плотность отличает рабочую панель от плашки «для красоты». */
+.src{list-style:none;display:flex;flex-direction:column;gap:7px}
+.src li{display:flex;align-items:center;gap:7px;font-size:11.5px;line-height:1}
+.src li i{width:6px;height:6px;border-radius:2px;background:var(--c);flex:none}
+.src__n{width:88px;flex:none;color:#c3cad4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src__bar{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.05);overflow:hidden;min-width:24px}
+.src__bar b{display:block;height:100%;width:var(--w);border-radius:3px;background:var(--c);opacity:.75}
+.src__v{width:22px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500;flex:none}
+.src li em{width:26px;text-align:right;font-style:normal;font-size:10px;font-variant-numeric:tabular-nums;flex:none}
+.src li em.is-up{color:var(--mint)}
+.src li em.is-down{color:#f0796b}
+.src__foot{
+  display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:9px;
+  border-top:1px solid rgba(255,255,255,.05);font-size:11px;color:var(--dim2);
+}
+.src__foot b{color:var(--ink);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.src__foot em{font-style:normal;font-size:10px}
+.src__foot em.is-down{color:var(--mint)}   /* дешевле — это хорошо */
+
+/* Требует внимания: иконка + два уровня текста + действие. Без действия
+   блок читается как статичный текст, а не как рабочее место. */
+.dotmini{width:6px;height:6px;border-radius:50%;background:var(--lime);flex:none}
+.ai{list-style:none;display:flex;flex-direction:column;gap:6px}
+.ai li{
+  display:flex;align-items:flex-start;gap:8px;padding:8px 9px;border-radius:7px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045);
+  transition:background-color .16s cubic-bezier(.25,.46,.45,.94);
+}
+.ai li:hover{background:rgba(255,255,255,.05)}
+.ai--hot{border-color:rgba(240,121,107,.22);background:rgba(240,121,107,.05)}
+.ai__ic{width:15px;height:15px;flex:none;color:var(--dim2);margin-top:1px}
+.ai--hot .ai__ic{color:#f0796b}
+.ai__ic svg{width:15px;height:15px}
+.ai__b{flex:1;min-width:0}
+.ai__b > b{display:block;font-size:11.5px;font-weight:500;line-height:1.3;margin-bottom:2px}
+.ai__b > span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.35}
+.ai__go{
+  flex:none;font-size:9.5px;color:#9099a6;border:1px solid rgba(255,255,255,.08);
+  border-radius:5px;padding:3px 5px;margin-top:1px;white-space:nowrap;
+}
+
+/* ══ Раздел «Сделки»: канбан ═══════════════════════════════════════════
+   Контраст с таблицей дашборда — главный смысл переключения. Если второй
+   экран похож на первый, переключение выглядит подделкой. */
+.kan{
+  flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border);
+}
+.kcol{background:var(--surface-2);padding:11px 10px;display:flex;flex-direction:column;gap:7px;min-width:0;overflow:hidden}
+.kcol__h{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:#c3cad4;white-space:nowrap;min-width:0}
+.kcol__h b{font-size:10px;font-weight:600;color:var(--dim2);background:rgba(255,255,255,.06);border-radius:4px;padding:1px 5px}
+.kcol__h em{margin-left:auto;font-style:normal;font-size:10px;color:var(--dim2);font-variant-numeric:tabular-nums}
+.kdot{width:6px;height:6px;border-radius:2px;background:var(--c);flex:none}
+
+.kcard{
+  display:flex;flex-direction:column;gap:6px;padding:9px 9px 8px;border-radius:7px;
+  background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.05);
+  transition:background-color .16s cubic-bezier(.25,.46,.45,.94);
+}
+.kcard:hover{background:rgba(255,255,255,.055)}
+.kcard__t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px;font-weight:500;line-height:1.25;letter-spacing:-.01em}
+/* сумма не рвётся никогда: при узких колонках «250 000 ₽» ломалось надвое.
+   Если пара не влезает, на вторую строку уходит чип источника целиком */
+.kcard__m{display:flex;align-items:center;flex-wrap:wrap;gap:4px 6px;min-width:0}
+.kcard__m b{white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.kcard__m i{
+  font-style:normal;font-size:9.5px;padding:1.5px 5px;border-radius:4px;white-space:nowrap;
+  color:var(--dim2);background:rgba(255,255,255,.05);
+}
+/* цвета каналов те же, что в «Источниках заявок» и «Окупаемости»:
+   Instagram лайм, Telegram мята, Сайт синий, Директ серый. Раньше на доске
+   Telegram был синим, а Сайт мятным — один продукт с двумя легендами */
+.kcard__m i.ig{color:#CDFF4F;background:rgba(205,255,79,.1)}
+.kcard__m i.tg{color:#31e0b0;background:rgba(49,224,176,.1)}
+.kcard__m i.st2{color:#5b9dff;background:rgba(91,157,255,.1)}
+.kcard__m i.ad{color:#9aa4b2;background:rgba(135,146,163,.12)}
+.kcard__f{display:flex;align-items:center;gap:5px}
+.kcard__d{font-size:10px;color:var(--dim2);margin-left:auto}
+.kcard__d--warn{color:#f0b46b}
+.kcard__d--ok{color:var(--mint)}
+.kcard--warn{border-color:rgba(240,180,107,.24);background:rgba(240,180,107,.05)}
+.kcard--done{opacity:.72}
+.kcard--ghost{
+  align-items:center;justify-content:center;padding:7px;border-style:dashed;
+  border-color:rgba(255,255,255,.07);background:none;
+}
+.kcard__more{font-size:10.5px;color:var(--dim2)}
+
+/* ══ Раздел «Аналитика» ════════════════════════════════════════════════ */
+.an{flex:1;min-height:0;display:grid;grid-template-columns:1.45fr 1fr;gap:1px;background:var(--border)}
+.an__chart{background:var(--surface-2);padding:12px 14px 10px;display:flex;flex-direction:column;min-width:0}
+.an__legend{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--dim2)}
+.an__legend i{width:9px;height:2px;border-radius:2px;background:var(--lime);flex:none}
+.an__legend i.pl{background:none;border-top:2px dashed var(--dim2);height:0;margin-left:6px}
+.an__legend i.bq{width:7px;height:7px;border-radius:2px;background:rgba(91,157,255,.5);margin-left:6px}
+.an__now{display:flex;align-items:baseline;gap:8px;margin:2px 0 8px}
+.an__now b{font-size:21px;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.an__now em{font-style:normal;font-size:11px;color:var(--mint)}
+.an__now > span:last-child{font-size:10.5px;color:var(--dim2);margin-left:auto}
+.an__plot{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;padding-left:44px}
+.an__canvas{position:relative;flex:1;min-height:0}
+/* подписи шкалы — HTML, а не текст в SVG: viewBox растягивается
+   preserveAspectRatio="none" и раздавил бы буквы по горизонтали */
+.an__y{list-style:none;position:absolute;left:-44px;top:0;bottom:0;width:40px;margin:0}
+.an__y li{position:absolute;right:0;font-size:9.5px;color:var(--dim2);font-variant-numeric:tabular-nums;transform:translateY(-50%)}
+.an__y li:nth-child(1){top:21.1%}
+.an__y li:nth-child(2){top:44.8%}
+.an__y li:nth-child(3){top:68.6%}
+.an__y li:nth-child(4){top:92.3%}
+.achart{position:absolute;inset:0;width:100%;height:100%;display:block}
+.achart__g line{stroke:rgba(255,255,255,.05);stroke-width:1}
+/* точка последнего значения — HTML, чтобы остаться круглой: 530/560 по X,
+   26.2/134 по Y — те же координаты, что у конца линии в SVG */
+.an__dot{
+  position:absolute;left:93.75%;top:23.4%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;
+  border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px rgba(205,255,79,.16);
+}
+/* столбцы тоже вынесены из SVG: rx там растягивался вместе с системой
+   координат и скругление получалось разным по осям */
+/* восемь равных колонок — та же сетка, что у точек линии (x=(i+0.5)/8×560)
+   и у подписей оси. При space-between центры разъезжались до 8px, потому
+   что столбцы 26px, а подписи «н1» — 14px */
+.an__bars{flex:none;height:90px;display:grid;grid-template-columns:repeat(8,1fr);align-items:end;justify-items:center;padding-top:4px}
+.an__bars span{width:26px;justify-self:center;height:var(--h);border-radius:2px;background:rgba(91,157,255,.28)}
+.an__bars span.is-now{background:rgba(91,157,255,.5)}
+/* подпись «заявки, шт» убрана: она стояла абсолютом и легла поверх первого
+   столбца. Синий квадрат в легенде объясняет столбцы без неё */
+.achart__line{fill:none;stroke:var(--lime);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.achart__plan{fill:none;stroke:rgba(255,255,255,.2);stroke-width:1.4;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+/* тот же padding-left, что у .an__plot: иначе подписи разъезжаются
+   со своими столбцами на 5,5px */
+.an__x{display:grid;grid-template-columns:repeat(8,1fr);text-align:center;font-size:9.5px;color:var(--dim2);padding:5px 0 0 44px}
+
+.an__side{display:grid;grid-template-rows:auto minmax(0,1fr);gap:1px;background:var(--border);min-width:0}
+.an__side > .box{overflow:hidden}
+
+.fun{list-style:none;display:flex;flex-direction:column;gap:5px}
+.fun li{position:relative;display:flex;align-items:center;gap:7px;font-size:11px;line-height:1;padding:5px 6px;border-radius:4px}
+.fun li::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:var(--w);border-radius:4px;
+  background:linear-gradient(90deg,rgba(205,255,79,.22),rgba(205,255,79,.06));
+}
+.fun li.is-ok::before{background:linear-gradient(90deg,rgba(49,224,176,.26),rgba(49,224,176,.07))}
+.fun li > *{position:relative}
+.fun__n{width:96px;flex:none;color:#c3cad4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fun li b{width:26px;text-align:right;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums;flex:none}
+.fun li em{width:36px;text-align:right;font-style:normal;font-size:10px;color:var(--dim2);font-variant-numeric:tabular-nums;flex:none}
+
+.romi{list-style:none;display:flex;flex-direction:column;gap:8px}
+.romi li{display:flex;align-items:center;gap:7px;font-size:11px;line-height:1;color:#c3cad4}
+.romi li i{width:6px;height:6px;border-radius:2px;background:var(--c);flex:none}
+/* название фиксированной ширины, а не flex:1 — иначе оно растягивалось и
+   выталкивало числа за обрезанный край окна */
+.romi li > span:first-of-type{width:88px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.romi__c{width:58px;flex:none;font-size:10.5px;color:var(--dim2);font-variant-numeric:tabular-nums;text-align:right}
+.romi li b{width:34px;text-align:right;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums;flex:none}
+.romi li b.is-up{color:var(--mint)}
+.romi li b.is-down{color:#f0b46b}
+
+
+
+/* Списки в разделах «Сайт» и «Реклама» несут другие подписи, чем источники
+   заявок: имена форм длиннее, а значения — суммы в тысячах, а не штуки */
+[data-view="site"] .src__n{width:132px}
+[data-view="site"] .src__v{width:18px}
+[data-view="ads"] .src__v{width:34px}
+[data-view="ads"] .src li em{width:32px}
+[data-view="site"] .src__foot b,
+[data-view="ads"] .src__foot b{margin-left:auto}
+[data-view="site"] .ai__b b,
+[data-view="ads"] .ai__b b{font-size:11px}
+
+/* ══ Раздел «Клиенты» ══════════════════════════════════════════════════
+   Сетка карточек, а не таблица: третий подряд табличный экран читался бы
+   как один и тот же раздел. */
+.cli{
+  flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);
+  grid-auto-rows:1fr;gap:1px;background:var(--border);
+}
+.cli__c{
+  background:var(--surface-2);padding:13px 13px 12px;display:flex;flex-direction:column;gap:3px;
+  min-width:0;transition:background-color .16s cubic-bezier(.25,.46,.45,.94);
+}
+.cli__c:hover{background:#121a2b}
+.cli__c--cold{opacity:.62}
+.cli__c .ava{margin-bottom:4px}
+.cli__n{font-size:11.5px;font-weight:500;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli__s{font-size:10px;color:var(--dim2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli__c b{font-size:12.5px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums;margin-top:auto;white-space:nowrap}
+.cli__d{font-size:9.5px;color:var(--dim2)}
+.cli__d--warn{color:#f0b46b}
+.cli__f{
+  flex:none;display:flex;align-items:center;gap:10px;padding:9px 14px;
+  border-top:1px solid var(--border);font-size:10.5px;color:var(--dim2);
+}
+.cli__f em{font-style:normal;margin-left:auto}
+
+
+/* Счётчики карточек берут текст из data-атрибута под текущую раскладку:
+   на узких экранах часть клиентов скрыта, и подпись «Показаны 16 из 268»
+   была бы прямым враньём — видно 12, 9 или 6. */
+.cnt::before{content:attr(data-l)}
+
+/* ══ Раздел «Задачи» ═══════════════════════════════════════════════════ */
+.tsk{flex:1;min-height:0;padding:10px 14px 0;overflow:hidden}
+.tsk__g{display:flex;align-items:center;gap:7px;margin:9px 0 6px}
+.tsk__g:first-child{margin-top:0}
+.tsk__gt{font:400 9.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--dim2)}
+.tsk__gt--hot{color:#f0796b}
+.tsk__g b{font-size:9.5px;font-weight:500;color:var(--dim2);background:rgba(255,255,255,.06);border-radius:4px;padding:1px 5px}
+.tsk__i{
+  display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;margin-bottom:4px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045);
+  transition:background-color .16s cubic-bezier(.25,.46,.45,.94);
+}
+.tsk__i:hover{background:rgba(255,255,255,.05)}
+.tsk__i--hot{border-color:rgba(240,121,107,.22);background:rgba(240,121,107,.05)}
+.tsk__box{
+  width:13px;height:13px;flex:none;border-radius:4px;
+  border:1.4px solid rgba(255,255,255,.22);
+}
+.tsk__i--hot .tsk__box{border-color:rgba(240,121,107,.5)}
+.tsk__b{flex:1;min-width:0}
+.tsk__b > b{display:block;font-size:11.5px;font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsk__b > span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.35;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsk__m{display:flex;align-items:center;gap:6px;flex:none}
+.tsk__d{font-style:normal;font-size:10px;color:var(--dim2);white-space:nowrap}
+.tsk__d--warn{color:#f0796b}
+
+
+.set__h2{margin-top:14px}
+.team{list-style:none;display:flex;flex-direction:column;gap:7px}
+.team li{display:flex;align-items:center;gap:8px;font-size:11.5px;line-height:1}
+.team__n{font-weight:500;color:#c3cad4}
+.team__r{font-size:10.5px;color:var(--dim2)}
+
+/* закрытые задачи приглушены и зачёркнуты: они показывают, что система
+   не только копит дела, но и закрывает их. Строка компактнее открытой —
+   описание не нужно, дело уже сделано */
+.tsk__i--done{opacity:.5;background:none;border-color:rgba(255,255,255,.035);padding:4px 8px;margin-bottom:2px}
+.tsk__i--done .tsk__b > span{display:none}
+.tsk__g--done{margin-top:6px}
+.tsk__i--done .tsk__b b{text-decoration:line-through;text-decoration-thickness:1px}
+.tsk__box--on{background:rgba(49,224,176,.22);border-color:rgba(49,224,176,.5);position:relative}
+.tsk__box--on::after{
+  content:'';position:absolute;left:3px;top:4px;width:5px;height:2.5px;
+  border-left:1.6px solid var(--mint);border-bottom:1.6px solid var(--mint);
+  transform:rotate(-45deg);
+}
+
+/* ══ Раздел «Настройки» ════════════════════════════════════════════════ */
+.set{flex:1;min-height:0;display:grid;grid-template-columns:168px minmax(0,1fr);gap:1px;background:var(--border)}
+.set__nav{background:var(--surface-2);padding:10px 8px;display:flex;flex-direction:column;gap:1px}
+.set__n{
+  font-size:11.5px;color:#9099a6;padding:7px 9px;border-radius:6px;
+  transition:background-color .16s,color .16s;
+}
+.set__n:hover{background:rgba(255,255,255,.04);color:#c3cad4}
+.set__n.is-on{background:rgba(255,255,255,.06);color:var(--ink)}
+.set__body{background:var(--surface-2);padding:12px 14px;min-width:0;overflow:hidden}
+
+.intg{list-style:none;display:flex;flex-direction:column;gap:6px}
+.intg li{display:flex;align-items:center;gap:8px;font-size:11.5px;line-height:1}
+.intg li i{width:6px;height:6px;border-radius:2px;background:var(--c);flex:none}
+.intg__n{width:112px;flex:none;color:#c3cad4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intg__v{font-size:10.5px;color:var(--dim2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.intg--off .intg__n{color:var(--dim2)}
+/* переключатель: 26×14 — минимальный размер, при котором он читается
+   как переключатель, а не как полоска. Стоит сразу за названием, а не
+   прижат вправо: правый край окна срезан кромкой экрана, и там его
+   попросту не было видно — как раньше не было видно чисел в источниках */
+.sw{
+  width:26px;height:14px;flex:none;border-radius:8px;position:relative;
+  background:rgba(255,255,255,.09);transition:background-color .16s;
+}
+.sw::after{
+  content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;
+  background:#8b96a6;transition:transform .16s cubic-bezier(.25,.46,.45,.94),background-color .16s;
+}
+.sw.is-on{background:rgba(205,255,79,.28)}
+.sw.is-on::after{transform:translateX(12px);background:var(--lime)}
+
+.set__rule{
+  display:flex;align-items:center;gap:9px;margin-top:12px;padding:9px 10px;border-radius:7px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045);
+}
+.set__ri{width:15px;height:15px;flex:none;color:var(--mint)}
+.set__ri svg{width:15px;height:15px}
+.set__rb{flex:none;max-width:230px;min-width:0}
+.set__rb b{display:block;font-size:11.5px;font-weight:500;line-height:1.3}
+.set__rb > span{display:block;font-size:10.5px;color:var(--dim2);margin-top:1px}
+
+
+/* ══ Оркестровка появления ═════════════════════════════════════════════
+   Правило из скилла анти-AI-slop дословно: «одна хорошо срежиссированная
+   загрузка со ступенчатыми появлениями сильнее россыпи микро-эффектов».
+   Поэтому здесь ОДНА партитура, а не набор случайных твинов:
+
+     0.22s  корпус окна
+     0.42s  сайдбар и шапка раздела
+     0.50s  KPI — по одной карточке через 60мс
+     0.74s  ряды таблицы — по строке через 34мс
+     0.62s  полосы источников и воронки растут от нуля
+     0.55s  линия графика прочерчивается
+
+   Ничего не мигает и не пружинит — в чёрном списке скилла и то, и другое.
+   Всё держится на opacity и transform, ни один слой не дёргает раскладку. */
+
+/* После первой загрузки партитура играет с начала, без стартовой паузы:
+   при переключении раздела ждать секунду недопустимо. Один сдвиг --uqt
+   двигает всю оркестровку целиком, не трогая порядок и интервалы. */
+.app.is-live{--uqt:-.42s}
+
+@keyframes uqRise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes uqGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes uqDraw{to{stroke-dashoffset:0}}
+
+.app .side,
+.app .top{animation:uqRise .5s cubic-bezier(.22,.61,.36,1) calc(var(--uqt, 0s) + .42s) backwards}
+
+.view.is-on .kpi{animation:uqRise .46s cubic-bezier(.22,.61,.36,1) backwards}
+.view.is-on .kpi:nth-child(1){animation-delay:calc(var(--uqt, 0s) + .50s)}
+.view.is-on .kpi:nth-child(2){animation-delay:calc(var(--uqt, 0s) + .56s)}
+.view.is-on .kpi:nth-child(3){animation-delay:calc(var(--uqt, 0s) + .62s)}
+.view.is-on .kpi:nth-child(4){animation-delay:calc(var(--uqt, 0s) + .68s)}
+
+/* строки таблицы въезжают лесенкой — это и есть «система загружает данные» */
+.view.is-on .tbl tbody tr{animation:uqRise .4s cubic-bezier(.22,.61,.36,1) backwards}
+.view.is-on .tbl tbody tr:nth-child(1){animation-delay:calc(var(--uqt, 0s) + .74s)}
+.view.is-on .tbl tbody tr:nth-child(2){animation-delay:calc(var(--uqt, 0s) + .774s)}
+.view.is-on .tbl tbody tr:nth-child(3){animation-delay:calc(var(--uqt, 0s) + .808s)}
+.view.is-on .tbl tbody tr:nth-child(4){animation-delay:calc(var(--uqt, 0s) + .842s)}
+.view.is-on .tbl tbody tr:nth-child(5){animation-delay:calc(var(--uqt, 0s) + .876s)}
+.view.is-on .tbl tbody tr:nth-child(6){animation-delay:calc(var(--uqt, 0s) + .91s)}
+.view.is-on .tbl tbody tr:nth-child(7){animation-delay:calc(var(--uqt, 0s) + .944s)}
+.view.is-on .tbl tbody tr:nth-child(8){animation-delay:calc(var(--uqt, 0s) + .978s)}
+.view.is-on .tbl tbody tr:nth-child(9){animation-delay:calc(var(--uqt, 0s) + 1.012s)}
+.view.is-on .tbl tbody tr:nth-child(10){animation-delay:calc(var(--uqt, 0s) + 1.046s)}
+
+/* полосы растут от левого края: transform-origin обязателен, иначе они
+   раздуваются из центра и читаются как «дышащий» декор */
+.view.is-on .src__bar b,
+.view.is-on .fun li::before{transform-origin:left center;animation:uqGrow .62s cubic-bezier(.22,.61,.36,1) calc(var(--uqt, 0s) + .62s) backwards}
+.view.is-on .src li:nth-child(2) .src__bar b{animation-delay:calc(var(--uqt, 0s) + .68s)}
+.view.is-on .src li:nth-child(3) .src__bar b{animation-delay:calc(var(--uqt, 0s) + .74s)}
+.view.is-on .src li:nth-child(4) .src__bar b{animation-delay:calc(var(--uqt, 0s) + .80s)}
+.view.is-on .fun li:nth-child(2)::before{animation-delay:calc(var(--uqt, 0s) + .68s)}
+.view.is-on .fun li:nth-child(3)::before{animation-delay:calc(var(--uqt, 0s) + .74s)}
+.view.is-on .fun li:nth-child(4)::before{animation-delay:calc(var(--uqt, 0s) + .80s)}
+
+/* столбцы графика поднимаются снизу — как реальная отрисовка гистограммы */
+.view.is-on .an__bars span{transform-origin:bottom center;animation:uqGrow .5s cubic-bezier(.22,.61,.36,1) backwards;animation-name:uqGrowY}
+@keyframes uqGrowY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.view.is-on .an__bars span:nth-child(1){animation-delay:calc(var(--uqt, 0s) + .55s)}
+.view.is-on .an__bars span:nth-child(2){animation-delay:calc(var(--uqt, 0s) + .59s)}
+.view.is-on .an__bars span:nth-child(3){animation-delay:calc(var(--uqt, 0s) + .63s)}
+.view.is-on .an__bars span:nth-child(4){animation-delay:calc(var(--uqt, 0s) + .67s)}
+.view.is-on .an__bars span:nth-child(5){animation-delay:calc(var(--uqt, 0s) + .71s)}
+.view.is-on .an__bars span:nth-child(6){animation-delay:calc(var(--uqt, 0s) + .75s)}
+.view.is-on .an__bars span:nth-child(7){animation-delay:calc(var(--uqt, 0s) + .79s)}
+.view.is-on .an__bars span:nth-child(8){animation-delay:calc(var(--uqt, 0s) + .83s)}
+
+/* линия выручки прочерчивается слева направо; 1400 — с запасом длина пути */
+.view.is-on .achart__line{stroke-dasharray:1400;stroke-dashoffset:1400;animation:uqDraw 1.05s cubic-bezier(.33,.9,.5,1) calc(var(--uqt, 0s) + .55s) forwards}
+.view.is-on .achart__area{animation:uqFade .7s ease-out calc(var(--uqt, 0s) + .95s) backwards}
+.view.is-on .an__dot{animation:uqFade .35s ease-out calc(var(--uqt, 0s) + 1.45s) backwards}
+@keyframes uqFade{from{opacity:0}to{opacity:1}}
+
+/* карточки доски и клиентов — общая лесенка по 40мс */
+.view.is-on .kcard,
+.view.is-on .cli__c,
+.view.is-on .tsk__i{animation:uqRise .42s cubic-bezier(.22,.61,.36,1) backwards}
+.view.is-on .kcol:nth-child(1) .kcard{animation-delay:calc(var(--uqt, 0s) + .50s)}
+.view.is-on .kcol:nth-child(2) .kcard{animation-delay:calc(var(--uqt, 0s) + .56s)}
+.view.is-on .kcol:nth-child(3) .kcard{animation-delay:calc(var(--uqt, 0s) + .62s)}
+.view.is-on .kcol:nth-child(4) .kcard{animation-delay:calc(var(--uqt, 0s) + .68s)}
+.view.is-on .cli__c:nth-child(-n+4){animation-delay:calc(var(--uqt, 0s) + .50s)}
+.view.is-on .cli__c:nth-child(n+5):nth-child(-n+8){animation-delay:calc(var(--uqt, 0s) + .57s)}
+.view.is-on .cli__c:nth-child(n+9):nth-child(-n+12){animation-delay:calc(var(--uqt, 0s) + .64s)}
+.view.is-on .cli__c:nth-child(n+13){animation-delay:calc(var(--uqt, 0s) + .71s)}
+.view.is-on .tsk__i:nth-child(-n+4){animation-delay:calc(var(--uqt, 0s) + .52s)}
+.view.is-on .tsk__i:nth-child(n+5){animation-delay:calc(var(--uqt, 0s) + .60s)}
+
+/* ── Вход: 4px и 0.4s, как внутри мокапа Linear ── */
+.pill,.h1,.sub,.cta,.marks,.proof{animation:in .45s cubic-bezier(.25,.46,.45,.94) backwards}
+.h1{animation-delay:calc(var(--uqt, 0s) + .05s)}.sub{animation-delay:calc(var(--uqt, 0s) + .1s)}.cta{animation-delay:calc(var(--uqt, 0s) + .15s)}
+.marks{animation-delay:calc(var(--uqt, 0s) + .2s)}.proof{animation-delay:calc(var(--uqt, 0s) + .25s)}
+/* окно приезжает отдельно: чуть дальше и дольше остальных — это главный
+   объект кадра, на 4px за 0.4s его появление просто не читалось */
+.app{animation:inApp .58s cubic-bezier(.22,.61,.36,1) .22s backwards}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes inApp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* Значение, которое поменялось, коротко подсвечивается — так делают рабочие
+   панели, и это единственный способ заметить обновление, не глядя в упор */
+.kpi__v.is-fresh{animation:fresh .9s ease-out}
+@keyframes fresh{
+  0%{background:rgba(205,255,79,.16);box-shadow:0 0 0 4px rgba(205,255,79,.16)}
+  100%{background:transparent;box-shadow:0 0 0 4px rgba(205,255,79,0)}
+}
+.kpi__v{border-radius:5px}
+
+@media (min-width:1180.02px) and (max-width:1500px){
+  /* 440, а не 500: заголовок на кегле 50 просит 421px под «Система, которая»,
+     и всё, что сверх этого, лучше отдать окну */
+  .grid{grid-template-columns:minmax(320px,440px) minmax(0,1fr);gap:32px}
+  }
+/* 1001–1240 — самая тесная десктопная полоса: две колонки ещё стоят рядом,
+   но окно шириной 960 показывалось лишь на 51%. Ужимаем текстовую колонку и
+   само окно, чтобы продукта было видно больше двух третей. */
+@media (min-width:1180.02px) and (max-width:1400px){
+  .grid{grid-template-columns:minmax(300px,390px) minmax(0,1fr);gap:32px}
+  .h1{font-size:clamp(38px,4.2vw,46px)}
+  /* колонка тут всего 390px: лид на 18px разъезжался на лишнюю строку и
+     текстовый блок становился выше окна — композиция перевешивала влево */
+  .sub{font-size:16.5px;line-height:25px}
+  .side{width:190px}
+  /* box--table тут всего 338px: убираем «Ответственный» и «Источник» */
+  .tbl th:nth-child(5),.tbl td:nth-child(5){display:none}
+  .tbl th:nth-child(3),.tbl td:nth-child(3){display:none}
+  .tbl{font-size:11px}
+  /* «Счёт выставлен» занимал 106px из 337 — короткая форма из data-s даёт 45 */
+  .st{font-size:0;padding:2px 6px}
+  .st::before{content:attr(data-s);font-size:10px}
+  .kcol__h em{display:none}
+  /* три колонки вместо четырёх: карточка клиента при 4 колонках сжималась
+     до 130px и имена уходили в многоточие */
+  .cli{grid-template-columns:repeat(3,1fr)}
+  .cli__c:nth-child(n+13){display:none}
+  .cnt::before{content:attr(data-m)}
+  .set{grid-template-columns:140px minmax(0,1fr)}
+  /* колонка доски тут 152px: «Автосервис «Драйв»» просил 116 при доступных
+     112 и обрезался многоточием — полкегля и трекинг возвращают его целиком */
+  .kcard__t{font-size:11px;letter-spacing:-.012em}
+  /* кнопки действий съедали 50px ширины, заголовки переносились на вторую
+     строку и блок вылезал на 27px за низ окна */
+  .ai__go{display:none}
+  /* карточка KPI тут 152px: за вычетом отступов под спарклайн подписи
+     оставалось 66px при нужных 92 — «+16,5% за неделю» ломалось надвое
+     и полоса KPI вырастала с 86 до 100px */
+  .spark{display:none}
+  .kpi__d{padding-right:0}
+  /* правой колонке достаётся 216px, а строке «Стоимость заявки · 6 440 ₽ ·
+     −450 ₽ к прошлой» нужно 244 — дельта уходит, цена остаётся */
+  .src__foot em{display:none}
+}
+@media (max-width:1180.01px){
+  /* колонки складываются: сначала обещание, под ним продукт */
+  .grid{grid-template-columns:1fr;gap:44px;padding:0 24px;max-width:900px}
+  .shell{width:100%}
+  .app{height:486px}
+  .side{width:180px}
+  .row{grid-template-columns:1fr}
+  .col{display:none}
+  /* строк ровно столько, сколько влезает целиком: полстроки на срезе
+     читается как баг, а не как «данных больше» */
+  .tbl tbody tr:nth-child(n+7){display:none}
+  .tbl th:nth-child(5),.tbl td:nth-child(5){display:none}
+  .tbl th:nth-child(3),.tbl td:nth-child(3){display:none}
+  /* карточка KPI сужается до 135px, и подпись с отступом под спарклайн
+     переносилась на вторую строку — полоса KPI росла и давила таблицу */
+  .spark{display:none}
+  .kpi__d{padding-right:0}
+  .kan{grid-template-columns:repeat(3,1fr)}
+  .kcol:last-child{display:none}
+  /* окно во всю ширину экрана, но само уже: карточек в ряд — три, а
+     навигация настроек уходит, оставляя содержимое */
+  .cli{grid-template-columns:repeat(3,1fr)}
+  .cli__c:nth-child(n+10){display:none}
+  .cnt::before{content:attr(data-s)}
+  .set{grid-template-columns:1fr}
+  .set__nav{display:none}
+  /* окно тут 486px, доступно 389. Прячем справочные блоки — закрытые
+     задачи и получателей уведомлений: они не несут счётчиков, поэтому
+     их отсутствие ничего не искажает. Открытые задачи остаются все семь */
+  .tsk__g--done,
+  .tsk__g--done ~ .tsk__i{display:none}
+  .team,
+  .set__h2 ~ .set__h2{display:none}
+  .set__rule:last-of-type{display:none}   /* убираем последнее, а не первое: на первое ссылаются алерт и задачи */
+  .set__h2 .box__m{display:none}
+  .tsk{padding:8px 12px 0}
+  .tsk__i{padding:5px 8px;margin-bottom:3px}
+  .tsk__g{margin:6px 0 4px}
+  .tsk__b b{font-size:11px}
+  .tsk__b > span{font-size:10px}
+  /* окно тут 486px → колонке достаётся 389, это ровно четыре карточки */
+  .kcol > :nth-child(n+6){display:none}
+  .an{grid-template-columns:1fr}
+  .an__side{display:none}
+}
+@media (max-width:720px){
+  .uqhero{padding:84px 0 0;display:block}
+  .grid{padding:0 16px}
+  /* На телефоне мокап начинался на 709px, а реальный сгиб Safari ~659 —
+     продукта на первом экране не было видно вообще. display:contents
+     распускает .wrap, и блок «системы работают у клиентов» уезжает ПОД
+     окно: мокап поднимается на 180px и выглядывает из-за сгиба. */
+  .grid{display:flex;flex-direction:column;gap:0}
+  .wrap{display:contents}
+  .pill{order:1}
+  .h1{order:2}
+  .sub{order:3}
+  .cta{order:4}
+  .shell{order:5}
+  .marks{order:6;margin-top:30px}
+  /* лид на телефоне подрос с 15 до 16px и утянул мокап на 41px вниз —
+     возвращаем запас отступами, чтобы окно осталось над сгибом Safari */
+  /* Продукт должен появляться раньше сгиба, а не после всего текста.
+     Гарантии («не приняли этап…») уезжают ПОД окно вместе с клиентами:
+     сначала обещание и кнопка, сразу за ними — сам продукт. */
+  .pill{margin-bottom:16px;font-size:12px;padding:4px 11px}
+  .proof{order:7;margin-top:24px}
+  .h1{font-size:33px;letter-spacing:-.8px;margin-bottom:16px}
+  .sub{font-size:15.5px;line-height:23.5px;margin-bottom:22px}
+  .cta{flex-direction:column;gap:9px;margin-bottom:0}
+  .uqhero-btn{width:100%}
+  .shell{padding:0 16px}
+  .app{height:472px;border-radius:10px}
+  .side{display:none}
+  /* четыре KPI в два ряда съедали 173px из 396 — почти половину окна.
+     Оставляем два: деньги и заявки, остальное несёт таблица */
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi:nth-child(n+3){display:none}
+  .spark{display:none}
+  .kpi__d{padding-right:0}
+  .tbl tbody tr:nth-child(n+6){display:none}
+
+  /* на телефоне видны только две колонки доски — третья читается как обрез,
+     а не как «не поместилось»: у карточек всё равно нет места на детали */
+  .kan{grid-template-columns:repeat(2,1fr)}
+  .kcol:nth-child(3){display:none}
+  .cli{grid-template-columns:repeat(2,1fr)}
+  .cli__c:nth-child(n+7){display:none}
+  .cnt::before{content:attr(data-xs)}
+  .cli__f em{display:none}
+  .cli__c{padding:9px 10px;gap:2px}
+  .cli__n{font-size:11px}
+  .cli__c b{font-size:12px}
+  /* Показываем две первые группы целиком — «Просрочено» (1) и «Сегодня» (2).
+     Резать группу пополам нельзя: счётчик рядом с заголовком сразу выдал бы
+     несоответствие. Названия переносятся, а не обрезаются: места хватает. */
+  .tsk{padding:8px 12px 0}
+  .tsk__i{padding:7px 8px}
+  .tsk__g:nth-of-type(3),
+  .tsk__g:nth-of-type(3) ~ .tsk__i{display:none}
+  .tsk__b b{white-space:normal}
+  .tsk__b > span{white-space:normal}
+  .tsk__m .ava--s{display:none}
+  .intg__n{width:auto;flex:1}
+  .intg__v{display:none}
+  /* колонки на телефоне ещё уже, чем на узком десктопе — тот же приём,
+     плюс 2px с боков карточки: названию не хватало ровно трёх */
+  .kcard__t{font-size:11px;letter-spacing:-.012em}
+  .kcard{padding:9px 7px 8px}
+  .kcol{padding:11px 8px}
+  /* в 333px высоты влезает ровно три карточки (36 + 85×N); четвёртая
+     вылезала на 154px и обрезалась по низу окна */
+  .kcol > :nth-child(n+5){display:none}
+  .kcol__h em{display:none}
+  .top__r .seg{display:none}
+}
+/* На 360–400px три оставшиеся колонки давали 328px при доступных 296 —
+   «Сумма» срезалась на 46px без многоточия, у КАЖДОЙ строки. Ужимаем кегль
+   и чипы этапа: 10.5px внутри мокапа эталоны допускают (их диапазон 10–14). */
+@media (max-width:400px){
+  .tbl{font-size:10.5px}
+  .tbl th{font-size:9.5px}
+  .tbl td{padding:6px 6px 6px 0}
+  .tbl .dim{font-size:10px}
+  .ava{width:17px;height:17px;font-size:9px}
+  .tbl td:first-child{gap:6px}
+  /* этап показывается короткой формой из data-s: «Счёт выставлен» занимал
+     92px из 268 доступных, «Счёт» — 34px. Без этого не помещалась «Сумма» */
+  .st{font-size:0;padding:2px 5px}
+  .st::before{content:attr(data-s);font-size:9.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  .pill,.h1,.sub,.cta,.marks,.proof,.app,.kpi__v{animation:none}
+  /* переходы разделов, строк и карточек тоже должны замереть */
+  .view,.tbl tbody tr,.kcard,.ai li,.side__i,.uqhero-btn,
+  .cli__c,.tsk__i,.set__n,.sw,.sw::after{transition-duration:.01ms!important}
+  /* вся оркестровка появления тоже замирает */
+  .app .side,.app .top,.view.is-on .kpi,.view.is-on .tbl tbody tr,
+  .view.is-on .src__bar b,.view.is-on .fun li::before,.view.is-on .an__bars span,
+  .view.is-on .achart__line,.view.is-on .achart__area,.view.is-on .an__dot,
+  .view.is-on .kcard,.view.is-on .cli__c,.view.is-on .tsk__i,
+  .kpi__v.is-fresh{animation:none!important}
+  .view.is-on .achart__line{stroke-dashoffset:0!important}
+}
+
+/* подсветка строки под курсором — 0.16s, как все состояния у Linear */
+.tbl tbody tr{transition:background-color .16s cubic-bezier(.25,.46,.45,.94)}
+.tbl tbody tr.is-hover td{background:rgba(255,255,255,.035)}
+.tbl tbody tr.is-warn.is-hover td{background:rgba(240,121,107,.08)}
