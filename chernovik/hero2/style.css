@@ -375,9 +375,11 @@ a{color:inherit;text-decoration:none}
   transition:background-color .16s cubic-bezier(.25,.46,.45,.94),transform .16s;
 }
 .kcard:hover{background:rgba(255,255,255,.055)}
-.kcard__t{font-size:11.5px;font-weight:500;line-height:1.25;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.kcard__m{display:flex;align-items:center;gap:6px;min-width:0}
-.kcard__m b{font-size:12px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.kcard__t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px;font-weight:500;line-height:1.25;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* сумма не рвётся никогда: при узких колонках «250 000 ₽» ломалось надвое.
+   Если пара не влезает, на вторую строку уходит чип источника целиком */
+.kcard__m{display:flex;align-items:center;flex-wrap:wrap;gap:4px 6px;min-width:0}
+.kcard__m b{white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
 .kcard__m i{
   font-style:normal;font-size:9.5px;padding:1.5px 5px;border-radius:4px;white-space:nowrap;
   color:var(--dim2);background:rgba(255,255,255,.05);
