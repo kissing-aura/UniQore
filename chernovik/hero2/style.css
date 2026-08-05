@@ -42,7 +42,7 @@ a{color:inherit;text-decoration:none}
    горизонтали: «продукта больше, чем поместилось в кадр». */
 .grid{
   position:relative;z-index:3;width:100%;
-  display:grid;grid-template-columns:minmax(360px,470px) 1fr;
+  display:grid;grid-template-columns:minmax(380px,500px) 1fr;
   align-items:center;gap:56px;
   max-width:1560px;margin:0 auto;padding:0 0 0 max(24px,calc((100vw - 1240px)/2));
 }
@@ -97,11 +97,11 @@ a{color:inherit;text-decoration:none}
    тянется под экран, он показан в своём масштабе и обрезается сгибом. */
 .shell{
   position:relative;z-index:2;
-  width:1080px;      /* шире своей колонки — правый край уходит за экран */
+  width:900px;       /* шире своей колонки — правый край уходит за экран */
   margin:0;padding:0;
 }
 .app{
-  display:flex;flex-direction:column;height:600px;overflow:hidden;
+  display:flex;flex-direction:column;height:512px;overflow:hidden;
   border-radius:12px;
   background:#0D0F12;
   /* хайрлайн + стек теней: радиусы удваиваются, непрозрачность 2.5–6%,
@@ -214,56 +214,24 @@ a{color:inherit;text-decoration:none}
 .ai b{display:block;font-size:11.5px;font-weight:500;margin-bottom:2px}
 .ai span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.4}
 
-/* ── Сателлиты: как у Attio — куски системы, а не декоративные плашки ── */
-.sat{
-  position:absolute;width:236px;border-radius:10px;overflow:hidden;background:#101318;
-  box-shadow:0 0 0 1px rgba(255,255,255,.07),0 2px 5px rgba(11,13,24,.3),
-             0 8px 18px rgba(11,13,24,.36),0 20px 38px rgba(11,13,24,.42);
-}
-/* Сателлиты живут НА мокапе, слегка выступая за его левый край, — как
-   мини-окна Attio. Заходить на текстовую колонку им нельзя: перекрытый
-   лид читается как ошибка вёрстки, а не как композиция. */
-.sat--tg{left:-38px;top:206px}
-.sat--auto{left:-38px;bottom:52px;width:230px}
-.sat__h{display:flex;align-items:center;gap:7px;padding:9px 11px;font-size:11px;color:#9099a6;border-bottom:1px solid rgba(255,255,255,.05)}
-.sat__ic{width:17px;height:17px;border-radius:5px;display:grid;place-items:center;background:rgba(255,255,255,.07);color:#9099a6}
-.sat__ic svg{width:10px;height:10px}
-.sat__ic.tg{background:rgba(51,144,236,.16);color:#3390ec}
-.sat__b{padding:10px 11px;display:flex;flex-direction:column;gap:3px}
-.sat__b b{font-size:12px;font-weight:500}
-.sat__b span{font-size:11px;color:#9099a6}
-.sat__b .dim{color:var(--dim2);font-size:10.5px}
-.sat__log{padding:9px 11px;display:flex;flex-direction:column;gap:6px;font-size:10.5px;color:#9099a6}
-.sat__log span{display:flex;align-items:center;gap:7px}
-.sat__log em{margin-left:auto;font-style:normal;color:var(--dim2);font-variant-numeric:tabular-nums}
-.sat__log i{width:6px;height:6px;border-radius:50%;flex:none}
-.sat__log i.ok{background:var(--mint)}
-.sat__log i.run{background:var(--lime);animation:pulse 1.6s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-
 /* ── Вход: 4px и 0.4s, как внутри мокапа Linear ── */
-.pill,.h1,.sub,.cta,.app,.sat{animation:in .4s cubic-bezier(.25,.46,.45,.94) backwards}
+.pill,.h1,.sub,.cta,.marks,.app{animation:in .4s cubic-bezier(.25,.46,.45,.94) backwards}
 .h1{animation-delay:.04s}.sub{animation-delay:.08s}.cta{animation-delay:.12s}
-.app{animation-delay:.16s}.sat--tg{animation-delay:.3s}.sat--auto{animation-delay:.38s}
+.marks{animation-delay:.16s}.app{animation-delay:.2s}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
 @media (max-width:1500px){
   .grid{grid-template-columns:minmax(330px,430px) 1fr;gap:40px}
-  .sat--tg{left:-28px}
-  .sat--auto{left:-28px}
-}
+  }
 @media (max-width:1240px){
   /* места слева не осталось — сателлиты заходят на окно, как мини-окна Attio */
-  .sat--tg{left:-32px}
-  .sat--auto{left:-24px}
-  .app{height:540px}
+    .app{height:540px}
 }
 @media (max-width:1000px){
   /* колонки складываются: сначала обещание, под ним продукт */
   .grid{grid-template-columns:1fr;gap:44px;padding:0 24px;max-width:900px}
   .shell{width:100%}
   .app{height:480px}
-  .sat{display:none}
   .side{width:180px}
   .row{grid-template-columns:1fr}
   .col{display:none}
@@ -284,7 +252,7 @@ a{color:inherit;text-decoration:none}
   .tbl th:nth-child(6),.tbl td:nth-child(6){display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .pill,.h1,.sub,.cta,.app,.sat,.sat__log i.run{animation:none}
+  .pill,.h1,.sub,.cta,.marks,.app{animation:none}
 }
 
 /* подсветка строки под курсором — 0.16s, как все состояния у Linear */
