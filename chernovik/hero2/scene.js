@@ -1,46 +1,120 @@
-/* scene.js (черновик 2) — намеренно почти пустой.
+/* scene.js (черновик 2) — движения ровно столько, сколько у эталонов.
 
-   Разведка эталонов показала: у Framer и Clay в первом экране движения нет
-   вообще, у Raycast весь вход — translateY(20px) за 1s, у Linear внутри
-   мокапа амплитуда 4px за 0.4s, а Stripe возит координаты мыши в шейдер и
-   ничего с ними не делает (эффект закомментирован в исходнике).
+   Разведка показала: у Framer и Clay в первом экране движения нет вообще,
+   у Raycast весь вход — translateY(20px) за 1s, у Linear внутри мокапа
+   амплитуда 4px за 0.4s. Никакого параллакса, наклона и прилетающих
+   карточек — это язык шаблонов, а не продуктовых сайтов.
 
-   Поэтому здесь ровно две вещи: подсветка строки под курсором (как реакция
-   живого интерфейса, 0.16s) и редкое обновление данных, чтобы таблица не
-   выглядела мёртвым скриншотом. Ни параллакса, ни наклона, ни плавающих
-   карточек — это язык шаблонов, а не продуктовых сайтов. */
+   Что здесь есть:
+   1) разделы продукта переключаются сами — статичный скриншот показывает
+      одну страницу, а покупают систему целиком;
+   2) подсветка строки под курсором, 0.16s;
+   3) редкое обновление цифры в шапке, чтобы дашборд не выглядел мёртвым. */
 (function () {
   'use strict';
-  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-  /* Строка таблицы подсвечивается под курсором — 0.16s, как все состояния
-     у Linear. Делаем классом, а не :hover, чтобы подсветку можно было
-     показать и программно. */
-  var строки = document.querySelectorAll('.tbl tbody tr');
-  Array.prototype.forEach.call(строки, function (tr) {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var окно   = document.querySelector('[data-app]');
+  var адрес  = document.querySelector('[data-url]');
+  if (!окно) return;
+
+  /* ── 1. Переключение разделов ───────────────────────────────────────── */
+
+  var РАЗДЕЛЫ = [
+    { key: 'dash',  url: 'crm.uniqore.pro/dashboard', держать: 7000 },
+    { key: 'deals', url: 'crm.uniqore.pro/deals',     держать: 6000 },
+    { key: 'stats', url: 'crm.uniqore.pro/analytics', держать: 6000 }
+  ];
+
+  var виды    = {};
+  var кнопки  = {};
+  document.querySelectorAll('.view').forEach(function (v) { виды[v.dataset.view] = v; });
+  document.querySelectorAll('.side__i[data-go]').forEach(function (b) {
+    кнопки[b.dataset.go] = b;
+    b.style.cursor = 'pointer';
+    b.addEventListener('click', function () { перейти(b.dataset.go, true); });
+  });
+
+  var текущий = 0;
+  var таймер  = null;
+  var пауза   = false;   /* курсор внутри окна — человек рассматривает */
+  var виден   = true;    /* hero в кадре */
+  var ручная  = 0;       /* до какого момента автоцикл молчит после клика */
+
+  function перейти(key, вручную) {
+    var i = РАЗДЕЛЫ.findIndex(function (р) { return р.key === key; });
+    if (i < 0) return;
+    текущий = i;
+
+    for (var k in виды) виды[k].classList.toggle('is-on', k === key);
+    for (var b in кнопки) кнопки[b].classList.remove('is-on', 'is-pre');
+    if (кнопки[key]) кнопки[key].classList.add('is-on');
+    if (адрес) адрес.textContent = РАЗДЕЛЫ[i].url;
+
+    if (вручную) ручная = Date.now() + 18000;
+    расписать();
+  }
+
+  /* Перед автопереключением пункт на полсекунды получает hover-состояние —
+     кажется, что по нему кто-то наводит курсор и кликает. Без этого смена
+     экрана выглядит как подмена картинки, а не как работа человека. */
+  function следующий() {
+    var i = (текущий + 1) % РАЗДЕЛЫ.length;
+    var кн = кнопки[РАЗДЕЛЫ[i].key];
+    if (кн) кн.classList.add('is-pre');
+    setTimeout(function () { перейти(РАЗДЕЛЫ[i].key, false); }, 300);
+  }
+
+  function расписать() {
+    clearTimeout(таймер);
+    if (reduce) return;
+    таймер = setTimeout(тик, РАЗДЕЛЫ[текущий].держать);
+  }
+
+  function тик() {
+    /* скрытая вкладка, курсор в окне, недавний клик или hero за кадром —
+       переносим, а не пропускаем: иначе после возврата на вкладку
+       прилетает пачка отложенных переключений */
+    if (document.hidden || пауза || !виден || Date.now() < ручная) {
+      таймер = setTimeout(тик, 1200);
+      return;
+    }
+    следующий();
+  }
+
+  окно.addEventListener('pointerenter', function () { пауза = true; });
+  окно.addEventListener('pointerleave', function () { пауза = false; });
+
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(function (entries) {
+      виден = entries[0].isIntersecting;
+    }, { threshold: 0.15 }).observe(окно);
+  }
+
+  расписать();
+
+  /* ── 2. Подсветка строки под курсором ───────────────────────────────── */
+
+  document.querySelectorAll('.tbl tbody tr').forEach(function (tr) {
     tr.addEventListener('pointerenter', function () { tr.classList.add('is-hover'); });
     tr.addEventListener('pointerleave', function () { tr.classList.remove('is-hover'); });
   });
 
   if (reduce) return;
 
-  /* Раз в ~9 секунд одна цифра в шапке меняется — этого достаточно, чтобы
-     экран читался живым. Никаких прилетающих карточек: у эталонов ничего
-     подобного нет, а «поток событий» в герое читается как демо-ролик. */
-  var чек = document.querySelectorAll('.kpi__v')[2];
-  var конв = document.querySelectorAll('.kpi__v')[3];
-  var время = document.querySelector('.top__b');
-  if (!чек || !время) return;
+  /* ── 3. Живая цифра в шапке дашборда ────────────────────────────────── */
+
+  var конв  = document.querySelectorAll('[data-view="dash"] .kpi__v')[3];
+  var время = document.querySelector('[data-view="dash"] .top__b');
+  if (!время) return;
 
   var мин = 2;
-  function тик() {
-    if (document.hidden) return;
+  setInterval(function () {
+    if (document.hidden || !виден) return;
     мин += 1;
     время.textContent = 'Обновлено ' + мин + ' мин назад';
-    if (мин % 3 === 0) {
-      var к = (67.4 + (Math.random() * 1.2 - .6)).toFixed(1).replace('.', ',');
-      конв.textContent = к + '%';
+    if (конв && мин % 3 === 0) {
+      конв.textContent = (67.4 + (Math.random() * 1.2 - .6)).toFixed(1).replace('.', ',') + '%';
     }
-  }
-  setInterval(тик, 9000);
+  }, 9000);
 })();
