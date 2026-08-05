@@ -7,7 +7,7 @@
 <title>[черновик 2] hero по эталонам — Uniqore</title>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
-<link rel="stylesheet" href="/chernovik/hero2/style.css?v=17">
+<link rel="stylesheet" href="/chernovik/hero2/style.css?v=18">
 </head>
 <body>
 <div class="lab-note">черновик 2 · собран по замерам Linear / Attio / Vercel · <b>/chernovik/hero2/</b></div>
@@ -332,28 +332,49 @@
           <section class="an__chart">
             <div class="box__h">
               <span class="box__t">Выручка по неделям</span>
-              <span class="an__legend"><i></i>факт<i class="pl"></i>план</span>
+              <span class="an__legend"><i></i>выручка<i class="pl"></i>план<i class="bq"></i>заявки</span>
             </div>
             <div class="an__now"><b>2 995 000 ₽</b><em class="up">+18,2%</em><span>текущая неделя</span></div>
-            <svg class="achart" viewBox="0 0 560 196" preserveAspectRatio="none" aria-hidden="true">
-              <defs>
-                <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#CDFF4F" stop-opacity=".22"/>
-                  <stop offset="100%" stop-color="#CDFF4F" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <g class="achart__g">
-                <line x1="0" y1="32" x2="560" y2="32"/>
-                <line x1="0" y1="78" x2="560" y2="78"/>
-                <line x1="0" y1="124" x2="560" y2="124"/>
-                <line x1="0" y1="170" x2="560" y2="170"/>
-              </g>
-              <path class="achart__plan" d="M10 158 L85.7 146 L161.4 134 L237.1 122 L312.9 110 L388.6 98 L464.3 86 L540 74"/>
-              <path class="achart__area" d="M10 152.6 L85.7 132.1 L161.4 139.2 L237.1 100.5 L312.9 87.9 L388.6 66.6 L464.3 46.8 L540 28.3 L540 196 L10 196 Z" fill="url(#ag)"/>
-              <path class="achart__line" d="M10 152.6 L85.7 132.1 L161.4 139.2 L237.1 100.5 L312.9 87.9 L388.6 66.6 L464.3 46.8 L540 28.3"/>
-              <circle class="achart__halo" cx="540" cy="28.3" r="8"/>
-              <circle class="achart__dot" cx="540" cy="28.3" r="3.6"/>
-            </svg>
+
+            <!-- Одна линия на всю площадь читалась как растянутый примитив.
+                 Здесь два ряда данных: выручка линией против пунктирного плана
+                 и заявки столбцами внизу — так панель несёт связь «заявок
+                 больше → выручка выше», а не просто «график вверх». -->
+            <div class="an__plot">
+              <ul class="an__y"><li>3,0 млн</li><li>2,5</li><li>2,0</li><li>1,5</li></ul>
+              <svg class="achart" viewBox="0 0 560 196" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#CDFF4F" stop-opacity=".2"/>
+                    <stop offset="100%" stop-color="#CDFF4F" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <g class="achart__g">
+                  <line x1="0" y1="25.8" x2="560" y2="25.8"/>
+                  <line x1="0" y1="54.7" x2="560" y2="54.7"/>
+                  <line x1="0" y1="83.7" x2="560" y2="83.7"/>
+                  <line x1="0" y1="112.6" x2="560" y2="112.6"/>
+                </g>
+
+                <g class="achart__bars">
+                  <rect x="17"  y="169.4" width="26" height="16.6" rx="2"/>
+                  <rect x="88"  y="165.8" width="26" height="20.2" rx="2"/>
+                  <rect x="160" y="167"   width="26" height="19"   rx="2"/>
+                  <rect x="231" y="161.1" width="26" height="24.9" rx="2"/>
+                  <rect x="303" y="159.9" width="26" height="26.1" rx="2"/>
+                  <rect x="374" y="156.3" width="26" height="29.7" rx="2"/>
+                  <rect x="446" y="153.9" width="26" height="32.1" rx="2"/>
+                  <rect x="517" y="151.6" width="26" height="34.4" rx="2" class="is-now"/>
+                </g>
+
+                <path class="achart__plan" d="M30 121 L101.4 111 L172.9 101 L244.3 91 L315.7 81 L387.1 71 L458.6 61 L530 51"/>
+                <path class="achart__area" d="M30 117.3 L101.4 102.2 L172.9 107.4 L244.3 79.1 L315.7 69.8 L387.1 54.2 L458.6 39.7 L530 26.2 L530 134 L30 134 Z" fill="url(#ag)"/>
+                <path class="achart__line" d="M30 117.3 L101.4 102.2 L172.9 107.4 L244.3 79.1 L315.7 69.8 L387.1 54.2 L458.6 39.7 L530 26.2"/>
+                <circle class="achart__halo" cx="530" cy="26.2" r="9"/>
+                <circle class="achart__dot" cx="530" cy="26.2" r="3.6"/>
+              </svg>
+              <span class="an__blab">заявки, шт</span>
+            </div>
             <div class="an__x"><span>н1</span><span>н2</span><span>н3</span><span>н4</span><span>н5</span><span>н6</span><span>н7</span><span>н8</span></div>
           </section>
 
@@ -389,6 +410,6 @@
   </div>
 </section>
 
-<script src="/chernovik/hero2/scene.js?v=17" defer></script>
+<script src="/chernovik/hero2/scene.js?v=18" defer></script>
 </body>
 </html>

@@ -85,9 +85,10 @@ a{color:inherit;text-decoration:none}
 
 /* H1: 64px / вес 600 / трекинг −0.022em / line-height 1.0 — медиана эталонов */
 .h1{
-  /* 58 на 1440 — медиана эталонов (54–88). На 52 заголовок проигрывал
-     окну 960×620 по весу: текст читался как подпись к картинке */
-  font-size:clamp(38px,4vw,58px);line-height:1.03;font-weight:600;letter-spacing:-.028em;
+  /* 54 на 1440: на 58 строка «работает без вас» не влезала в колонку и
+     «вас» повисало четвёртой строкой. Ниже 52 заголовок проигрывает окну
+     960×620 по весу и читается как подпись к картинке */
+  font-size:clamp(38px,3.75vw,54px);line-height:1.03;font-weight:600;letter-spacing:-.028em;
   color:var(--ink);margin:0 0 18px;
 }
 .sub{font-size:15.5px;line-height:24px;font-weight:400;color:var(--dim);max-width:44ch;margin:0 0 24px}
@@ -362,17 +363,30 @@ a{color:inherit;text-decoration:none}
 .an__legend{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--dim2)}
 .an__legend i{width:9px;height:2px;border-radius:2px;background:var(--lime);flex:none}
 .an__legend i.pl{background:none;border-top:2px dashed var(--dim2);height:0;margin-left:6px}
+.an__legend i.bq{width:7px;height:7px;border-radius:2px;background:rgba(91,157,255,.5);margin-left:6px}
 .an__now{display:flex;align-items:baseline;gap:8px;margin:2px 0 8px}
 .an__now b{font-size:21px;font-weight:600;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
 .an__now em{font-style:normal;font-size:11px;color:var(--mint)}
 .an__now span{font-size:10.5px;color:var(--dim2);margin-left:auto}
-.achart{flex:1;min-height:0;width:100%;display:block}
+.an__plot{position:relative;flex:1;min-height:0;padding-left:44px}
+/* подписи шкалы — HTML, а не текст в SVG: viewBox растягивается
+   preserveAspectRatio="none" и раздавил бы буквы по горизонтали */
+.an__y{list-style:none;position:absolute;left:0;top:0;bottom:0;width:40px;margin:0}
+.an__y li{position:absolute;right:0;font-size:9.5px;color:var(--dim2);font-variant-numeric:tabular-nums;transform:translateY(-50%)}
+.an__y li:nth-child(1){top:13.2%}
+.an__y li:nth-child(2){top:27.9%}
+.an__y li:nth-child(3){top:42.7%}
+.an__y li:nth-child(4){top:57.4%}
+.an__blab{position:absolute;left:44px;bottom:2px;font-size:9px;color:var(--dim2);letter-spacing:.02em}
+.achart{width:100%;height:100%;display:block}
+.achart__bars rect{fill:rgba(91,157,255,.28)}
+.achart__bars rect.is-now{fill:rgba(91,157,255,.5)}
 .achart__g line{stroke:rgba(255,255,255,.05);stroke-width:1}
 .achart__line{fill:none;stroke:var(--lime);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .achart__plan{fill:none;stroke:rgba(255,255,255,.2);stroke-width:1.4;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
 .achart__dot{fill:var(--lime)}
 .achart__halo{fill:rgba(205,255,79,.16)}
-.an__x{display:flex;justify-content:space-between;font-size:9.5px;color:var(--dim2);padding:5px 2px 0}
+.an__x{display:flex;justify-content:space-between;font-size:9.5px;color:var(--dim2);padding:5px 2px 0 46px}
 
 .an__side{display:grid;grid-template-rows:auto minmax(0,1fr);gap:1px;background:var(--border);min-width:0}
 .an__side > .box{overflow:hidden}
