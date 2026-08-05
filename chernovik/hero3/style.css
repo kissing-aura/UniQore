@@ -163,11 +163,15 @@ a{color:inherit;text-decoration:none}
   /* Панель заведомо уже деки: разница уходит на «подглядывание» соседей.
      По 38px с каждой стороны — этого хватает, чтобы прочитать «там ещё
      дашборды», и мало, чтобы сосед начал спорить с активной панелью. */
-  --peek:26px;
+  /* Видимая часть соседа = peek − gap. При peek 26 и зазоре 22 оставалось
+     четыре пикселя — соседа не было видно вовсе. Считаем от обратного:
+     хотим показать 28px соседа, значит peek = 28 + gap. */
+  --gap:14px;
+  --peek:42px;
   --pw:calc(100% - var(--peek) * 2);
 }
 .deck__rail{
-  display:flex;align-items:stretch;gap:22px;
+  display:flex;align-items:stretch;gap:var(--gap);
   transition:transform .62s cubic-bezier(.32,.72,.28,1);
   will-change:transform;
 }
@@ -322,7 +326,7 @@ a{color:inherit;text-decoration:none}
 .app__body{display:flex;flex:1;min-height:0}
 
 /* ── Сайдбар ── */
-.side{width:184px;flex:none;border-right:1px solid var(--border);display:flex;flex-direction:column;background:#0B111D}
+.side{width:172px;flex:none;border-right:1px solid var(--border);display:flex;flex-direction:column;background:#0B111D}
 .side__top{display:flex;align-items:center;gap:9px;padding:14px 14px 12px}
 .side__logo{width:20px;height:20px;border-radius:6px;background:linear-gradient(140deg,var(--lime),var(--mint));flex:none}
 .side__name{font-size:13px;font-weight:600;letter-spacing:-.01em}

@@ -86,6 +86,10 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
   .card img{object-position:50% 58%}
 }
 
+/* режим одиночного кадра (?frame=…): сцена одна на экране */
+body.frame-mode .pad{display:none}
+body.frame-mode .stage{height:100svh}
+
 @media (prefers-reduced-motion:reduce){
   .fx,.fx-glow{display:none}
   .card,.head,.card__cap,.card__flag{opacity:1!important;transform:none!important}
@@ -410,12 +414,12 @@ function render(p, time){
       r += (P.r1[i]-r)*e; g += (P.g1[i]-g)*e; b += (P.b1[i]-b)*e;
       r += (205-r)*air*0.28; g += (255-g)*air*0.28; b += (79-b)*air*0.28;
 
-      const a = (t>=1 ? 0.74 : 0.55+air*0.45) * vis;
-      const S = P.sz[i]*(1+air*0.45)*dpr;
+      const a = (0.80 + air*0.30) * vis;
+      const S = (P.sw[i] + (P.sp[i]-P.sw[i])*e) * (1+air*0.45) * dpr;
       const X = x*dpr, Y = y*dpr;
 
       splat(d,cw,ch,X,Y,r,g,b,a);
-      if (S>1.15){
+      if (S>1.5){
         const o=S*0.62, ha=a*0.40;
         splat(d,cw,ch,X+o,Y,r,g,b,ha); splat(d,cw,ch,X-o,Y,r,g,b,ha);
         splat(d,cw,ch,X,Y+o,r,g,b,ha); splat(d,cw,ch,X,Y-o,r,g,b,ha);
@@ -491,6 +495,18 @@ function frame(now){
 function boot(){
   resize();                       // сразу, не дожидаясь кадра: вкладка может быть в фоне
   if (!ready) requestAnimationFrame(resize);
+
+  // ?frame=0.35 — застывший кадр нужной фазы: удобно смотреть и снимать отдельные моменты
+  const forced = parseFloat(new URLSearchParams(location.search).get('frame'));
+  if (isFinite(forced)){
+    document.body.classList.add('frame-mode');   // прячем подводку, сцена встаёт в экран
+    resize();
+    const p = clamp(forced, 0, 1);
+    render(p, 0);
+    applyDom(p);
+    return;
+  }
+
   const p = readProgress();
   render(p, performance.now());
   applyDom(p);
