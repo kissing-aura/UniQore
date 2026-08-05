@@ -254,6 +254,186 @@
   .up__reassure{margin-top:10px;gap:5px;font-size:10.5px}
 }
 </style>
+
+<!-- ═══ BENTO «Вы получаете не просто сайт» — перенос из /proto/wow-lab.html ═══
+     Живёт внутри обёртки .uq-grid, чтобы работало существующее правило
+     «скрыть на ≤768px» (на мобилке остаётся компактный .sy-get__grid).
+     Раскладку обёртки сбрасываем — сеткой управляет сам .bento. -->
+<style>
+/* сброс раскладки обёртки — ТОЛЬКО на десктопе: на ≤768px обёртка обязана
+   скрываться правилом из css/sayty.css, иначе на мобилке покажутся оба блока */
+@media(min-width:769px){
+  .uq-grid--bento{display:block!important;background:none!important;border:0!important;
+    border-radius:0!important;overflow:visible!important;margin-top:0!important}
+}
+.bento{margin-top:44px;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(220px,auto);gap:16px;perspective:1400px}
+.bento__card{position:relative;border-radius:18px;overflow:hidden;padding:22px;background:#0f131f;border:1px solid var(--line);transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;outline:none;transform-style:preserve-3d;--shx:0px;--shy:14px;box-shadow:var(--shx) var(--shy) 32px -16px rgba(0,0,0,.55)}
+/* entrance-каскад: скрыто до появления в вьюпорте, JS переключает классы */
+.bento__card.wl-pre{opacity:0;transform:rotateX(8deg) translateY(30px)}
+.bento__card.wl-in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .35s ease,border-color .35s ease,box-shadow .35s ease}
+/* тонкое зерно — текстура вместо плоской заливки */
+.bento__card::before{content:"";position:absolute;inset:0;z-index:0;opacity:.035;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:150px 150px}
+/* ambient-свет за курсором, обновляется JS через --mx/--my/--glow */
+.bento__card::after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;transition:opacity .3s ease;mix-blend-mode:screen;background:radial-gradient(360px 360px at var(--mx,50%) var(--my,50%),var(--glow,rgba(255,255,255,.3)),transparent 68%)}
+.bento__card.wl-glow::after{opacity:.6}
+/* внутренний слой с 3D-наклоном — тянет за собой параллакс-детей, сам двигается rAF-физикой */
+.bento__tilt{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+.bento__card:hover{transform:translateY(-3px)}
+.bento__card:focus-visible{outline:2px solid rgba(255,255,255,.5);outline-offset:3px}
+.b1:hover,.b1:focus-visible{border-color:rgba(49,224,176,.5);box-shadow:0 16px 44px -20px rgba(49,224,176,.6)}
+.b2:hover,.b2:focus-visible{border-color:rgba(242,184,75,.5);box-shadow:0 16px 44px -20px rgba(242,184,75,.6)}
+.b3:hover,.b3:focus-visible{border-color:rgba(255,110,99,.45);box-shadow:0 16px 44px -20px rgba(255,110,99,.55)}
+.b4:hover,.b4:focus-visible{border-color:rgba(167,139,250,.5);box-shadow:0 16px 44px -20px rgba(167,139,250,.6)}
+.b1:focus-visible{outline-color:var(--mint)}
+.b2:focus-visible{outline-color:var(--amber)}
+.b3:focus-visible{outline-color:var(--coral)}
+.b4:focus-visible{outline-color:var(--lav)}
+.bento__num{position:absolute;top:16px;right:18px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--mut2);z-index:2;transform:translateZ(6px)}
+.bento__lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-top:2px;transform:translateZ(10px)}
+.bento__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;letter-spacing:-.015em;margin-top:6px;line-height:1.15;transform:translateZ(18px)}
+.bento__d{color:var(--mut);font-size:13.5px;margin-top:8px;line-height:1.5}
+
+/* ─── B1: живая лента заявок (мятная, 4×2 слева) ─── */
+.b1{grid-column:span 4;grid-row:span 2;background:radial-gradient(120% 100% at 0% 0%,rgba(49,224,176,.08),transparent 55%),linear-gradient(160deg,#0c1d18 0%,#0a0e17 60%);border-color:rgba(49,224,176,.18);--glow:rgba(49,224,176,.32)}
+.b1 .bento__num{color:var(--mint)}
+.b1__top{position:absolute;top:56px;left:22px;right:22px;display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut2);letter-spacing:.06em;text-transform:uppercase}
+.b1__mix{display:flex;align-items:center;gap:5px}
+.b1__mix i{width:6px;height:6px;border-radius:50%;display:inline-block}
+.b1__mix b{font-family:'JetBrains Mono',monospace;font-weight:400;font-size:10px;letter-spacing:.02em;text-transform:none;color:var(--mut2);margin-left:3px}
+.b1__top .live{display:inline-flex;align-items:center;gap:6px;color:var(--mint)}
+.b1__top .live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint);animation:pulse 1.6s ease infinite}
+.b1__body{position:absolute;inset:96px 22px 72px 22px;display:flex;flex-direction:column-reverse;gap:8px;overflow:hidden}
+.b1-row{display:grid;grid-template-columns:22px 54px 1fr auto;gap:12px;align-items:center;padding:11px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:11px;font-size:13px;transition:border-color .2s,background .2s}
+.b1-row:hover{border-color:rgba(49,224,176,.28);background:rgba(255,255,255,.045)}
+.b1-row .ico{grid-column:1;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.b1-row .ico svg{width:11px;height:11px;stroke:currentColor;stroke-width:2.3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.b1-row .ico--form{background:rgba(205,255,79,.14);color:var(--lime)}
+.b1-row .ico--phone{background:rgba(49,224,176,.14);color:var(--mint)}
+.b1-row .ico--tg{background:rgba(242,184,75,.14);color:var(--amber)}
+.b1-row .ico--ad{background:rgba(255,255,255,.08);color:var(--mut2)}
+.b1-row .t{font-family:'JetBrains Mono',monospace;color:var(--mut2);font-size:11px;grid-column:2}
+.b1-row .n{color:#e9f0fb;grid-column:3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b1-row .a{grid-column:4;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mint);padding:3px 8px;border-radius:999px;background:rgba(49,224,176,.1);border:1px solid rgba(49,224,176,.28);white-space:nowrap}
+.b1-row.new{animation:b1slide .55s cubic-bezier(.22,1,.36,1)}
+.b1-row.old{animation:b1out .45s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes b1slide{from{opacity:0;transform:translateY(-14px) scale(.98);box-shadow:0 0 0 2px rgba(49,224,176,.35)}to{opacity:1;transform:none;box-shadow:0 0 0 2px transparent}}
+@keyframes b1out{to{opacity:0;transform:translateY(14px)}}
+.b1-foot{position:absolute;left:22px;right:22px;bottom:22px;font-size:12.5px;color:var(--mut);display:flex;justify-content:space-between;align-items:baseline}
+.b1-foot__num{display:flex;align-items:baseline;gap:9px}
+.b1-foot .cnt{font-family:'Unbounded',sans-serif;font-weight:800;font-size:20px;color:var(--mint);font-variant-numeric:tabular-nums;letter-spacing:-.02em;display:inline-block;transform:translateZ(14px)}
+.b1-foot .cnt::after{content:" заявок";font-family:'Geist',sans-serif;font-weight:400;font-size:12.5px;color:var(--mut);letter-spacing:0}
+.b1-foot .ctx{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut2)}
+.b1-foot .ping{color:var(--mint);opacity:0;transition:opacity .5s}
+.b1-foot .ping.show{opacity:1}
+/* узкие экраны: заголовок b1 может стать двустрочным — сдвигаем верхнюю плашку/ленту, чтобы не наезжало */
+@media(max-width:600px){
+  .b1__top{top:98px}
+  .b1__body{top:118px}
+}
+
+/* ─── B2: ROI ×3.4 с растущим счётчиком и графиком (янтарная, 2×2) ─── */
+.b2{grid-column:span 2;grid-row:span 2;background:radial-gradient(140% 100% at 100% 0%,rgba(242,184,75,.10),transparent 60%),linear-gradient(160deg,#171003 0%,#0a0e17 65%);border-color:rgba(242,184,75,.20);--glow:rgba(242,184,75,.32)}
+.b2 .bento__num{color:var(--amber)}
+.b2__big{position:absolute;left:22px;top:56px;right:22px}
+.b2__row{display:flex;align-items:baseline;gap:8px}
+.b2__val{font-family:'Unbounded',sans-serif;font-weight:800;font-size:52px;line-height:.95;letter-spacing:-.04em;color:var(--amber);font-variant-numeric:tabular-nums;display:inline-block;transform:translateZ(24px)}
+.b2__trend{width:20px;height:20px;stroke:var(--mint);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;transform:translateY(-6px)}
+.b2__big small{display:block;font-size:11px;font-weight:600;color:rgba(242,184,75,.7);letter-spacing:.05em;text-transform:uppercase;margin-top:8px;line-height:1.4}
+.b2__flow{position:absolute;left:22px;top:150px;right:22px;display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mut)}
+.b2__flow b{color:#e9f0fb;font-weight:600}
+.b2__flow .to{color:var(--amber)}
+.b2__chart{position:absolute;left:22px;right:22px;bottom:60px;height:72px;display:flex;align-items:flex-end;gap:5px}
+.b2-bar{flex:1;background:linear-gradient(180deg,var(--amber),rgba(242,184,75,.2));border-radius:3px 3px 0 0;position:relative;transform-origin:bottom;transform:scaleY(0) translateZ(var(--z,0px));transition:filter .2s}
+.b2-bar:hover{filter:brightness(1.15)}
+.b2-bar.grow{animation:b2grow .8s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes b2grow{to{transform:scaleY(1) translateZ(var(--z,0px))}}
+.b2-bar::after{content:attr(data-l);position:absolute;bottom:-16px;left:0;right:0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--mut2)}
+.b2-bar .spark{position:absolute;top:-22px;left:50%;transform:translate(-50%,4px);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--amber);white-space:nowrap;opacity:0;transition:transform .4s,opacity .4s}
+.b2-bar.hot .spark{opacity:1;transform:translate(-50%,0)}
+.b2__foot{position:absolute;left:22px;right:22px;bottom:22px;font-size:11.5px;color:var(--mut);text-align:center}
+
+/* ─── B3: гонка индикаторов (коралловая, 3×1) ─── */
+.b3{grid-column:span 3;grid-row:span 1;background:radial-gradient(140% 100% at 0% 100%,rgba(255,110,99,.08),transparent 60%),linear-gradient(160deg,#180b0d 0%,#0a0e17 65%);border-color:rgba(255,110,99,.16);padding-bottom:18px;--glow:rgba(255,110,99,.30)}
+.b3 .bento__num{color:var(--coral)}
+.b3__race{position:absolute;left:22px;right:22px;bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.b3__lane{padding:10px 13px 12px;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);position:relative;transition:border-color .2s}
+.b3__lane.us{background:rgba(49,224,176,.06);border-color:rgba(49,224,176,.24)}
+.b3__lane.them{background:rgba(255,110,99,.06);border-color:rgba(255,110,99,.20)}
+.b3__lane .head{display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut);letter-spacing:.06em;margin-bottom:6px}
+.b3__lane.us .head{color:var(--mint)}
+.b3__lane.them .head{color:var(--coral)}
+.b3__lane .who{display:inline-flex;align-items:center;gap:5px}
+.b3__lane .ic{width:12px;height:12px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.b3__lane .head .val{font-family:'Unbounded',sans-serif;font-weight:800;font-size:14px;color:#e9f0fb;font-variant-numeric:tabular-nums;letter-spacing:-.02em;display:inline-block;transform:translateZ(12px)}
+.b3__lane.us .head .val{color:var(--mint)}
+.b3__lane.them .head .val{color:var(--coral)}
+.b3__track{height:5px;border-radius:3px;background:rgba(255,255,255,.05);position:relative;overflow:visible}
+.b3__track i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;transform-origin:left}
+.b3__lane.us .b3__track i{background:linear-gradient(90deg,var(--mint),#7cf3cf)}
+.b3__lane.them .b3__track i{background:linear-gradient(90deg,var(--coral),#ff9c93)}
+.b3__lane.us.run .b3__track i{animation:b3us 5.5s ease-in-out infinite}
+.b3__lane.them.run .b3__track i{animation:b3them 5.5s linear infinite}
+@keyframes b3us{0%{transform:scaleX(0)}9%{transform:scaleX(1)}55%{transform:scaleX(1)}62%{transform:scaleX(0)}100%{transform:scaleX(0)}}
+@keyframes b3them{0%{transform:scaleX(0)}100%{transform:scaleX(.42)}}
+.b3__track .flag{position:absolute;right:-3px;top:50%;width:13px;height:13px;fill:var(--mint);transform:translateY(-50%) scale(.4);opacity:0;filter:drop-shadow(0 0 4px rgba(49,224,176,.7))}
+.b3__lane.us.run .b3__track .flag{animation:b3flag 5.5s ease-in-out infinite}
+@keyframes b3flag{0%,8%{opacity:0;transform:translateY(-50%) scale(.4)}11%,54%{opacity:1;transform:translateY(-50%) scale(1)}60%,100%{opacity:0;transform:translateY(-50%) scale(.4)}}
+/* след-трейл за бегунком, синхронизирован по времени с движением полосы */
+.b3__track .trail{position:absolute;top:-3px;bottom:-3px;left:0;width:24px;border-radius:50%;opacity:0;pointer-events:none;filter:blur(2px)}
+.b3__lane.us .b3__track .trail{background:radial-gradient(circle,rgba(255,255,255,.75),rgba(49,224,176,.25) 55%,transparent 75%)}
+.b3__lane.them .b3__track .trail{background:radial-gradient(circle,rgba(255,255,255,.55),rgba(255,110,99,.22) 55%,transparent 75%)}
+.b3__lane.us.run .b3__track .trail{animation:b3trailUs 5.5s ease-in-out infinite}
+.b3__lane.them.run .b3__track .trail{animation:b3trailThem 5.5s linear infinite}
+@keyframes b3trailUs{0%,8%{left:0%;opacity:0}9%{opacity:.95}54%{left:calc(100% - 24px);opacity:.95}55%{opacity:0}62%,100%{left:0%;opacity:0}}
+@keyframes b3trailThem{0%{left:0%;opacity:.7}100%{left:calc(42% - 24px);opacity:.7}}
+/* вспышка на финише — короткий импульс на дорожке лидера */
+.b3__lane.us .flash{position:absolute;inset:-5px;border-radius:15px;pointer-events:none;opacity:0}
+.b3__lane.us.run .flash{animation:b3flash 5.5s ease-in-out infinite}
+@keyframes b3flash{0%,50%{opacity:0;box-shadow:0 0 0 0 rgba(49,224,176,0)}54%{opacity:1;box-shadow:0 0 26px 3px rgba(49,224,176,.5)}62%,100%{opacity:0;box-shadow:0 0 0 0 rgba(49,224,176,0)}}
+.b3__hint{position:absolute;left:22px;right:22px;bottom:82px;font-size:11.5px;color:var(--mut)}
+.b3__hint b{color:var(--coral);font-weight:600}
+
+/* ─── B4: два PageSpeed-gauge (сиреневая, 3×1) ─── */
+.b4{grid-column:span 3;grid-row:span 1;background:radial-gradient(140% 100% at 100% 100%,rgba(167,139,250,.09),transparent 60%),linear-gradient(160deg,#12102a 0%,#0a0e17 60%);border-color:rgba(167,139,250,.18);padding-bottom:18px;--glow:rgba(167,139,250,.32)}
+.b4 .bento__num{color:var(--lav)}
+.b4__gauges{position:absolute;left:22px;right:22px;bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:flex-end}
+.b4__g{position:relative;text-align:center}
+.b4__g svg{width:100%;max-width:118px;height:auto;display:block;margin:0 auto}
+.b4__g .track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9;stroke-linecap:round}
+.b4__g .arc{fill:none;stroke-width:9;stroke-linecap:round;stroke-dasharray:151;stroke-dashoffset:151;transform-origin:60px 60px;transform:rotate(-1deg)}
+.b4__g.us .arc{stroke:var(--mint);animation:b4us 2.2s cubic-bezier(.22,1,.36,1) forwards}
+.b4__g.them .arc{stroke:var(--coral);animation:b4them 2.6s cubic-bezier(.22,1,.36,1) forwards .3s}
+@keyframes b4us{to{stroke-dashoffset:3}}    /* 98/100 из 151 полукруга */
+@keyframes b4them{to{stroke-dashoffset:100}} /* 34/100 */
+.b4__g .scale circle{fill:var(--mut2);opacity:.4}
+.b4__g .scale text{font-family:'JetBrains Mono',monospace;font-size:7px;fill:var(--mut2);opacity:.55;text-anchor:middle}
+/* стрелка-указатель, доезжает до значения через JS-пружину (rotate вокруг 60,60) */
+.b4__g .needle{stroke-width:2.6;stroke-linecap:round;transform-origin:60px 60px;transform:rotate(-90deg)}
+.b4__g .needle-pivot{opacity:.9}
+.b4__g.us .needle,.b4__g.us .needle-pivot{stroke:var(--mint);fill:var(--mint)}
+.b4__g.them .needle,.b4__g.them .needle-pivot{stroke:var(--coral);fill:var(--coral)}
+.b4__g .val{position:absolute;left:0;right:0;top:32%;font-family:'Unbounded',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#e9f0fb;display:inline-block;transform:translateZ(16px)}
+.b4__g.us .val{color:var(--mint)}
+.b4__g.them .val{color:var(--coral)}
+.b4__g .lbl{display:flex;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mut);letter-spacing:.06em;margin-top:4px}
+.b4__g .lbl svg{width:10px;height:10px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.b4__g.us .lbl{color:var(--mint)}
+.b4__g.them .lbl{color:var(--coral);opacity:.8}
+.b4__hint{position:absolute;left:22px;right:22px;bottom:112px;font-size:11.5px;color:var(--mut);text-align:center}
+.b4__hint b{color:var(--lav);font-weight:600}
+
+/* ── bento: мобилка — нет мыши, тilt/ambient выключены, остаётся только entrance ── */
+@media(max-width:899px){
+  .bento__tilt{transform:none!important}
+  .bento__card::after{opacity:0!important}
+}
+/* ── bento: reduced-motion — статика, без наклона и свечения ── */
+@media(prefers-reduced-motion:reduce){
+  .bento__tilt{transform:none!important}
+  .bento__card::after{opacity:0!important}
+}
+
+</style>
 </head>
 <body class="sy">
 <div style="position:sticky;top:0;z-index:9999;background:linear-gradient(90deg,#1a1400,#0A0E1A);border-bottom:1px solid rgba(242,184,75,.35);padding:9px 16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#F2B84B;letter-spacing:.02em">
@@ -624,239 +804,125 @@
           <p class="sy-sub sy-rev" data-d="1">А инструмент, который превращает рекламный трафик в заявки и продажи.</p>
         </div>
                   <!-- десктоп: карточки с микро-интерфейсами -->
-<div class="uq-grid" id="grid">
-
-    
-    <div class="uq-card" data-i="0" id="c1card">
-      <div class="uq-stage" id="c1stage">
-        <div class="uq-n">01</div>
-
-        <div class="c1-src" id="c1src"><i></i>трафик с рекламы</div>
-
-        <div class="c1-spine"><i id="c1spine"></i></div>
-
-        <div class="c1-form" id="c1form">
-          <div class="c1-row done" id="c1r1">
-            <span class="c1-lb">Имя</span><span class="c1-vl" id="c1v1">Виталий</span><span class="c1-caret"></span>
-            <span class="c1-chk"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg></span>
-          </div>
-          <div class="c1-row done" id="c1r2">
-            <span class="c1-lb">Телефон</span><span class="c1-vl mono" id="c1v2">+7 913 204-11-08</span><span class="c1-caret"></span>
-            <span class="c1-chk"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg></span>
-          </div>
-          <div class="c1-btn ready" id="c1btn">
-            <span class="c1-lb2">Отправить заявку</span>
-            <span class="c1-ok2"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>Заявка отправлена</span>
-          </div>
+<div class="uq-grid uq-grid--bento" id="grid">
+<div class="bento">
+    <!-- B1: живая лента заявок с автопотоком -->
+    <div class="bento__card b1" tabindex="0" role="group" aria-label="Лента заявок в реальном времени: 47 заявок и растёт">
+     <div class="bento__tilt">
+      <span class="bento__num">01</span>
+      <div class="bento__lbl">лента в реальном времени</div>
+      <div class="bento__h">Заявки, а не просмотры</div>
+      <div class="b1__top">
+        <div class="b1__mix" aria-label="Источники заявок: форма 44%, звонок 29%, telegram 18%, директ 9%">
+          <i style="background:var(--lime)"></i><i style="background:var(--mint)"></i><i style="background:var(--amber)"></i><i style="background:var(--mut2)"></i>
+          <b>4 канала заявок</b>
         </div>
-
-        <span class="c1-ring" id="c1ring"></span>
-        <div class="c1-cur" id="c1cur"><span class="c1-cur-i"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6 1.6L10 20z"/></svg></span></div>
-
-        <div class="c1-conv" id="c1conv"><span class="uq-p">просмотр</span><span class="arw">→</span><span class="uq-hit" id="c1hit">заявка</span></div>
+        <span class="live">поток открыт</span>
       </div>
-
-      <div class="uq-t">Заявки, а не просмотры</div>
-      <div class="uq-d">Структура ведёт посетителя к действию — трафик превращается в обращения, а не в отказы.</div>
+      <div class="b1__body" id="b1body"><!-- строки добавляются JS --></div>
+      <div class="b1-foot">
+        <div class="b1-foot__num">
+          <span class="cnt" id="b1cnt">47</span>
+          <span class="ctx">+12 за последний час</span>
+        </div>
+        <span class="ping" id="b1ping">+1 в CRM</span>
+      </div>
+     </div>
     </div>
 
-    
-    <div class="uq-card" data-i="1" id="c2">
-      <div class="uq-stage">
-        <div class="uq-n">02</div>
-
-        <div class="c2-panel">
-
-          <div class="c2-head">
-            <span class="c2-s1">
-              <svg class="c2-tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>метрика
-            </span>
-            <span class="c2-s2">
-              <svg class="c2-tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.7 2.7L10 3.4"/></svg>цель «заявка»
-            </span>
-          </div>
-
-          <div class="c2-kpi">
-            <div class="c2-ratio" id="c2-ratio">×3,4</div>
-            <div class="c2-sub">
-              <span>на каждый вложенный ₽</span>
-              <span id="c2-leads">47 заявок · 6 недель</span>
-            </div>
-          </div>
-
-          <div class="c2-plot">
-            <span class="c2-grid" style="top:22px"></span>
-            <span class="c2-grid" style="top:40px"></span>
-            <span class="c2-axis"></span>
-            <div class="c2-cols">
-              <div class="c2-col"><span class="c2-up" style="height:14.14px"></span><span class="c2-dn"></span><em class="c2-wk">1</em></div>
-              <div class="c2-col"><span class="c2-up" style="height:25.71px"></span><span class="c2-dn"></span><em class="c2-wk">2</em></div>
-              <div class="c2-col"><span class="c2-up" style="height:32.14px"></span><span class="c2-dn"></span><em class="c2-wk">3</em></div>
-              <div class="c2-col"><span class="c2-up" style="height:38.57px"></span><span class="c2-dn"></span><em class="c2-wk">4</em></div>
-              <div class="c2-col"><span class="c2-up" style="height:45.00px"></span><span class="c2-dn"></span><em class="c2-wk">5</em></div>
-              <div class="c2-col"><span class="c2-up" style="height:54.00px"></span><span class="c2-dn"></span><em class="c2-wk">6</em></div>
-            </div>
-            <span class="c2-be"></span>
-          </div>
-
-          <div class="c2-leg">
-            <div class="c2-row"><i class="c2-sw" style="background:#39404E"></i>расход<b class="c2-val" id="c2-spend">48 000 ₽</b></div>
-            <div class="c2-row"><i class="c2-sw" style="background:#CDFF4F"></i>выручка<b class="c2-val" id="c2-earn">163 000 ₽</b></div>
-          </div>
-
+    <!-- B2: ROI ×3.4 с растущим счётчиком и графиком -->
+    <div class="bento__card b2" tabindex="0" role="group" aria-label="Рекламный ROI ×3,4, было ×1,2 в первый месяц">
+     <div class="bento__tilt">
+      <span class="bento__num">02</span>
+      <div class="bento__lbl">окупаемость рекламы</div>
+      <div class="b2__big" id="b2big">
+        <div class="b2__row">
+          <span class="b2__val">×0,0</span>
+          <svg class="b2__trend" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
         </div>
+        <small>ROI на каждый ₽ · за 6 недель, было ×1,2</small>
       </div>
-
-      <div class="uq-t">Окупаемая реклама</div>
-      <div class="uq-d">Готов под Яндекс Директ с первого дня: метрика и цели настроены — видно отдачу с каждого рубля.</div>
+      <div class="b2__flow">
+        <b>48 000 ₽</b><span class="to">→</span><b style="color:var(--amber)">163 000 ₽</b>
+      </div>
+      <div class="b2__chart" id="b2chart">
+        <div class="b2-bar" data-l="нед.1" data-h="22" data-sp="+8к"><span class="spark">+8к</span></div>
+        <div class="b2-bar" data-l="2" data-h="38" data-sp="+14к"><span class="spark">+14к</span></div>
+        <div class="b2-bar" data-l="3" data-h="32" data-sp="+11к"><span class="spark">+11к</span></div>
+        <div class="b2-bar" data-l="4" data-h="56" data-sp="+22к"><span class="spark">+22к</span></div>
+        <div class="b2-bar" data-l="5" data-h="78" data-sp="+38к"><span class="spark">+38к</span></div>
+        <div class="b2-bar" data-l="6" data-h="100" data-sp="+70к"><span class="spark">+70к</span></div>
+      </div>
+      <div class="b2__foot">47 заявок · Немеция, Омск</div>
+     </div>
     </div>
 
-    
-    <div class="uq-card" data-i="2" id="card3">
-      <div class="uq-stage">
-        <div class="uq-n">03</div>
-
-        <div class="c3" id="c3">
-
-          <div class="c3-chip" id="c3chip"><span class="c3-dot" id="c3dot"></span>новая заявка с сайта</div>
-
-          <div class="c3-fork" id="c3fork">
-            <svg viewBox="0 0 226 54" preserveAspectRatio="none" aria-hidden="true">
-              <path class="c3-rail" id="c3railTr"  vector-effect="non-scaling-stroke" d="M113,0 L113,17"/>
-              <path class="c3-rail" id="c3railTg"  vector-effect="non-scaling-stroke" d="M113,17 C113,34 88,34 54,54"/>
-              <path class="c3-rail" id="c3railCrm" vector-effect="non-scaling-stroke" d="M113,17 C113,38 146,32 172,54"/>
-              <path class="c3-pk c3-pk-tr"  vector-effect="non-scaling-stroke" pathLength="100" d="M113,0 L113,17"/>
-              <path class="c3-pk c3-pk-tg"  vector-effect="non-scaling-stroke" pathLength="100" d="M113,17 C113,34 88,34 54,54"/>
-              <path class="c3-pk c3-pk-crm" vector-effect="non-scaling-stroke" pathLength="100" d="M113,17 C113,38 146,32 172,54"/>
-            </svg>
+    <!-- B3: гонка индикаторов -->
+    <div class="bento__card b3" tabindex="0" role="group" aria-label="Uniqore отвечает за 0,4 секунды, конкурент — за 12 минут">
+     <div class="bento__tilt">
+      <span class="bento__num">03</span>
+      <div class="bento__lbl">ни одного потерянного лида</div>
+      <div class="bento__h">Отвечаете первым</div>
+      <div class="b3__hint">пока конкурент проснулся — клиент уже у&nbsp;вас · <b>0</b> потерь за 30&nbsp;дней</div>
+      <div class="b3__race" id="b3race">
+        <div class="b3__lane us">
+          <span class="flash"></span>
+          <div class="head">
+            <span class="who"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Uniqore</span>
+            <span class="val">0,4 с</span>
           </div>
-
-          <div class="c3-dsts">
-
-            <div class="c3-dst uq-hit" id="c3tg">
-              <div class="c3-dh">
-                <svg class="c3-g" viewBox="0 0 24 24"><path d="M21.4 4.4 2.9 11.5l6.6 2.2 2.2 6.6z"/><path d="M9.5 13.7 21.4 4.4"/></svg>
-                <span>Telegram</span>
-              </div>
-              <div class="c3-bub">
-                <div class="c3-l1">Виталий</div>
-                <div class="c3-l2">+7 913 204-11-08</div>
-                <div class="c3-meta">
-                  <span class="c3-ms">0,20 с</span>
-                  <svg class="c3-dc" viewBox="0 0 14 9"><path class="uq-a" d="M1 4.9 3.4 7.4 7.9 2.1"/><path class="uq-b" d="M5.7 4.9 8.1 7.4 12.6 2.1"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <div class="c3-dst uq-hit" id="c3crm">
-              <div class="c3-dh">
-                <svg class="c3-g" viewBox="0 0 24 24"><rect x="2.7" y="3.7" width="18.6" height="16.6" rx="2.6"/><path d="M2.7 9.4h18.6M9.6 9.4v10.9"/></svg>
-                <span>CRM</span>
-              </div>
-              <div class="c3-tbl">
-                <div class="c3-r c3-r--new"><b>Виталий</b><i>0,40 с</i></div>
-                <div class="c3-r c3-r--old"><b>Марат</b><i>12 мин</i></div>
-              </div>
-            </div>
-
+          <div class="b3__track"><i></i><span class="trail"></span><svg class="flag" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="2" height="20" rx="1"/><path d="M6 3l13 4-13 4z"/></svg></div>
+        </div>
+        <div class="b3__lane them">
+          <div class="head">
+            <span class="who"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 3.5"/></svg>Конкурент</span>
+            <span class="val">12 мин</span>
           </div>
-
-          <div class="c3-sum full" id="c3sum">
-            <svg class="c3-ok" viewBox="0 0 12 12"><path d="M2 6.3 4.6 8.9 10 3.4"/></svg>
-            <span>доставлено <b class="c3-cn" id="c3cn">2</b> / 2</span>
-            <span class="c3-clock done" id="c3clock">0,40 с</span>
-          </div>
-
+          <div class="b3__track"><i></i><span class="trail"></span></div>
         </div>
       </div>
-
-      <div class="uq-t">Ни одного потерянного лида</div>
-      <div class="uq-d">Каждая заявка мгновенно в Telegram и CRM — вы отвечаете первым, пока клиент ещё горячий.</div>
+     </div>
     </div>
 
-    
-    <div class="uq-card" data-i="3" id="card4">
-      <div class="uq-stage">
-        <div class="uq-n">04</div>
-
-        <div class="c4">
-
-          
-          <div class="c4-col c4-col--we">
-            <div class="c4-lab">ваш сайт</div>
-
-            <div class="c4-win c4-win--we">
-              <div class="c4-bar">
-                <div class="c4-tab">
-                  <span class="c4-favbox">
-                    <span class="c4-favghost"></span>
-                    <span class="c4-fav"></span>
-                  </span>
-                  <span class="c4-tabname"></span>
-                </div>
-                <span class="c4-load c4-load--we"></span>
-              </div>
-
-              <div class="c4-body">
-                <div class="c4-h">«Немеция»</div>
-                <div class="c4-p">Ремонт, запчасти и ТО<br>VAG · BMW · Mercedes</div>
-                <div class="c4-meta">Минск · без выходных</div>
-                <div class="c4-btn">Записаться</div>
-              </div>
-
-              <span class="c4-cur c4-cur--we" id="c4-curWe">
-                <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg>
-              </span>
-            </div>
-
-            <div class="c4-foot">
-              <span class="c4-st c4-st--we" id="c4-stWe">остался</span>
-              <span class="c4-time c4-time--we"><span id="c4-numWe">0,8 c</span></span>
-            </div>
-          </div>
-
-          
-          <div class="c4-col c4-col--they">
-            <div class="c4-lab">на конструкторе</div>
-
-            <div class="c4-win c4-win--they" id="c4-winThey">
-              <div class="c4-bar">
-                <div class="c4-tab">
-                  <span class="c4-favbox"><span class="c4-favghost"></span></span>
-                  <span class="c4-tabname"></span>
-                  <span class="c4-x" id="c4-x">
-                    <svg viewBox="0 0 8 8"><path d="M1.6 1.6l4.8 4.8M6.4 1.6L1.6 6.4"/></svg>
-                  </span>
-                </div>
-                <span class="c4-load c4-load--they"></span>
-              </div>
-
-              <div class="c4-body">
-                <div class="c4-ghost c4-ghost--a"></div>
-                <div class="c4-ghost c4-ghost--b"></div>
-                <div class="c4-spinwrap"><span class="c4-spin"></span></div>
-              </div>
-
-              <span class="c4-ring" id="c4-ring"></span>
-              <span class="c4-cur c4-cur--they" id="c4-curThey">
-                <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.6L10 20z"/></svg>
-              </span>
-            </div>
-
-            <div class="c4-foot">
-              <span class="c4-st c4-st--they" id="c4-stThey">закрыл вкладку</span>
-              <span class="c4-time c4-time--they" id="c4-timeThey"><span id="c4-numThey">3,0 c</span><i class="c4-cross"></i></span>
-            </div>
-          </div>
-
+    <!-- B4: два gauge PageSpeed -->
+    <div class="bento__card b4" tabindex="0" role="group" aria-label="PageSpeed Uniqore 98 из 100 против 34 у конструктора">
+     <div class="bento__tilt">
+      <span class="bento__num">04</span>
+      <div class="bento__lbl">клиент не ушёл</div>
+      <div class="bento__h">Мгновенная загрузка</div>
+      <div class="b4__hint">каждая лишняя секунда загрузки = <b>−7%</b> конверсии</div>
+      <div class="b4__gauges" id="b4g">
+        <div class="b4__g us">
+          <svg viewBox="0 0 120 70" aria-hidden="true">
+            <path class="track" d="M12 60 A48 48 0 0 1 108 60"/>
+            <path class="arc"   d="M12 60 A48 48 0 0 1 108 60"/>
+            <g class="scale">
+              <circle cx="12" cy="60" r="1.6"/><circle cx="60" cy="12" r="1.6"/><circle cx="108" cy="60" r="1.6"/>
+              <text x="12" y="68">0</text><text x="60" y="8">50</text><text x="108" y="68">100</text>
+            </g>
+            <g class="needle-g"><line class="needle" data-v="98" x1="60" y1="60" x2="60" y2="20"/><circle class="needle-pivot" cx="60" cy="60" r="3"/></g>
+          </svg>
+          <div class="val">98</div>
+          <div class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>Uniqore</div>
+        </div>
+        <div class="b4__g them">
+          <svg viewBox="0 0 120 70" aria-hidden="true">
+            <path class="track" d="M12 60 A48 48 0 0 1 108 60"/>
+            <path class="arc"   d="M12 60 A48 48 0 0 1 108 60"/>
+            <g class="scale">
+              <circle cx="12" cy="60" r="1.6"/><circle cx="60" cy="12" r="1.6"/><circle cx="108" cy="60" r="1.6"/>
+              <text x="12" y="68">0</text><text x="60" y="8">50</text><text x="108" y="68">100</text>
+            </g>
+            <g class="needle-g"><line class="needle" data-v="34" x1="60" y1="60" x2="60" y2="20"/><circle class="needle-pivot" cx="60" cy="60" r="3"/></g>
+          </svg>
+          <div class="val">34</div>
+          <div class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Конструктор</div>
         </div>
       </div>
-
-      <div class="uq-t">Клиент, который не ушёл</div>
-      <div class="uq-d">Сайт грузится мгновенно — никто не закрывает вкладку, не дождавшись загрузки.</div>
+     </div>
     </div>
-
   </div>
+        </div>
 
           <!-- мобилка ≤768: прежние карточки — эффекты в одну колонку заняли бы четыре экрана -->
 <div class="sy-get__grid">
@@ -2562,5 +2628,262 @@ addEventListener('load', function(){
 })();
   </script>
   <script src="/js/brackets.js?v=20260805a" defer></script>
+
+<!-- ═══ BENTO: живые сценарии карточек (перенос из /proto/wow-lab.html) ═══
+     Один общий rAF-тик на 3D-tilt + пружины. На мобилке и при
+     prefers-reduced-motion эффекты отключаются сами. -->
+<script>
+// ── общая физика: ОДИН rAF-тик на все карточки (3D-tilt + магнит + тень + spring-числа) ──
+var WL = (function(){
+  var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var desktop = !reduce && window.innerWidth >= 900 && !!(window.matchMedia && matchMedia('(hover:hover)').matches);
+  var springs = [], tilts = [], running = false, last = 0;
+
+  // универсальная пружина: from→to с overshoot, использует общий тик ниже
+  function spring(from, to, set, k, d){
+    var s = { v:from, vel:0, t:to, set:set, k:k||210, d:d||16 };
+    set(from);
+    springs.push(s);
+    kick();
+    return s;
+  }
+
+  function tick(now){
+    var dt = last ? Math.min(.032, (now - last) / 1000) : .016;
+    last = now;
+    for (var i = springs.length - 1; i >= 0; i--){
+      var s = springs[i];
+      var acc = s.k * (s.t - s.v) - s.d * s.vel;
+      s.vel += acc * dt;
+      s.v += s.vel * dt;
+      s.set(s.v);
+      if (Math.abs(s.t - s.v) < .002 && Math.abs(s.vel) < .01){ s.set(s.t); springs.splice(i, 1); }
+    }
+    for (var j = 0; j < tilts.length; j++){
+      var it = tilts[j];
+      it.rx  += (it.trx  - it.rx ) * .14;
+      it.ry  += (it.try_ - it.ry ) * .14;
+      it.mgx += (it.tmgx - it.mgx) * .14;
+      it.mgy += (it.tmgy - it.mgy) * .14;
+      it.shx += (it.tshx - it.shx) * .14;
+      it.shy += (it.tshy - it.shy) * .14;
+      it.tilt.style.transform = 'translate(' + it.mgx.toFixed(2) + 'px,' + it.mgy.toFixed(2) + 'px) rotateX(' + it.rx.toFixed(2) + 'deg) rotateY(' + it.ry.toFixed(2) + 'deg)';
+      it.card.style.setProperty('--shx', it.shx.toFixed(1) + 'px');
+      it.card.style.setProperty('--shy', it.shy.toFixed(1) + 'px');
+    }
+    if (springs.length || tilts.length){ requestAnimationFrame(tick); } else { running = false; }
+  }
+  function kick(){ if (!running){ running = true; last = 0; requestAnimationFrame(tick); } }
+
+  // 3D-tilt + магнит + динамическая тень — только там, где реально есть мышь
+  if (desktop){
+    Array.prototype.forEach.call(document.querySelectorAll('.bento__card'), function(card){
+      var tiltEl = card.querySelector('.bento__tilt');
+      if (!tiltEl) return;
+      var it = { card:card, tilt:tiltEl, rx:0, ry:0, mgx:0, mgy:0, shx:0, shy:14, trx:0, try_:0, tmgx:0, tmgy:0, tshx:0, tshy:14 };
+      tilts.push(it);
+      card.addEventListener('pointermove', function(e){
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+        it.trx = (0.5 - py) * 12;         // максимум ≈ ±6°
+        it.try_ = (px - 0.5) * 12;
+        it.tmgx = (px - 0.5) * 6;         // магнит-притяжение 2-4px
+        it.tmgy = (py - 0.5) * 6;
+        it.tshx = (0.5 - px) * 24;        // тень уходит в сторону, противоположную наклону
+        it.tshy = 14 - (0.5 - py) * 24;
+        card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+        card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+        card.classList.add('wl-glow');
+        kick();
+      });
+      card.addEventListener('pointerleave', function(){
+        it.trx = 0; it.try_ = 0; it.tmgx = 0; it.tmgy = 0; it.tshx = 0; it.tshy = 14;
+        card.classList.remove('wl-glow');
+        kick();
+      });
+    });
+  }
+
+  // entrance-каскад по IntersectionObserver: rotateX(8deg) translateY(30px) → none, шаг 80мс
+  if (!reduce && 'IntersectionObserver' in window){
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.bento__card'));
+    cards.forEach(function(c){ c.classList.add('wl-pre'); });
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if (!e.isIntersecting) return;
+        var idx = cards.indexOf(e.target);
+        setTimeout(function(){
+          e.target.classList.remove('wl-pre');
+          e.target.classList.add('wl-in');
+        }, Math.max(0, idx) * 80);
+        io.unobserve(e.target);
+      });
+    }, { threshold:.18 });
+    cards.forEach(function(c){ io.observe(c); });
+  }
+
+  return { spring:spring, reduce:reduce };
+})();
+
+// ── B1: автопоток заявок ──
+(function(){
+  var body = document.getElementById('b1body');
+  var cnt = document.getElementById('b1cnt');
+  var ping = document.getElementById('b1ping');
+  if (!body) return;
+
+  // источники — иконки для второго визуального слоя каждой строки
+  var ICONS = {
+    phone:'<svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>',
+    form:'<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+    tg:'<svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9z"/></svg>',
+    ad:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>'
+  };
+
+  var seed = [
+    {t:'14:22', n:'Виталий · +7 913 204-11-08', a:'новая', src:'phone'},
+    {t:'14:19', n:'Марат · телефон записан',    a:'в CRM', src:'form'},
+    {t:'14:14', n:'Анна · через форму «Записаться»', a:'новая', src:'form'},
+    {t:'14:03', n:'Игорь · клик из Яндекс.Директа',  a:'новая', src:'ad'}
+  ];
+  var pool = [
+    {n:'Дарья · +7 921 —— по услуге',   a:'новая', src:'phone'},
+    {n:'Пётр · бронь стола на 4',       a:'новая', src:'form'},
+    {n:'Ольга · перезвонить в 16:30',   a:'в CRM', src:'phone'},
+    {n:'Кирилл · оставил Telegram',     a:'новая', src:'tg'},
+    {n:'Юля · записать на 12 авг',      a:'в CRM', src:'form'},
+    {n:'Марк · нужен расчёт',           a:'новая', src:'ad'},
+    {n:'Инна · заказ #1284',            a:'в CRM', src:'form'},
+    {n:'Сергей · пришёл по кнопке',     a:'новая', src:'ad'}
+  ];
+  var count = 47;
+  var rows = [];
+
+  function makeRow(d){
+    var el = document.createElement('div');
+    el.className = 'b1-row';
+    el.innerHTML =
+      '<span class="ico ico--' + d.src + '">' + ICONS[d.src] + '</span>' +
+      '<span class="t">' + d.t + '</span>' +
+      '<span class="n">' + d.n + '</span>' +
+      '<span class="a">' + d.a + '</span>';
+    return el;
+  }
+
+  // сеем 4 стартовые (снизу вверх, потому что flex-direction: column-reverse)
+  seed.forEach(function(d){
+    var r = makeRow(d);
+    body.appendChild(r);
+    rows.push(r);
+  });
+
+  function pushOne(){
+    // синтетическое «14:XX» — держим стиль (не new Date().now, а фиктивное время +1)
+    var last = rows[0].querySelector('.t').textContent;
+    var mm = parseInt(last.split(':')[1], 10) + Math.floor(1 + Math.random()*3);
+    var hh = parseInt(last.split(':')[0], 10);
+    if (mm >= 60){ hh++; mm -= 60; }
+    var t = (hh<10?'0':'') + hh + ':' + (mm<10?'0':'') + mm;
+
+    var p = pool[Math.floor(Math.random()*pool.length)];
+    var d = {t:t, n:p.n, a:p.a, src:p.src};
+    var r = makeRow(d);
+    r.classList.add('new');
+    body.appendChild(r);
+    rows.unshift(r);
+
+    // самая старая — уходит
+    if (rows.length > 4){
+      var old = rows.pop();
+      old.classList.add('old');
+      setTimeout(function(){ if(old.parentNode) old.parentNode.removeChild(old); }, 450);
+    }
+
+    // счётчик — значение сразу, а масштаб отыгрывает пружиной с overshoot
+    count++;
+    cnt.textContent = count;
+    if (!WL.reduce){
+      WL.spring(.8, 1, function(v){ cnt.style.transform = 'translateZ(14px) scale(' + v.toFixed(3) + ')'; }, 300, 12);
+    }
+
+    // ping «+1 в CRM»
+    ping.classList.add('show');
+    setTimeout(function(){ ping.classList.remove('show'); }, 900);
+  }
+
+  setInterval(pushOne, 3400);
+})();
+
+// ── B2: цифра счётчиком + столбцы + вспышки spark ──
+(function(){
+  var big = document.getElementById('b2big');
+  var val = big && big.querySelector('.b2__val');
+  var bars = document.querySelectorAll('#b2chart .b2-bar');
+  if (!big || !val || !bars.length) return;
+
+  // Наблюдаем момент, когда карточка появилась на экране — потом «прогреваем».
+  var played = false;
+  function play(){
+    if (played) return; played = true;
+
+    // рост столбцов + вспышки
+    bars.forEach(function(b, i){
+      b.style.setProperty('height', b.getAttribute('data-h') + '%');
+      setTimeout(function(){ b.classList.add('grow'); }, 80*i);
+      setTimeout(function(){ b.classList.add('hot'); },  80*i + 900);
+      setTimeout(function(){ b.classList.remove('hot'); }, 80*i + 2100);
+    });
+
+    // 0.0 → 3.4 — пружина с лёгким overshoot вместо линейного ease (общий rAF-тик WL)
+    function setVal(v){ val.textContent = '×' + Math.max(0, v).toFixed(1).replace('.', ','); }
+    if (WL.reduce){ setVal(3.4); } else { WL.spring(0, 3.4, setVal, 26, 6); }
+
+    // Повтор эффекта каждые 8 сек — карточка остаётся живой
+    setInterval(function(){
+      bars.forEach(function(b, i){
+        setTimeout(function(){ b.classList.add('hot'); },  80*i);
+        setTimeout(function(){ b.classList.remove('hot'); }, 80*i + 1200);
+      });
+    }, 8000);
+  }
+
+  // IO — как только видно ≥30% карточки
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting) play(); });
+    }, {threshold:0.3}).observe(bars[0].parentElement.parentElement);
+  } else { play(); }
+})();
+
+// ── B3: запустить гонку по появлению ──
+(function(){
+  var race = document.getElementById('b3race');
+  if (!race) return;
+  function start(){
+    race.querySelector('.us').classList.add('run');
+    race.querySelector('.them').classList.add('run');
+  }
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting) start(); });
+    }, {threshold:0.4}).observe(race);
+  } else { start(); }
+})();
+
+// ── B4: gauge — арки едут CSS-анимацией сами; стрелки доезжают пружиной с overshoot ──
+(function(){
+  var needles = document.querySelectorAll('.b4__g .needle');
+  if (!needles.length) return;
+  function angleFor(v){ return (v / 100) * 180 - 90; } // -90deg=0 · 0deg=50 · +90deg=100
+  Array.prototype.forEach.call(needles, function(n, i){
+    var target = angleFor(+n.getAttribute('data-v') || 0);
+    var delay = i * 300; // синхронно с .b4__g.them .arc{...forwards .3s}
+    setTimeout(function(){
+      if (WL.reduce){ n.style.transform = 'rotate(' + target + 'deg)'; return; }
+      WL.spring(-90, target, function(v){ n.style.transform = 'rotate(' + v.toFixed(2) + 'deg)'; }, 48, 7);
+    }, delay);
+  });
+})();
+</script>
 </body>
 </html>
