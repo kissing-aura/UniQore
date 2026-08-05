@@ -92,8 +92,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__rad__badge{position:absolute;top:-8px;right:10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--bg);background:var(--lime);padding:2px 8px;border-radius:999px;letter-spacing:.04em;font-weight:700}
 .up__rad--premium .up__rad__badge{background:var(--amber)}
 
-/* Сравнение уровней «что входит» — глубина работы, не количество страниц */
+/* Сравнение уровней «что входит» — глубина работы, не количество страниц.
+   <details> ради мобилки: там сворачивается (экономит ~350px), на десктопе
+   summary скрыт и таблица всегда видна — атрибут open стоит в разметке. */
 .up__cmp{margin-top:18px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid var(--line)}
+.up__cmp__toggle{display:none}
+.up__cmp__toggle::-webkit-details-marker{display:none}
 .up__cmp__note{font-size:12.5px;color:var(--mut);line-height:1.55;margin-bottom:13px}
 .up__cmp__note b{color:var(--amber)}
 .up__cmp__grid{display:grid;gap:1px;background:var(--line);border-radius:9px;overflow:hidden}
@@ -245,7 +249,126 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__rad__like{display:block;margin-top:6px;font-size:10px;color:var(--mut2)}
 .up__rad__like a{color:var(--amber);text-decoration:none;border-bottom:1px dashed rgba(242,184,75,.4)}
 @media(max-width:720px){.up__cases__grid{grid-template-columns:1fr 1fr;gap:12px}}
-@media(max-width:480px){.up__cases__grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════
+   МОБИЛЬНЫЙ КОМПАКТ (≤620px)
+   Было: 6270px = 5.9 экранов, одна карточка допа 306px.
+   Принцип: мелкие плотные блоки, всё главное — в одну строку,
+   вторичное — мельче или по требованию. Ничего не удаляем,
+   только уплотняем подачу.
+   ═══════════════════════════════════════════════════════════ */
+@media(max-width:620px){
+  /* ── шапка: без лишнего воздуха ── */
+  .draft-bar{padding:7px 14px;font-size:10.5px}
+  .lab-hero{padding:26px 16px 4px}
+  .lab-hero h1{font-size:26px;line-height:1.05}
+  .lab-hero p{margin-top:10px;font-size:13px;line-height:1.45}
+  .lab-nav{margin-top:12px}
+  .wl-sec{padding:22px 16px 44px}
+  .wl-sec__h{font-size:24px;margin-top:6px}
+  .wl-sec__sub{font-size:13.5px;margin-top:10px;line-height:1.45}
+  .wl-sec__meta{display:none}          /* служебная пометка «место в продакшене» — не для клиента */
+
+  /* ── пресеты: 2×2 компактных плитки вместо 4 полос ── */
+  .up__presets{grid-template-columns:1fr 1fr;gap:8px;margin-top:22px}
+  .up__preset{padding:11px 11px 10px;border-radius:11px}
+  .up__preset .k{font-size:8.5px;letter-spacing:.06em}
+  .up__preset .nm{font-size:13px;margin-top:4px}
+  .up__preset .ds{font-size:10.5px;margin-top:3px;line-height:1.3;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .up__preset .fr{margin-top:7px;font-size:10px}
+  .up__preset .fr b{font-size:12px}
+  .up__preset .fr s,.up__preset .fr i{font-size:9.5px}
+
+  /* ── тарифы: 2×2 вместо 4 в столбик ── */
+  .up{margin-top:18px;gap:14px}
+  .up__col{padding:16px 14px;border-radius:14px}
+  .up__lbl{font-size:10px}
+  .up__h{font-size:16px;margin-top:4px}
+  .up__base{grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  .up__rad{padding:11px 9px;border-radius:11px}
+  .up__rad .n{font-size:12.5px}
+  .up__rad .p{font-size:15px;margin-top:2px}
+  .up__rad .d{font-size:10px;margin-top:3px;line-height:1.3}
+  /* бейдж на узкой плитке не помещается справа — растягиваем по ширине карточки */
+  .up__rad__badge{font-size:8.5px;padding:2px 6px;top:-7px;left:8px;right:8px;text-align:center;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .up__rad__like{font-size:9px;margin-top:4px}
+
+  /* ── сравнение: сворачиваем в аккордеон (детали для выбирающих Авторский,
+     не первичная информация) — экономит ~350px на первом заходе ── */
+  .up__cmp{margin-top:14px;padding:0;border-radius:12px}
+  .up__cmp__toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:14px 13px;min-height:46px;cursor:pointer;list-style:none;font-size:12px;color:var(--ink);font-weight:600}
+  .up__cmp__toggle:focus-visible{outline:2px solid var(--lime);outline-offset:2px;border-radius:12px}
+  .up__cmp__chev{color:var(--amber);font-size:11px;transition:transform .25s ease;flex:0 0 auto}
+  .up__cmp[open] .up__cmp__chev{transform:rotate(180deg)}
+  .up__cmp__note{font-size:11.5px;line-height:1.45;margin:0 13px 10px}
+  .up__cmp__grid{margin:0 13px 13px}
+  .up__cmp__row{grid-template-columns:58px 1fr 1fr;gap:7px;padding:7px 9px;font-size:10.5px}
+  .up__cmp__row span:first-child{font-size:10px}
+  .up__cmp__row--head{font-size:9px}
+
+  /* ── ДОПЫ: главное уплотнение. Было 306px на карточку, стало ~78px.
+     Название и цена — в одну строку, описание мельче в 2 строки,
+     польза (.val) — только у выбранного допа, чтобы не раздувать список ── */
+  .up__addH{margin-top:18px}
+  .up__addH .l{font-size:10px}
+  .up__addH .r{font-size:9.5px}
+  .up__adds{margin-top:10px;gap:14px}
+  .up__cat__h{font-size:9.5px;margin-bottom:7px}
+  .up__cat__grid{gap:7px}
+  .up__add{padding:10px 11px;border-radius:11px;
+    grid-template-columns:18px 1fr auto;gap:9px;align-items:center}
+  .up__add .chk{width:16px;height:16px;margin-top:0}
+  .up__add.on .chk::after{left:4px;top:1px;width:4px;height:8px;border-width:2px}
+  .up__add .tt{font-size:12.5px}
+  .up__add .tt b{font-size:12.5px;line-height:1.25}
+  .up__add.on .tt b::after{font-size:9.5px}
+  .up__add .tt .d{font-size:10px;margin-top:2px;line-height:1.35;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .up__add .tt .val{display:none}                 /* по умолчанию скрыта — не раздувает список */
+  .up__add.on .tt .val{display:block;font-size:10px;margin-top:4px;line-height:1.35}
+  .up__add .pp{font-size:12.5px}
+  .up__add .fav{font-size:8.5px;padding:2px 6px;top:-6px;right:9px}
+  /* тумблер «Год поддержки» — тоже мельче */
+  .up__toggle3d{width:30px!important;height:17px!important}
+  .up__toggle3d .knob{width:13px;height:13px}
+  .up__add.on .up__toggle3d .knob{transform:translateX(13px) rotate(180deg)}
+
+  /* ── чек: компактнее, но итог остаётся крупным акцентом ── */
+  .up__bill{padding:16px 14px;border-radius:14px}
+  .up__bill__lbl{font-size:10px}
+  .up__bill__h{font-size:16px;margin-top:4px}
+  .up__lines{margin-top:12px}
+  .up__line{padding:7px 0;gap:2px}
+  .up__line__row .n,.up__line__row .p{font-size:12.5px}
+  .up__line__val{font-size:10px}
+  .up__disc{font-size:11.5px;padding:7px 0}
+  .up__total{margin-top:12px;padding:14px 16px;border-radius:12px}
+  .up__total .l{font-size:9.5px}
+  .up__total .v{font-size:32px}
+  .up__level{margin-top:14px}
+  .up__level__labels{font-size:9px;margin-top:6px}
+  .up__marquee{margin-top:11px;padding:6px 0}
+  .up__marquee__track{gap:24px}
+  .up__marquee__track span{font-size:9.5px}
+  .up__cta{margin-top:14px;padding:14px 16px;font-size:13px;border-radius:11px;min-height:46px}
+  .up__reassure{margin-top:10px;gap:5px;font-size:10.5px}
+
+  /* ── кейсы: 2 колонки мелких плиток вместо 6 больших ── */
+  .up__cases{margin-top:34px}
+  .up__cases__h{font-size:19px}
+  .up__cases__sub{font-size:12.5px;margin-top:6px;line-height:1.4}
+  .up__cases__grid{grid-template-columns:1fr 1fr!important;gap:9px;margin-top:16px}
+  .up__case{border-radius:11px}
+  .up__case__live{font-size:8.5px;padding:3px 7px;top:7px;left:7px;gap:4px}
+  .up__case__live::before{width:5px;height:5px}
+  .up__case__cap{padding:8px 9px 10px}
+  .up__case__cap b{font-size:11.5px}
+  .up__case__cap span{font-size:9px;margin-top:2px;
+    display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+}
 </style>
 </head>
 <body>
@@ -316,7 +439,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
         </label>
       </div>
 
-      <div class="up__cmp">
+      <details class="up__cmp" open>
+        <summary class="up__cmp__toggle">Чем Авторский отличается от стандартного<span class="up__cmp__chev" aria-hidden="true">▾</span></summary>
         <div class="up__cmp__note">Сайт от $150 — рабочий инструмент, заявки идут исправно. <b>Авторский</b> — когда сайт должен продавать сам бренд, а не только собирать заявки.</div>
         <div class="up__cmp__grid">
           <div class="up__cmp__row up__cmp__row--head"><span></span><span>стандарт</span><span>авторский</span></div>
@@ -327,7 +451,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
           <div class="up__cmp__row"><span>Правки</span><span>1 круг правок</span><span>3 круга + A/B-тест первого экрана</span></div>
           <div class="up__cmp__row"><span>Срок</span><span>3–7 дней</span><span>10–14 дней</span></div>
         </div>
-      </div>
+      </details>
 
       <div class="up__addH">
         <span class="l">02 · допы по категориям</span>
@@ -742,6 +866,18 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
       el.style.transform = '';
     });
   });
+})();
+
+// ── Мобильный компакт: таблица сравнения свёрнута по умолчанию.
+// В разметке стоит open (чтобы на десктопе и без JS она была видна),
+// на узком экране снимаем — экономит ~350px на первом заходе.
+(function(){
+  var cmp = document.querySelector('.up__cmp');
+  if (!cmp) return;
+  var mq = matchMedia('(max-width:620px)');
+  function sync(e){ if (e.matches) cmp.removeAttribute('open'); else cmp.setAttribute('open',''); }
+  sync(mq);
+  if (mq.addEventListener) mq.addEventListener('change', sync);
 })();
 </script>
 
