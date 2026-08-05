@@ -471,6 +471,13 @@ a{color:inherit;text-decoration:none}
   /* строк ровно столько, сколько влезает целиком: полстроки на срезе
      читается как баг, а не как «данных больше» */
   .tbl tbody tr:nth-child(n+7){display:none}
+  /* окно во всю ширину, но main тут всего 540px: шесть колонок давали 495px
+     плюс отбивки и вылезали за правый край — «Ответственный» уходит */
+  .tbl th:nth-child(5),.tbl td:nth-child(5){display:none}
+  /* карточка KPI сужается до 135px, и подпись с отступом под спарклайн
+     переносилась на вторую строку — полоса KPI росла и давила таблицу */
+  .spark{display:none}
+  .kpi__d{padding-right:0}
   .kan{grid-template-columns:repeat(3,1fr)}
   .kcol:last-child{display:none}
   /* окно тут 486px → колонке достаётся 389, это ровно четыре карточки */
