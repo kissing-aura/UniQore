@@ -147,7 +147,11 @@
 .up__add.is-included{border-color:rgba(49,224,176,.28)}
 
 /* ── endowment: «в пакете» у выбранного допа + вспышка при снятии ── */
-.up__add.on .tt b::after{content:" · в пакете";color:var(--mint);font-size:11px;font-weight:600}
+/* «в пакете» отдельной строкой: инлайном оно рвало заголовок допа
+   пополам («Дизайн под бренд · в / пакете») — выглядело как ошибка вёрстки */
+.up__add.on .tt b::after{content:"в пакете";display:block;color:var(--mint);
+  font-size:10px;font-weight:600;letter-spacing:.04em;margin-top:3px;
+  font-family:'JetBrains Mono',monospace}
 .up__line--removing{background:rgba(255,110,99,.10);border-radius:8px;transition:background .16s ease}
 .up__line--removing .up__line__row .p{color:var(--coral)!important;transition:color .16s ease}
 
@@ -577,6 +581,50 @@
   .b4__g .val::after{font-size:7px}
 }
 </style>
+
+<style>
+/* ═══ Карточка «Окупаемость рекламы» ═══
+   Подпись была одной длинной строкой капсом и читалась тяжело —
+   разбил на суть и контекст разными весами. */
+.b2__big small{text-transform:none!important;font-size:11px;letter-spacing:.01em;line-height:1.35;opacity:.95}
+.b2__big small i{display:block;font-style:normal;font-size:9.5px;opacity:.62;margin-top:2px;letter-spacing:.03em}
+.b2__flow .to{font-size:9px;letter-spacing:.04em;opacity:.55;text-transform:uppercase}
+
+/* Движение: график не должен замирать после первого показа — по столбцам
+   бесконечно бежит волна подсветки, слева направо, как «неделя за неделей». */
+.b2-bar{position:relative;overflow:hidden}
+.b2-bar::before{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0));
+  opacity:0;animation:b2wave 4.2s ease-in-out infinite}
+.b2-bar:nth-child(1)::before{animation-delay:0s}
+.b2-bar:nth-child(2)::before{animation-delay:.18s}
+.b2-bar:nth-child(3)::before{animation-delay:.36s}
+.b2-bar:nth-child(4)::before{animation-delay:.54s}
+.b2-bar:nth-child(5)::before{animation-delay:.72s}
+.b2-bar:nth-child(6)::before{animation-delay:.9s}
+@keyframes b2wave{0%,72%{opacity:0}80%{opacity:.30}100%{opacity:0}}
+
+/* последний столбец — цель, к которой шли: тихо пульсирует */
+.b2-bar:last-child{animation:b2goal 4.2s ease-in-out infinite}
+@keyframes b2goal{0%,70%{filter:none}82%{filter:brightness(1.18)}100%{filter:none}}
+
+/* стрелка тренда живёт вместе с волной */
+.b2__trend{animation:b2trend 4.2s ease-in-out infinite}
+@keyframes b2trend{0%,74%{transform:translate(0,0)}86%{transform:translate(1.5px,-1.5px)}100%{transform:translate(0,0)}}
+
+@media(prefers-reduced-motion:reduce){
+  .b2-bar::before,.b2-bar:last-child,.b2__trend{animation:none}
+}
+</style>
+
+<style>
+/* Карточки допов идут парами: если у соседа текст втрое длиннее, справа
+   зияет пустота. Прижимаем содержимое к верху и держим цену на одной
+   линии с заголовком — пара читается ровно даже при разной длине. */
+.up__add{align-content:start}
+.up__add .tt{align-self:start}
+.up__add .pp{align-self:start;margin-top:1px}
+</style>
 </head>
 <body class="sy">
 <div style="position:sticky;top:0;z-index:9999;background:linear-gradient(90deg,#1a1400,#0A0E1A);border-bottom:1px solid rgba(242,184,75,.35);padding:9px 16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#F2B84B;letter-spacing:.02em">
@@ -983,10 +1031,10 @@
           <span class="b2__val">×0,0</span>
           <svg class="b2__trend" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
         </div>
-        <small>ROI на каждый ₽ · за 6 недель, было ×1,2</small>
+        <small>возврат на каждый ₽ рекламы<i>было ×1,2 — стало за 6 недель</i></small>
       </div>
       <div class="b2__flow">
-        <b>48 000 ₽</b><span class="to">→</span><b style="color:var(--amber)">163 000 ₽</b>
+        <b>48 000 ₽</b><span class="to">вложили → вернулось</span><b style="color:var(--amber)">163 000 ₽</b>
       </div>
       <div class="b2__chart" id="b2chart">
         <div class="b2-bar" data-l="нед.1" data-h="22" data-sp="+8к"><span class="spark">+8к</span></div>
@@ -996,7 +1044,7 @@
         <div class="b2-bar" data-l="5" data-h="78" data-sp="+38к"><span class="spark">+38к</span></div>
         <div class="b2-bar" data-l="6" data-h="100" data-sp="+70к"><span class="spark">+70к</span></div>
       </div>
-      <div class="b2__foot">47 заявок · Немеция, Омск</div>
+      <div class="b2__foot">47 заявок · автосервис «Немеция», Омск</div>
      </div>
     </div>
 
@@ -1229,7 +1277,7 @@
                     </label>
                     <label class="up__add" data-p="80" data-n="Логотип и фирстиль" data-id="brand">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Логотип и фирстиль</b><span class="d">Логотип в векторе, палитра, шрифтовая пара, правила использования — файлы остаются у вас</span><span class="val">→ один стиль на сайте, визитках и соцсетях — бизнес выглядит собранным</span></span>
+                      <span class="tt"><b>Логотип и фирстиль</b><span class="d">Логотип в векторе, палитра и шрифты — файлы остаются у вас</span><span class="val">→ один стиль на сайте, визитках и соцсетях — бизнес выглядит собранным</span></span>
                       <span class="pp" data-usd="80" data-prefix="+">+$80</span>
                     </label>
                   </div>
@@ -1240,7 +1288,7 @@
                   <div class="up__cat__grid">
                     <label class="up__add" data-p="100" data-n="SEO-стартер" data-id="seo">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>SEO-стартер</b><span class="d">Собираем 20 запросов, по которым вас ищут. Прописываем заголовки страниц, отдаём карту сайта Яндексу и Google, подключаем Вебмастер и Search Console</span><span class="val">→ сайт начинают показывать в поиске — трафик без оплаты за клик</span></span>
+                      <span class="tt"><b>SEO-стартер</b><span class="d">20 запросов, заголовки страниц, карта сайта для Яндекса и Google</span><span class="val">→ сайт видно в поиске, трафик без оплаты за клик · подключаем Вебмастер</span></span>
                       <span class="pp" data-usd="100" data-prefix="+">+$100</span>
                     </label>
                     <label class="up__add" data-p="80" data-n="Мобильная скорость 95+" data-id="speed">
