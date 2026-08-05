@@ -938,14 +938,14 @@
    пятно света. Текста не прибавилось, а плоскость пропала. */
 .sy-emo{position:relative;isolation:isolate}
 .sy-emo::before{content:"";position:absolute;z-index:-1;inset:-40px -14vw -20px;pointer-events:none;
-  background-image:radial-gradient(circle,rgba(205,255,79,.14) 1px,transparent 1px);
-  background-size:26px 26px;
-  -webkit-mask-image:radial-gradient(58% 62% at 50% 58%,#000 5%,transparent 74%);
-  mask-image:radial-gradient(58% 62% at 50% 58%,#000 5%,transparent 74%);
-  opacity:.5;transform:translate3d(var(--px,0),var(--py,0),0);
+  background-image:radial-gradient(circle,rgba(205,255,79,.30) 1.4px,transparent 1.4px);
+  background-size:28px 28px;
+  -webkit-mask-image:radial-gradient(62% 66% at 50% 56%,#000 18%,transparent 82%);
+  mask-image:radial-gradient(62% 66% at 50% 56%,#000 18%,transparent 82%);
+  opacity:.75;transform:translate3d(var(--px,0),var(--py,0),0);
   transition:transform .6s cubic-bezier(.22,1,.36,1)}
 .sy-emo::after{content:"";position:absolute;z-index:-1;inset:auto 0 -30px;height:340px;pointer-events:none;
-  background:radial-gradient(46% 60% at 50% 74%,rgba(49,224,176,.10),transparent 70%);
+  background:radial-gradient(46% 60% at 50% 74%,rgba(49,224,176,.17),transparent 70%);
   transform:translate3d(calc(var(--px,0)*-.5),calc(var(--py,0)*-.5),0);
   transition:transform .7s cubic-bezier(.22,1,.36,1)}
 @media(max-width:620px){
