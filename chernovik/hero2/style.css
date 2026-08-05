@@ -559,8 +559,11 @@ a{color:inherit;text-decoration:none}
 .team__r{font-size:10.5px;color:var(--dim2)}
 
 /* закрытые задачи приглушены и зачёркнуты: они показывают, что система
-   не только копит дела, но и закрывает их */
-.tsk__i--done{opacity:.5;background:none;border-color:rgba(255,255,255,.035)}
+   не только копит дела, но и закрывает их. Строка компактнее открытой —
+   описание не нужно, дело уже сделано */
+.tsk__i--done{opacity:.5;background:none;border-color:rgba(255,255,255,.035);padding:5px 8px}
+.tsk__i--done .tsk__b > span{display:none}
+.tsk__g--done{margin-top:10px}
 .tsk__i--done .tsk__b b{text-decoration:line-through;text-decoration-thickness:1px}
 .tsk__box--on{background:rgba(49,224,176,.22);border-color:rgba(49,224,176,.5);position:relative}
 .tsk__box--on::after{
