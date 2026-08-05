@@ -104,7 +104,7 @@
 
   /* ── 3. Живая цифра в шапке дашборда ────────────────────────────────── */
 
-  var конв  = document.querySelectorAll('[data-view="dash"] .kpi__v')[3];
+  var конв  = document.querySelectorAll('[data-view="dash"] .kpi__v')[2];  /* конверсия — третья карточка */
   var время = document.querySelector('[data-view="dash"] .top__b');
   if (!время) return;
 

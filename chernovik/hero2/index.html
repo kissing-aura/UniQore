@@ -7,7 +7,7 @@
 <title>[черновик 2] hero по эталонам — Uniqore</title>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
-<link rel="stylesheet" href="/chernovik/hero2/style.css?v=23">
+<link rel="stylesheet" href="/chernovik/hero2/style.css?v=24">
 </head>
 <body>
 <div class="lab-note">черновик 2 · собран по замерам Linear / Attio / Vercel · <b>/chernovik/hero2/</b></div>
@@ -92,8 +92,11 @@
         <div class="kpis">
           <div class="kpi"><span class="kpi__l">Выручка</span><b class="kpi__v">2 995 000 ₽</b><span class="kpi__d up">+18,2% к прошлой неделе</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 18 L11 15 L22 16 L33 11 L44 12 L55 7 L66 8 L77 4 L88 2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
           <div class="kpi"><span class="kpi__l">Заявки</span><b class="kpi__v">184</b><span class="kpi__d up">+12 за неделю</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 16 L11 17 L22 12 L33 14 L44 9 L55 11 L66 6 L77 7 L88 3" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
+          <!-- порядок по важности: правый край окна срезан кромкой экрана,
+               поэтому последний KPI виден лишь на треть — там наименее
+               ценная метрика, а не конверсия -->
+          <div class="kpi"><span class="kpi__l">Конверсия счёт → оплата</span><b class="kpi__v">67,4%</b><span class="kpi__d up">+4,0 п.п.</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 14 L11 13 L22 15 L33 10 L44 11 L55 8 L66 9 L77 5 L88 4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
           <div class="kpi"><span class="kpi__l">Средний чек</span><b class="kpi__v">162 800 ₽</b><span class="kpi__d down">−3,1%</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 6 L11 8 L22 5 L33 9 L44 8 L55 12 L66 10 L77 14 L88 13" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
-          <div class="kpi"><span class="kpi__l">Конверсия в оплату</span><b class="kpi__v">67,4%</b><span class="kpi__d up">+4,0 п.п.</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 14 L11 13 L22 15 L33 10 L44 11 L55 8 L66 9 L77 5 L88 4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
         </div>
 
         <div class="row">
@@ -122,26 +125,30 @@
           <div class="col">
             <section class="box">
               <div class="box__h"><span class="box__t">Источники заявок</span><span class="box__m">неделя</span></div>
+              <!-- Порядок важен: число и динамика идут сразу за названием, а
+                   полоса — последней. Окно уходит за правый край экрана, и
+                   когда числа стояли справа, обрезалось именно они: блок
+                   показывал названия каналов без единой цифры. -->
               <ul class="src">
                 <li>
                   <i style="--c:#CDFF4F"></i><span class="src__n">Instagram</span>
-                  <span class="src__bar"><b style="--w:100%"></b></span>
                   <span class="src__v">77</span><em class="up">+9</em>
+                  <span class="src__bar"><b style="--w:100%"></b></span>
                 </li>
                 <li>
                   <i style="--c:#31e0b0"></i><span class="src__n">Telegram</span>
-                  <span class="src__bar"><b style="--w:67%"></b></span>
                   <span class="src__v">52</span><em class="up">+4</em>
+                  <span class="src__bar"><b style="--w:67%"></b></span>
                 </li>
                 <li>
                   <i style="--c:#5b9dff"></i><span class="src__n">Сайт</span>
-                  <span class="src__bar"><b style="--w:43%"></b></span>
                   <span class="src__v">33</span><em class="down">−2</em>
+                  <span class="src__bar"><b style="--w:43%"></b></span>
                 </li>
                 <li>
                   <i style="--c:#8792a3"></i><span class="src__n">Яндекс Директ</span>
-                  <span class="src__bar"><b style="--w:28%"></b></span>
                   <span class="src__v">22</span><em class="up">+1</em>
+                  <span class="src__bar"><b style="--w:28%"></b></span>
                 </li>
               </ul>
               <div class="src__foot">
@@ -341,44 +348,38 @@
                  и заявки столбцами внизу — так панель несёт связь «заявок
                  больше → выручка выше», а не просто «график вверх». -->
             <div class="an__plot">
-              <ul class="an__y"><li>3,0 млн</li><li>2,5</li><li>2,0</li><li>1,5</li></ul>
-              <svg class="achart" viewBox="0 0 560 196" preserveAspectRatio="none" aria-hidden="true">
-                <defs>
-                  <!-- userSpaceOnUse: иначе градиент считается от всей высоты
-                       viewBox и на нижней кромке заливки (y=134) остаётся 6%
-                       непрозрачности — видна ровная горизонтальная черта -->
-                  <linearGradient id="ag" gradientUnits="userSpaceOnUse" x1="0" y1="20" x2="0" y2="134">
-                    <stop offset="0%" stop-color="#CDFF4F" stop-opacity=".2"/>
-                    <stop offset="100%" stop-color="#CDFF4F" stop-opacity="0"/>
-                  </linearGradient>
-                </defs>
-                <g class="achart__g">
-                  <line x1="0" y1="25.8" x2="560" y2="25.8"/>
-                  <line x1="0" y1="54.7" x2="560" y2="54.7"/>
-                  <line x1="0" y1="83.7" x2="560" y2="83.7"/>
-                  <line x1="0" y1="112.6" x2="560" y2="112.6"/>
-                </g>
+              <div class="an__canvas">
+                <ul class="an__y"><li>3,0 млн</li><li>2,5</li><li>2,0</li><li>1,5</li></ul>
+                <!-- в SVG остались только линии и заливка: они переживают
+                     preserveAspectRatio="none". Круги и скруглённые прямоугольники
+                     здесь деформируются — по вертикали масштаб втрое больше, и
+                     точка на конце линии превращалась в вытянутое пятно. -->
+                <svg class="achart" viewBox="0 0 560 134" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="ag" gradientUnits="userSpaceOnUse" x1="0" y1="20" x2="0" y2="134">
+                      <stop offset="0%" stop-color="#CDFF4F" stop-opacity=".2"/>
+                      <stop offset="100%" stop-color="#CDFF4F" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <g class="achart__g">
+                    <line x1="0" y1="25.8" x2="560" y2="25.8"/>
+                    <line x1="0" y1="54.7" x2="560" y2="54.7"/>
+                    <line x1="0" y1="83.7" x2="560" y2="83.7"/>
+                    <line x1="0" y1="112.6" x2="560" y2="112.6"/>
+                  </g>
+                  <path class="achart__plan" d="M30 121 L101.4 111 L172.9 101 L244.3 91 L315.7 81 L387.1 71 L458.6 61 L530 51"/>
+                  <path class="achart__area" d="M30 117.3 L101.4 102.2 L172.9 107.4 L244.3 79.1 L315.7 69.8 L387.1 54.2 L458.6 39.7 L530 26.2 L530 134 L30 134 Z" fill="url(#ag)"/>
+                  <path class="achart__line" d="M30 117.3 L101.4 102.2 L172.9 107.4 L244.3 79.1 L315.7 69.8 L387.1 54.2 L458.6 39.7 L530 26.2"/>
+                </svg>
+                <span class="an__dot" aria-hidden="true"></span>
+              </div>
 
-                <!-- столбцы поднимаются до y=144: при прежней высоте между
-                     низом заливки (134) и вершиной самого высокого столбца
-                     зияло 18 единиц, и график читался как два разных -->
-                <g class="achart__bars">
-                  <rect x="17"  y="165.9" width="26" height="20.1" rx="2"/>
-                  <rect x="88"  y="161.6" width="26" height="24.4" rx="2"/>
-                  <rect x="160" y="163"   width="26" height="23"   rx="2"/>
-                  <rect x="231" y="155.8" width="26" height="30.2" rx="2"/>
-                  <rect x="303" y="154.4" width="26" height="31.6" rx="2"/>
-                  <rect x="374" y="150.1" width="26" height="35.9" rx="2"/>
-                  <rect x="446" y="147.2" width="26" height="38.8" rx="2"/>
-                  <rect x="517" y="144.3" width="26" height="41.7" rx="2" class="is-now"/>
-                </g>
-
-                <path class="achart__plan" d="M30 121 L101.4 111 L172.9 101 L244.3 91 L315.7 81 L387.1 71 L458.6 61 L530 51"/>
-                <path class="achart__area" d="M30 117.3 L101.4 102.2 L172.9 107.4 L244.3 79.1 L315.7 69.8 L387.1 54.2 L458.6 39.7 L530 26.2 L530 134 L30 134 Z" fill="url(#ag)"/>
-                <path class="achart__line" d="M30 117.3 L101.4 102.2 L172.9 107.4 L244.3 79.1 L315.7 69.8 L387.1 54.2 L458.6 39.7 L530 26.2"/>
-                <circle class="achart__halo" cx="530" cy="26.2" r="9"/>
-                <circle class="achart__dot" cx="530" cy="26.2" r="3.6"/>
-              </svg>
+              <div class="an__bars" aria-hidden="true">
+                <span style="--h:44%"></span><span style="--h:53%"></span>
+                <span style="--h:50%"></span><span style="--h:66%"></span>
+                <span style="--h:69%"></span><span style="--h:78%"></span>
+                <span style="--h:84%"></span><span class="is-now" style="--h:91%"></span>
+              </div>
               <span class="an__blab">заявки, шт</span>
             </div>
             <div class="an__x"><span>н1</span><span>н2</span><span>н3</span><span>н4</span><span>н5</span><span>н6</span><span>н7</span><span>н8</span></div>
@@ -388,10 +389,10 @@
             <section class="box">
               <div class="box__h"><span class="box__t">Воронка</span><span class="box__m">33,7% в оплату</span></div>
               <ul class="fun">
-                <li><span class="fun__n">Заявки</span><span class="fun__b" style="--w:100%"></span><b>184</b></li>
-                <li><span class="fun__n">Квалифицированы</span><span class="fun__b" style="--w:66%"></span><b>121</b><em>65,8%</em></li>
-                <li><span class="fun__n">Счёт выставлен</span><span class="fun__b" style="--w:48%"></span><b>88</b><em>72,7%</em></li>
-                <li><span class="fun__n">Оплачено</span><span class="fun__b fun__b--ok" style="--w:34%"></span><b>62</b><em>70,5%</em></li>
+                <li><span class="fun__n">Заявки</span><b>184</b><em>—</em><span class="fun__b" style="--w:100%"></span></li>
+                <li><span class="fun__n">Квалифицированы</span><b>121</b><em>65,8%</em><span class="fun__b" style="--w:66%"></span></li>
+                <li><span class="fun__n">Счёт выставлен</span><b>88</b><em>72,7%</em><span class="fun__b" style="--w:48%"></span></li>
+                <li><span class="fun__n">Оплачено</span><b>62</b><em>70,5%</em><span class="fun__b fun__b--ok" style="--w:34%"></span></li>
               </ul>
             </section>
 
@@ -416,6 +417,6 @@
   </div>
 </section>
 
-<script src="/chernovik/hero2/scene.js?v=23" defer></script>
+<script src="/chernovik/hero2/scene.js?v=24" defer></script>
 </body>
 </html>
