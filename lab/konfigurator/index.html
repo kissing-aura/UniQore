@@ -93,11 +93,11 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 .up__rad--premium .up__rad__badge{background:var(--amber)}
 
 /* Сравнение уровней «что входит» — глубина работы, не количество страниц.
-   <details> ради мобилки: там сворачивается (экономит ~350px), на десктопе
-   summary скрыт и таблица всегда видна — атрибут open стоит в разметке. */
+   На мобилке сворачивается в аккордеон (экономит ~350px), на десктопе
+   кнопка-тоггл скрыта и таблица видна всегда. Видимостью управляет CSS,
+   а не JS-состояние: иначе при ресайзе с узкого на широкий контент пропадал. */
 .up__cmp{margin-top:18px;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid var(--line)}
-.up__cmp__toggle{display:none}
-.up__cmp__toggle::-webkit-details-marker{display:none}
+.up__cmp__toggle{display:none;appearance:none;-webkit-appearance:none;background:none;border:0;font:inherit;width:100%;text-align:left}
 .up__cmp__note{font-size:12.5px;color:var(--mut);line-height:1.55;margin-bottom:13px}
 .up__cmp__note b{color:var(--amber)}
 .up__cmp__grid{display:grid;gap:1px;background:var(--line);border-radius:9px;overflow:hidden}
@@ -299,10 +299,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
      не первичная информация) — экономит ~350px на первом заходе ── */
   .up__cmp{margin-top:14px;padding:0;border-radius:12px}
   .up__cmp__toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:14px 13px;min-height:46px;cursor:pointer;list-style:none;font-size:12px;color:var(--ink);font-weight:600}
+    padding:14px 13px;min-height:46px;cursor:pointer;font-size:12px;color:var(--ink);font-weight:600}
   .up__cmp__toggle:focus-visible{outline:2px solid var(--lime);outline-offset:2px;border-radius:12px}
   .up__cmp__chev{color:var(--amber);font-size:11px;transition:transform .25s ease;flex:0 0 auto}
-  .up__cmp[open] .up__cmp__chev{transform:rotate(180deg)}
+  /* тело скрыто только на узком экране и только пока не раскрыли */
+  .up__cmp:not(.is-open) .up__cmp__body{display:none}
+  .up__cmp.is-open .up__cmp__chev{transform:rotate(180deg)}
   .up__cmp__note{font-size:11.5px;line-height:1.45;margin:0 13px 10px}
   .up__cmp__grid{margin:0 13px 13px}
   .up__cmp__row{grid-template-columns:58px 1fr 1fr;gap:7px;padding:7px 9px;font-size:10.5px}
@@ -439,8 +441,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
         </label>
       </div>
 
-      <details class="up__cmp" open>
-        <summary class="up__cmp__toggle">Чем Авторский отличается от стандартного<span class="up__cmp__chev" aria-hidden="true">▾</span></summary>
+      <div class="up__cmp">
+        <button type="button" class="up__cmp__toggle" aria-expanded="false" aria-controls="upCmpBody">Чем Авторский отличается от стандартного<span class="up__cmp__chev" aria-hidden="true">▾</span></button>
+        <div class="up__cmp__body" id="upCmpBody">
         <div class="up__cmp__note">Сайт от $150 — рабочий инструмент, заявки идут исправно. <b>Авторский</b> — когда сайт должен продавать сам бренд, а не только собирать заявки.</div>
         <div class="up__cmp__grid">
           <div class="up__cmp__row up__cmp__row--head"><span></span><span>стандарт</span><span>авторский</span></div>
@@ -451,7 +454,8 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
           <div class="up__cmp__row"><span>Правки</span><span>1 круг правок</span><span>3 круга + A/B-тест первого экрана</span></div>
           <div class="up__cmp__row"><span>Срок</span><span>3–7 дней</span><span>10–14 дней</span></div>
         </div>
-      </details>
+        </div>
+      </div>
 
       <div class="up__addH">
         <span class="l">02 · допы по категориям</span>
@@ -873,11 +877,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Geist',system-ui,sans-se
 // на узком экране снимаем — экономит ~350px на первом заходе.
 (function(){
   var cmp = document.querySelector('.up__cmp');
-  if (!cmp) return;
-  var mq = matchMedia('(max-width:620px)');
-  function sync(e){ if (e.matches) cmp.removeAttribute('open'); else cmp.setAttribute('open',''); }
-  sync(mq);
-  if (mq.addEventListener) mq.addEventListener('change', sync);
+  var btn = cmp && cmp.querySelector('.up__cmp__toggle');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    var open = cmp.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
 })();
 </script>
 
