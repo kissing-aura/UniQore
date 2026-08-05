@@ -582,8 +582,11 @@ a{color:inherit;text-decoration:none}
      а не как «не поместилось»: у карточек всё равно нет места на детали */
   .kan{grid-template-columns:repeat(2,1fr)}
   .kcol:nth-child(3){display:none}
-  /* колонки на телефоне ещё уже, чем на узком десктопе — тот же приём */
+  /* колонки на телефоне ещё уже, чем на узком десктопе — тот же приём,
+     плюс 2px с боков карточки: названию не хватало ровно трёх */
   .kcard__t{font-size:11px;letter-spacing:-.012em}
+  .kcard{padding:9px 7px 8px}
+  .kcol{padding:11px 8px}
   /* в 333px высоты влезает ровно три карточки (36 + 85×N); четвёртая
      вылезала на 154px и обрезалась по низу окна */
   .kcol > :nth-child(n+5){display:none}
