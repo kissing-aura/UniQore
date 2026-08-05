@@ -95,7 +95,7 @@ a{color:inherit;text-decoration:none}
 }
 
 .pill{
-  display:inline-block;margin-bottom:20px;
+  display:inline-block;margin-bottom:24px;
   font-size:13px;line-height:18px;color:var(--dim);
   border:1px solid var(--hair);border-radius:13px;padding:5px 13px;
 }
@@ -106,14 +106,18 @@ a{color:inherit;text-decoration:none}
      «вас» повисало четвёртой строкой. Ниже 52 заголовок проигрывает окну
      960×620 по весу и читается как подпись к картинке */
   font-size:clamp(38px,3.75vw,54px);line-height:1.03;font-weight:600;letter-spacing:-.028em;
-  color:var(--ink);margin:0 0 18px;
+  color:var(--ink);margin:0 0 22px;
 }
-.sub{font-size:15.5px;line-height:24px;font-weight:400;color:var(--dim);max-width:44ch;margin:0 0 24px}
+/* Ступени кегля были 54 / 15,5 / 14 / 12,5 / 12,5 — четыре почти слитых
+   уровня, глаз не читает их как иерархию, и провал после заголовка в 3,5
+   раза. Стало 54 / 18 / 14,5 / 13 / 11: лид отделён, шаг ~1,25. У эталонов
+   лид при H1 54–64 идёт 18–21px. */
+.sub{font-size:18px;line-height:27px;font-weight:400;color:var(--dim);max-width:42ch;margin:0 0 30px}
 
-.cta{display:flex;gap:10px;justify-content:flex-start;margin-bottom:22px;flex-wrap:wrap}
+.cta{display:flex;gap:10px;justify-content:flex-start;margin-bottom:24px;flex-wrap:wrap}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;
-  border-radius:10px;font-size:14px;font-weight:500;
+  border-radius:10px;font-size:14.5px;font-weight:500;
   transition:background-color .16s cubic-bezier(.25,.46,.45,.94),border-color .16s,color .16s;
 }
 /* теней у кнопок нет ни у Clay, ни у Framer, ни у Stripe */
@@ -122,21 +126,22 @@ a{color:inherit;text-decoration:none}
 .btn--ghost{border:1px solid var(--hair);color:var(--ink)}
 .btn--ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
 
-.marks{list-style:none;display:flex;flex-direction:column;gap:9px}
-.marks li{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--dim)}
+.marks{list-style:none;display:flex;flex-direction:column;gap:10px}
+/* мелкий Geist читается плотно — на 13px и ниже нужен положительный трекинг */
+.marks li{display:flex;align-items:center;gap:9px;font-size:13px;letter-spacing:.005em;color:var(--dim)}
 .marks svg{width:15px;height:15px;color:var(--mint);flex:none}
 
 /* Доказательство под обещанием: не «300+ клиентов», а имена систем, которые
    можно проверить. Логотипов у нас нет — значит текстом, как логополоса. */
-.proof{margin-top:22px;padding-top:17px;border-top:1px solid var(--border)}
+.proof{margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
 .proof__t{
   display:block;font:400 10px/1 var(--mono);letter-spacing:.1em;
   text-transform:uppercase;color:var(--dim2);margin-bottom:11px;
 }
 .proof__l{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:9px 18px}
 .proof__l li{display:flex;flex-direction:column;gap:2px;line-height:1.25}
-.proof__l b{font-size:12.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
-.proof__l i{font-style:normal;font-size:10.5px;color:var(--dim2)}
+.proof__l b{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.proof__l i{font-style:normal;font-size:11px;letter-spacing:.005em;color:var(--dim2)}
 
 /* ── Мокап ────────────────────────────────────────────────────────────
    Фиксированная ширина, как у Linear (--width:1320px): интерфейс не
@@ -539,7 +544,7 @@ a{color:inherit;text-decoration:none}
   .shell{order:6}
   .proof{order:7;margin-top:30px}
   .h1{font-size:34px;letter-spacing:-.75px}
-  .sub{font-size:15px}
+  .sub{font-size:16px;line-height:25px}
   .cta{flex-direction:column;margin-bottom:22px}
   .btn{width:100%}
   .shell{padding:0 16px}
