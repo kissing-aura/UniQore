@@ -838,18 +838,21 @@ a{color:inherit;text-decoration:none}
   .h1{order:2}
   .sub{order:3}
   .cta{order:4}
-  .marks{order:5;margin-bottom:26px}
+  .shell{order:5}
+  .marks{order:6;margin-top:30px}
   /* лид на телефоне подрос с 15 до 16px и утянул мокап на 41px вниз —
      возвращаем запас отступами, чтобы окно осталось над сгибом Safari */
-  .pill{margin-bottom:18px}
-  .shell{order:6}
-  .proof{order:7;margin-top:30px}
-  .h1{font-size:34px;letter-spacing:-.75px}
-  .sub{font-size:16px;line-height:25px}
-  .cta{flex-direction:column;margin-bottom:18px}
+  /* Продукт должен появляться раньше сгиба, а не после всего текста.
+     Гарантии («не приняли этап…») уезжают ПОД окно вместе с клиентами:
+     сначала обещание и кнопка, сразу за ними — сам продукт. */
+  .pill{margin-bottom:16px;font-size:12px;padding:4px 11px}
+  .proof{order:7;margin-top:24px}
+  .h1{font-size:33px;letter-spacing:-.8px;margin-bottom:16px}
+  .sub{font-size:15.5px;line-height:23.5px;margin-bottom:22px}
+  .cta{flex-direction:column;gap:9px;margin-bottom:0}
   .uqhero-btn{width:100%}
   .shell{padding:0 16px}
-  .app{height:430px;border-radius:10px}
+  .app{height:472px;border-radius:10px}
   .side{display:none}
   /* четыре KPI в два ряда съедали 173px из 396 — почти половину окна.
      Оставляем два: деньги и заявки, остальное несёт таблица */
