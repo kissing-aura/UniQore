@@ -437,6 +437,8 @@ a{color:inherit;text-decoration:none}
   .tbl tbody tr:nth-child(n+7){display:none}
   .kan{grid-template-columns:repeat(3,1fr)}
   .kcol:last-child{display:none}
+  /* окно тут 486px → колонке достаётся 389, это ровно четыре карточки */
+  .kcol > :nth-child(n+6){display:none}
   .an{grid-template-columns:1fr}
   .an__side{display:none}
 }
