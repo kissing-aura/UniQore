@@ -36,13 +36,14 @@
 
   var виды    = {};
   var кнопки  = {};
-  document.querySelectorAll('.view').forEach(function (v) { виды[v.dataset.view] = v; });
-  document.querySelectorAll('.side__i[data-go]').forEach(function (b) {
+  окно.querySelectorAll('.view').forEach(function (v) { виды[v.dataset.view] = v; });
+  окно.querySelectorAll('.side__i[data-go]').forEach(function (b) {
     кнопки[b.dataset.go] = b;
     b.style.cursor = 'pointer';
     b.addEventListener('click', function () { перейти(b.dataset.go, true); });
   });
 
+  var паузаДо = 0;
   var текущий = 0;
   var таймер  = null;
   var подсветка = null;  /* отложенный переход после hover-подсветки пункта */
@@ -102,7 +103,6 @@
      тапе, а pointerleave — нет: после первого касания показ вставал
      навсегда. Плюс страховка по времени: если курсор ушёл со страницы и
      leave потерялся, через 20 секунд пауза снимается сама. */
-  var паузаДо = 0;
   окно.addEventListener('pointerenter', function (e) {
     if (e.pointerType && e.pointerType !== 'mouse') return;
     пауза = true; паузаДо = Date.now() + 20000;
@@ -128,7 +128,7 @@
 
   /* ── 2. Подсветка строки под курсором ───────────────────────────────── */
 
-  document.querySelectorAll('.tbl tbody tr').forEach(function (tr) {
+  окно.querySelectorAll('.tbl tbody tr').forEach(function (tr) {
     tr.addEventListener('pointerenter', function () { tr.classList.add('is-hover'); });
     tr.addEventListener('pointerleave', function () { tr.classList.remove('is-hover'); });
   });
@@ -137,24 +137,49 @@
 
   /* ── 3. Живая цифра в шапке дашборда ────────────────────────────────── */
 
-  var конв  = document.querySelectorAll('[data-view="dash"] .kpi__v')[2];  /* конверсия — третья карточка */
-  var время = document.querySelector('[data-view="dash"] .top__b');
+  /* ищем по подписи, а не по индексу: на узких раскладках часть карточек
+     скрыта, и позиционный номер начинал указывать не на ту метрику */
+  function карточка(подпись) {
+    var найдено = null;
+    окно.querySelectorAll('[data-view="dash"] .kpi').forEach(function (k) {
+      var l = k.querySelector('.kpi__l');
+      if (l && l.textContent.indexOf(подпись) === 0) найдено = k;
+    });
+    return найдено;
+  }
+  var заявкиК = карточка('Заявки');
+  var конвК   = карточка('Конверсия');
+  var время   = окно.querySelector('[data-view="dash"] .top__b');
   if (!время) return;
 
   /* минута прибавляется раз в минуту, а не раз в 9 секунд: иначе за минуту
      просмотра шапка доходила до «8 мин назад», пока строка таблицы всё ещё
      писала «4 мин назад». Потолок 9 — дальше дашборд «обновляется» заново. */
-  var мин = 2;
+  var мин = 2, заявок = 53, оплат = 18;
+  function вспышка(el) {
+    if (!el) return;
+    el.classList.remove('is-fresh');
+    void el.offsetWidth;            /* без снятия класса анимация не повторится */
+    el.classList.add('is-fresh');
+  }
   var часы = setInterval(function () {
     if (document.hidden || !виден) return;
     мин = мин >= 9 ? 1 : мин + 1;
     время.textContent = 'Обновлено ' + мин + ' мин назад';
-    if (конв && мин % 3 === 0) {
-      конв.textContent = (34 + (Math.random() * 1.2 - .6)).toFixed(1).replace('.', ',') + '%';
-      /* перезапуск анимации: без снятия класса второй раз она не проиграет */
-      конв.classList.remove('is-fresh');
-      void конв.offsetWidth;
-      конв.classList.add('is-fresh');
+    if (мин % 3) return;
+
+    /* пришла заявка: растёт счётчик, конверсия честно пересчитывается от
+       того же числа оплат, дельта — от начальных 47 заявок недели */
+    заявок += 1;
+    if (заявкиК) {
+      заявкиК.querySelector('.kpi__v').textContent = заявок;
+      заявкиК.querySelector('.kpi__d').textContent = '+' + (заявок - 47) + ' за неделю';
+      вспышка(заявкиК.querySelector('.kpi__v'));
+    }
+    if (конвК) {
+      var c = (оплат / заявок * 100).toFixed(1).replace('.', ',');
+      конвК.querySelector('.kpi__v').textContent = c + '%';
+      конвК.querySelector('.kpi__d').textContent = '+' + ((оплат / заявок * 100) - 31.9).toFixed(1).replace('.', ',') + ' п.п.';
     }
   }, 60000);
 
