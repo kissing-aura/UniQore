@@ -565,8 +565,12 @@
 .b4__g svg{max-width:132px;overflow:visible}
 .b4__g .scale text{font-size:6.5px;opacity:.42}
 .b4__g .scale circle{opacity:.28}
-.b4__g .val{top:auto;bottom:2px;font-size:29px;line-height:1}
-.b4__g .lbl{margin-top:9px;gap:5px;opacity:.9}
+/* Цифра в потоке, а не absolute: при absolute она вылезала ниже дуги и
+   налезала на подпись. Отрицательный отступ у svg втягивает число внутрь
+   полукруга — так оно всегда сидит по центру, независимо от высоты блока. */
+.b4__g svg{margin-bottom:-42px}
+.b4__g .val{position:static;font-size:29px;line-height:1}
+.b4__g .lbl{margin-top:12px;gap:5px;opacity:.9}
 .b4__g .lbl svg{width:11px;height:11px;flex:0 0 auto}
 .b4__g.us .lbl svg{fill:var(--mint)}
 .b4__g.them .lbl svg{fill:var(--coral);stroke:var(--coral);fill:none;stroke-width:2}
@@ -576,7 +580,7 @@
 .b4__g.us .val::after{content:"PageSpeed"}
 .b4__g.them .val::after{content:"PageSpeed"}
 @media(max-width:768px){
-  .b4__g svg{max-width:104px}
+  .b4__g svg{max-width:104px;margin-bottom:-34px}
   .b4__g .val{font-size:23px}
   .b4__g .val::after{font-size:7px}
 }
