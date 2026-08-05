@@ -836,6 +836,24 @@
 .up__add .tt .d,.up__add .tt .val{display:block;max-height:0;opacity:0;overflow:hidden;margin-top:0;
   transition:max-height .5s cubic-bezier(.25,.8,.3,1),opacity .34s ease .08s,
              margin-top .5s cubic-bezier(.25,.8,.3,1)}
+
+/* Рывок в конце раскрытия шёл от max-height: он больше реальной высоты
+   текста, поэтому контент доезжал раньше, чем кончалась анимация, и
+   последняя треть движения проходила «вхолостую». grid-template-rows
+   0fr→1fr считает по фактической высоте — ход получается ровным до конца. */
+@supports (grid-template-rows:0fr){
+  .up__add .tt .d,.up__add .tt .val{
+    display:grid;grid-template-rows:0fr;max-height:none;
+    transition:grid-template-rows .58s cubic-bezier(.22,.9,.28,1),
+               opacity .4s ease .1s,margin-top .58s cubic-bezier(.22,.9,.28,1)}
+  /* текст обёрнут в .i намеренно: анонимный grid-элемент не сжимается
+     до нуля, и строка в покое раздувалась с 43px до 75px */
+  .up__add .tt .d>.i,.up__add .tt .val>.i{min-height:0;overflow:hidden;display:block}
+  @media(hover:hover){
+    .up__add:hover .tt .d,.up__add:hover .tt .val{grid-template-rows:1fr;max-height:none}
+  }
+  .up__add.on .tt .d,.up__add.on .tt .val{grid-template-rows:1fr;max-height:none}
+}
 .up__add .tt .d{font-size:11.5px;color:var(--mut);line-height:1.45;hyphens:none;text-wrap:pretty}
 .up__add .tt .val{font-size:11px;color:var(--mint);font-weight:600;line-height:1.4;text-wrap:pretty}
 @media(hover:hover){
@@ -913,6 +931,111 @@
   mask-image:linear-gradient(90deg,transparent,#000 46px,#000 calc(100% - 46px),transparent)}
 .up__marquee__track span{font-size:9.5px}
 .up__note{margin-top:9px;font-size:11px}
+
+/* ═══ ГЛУБИНА за блоком перед формой ═══════════════════════════════════
+   Блок был плоской стопкой текста на ровном фоне. Даём ему сцену: точечная
+   сетка уходит в перспективу и мягко ведёт за курсором, поверх — тёплое
+   пятно света. Текста не прибавилось, а плоскость пропала. */
+.sy-emo{position:relative;isolation:isolate}
+.sy-emo::before{content:"";position:absolute;z-index:-1;inset:-40px -14vw -20px;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(205,255,79,.14) 1px,transparent 1px);
+  background-size:26px 26px;
+  -webkit-mask-image:radial-gradient(58% 62% at 50% 58%,#000 5%,transparent 74%);
+  mask-image:radial-gradient(58% 62% at 50% 58%,#000 5%,transparent 74%);
+  opacity:.5;transform:translate3d(var(--px,0),var(--py,0),0);
+  transition:transform .6s cubic-bezier(.22,1,.36,1)}
+.sy-emo::after{content:"";position:absolute;z-index:-1;inset:auto 0 -30px;height:340px;pointer-events:none;
+  background:radial-gradient(46% 60% at 50% 74%,rgba(49,224,176,.10),transparent 70%);
+  transform:translate3d(calc(var(--px,0)*-.5),calc(var(--py,0)*-.5),0);
+  transition:transform .7s cubic-bezier(.22,1,.36,1)}
+@media(max-width:620px){
+  .sy-emo::before{inset:-24px -8vw -14px;background-size:20px 20px;opacity:.38}
+}
+@media(prefers-reduced-motion:reduce){
+  .sy-emo::before,.sy-emo::after{transition:none;transform:none}
+}
+
+/* ═══ ВОРОНКА перед формой ═════════════════════════════════════════════
+   На месте пустоты с линией 2px — сцена, которая показывает то же, о чём
+   блок говорит словами: сверху сыпятся клики, вниз выходит заявка. Один
+   промах намеренно уходит мимо стенки — иначе картинка врёт про 100%.
+   Сцена наклоняется за курсором: 3D на одном крупном объекте читается
+   как глубина, в отличие от наклона у россыпи мелких карточек. */
+.sy-emo__funnel.uqf{width:auto;height:auto;background:none;border-radius:0;
+  margin:26px auto 0;perspective:760px;display:flex;justify-content:center}
+.uqf__scene{display:flex;flex-direction:column;align-items:center;gap:9px;
+  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.uqf__cap{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;line-height:1.5;transform:translateZ(14px)}
+.uqf__cap--top{color:var(--sy-mut2)}
+.uqf__cap--bot{color:var(--sy-mint,#31E0B0);font-weight:600;
+  text-shadow:0 0 18px rgba(49,224,176,.45)}
+.uqf__body{position:relative;width:224px;height:158px;transform-style:preserve-3d}
+/* Свет под горловиной: без него конструкция читается как чертёж, а не как
+   работающий механизм — ради этого объёма всё и затевалось. */
+.uqf__body::before{content:"";position:absolute;left:50%;bottom:-14px;width:190px;height:112px;
+  margin-left:-95px;border-radius:50%;pointer-events:none;transform:translateZ(2px);
+  background:radial-gradient(50% 50% at 50% 68%,rgba(49,224,176,.22),rgba(49,224,176,.05) 55%,transparent 72%);
+  animation:uqfGlow 3.3s ease-out infinite}
+@keyframes uqfGlow{0%,68%{opacity:.5}80%{opacity:1}100%{opacity:.5}}
+.uqf__walls{position:absolute;inset:0;width:100%;height:100%;overflow:visible;transform:translateZ(6px)}
+
+/* Точки: падают сверху, сходятся к горловине, гаснут на выходе. */
+/* Траектория считана под корпус 224×158: горловина на 120px, выход на 152.
+   Точка идёт по стенке вниз, у горловины смещение по X гасится до нуля. */
+.uqf__p{position:absolute;left:50%;top:3px;width:6px;height:6px;margin-left:-3px;
+  border-radius:50%;background:var(--sy-l,#CDFF4F);opacity:0;
+  box-shadow:0 0 10px rgba(205,255,79,.6);transform:translateZ(10px);
+  animation:uqfFall 3.3s cubic-bezier(.45,0,.7,.45) infinite;animation-delay:var(--d)}
+@keyframes uqfFall{
+  0%{transform:translate3d(var(--x),0,10px) scale(.85);opacity:0}
+  10%{opacity:1}
+  62%{transform:translate3d(calc(var(--x)*.14),104px,10px) scale(.82);opacity:1}
+  82%{transform:translate3d(0,134px,10px) scale(.62);opacity:1}
+  100%{transform:translate3d(0,158px,10px) scale(.3);opacity:0}
+}
+/* промах — уходит вбок и тает, не доходя до горловины */
+.uqf__p--miss{background:#FF6E63;box-shadow:0 0 10px rgba(255,110,99,.55);
+  animation-name:uqfMiss;animation-timing-function:ease-in}
+@keyframes uqfMiss{
+  0%{transform:translate3d(var(--x),0,10px) scale(.85);opacity:0}
+  12%{opacity:.9}
+  55%{transform:translate3d(calc(var(--x) - 34px),76px,10px) scale(.7);opacity:.5}
+  75%,100%{transform:translate3d(calc(var(--x) - 52px),104px,10px) scale(.5);opacity:0}
+}
+
+/* Выход: точка пульсирует, кольцо расходится в такт приходу капли. */
+.uqf__dot{position:absolute;left:50%;bottom:-4px;width:7px;height:7px;margin-left:-3.5px;
+  border-radius:50%;background:var(--sy-mint,#31E0B0);transform:translateZ(12px);
+  box-shadow:0 0 12px rgba(49,224,176,.7);animation:uqfPulse 3.3s ease-out infinite}
+@keyframes uqfPulse{0%,70%{transform:translateZ(12px) scale(1)}80%{transform:translateZ(12px) scale(1.5)}100%{transform:translateZ(12px) scale(1)}}
+.uqf__ring{position:absolute;left:50%;bottom:-11px;width:23px;height:23px;margin-left:-11.5px;
+  border-radius:50%;border:1px solid rgba(49,224,176,.6);transform:translateZ(11px);
+  opacity:0;animation:uqfRing 3.3s ease-out infinite}
+@keyframes uqfRing{0%,70%{opacity:0;transform:translateZ(11px) scale(.4)}
+  78%{opacity:.75}100%{opacity:0;transform:translateZ(11px) scale(2.1)}}
+
+@media(max-width:620px){
+  /* Масштабируем сцену целиком, а не задаём корпусу другой размер:
+     траектории точек заданы в пикселях и при смене размера разъехались бы. */
+  .uqf__body{transform:scale(.76);transform-origin:top center;margin-bottom:-38px}
+  .uqf__cap{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  .uqf__p,.uqf__dot,.uqf__ring{animation:none}
+  .uqf__p{opacity:.9;transform:translate3d(var(--x),4px,10px)}   /* статичная россыпь вместо падения */
+  .uqf__ring{opacity:.35}
+  .uqf__scene{transition:none}
+}
+
+/* ─── Строка «Съёмка, 3D-продукт…» ───────────────────────────────────
+   Звезда висела в стороне от текста: flex с align-items:center ставил её
+   по вертикальной середине двухстрочного абзаца, то есть между строками,
+   а text-align:center сжимал текст внутрь блока и разносил зазор с 11px
+   до фактических 35. Сетка держит иконку строго слева от первой строки. */
+.sy-team-line{display:grid;grid-template-columns:20px minmax(0,1fr);
+  align-items:start;gap:10px;text-align:left;max-width:600px;margin:26px auto 0}
+.sy-team-line svg{margin-top:2px}   /* оптический центр первой строки */
 
 /* ─── ШАГ 2: контакты прямо в чеке ───────────────────────────────────── */
 .up__step2{margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,255,255,.07);
@@ -1632,17 +1755,17 @@
                   <div class="up__cat__grid">
                     <label class="up__add" data-p="180" data-n="CRM-интеграция" data-id="crm">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>CRM-интеграция</b><span class="fav">частый выбор</span><span class="d">Заявки автоматически попадают в CRM: статус, история, ответственный</span><span class="val">→ без CRM заявки тонут в WhatsApp — с ней остаются на виду</span></span>
+                      <span class="tt"><b>CRM-интеграция</b><span class="fav">частый выбор</span><span class="d"><span class="i">Заявки автоматически попадают в CRM: статус, история, ответственный</span></span><span class="val"><span class="i">→ без CRM заявки тонут в WhatsApp — с ней остаются на виду</span></span></span>
                       <span class="pp" data-usd="180" data-prefix="+">+$180</span>
                     </label>
                     <label class="up__add" data-p="120" data-n="Метрика + Директ" data-id="ads">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Метрика + Директ</b><span class="fav">частый выбор</span><span class="d">Настройка целей, Вебвизор, первая рекламная кампания</span><span class="val">→ видно, с какой рекламы приходят именно деньги, а не просто клики</span></span>
+                      <span class="tt"><b>Метрика + Директ</b><span class="fav">частый выбор</span><span class="d"><span class="i">Настройка целей, Вебвизор, первая рекламная кампания</span></span><span class="val"><span class="i">→ видно, с какой рекламы приходят именно деньги, а не просто клики</span></span></span>
                       <span class="pp" data-usd="120" data-prefix="+">+$120</span>
                     </label>
                     <label class="up__add" data-p="130" data-n="Telegram-бот" data-id="bot">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Telegram-бот</b><span class="d">Не только уведомления — чат-бот с прогревом лида</span><span class="val">→ бот отвечает в 3 ночи — вы спите, конкурент тоже</span></span>
+                      <span class="tt"><b>Telegram-бот</b><span class="d"><span class="i">Не только уведомления — чат-бот с прогревом лида</span></span><span class="val"><span class="i">→ бот отвечает в 3 ночи — вы спите, конкурент тоже</span></span></span>
                       <span class="pp" data-usd="130" data-prefix="+">+$130</span>
                     </label>
                   </div>
@@ -1653,12 +1776,12 @@
                   <div class="up__cat__grid">
                     <label class="up__add" data-p="100" data-n="Дизайн под бренд" data-id="design" data-price-map='{"landing":50,"multi":100,"crmsite":110,"premium":0}'>
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Дизайн под бренд</b><span class="d">Не шаблон, а айдентика: цвет, шрифт, фото-подбор</span><span class="val">→ ваш сайт не спутают с шаблоном конкурента</span></span>
+                      <span class="tt"><b>Дизайн под бренд</b><span class="d"><span class="i">Не шаблон, а айдентика: цвет, шрифт, фото-подбор</span></span><span class="val"><span class="i">→ ваш сайт не спутают с шаблоном конкурента</span></span></span>
                       <span class="pp" data-usd="100" data-prefix="+">+$100</span>
                     </label>
                     <label class="up__add" data-p="80" data-n="Логотип и фирстиль" data-id="brand">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Логотип и фирстиль</b><span class="d">Логотип в векторе, палитра и шрифты — файлы остаются у вас</span><span class="val">→ один стиль на сайте, визитках и соцсетях — бизнес выглядит собранным</span></span>
+                      <span class="tt"><b>Логотип и фирстиль</b><span class="d"><span class="i">Логотип в векторе, палитра и шрифты — файлы остаются у вас</span></span><span class="val"><span class="i">→ один стиль на сайте, визитках и соцсетях — бизнес выглядит собранным</span></span></span>
                       <span class="pp" data-usd="80" data-prefix="+">+$80</span>
                     </label>
                   </div>
@@ -1669,17 +1792,17 @@
                   <div class="up__cat__grid">
                     <label class="up__add" data-p="100" data-n="SEO-стартер" data-id="seo">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>SEO-стартер</b><span class="d">20 запросов, заголовки страниц, карта сайта для Яндекса и Google</span><span class="val">→ сайт видно в поиске, трафик без оплаты за клик · подключаем Вебмастер</span></span>
+                      <span class="tt"><b>SEO-стартер</b><span class="d"><span class="i">20 запросов, заголовки страниц, карта сайта для Яндекса и Google</span></span><span class="val"><span class="i">→ сайт видно в поиске, трафик без оплаты за клик · подключаем Вебмастер</span></span></span>
                       <span class="pp" data-usd="100" data-prefix="+">+$100</span>
                     </label>
                     <label class="up__add" data-p="80" data-n="Мобильная скорость 95+" data-id="speed">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Мобильная скорость 95+</b><span class="d">Оптимизация под 3G: WebP, lazy-load, sprite-svg</span><span class="val">→ каждая лишняя секунда загрузки — минус 7% к продажам</span></span>
+                      <span class="tt"><b>Мобильная скорость 95+</b><span class="d"><span class="i">Оптимизация под 3G: WebP, lazy-load, sprite-svg</span></span><span class="val"><span class="i">→ каждая лишняя секунда загрузки — минус 7% к продажам</span></span></span>
                       <span class="pp" data-usd="80" data-prefix="+">+$80</span>
                     </label>
                     <label class="up__add" data-p="240" data-n="Поддержка" data-id="support">
                       <input type="checkbox"><span class="chk up__toggle3d"><i class="knob"></i></span>
-                      <span class="tt"><b>Поддержка · $20 в месяц</b><span class="d">Мелкие правки без счёта, отчёт раз в месяц</span><span class="val">→ правки закрываются без счёта и разборок · $20 в месяц, год вперёд</span></span>
+                      <span class="tt"><b>Поддержка · $20 в месяц</b><span class="d"><span class="i">Мелкие правки без счёта, отчёт раз в месяц</span></span><span class="val"><span class="i">→ правки закрываются без счёта и разборок · $20 в месяц, год вперёд</span></span></span>
                       <span class="pp" data-usd="240" data-prefix="+">+$240</span>
                     </label>
                   </div>
@@ -2286,6 +2409,35 @@
          pointermove и ставил inline transform — это и было «едет неприятно».
          Отдача на нажатие теперь одна и точная: галочка сжимается (CSS). */
     })();
+
+    /* Наклон воронки за курсором. Здесь 3D уместно — объект один и крупный,
+       в отличие от россыпи карточек, где тот же приём читался как дрожь.
+       Курсор ведём от центра секции, а не от самой воронки: она узкая, и
+       по ней одной наклон срабатывал бы только при попадании точно в неё. */
+    (function(){
+      var wrap = document.querySelector('.uqf'), scene = wrap && wrap.querySelector('.uqf__scene');
+      if (!scene) return;
+      if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var zone = wrap.closest('.sy-emo') || wrap, raf = 0, tx = 0, ty = 0, nx = 0, ny = 0;
+      function apply(){
+        raf = 0;
+        scene.style.transform = 'rotateX(' + ty + 'deg) rotateY(' + tx + 'deg)';
+        /* фоновая сетка идёт следом, но слабее — так читается разная глубина слоёв */
+        zone.style.setProperty('--px', (nx * 14).toFixed(1) + 'px');
+        zone.style.setProperty('--py', (ny * 9).toFixed(1) + 'px');
+      }
+      zone.addEventListener('pointermove', function(ev){
+        var r = zone.getBoundingClientRect();
+        nx = ((ev.clientX - r.left) / r.width) - 0.5;
+        ny = ((ev.clientY - r.top) / r.height) - 0.5;
+        tx = nx * 15; ty = -ny * 9;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      zone.addEventListener('pointerleave', function(){
+        tx = ty = nx = ny = 0; if (!raf) raf = requestAnimationFrame(apply);
+      });
+    })();
     </script>
 
 
@@ -2429,7 +2581,36 @@
           <p class="sy-emo__sub">Соберём структуру под заявки из рекламы, покажем концепцию первого экрана и назовём точную цену. Подходит или нет — решаете до оплаты.</p>
           <div class="sy-emo__proof"><span>50+ запущенных проектов</span><i></i><span>Гранат · Немеция · Lovi</span><i></i><span>Ответ за 15 минут</span></div>
           <div class="sy-emo__scarcity"><span class="sy-emo__pulse"></span>Работаем небольшой командой и берём проекты порциями — так держим срок 3–5 дней.</div>
-          <div class="sy-emo__funnel" aria-hidden="true"></div>
+          <!-- Было: линия 2px в пустоте. Стало: воронка — трафик сверху,
+               заявка снизу. Тот же смысл, что у блока, только показанный. -->
+          <div class="sy-emo__funnel uqf" aria-hidden="true">
+            <div class="uqf__scene">
+              <span class="uqf__cap uqf__cap--top">клики из рекламы</span>
+              <div class="uqf__body">
+                <svg class="uqf__walls" viewBox="0 0 160 116" fill="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="uqfW" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#CDFF4F" stop-opacity=".08"/>
+                      <stop offset=".55" stop-color="#CDFF4F" stop-opacity=".55"/>
+                      <stop offset="1" stop-color="#31E0B0" stop-opacity=".9"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M6 4 L68 88 L68 112" stroke="url(#uqfW)" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M154 4 L92 88 L92 112" stroke="url(#uqfW)" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M6 4 L154 4" stroke="#CDFF4F" stroke-opacity=".18" stroke-width="1.2" stroke-dasharray="3 5"/>
+                </svg>
+                <i class="uqf__p" style="--x:-84px;--d:0s"></i>
+                <i class="uqf__p" style="--x:-48px;--d:.55s"></i>
+                <i class="uqf__p uqf__p--miss" style="--x:-10px;--d:1.1s"></i>
+                <i class="uqf__p" style="--x:30px;--d:1.65s"></i>
+                <i class="uqf__p" style="--x:88px;--d:2.2s"></i>
+                <i class="uqf__p" style="--x:64px;--d:2.75s"></i>
+                <span class="uqf__ring"></span>
+                <span class="uqf__dot"></span>
+              </div>
+              <span class="uqf__cap uqf__cap--bot">заявка в CRM</span>
+            </div>
+          </div>
         </div>
         <div class="sy-head sy-head--center">
           <h2 class="sy-h2 sy-rev">Получите расчёт за 15 минут</h2>
