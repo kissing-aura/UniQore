@@ -13,13 +13,20 @@
    ═══════════════════════════════════════════════════════════════════════ */
 
 :root{
-  --bg:#08090B;
-  --ink:#F7F8F8;
-  --dim:#8A8F98;
-  --dim2:#6b7280;
+  /* Палитра Uniqore, не чёрный Linear: тёмно-синий Deep Tech + лайм + мята.
+     Синева в фоне важна — на чистом чёрном лайм выглядит кислотно, а на
+     #0A0E1A он садится в тон и читается как акцент системы. */
+  --bg:#0A0E1A;
+  --surface:#121826;
+  --surface-2:#0E1422;
+  --border:#1E2536;
+  --ink:#E7EAF0;
+  --dim:#949BA8;
+  --dim2:#7a8699;
   --lime:#CDFF4F;
+  --lime-dim:#9BC22F;
   --mint:#31e0b0;
-  --hair:rgba(255,255,255,.08);
+  --hair:rgba(255,255,255,.07);
   --font:'Geist',system-ui,-apple-system,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,monospace;
 }
@@ -35,7 +42,7 @@ a{color:inherit;text-decoration:none}
 }
 .lab-note b{color:var(--lime)}
 
-.hero{position:relative;overflow:hidden;padding:120px 0 0;min-height:100svh;display:flex;align-items:center}
+.hero{position:relative;overflow:hidden;padding:104px 0 40px;min-height:100svh;display:flex;align-items:center}
 
 /* Две колонки: слева обещание, справа продукт. Правая колонка сознательно
    шире экрана — мокап уходит за край, как за сгиб у Linear, только по
@@ -55,8 +62,12 @@ a{color:inherit;text-decoration:none}
 .hero__bg{
   position:absolute;inset:0;z-index:0;
   background:
-    radial-gradient(52% 58% at 50% 100%, rgba(8,9,11,0) 0%, rgba(8,9,11,.5) 100%),
-    linear-gradient(180deg, #08090B 10%, #14161A 100%);
+    /* лаймовое свечение за окном — источник света сцены, но приглушённый:
+       у эталонов подсветка едва заметна, вся работа на самом продукте */
+    radial-gradient(46% 52% at 74% 34%, rgba(205,255,79,.07), transparent 68%),
+    radial-gradient(38% 44% at 88% 62%, rgba(49,224,176,.05), transparent 70%),
+    radial-gradient(52% 58% at 50% 100%, rgba(10,14,26,0) 0%, rgba(10,14,26,.6) 100%),
+    linear-gradient(180deg, #0A0E1A 6%, #101728 100%);
 }
 /* Зерно: тайл 96px, отрисованный в 48 (2× плотность), overlay 5% — как у Framer */
 .hero__grain{
@@ -67,19 +78,19 @@ a{color:inherit;text-decoration:none}
 }
 
 .pill{
-  display:inline-block;margin-bottom:26px;
+  display:inline-block;margin-bottom:20px;
   font-size:13px;line-height:18px;color:var(--dim);
   border:1px solid var(--hair);border-radius:13px;padding:5px 13px;
 }
 
 /* H1: 64px / вес 600 / трекинг −0.022em / line-height 1.0 — медиана эталонов */
 .h1{
-  font-size:clamp(40px,3.9vw,56px);line-height:1.02;font-weight:600;letter-spacing:-.025em;
+  font-size:clamp(38px,3.6vw,52px);line-height:1.03;font-weight:600;letter-spacing:-.025em;
   color:var(--ink);margin:0 0 18px;
 }
-.sub{font-size:16px;line-height:25px;font-weight:400;color:var(--dim);max-width:44ch;margin:0 0 28px}
+.sub{font-size:15.5px;line-height:24px;font-weight:400;color:var(--dim);max-width:44ch;margin:0 0 24px}
 
-.cta{display:flex;gap:10px;justify-content:flex-start;margin-bottom:26px;flex-wrap:wrap}
+.cta{display:flex;gap:10px;justify-content:flex-start;margin-bottom:22px;flex-wrap:wrap}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;
   border-radius:10px;font-size:14px;font-weight:500;
@@ -92,8 +103,20 @@ a{color:inherit;text-decoration:none}
 .btn--ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
 
 .marks{list-style:none;display:flex;flex-direction:column;gap:9px}
-.marks li{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--dim)}
+.marks li{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--dim)}
 .marks svg{width:15px;height:15px;color:var(--mint);flex:none}
+
+/* Доказательство под обещанием: не «300+ клиентов», а имена систем, которые
+   можно проверить. Логотипов у нас нет — значит текстом, как логополоса. */
+.proof{margin-top:22px;padding-top:17px;border-top:1px solid var(--border)}
+.proof__t{
+  display:block;font:400 10px/1 var(--mono);letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim2);margin-bottom:11px;
+}
+.proof__l{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:9px 18px}
+.proof__l li{display:flex;flex-direction:column;gap:2px;line-height:1.25}
+.proof__l b{font-size:12.5px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.proof__l i{font-style:normal;font-size:10.5px;color:var(--dim2)}
 
 /* ── Мокап ────────────────────────────────────────────────────────────
    Фиксированная ширина, как у Linear (--width:1320px): интерфейс не
@@ -106,7 +129,7 @@ a{color:inherit;text-decoration:none}
 .app{
   display:flex;flex-direction:column;height:512px;overflow:hidden;
   border-radius:12px;
-  background:#0D0F12;
+  background:var(--surface-2);
   /* хайрлайн + стек теней: радиусы удваиваются, непрозрачность 2.5–6%,
      цвет сине-серый #0b0d18, как у Attio — не чёрный */
   box-shadow:
@@ -122,7 +145,7 @@ a{color:inherit;text-decoration:none}
    1px hairline и radius 18px, вся работа на содержимом, а не на «шапке». */
 .chrome{
   display:flex;align-items:center;gap:12px;height:34px;flex:none;
-  padding:0 12px;background:#0A0C0F;border-bottom:1px solid rgba(255,255,255,.06);
+  padding:0 12px;background:#0B111D;border-bottom:1px solid rgba(255,255,255,.06);
 }
 .chrome__dots{display:flex;gap:6px}
 .chrome__dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
@@ -136,7 +159,7 @@ a{color:inherit;text-decoration:none}
 .app__body{display:flex;flex:1;min-height:0}
 
 /* ── Сайдбар ── */
-.side{width:212px;flex:none;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;background:#0B0D10}
+.side{width:212px;flex:none;border-right:1px solid var(--border);display:flex;flex-direction:column;background:#0B111D}
 .side__top{display:flex;align-items:center;gap:9px;padding:14px 14px 12px}
 .side__logo{width:20px;height:20px;border-radius:6px;background:linear-gradient(140deg,var(--lime),var(--mint));flex:none}
 .side__name{font-size:13px;font-weight:600;letter-spacing:-.01em}
@@ -155,7 +178,7 @@ a{color:inherit;text-decoration:none}
 .side__me i{font-size:10.5px;color:var(--dim2);font-style:normal}
 
 /* ── Основная область ── */
-.main{flex:1;min-width:0;display:flex;flex-direction:column;background:#0D0F12}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--surface-2)}
 .top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.05)}
 .top__t{font-size:14px;font-weight:600;letter-spacing:-.01em}
 .top__b{display:block;margin-top:2px;font-size:11px;color:var(--dim2)}
@@ -165,8 +188,8 @@ a{color:inherit;text-decoration:none}
 .seg i.is-on{background:rgba(255,255,255,.07);color:var(--ink)}
 .btn-s{font-size:11px;padding:6px 11px;border:1px solid var(--hair);border-radius:7px;color:#9099a6}
 
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05)}
-.kpi{background:#0D0F12;padding:12px 14px 11px;position:relative;overflow:hidden}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.kpi{background:var(--surface-2);padding:12px 14px 11px;position:relative;overflow:hidden}
 .kpi__l{display:block;font-size:11px;color:var(--dim2);margin-bottom:6px}
 .kpi__v{display:block;font-size:18px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .kpi__d{display:block;margin-top:4px;font-size:11px}
@@ -175,14 +198,14 @@ a{color:inherit;text-decoration:none}
 .spark{position:absolute;right:12px;bottom:10px;width:66px;height:18px;color:rgba(205,255,79,.5)}
 .kpi:nth-child(3) .spark{color:rgba(240,121,107,.45)}
 
-.row{display:grid;grid-template-columns:1.5fr 1fr;gap:1px;background:rgba(255,255,255,.05);flex:1;min-height:0}
-.box{background:#0D0F12;padding:12px 14px;min-width:0}
+.row{display:grid;grid-template-columns:1.5fr 1fr;gap:1px;background:var(--border);flex:1;min-height:0}
+.box{background:var(--surface-2);padding:12px 14px;min-width:0}
 .box__h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
 .box__t{font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px}
 .box__m{font-size:11px;color:var(--dim2)}
 .col{
   display:grid;grid-template-rows:auto minmax(0,1fr);gap:1px;
-  background:rgba(255,255,255,.05);min-width:0;
+  background:var(--border);min-width:0;
 }
 /* каждый блок обрезает своё содержимое сам, иначе нижний наезжает на верхний */
 .col > .box{overflow:hidden}
@@ -256,9 +279,9 @@ a{color:inherit;text-decoration:none}
 }
 
 /* ── Вход: 4px и 0.4s, как внутри мокапа Linear ── */
-.pill,.h1,.sub,.cta,.marks,.app{animation:in .4s cubic-bezier(.25,.46,.45,.94) backwards}
+.pill,.h1,.sub,.cta,.marks,.proof,.app{animation:in .4s cubic-bezier(.25,.46,.45,.94) backwards}
 .h1{animation-delay:.04s}.sub{animation-delay:.08s}.cta{animation-delay:.12s}
-.marks{animation-delay:.16s}.app{animation-delay:.2s}
+.marks{animation-delay:.16s}.proof{animation-delay:.2s}.app{animation-delay:.24s}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
 @media (max-width:1500px){
@@ -293,7 +316,7 @@ a{color:inherit;text-decoration:none}
   .tbl th:nth-child(6),.tbl td:nth-child(6){display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .pill,.h1,.sub,.cta,.marks,.app{animation:none}
+  .pill,.h1,.sub,.cta,.marks,.proof,.app{animation:none}
 }
 
 /* подсветка строки под курсором — 0.16s, как все состояния у Linear */
