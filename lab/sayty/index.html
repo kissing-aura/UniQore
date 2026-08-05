@@ -856,6 +856,46 @@
   .up__preset .fr b{font-size:14px}
 }
 </style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   ГЕОМЕТРИЯ КОНФИГУРАТОРА — корень всех жалоб был один.
+   Замер показал: чек раздулся до 2264px, левая колонка сжалась до 513px.
+   Причина — бегущая строка внутри чека имеет width:max-content, а
+   grid-колонка по умолчанию minmax(auto,1fr): её минимум равен min-content
+   содержимого, поэтому лента растянула колонку и вытолкнула всё остальное.
+   Отсюда сразу три беды: описания рвались по одному слову (ширина 61px),
+   чек уезжал за экран «частью», левая часть была узкой и длинной.
+   Лечение: minmax(0,…) обеим колонкам + лента больше не влияет на ширину.
+   ═══════════════════════════════════════════════════════════════════ */
+@media(min-width:901px){
+  /* левая часть заметно шире — блок перестаёт быть длинной кишкой */
+  .up{grid-template-columns:minmax(0,1.85fr) minmax(0,1fr);gap:26px}
+  .up__col,.up__billwrap,.up__bill{min-width:0}
+
+  /* чек по центру, а не прижат к верху; идёт целиком, ничего не обрезается */
+  .up__billwrap{align-self:center}
+  .up__bill{position:static;top:auto}
+}
+
+/* Та же болезнь была и на мобилке: одна колонка 1fr тоже имеет минимум
+   min-content, поэтому лента растягивала её до 1994px при экране 390 —
+   текст уходил за край, и только overflow:hidden прятал это от глаз. */
+.up{grid-template-columns:minmax(0,1fr)}
+.up__col,.up__billwrap,.up__bill,.up__lines,.up__line{min-width:0}
+.up__cat__grid,.up__base,.up__presets{min-width:0}
+
+/* лента не должна диктовать ширину колонки — она декоративная */
+.up__marquee{max-width:100%;overflow:hidden}
+.up__marquee__track{width:auto;min-width:max-content}
+/* строки чека: длинные названия не должны расширять блок */
+.up__line__row{min-width:0}
+.up__line__row .n{min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+/* описания допов: даём тексту дышать и запрещаем висячие обрывки */
+.up__add .tt{min-width:0}
+.up__add .tt .d{hyphens:none;text-wrap:pretty}
+</style>
 </head>
 <body class="sy">
 <div style="position:sticky;top:0;z-index:9999;background:linear-gradient(90deg,#1a1400,#0A0E1A);border-bottom:1px solid rgba(242,184,75,.35);padding:9px 16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#F2B84B;letter-spacing:.02em">

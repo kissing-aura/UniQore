@@ -182,7 +182,10 @@ a{color:inherit;text-decoration:none}
 .chrome__dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
 .chrome__url{
   flex:1;max-width:280px;margin:0 auto;text-align:center;
-  font:400 10.5px/1 var(--mono);color:#767f8e;
+  /* системный моноширинный, а не JetBrains: ради одной строки адреса
+     тянулся файл латиницы на 30,6 КБ. В имитации адресной строки браузера
+     системный шрифт к тому же выглядит достовернее */
+  font:400 10.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#767f8e;
   background:rgba(255,255,255,.04);border-radius:6px;padding:5px 10px;
 }
 .chrome__side{display:flex;gap:6px}
