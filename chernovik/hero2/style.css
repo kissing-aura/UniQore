@@ -59,7 +59,7 @@ a{color:inherit;text-decoration:none}
 }
 .lab-note b{color:var(--lime)}
 
-.hero{position:relative;overflow:hidden;padding:104px 0 40px;min-height:100svh;display:flex;align-items:center}
+.uqhero{position:relative;overflow:hidden;padding:104px 0 40px;min-height:100svh;display:flex;align-items:center}
 
 /* Две колонки: слева обещание, справа продукт. Правая колонка сознательно
    шире экрана — мокап уходит за край, как за сгиб у Linear, только по
@@ -76,7 +76,7 @@ a{color:inherit;text-decoration:none}
 .wrap{position:relative;z-index:3;text-align:left;padding-bottom:24px}
 
 /* Фон: у Linear это radial + linear в два стопа, без «трёх пятен по вкусу» */
-.hero__bg{
+.uqhero__bg{
   position:absolute;inset:0;z-index:0;
   background:
     /* лаймовое свечение за окном — источник света сцены, но приглушённый:
@@ -87,7 +87,7 @@ a{color:inherit;text-decoration:none}
     linear-gradient(180deg, #0A0E1A 6%, #101728 100%);
 }
 /* Зерно: тайл 96px, отрисованный в 48 (2× плотность), overlay 5% — как у Framer */
-.hero__grain{
+.uqhero__grain{
   position:absolute;inset:0;z-index:1;pointer-events:none;
   mix-blend-mode:overlay;opacity:.05;
   background-repeat:repeat;background-size:48px 48px;
@@ -116,16 +116,16 @@ a{color:inherit;text-decoration:none}
 .sub{font-size:18px;line-height:27px;font-weight:400;color:var(--dim);max-width:42ch;margin:0 0 30px}
 
 .cta{display:flex;gap:10px;justify-content:flex-start;margin-bottom:24px;flex-wrap:wrap}
-.btn{
+.uqhero-btn{
   display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;
   border-radius:10px;font-size:14.5px;font-weight:500;
   transition:background-color .16s cubic-bezier(.25,.46,.45,.94),border-color .16s,color .16s;
 }
 /* теней у кнопок нет ни у Clay, ни у Framer, ни у Stripe */
-.btn--main{background:var(--lime);color:#0A1005}
-.btn--main:hover{background:#d9ff74}
-.btn--ghost{border:1px solid var(--hair);color:var(--ink)}
-.btn--ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+.uqhero-btn--main{background:var(--lime);color:#0A1005}
+.uqhero-btn--main:hover{background:#d9ff74}
+.uqhero-btn--ghost{border:1px solid var(--hair);color:var(--ink)}
+.uqhero-btn--ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
 
 .marks{list-style:none;display:flex;flex-direction:column;gap:10px}
 /* мелкий Geist читается плотно — на 13px и ниже нужен положительный трекинг */
@@ -256,8 +256,8 @@ a{color:inherit;text-decoration:none}
    переносилась на вторую строку, полоса KPI вырастала с 86 до 114px и
    выдавливала последнюю строку таблицы за низ окна */
 .kpi__d{display:block;margin-top:4px;font-size:11px;padding-right:58px}
-.kpi__d.up{color:var(--mint)}
-.kpi__d.down{color:#f0796b}
+.kpi__d.is-up{color:var(--mint)}
+.kpi__d.is-down{color:#f0796b}
 .spark{position:absolute;right:12px;bottom:10px;width:52px;height:18px;color:rgba(205,255,79,.5)}
 .kpi:nth-child(4) .spark{color:rgba(240,121,107,.45)}   /* средний чек падает */
 
@@ -327,15 +327,15 @@ a{color:inherit;text-decoration:none}
 .src__bar b{display:block;height:100%;width:var(--w);border-radius:3px;background:var(--c);opacity:.75}
 .src__v{width:22px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500;flex:none}
 .src li em{width:26px;text-align:right;font-style:normal;font-size:10px;font-variant-numeric:tabular-nums;flex:none}
-.src li em.up{color:var(--mint)}
-.src li em.down{color:#f0796b}
+.src li em.is-up{color:var(--mint)}
+.src li em.is-down{color:#f0796b}
 .src__foot{
   display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:9px;
   border-top:1px solid rgba(255,255,255,.05);font-size:11px;color:var(--dim2);
 }
 .src__foot b{color:var(--ink);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
 .src__foot em{font-style:normal;font-size:10px}
-.src__foot em.down{color:var(--mint)}   /* дешевле — это хорошо */
+.src__foot em.is-down{color:var(--mint)}   /* дешевле — это хорошо */
 
 /* Требует внимания: иконка + два уровня текста + действие. Без действия
    блок читается как статичный текст, а не как рабочее место. */
@@ -474,8 +474,8 @@ a{color:inherit;text-decoration:none}
 .romi li > span:first-of-type{width:88px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .romi__c{width:58px;flex:none;font-size:10.5px;color:var(--dim2);font-variant-numeric:tabular-nums;text-align:right}
 .romi li b{width:34px;text-align:right;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums;flex:none}
-.romi li b.up{color:var(--mint)}
-.romi li b.down{color:#f0b46b}
+.romi li b.is-up{color:var(--mint)}
+.romi li b.is-down{color:#f0b46b}
 
 /* ── Вход: 4px и 0.4s, как внутри мокапа Linear ── */
 .pill,.h1,.sub,.cta,.marks,.proof{animation:in .45s cubic-bezier(.25,.46,.45,.94) backwards}
@@ -561,7 +561,7 @@ a{color:inherit;text-decoration:none}
   .an__side{display:none}
 }
 @media (max-width:720px){
-  .hero{padding:84px 0 0;display:block}
+  .uqhero{padding:84px 0 0;display:block}
   .grid{padding:0 16px}
   /* На телефоне мокап начинался на 709px, а реальный сгиб Safari ~659 —
      продукта на первом экране не было видно вообще. display:contents
@@ -582,7 +582,7 @@ a{color:inherit;text-decoration:none}
   .h1{font-size:34px;letter-spacing:-.75px}
   .sub{font-size:16px;line-height:25px}
   .cta{flex-direction:column;margin-bottom:18px}
-  .btn{width:100%}
+  .uqhero-btn{width:100%}
   .shell{padding:0 16px}
   .app{height:430px;border-radius:10px}
   .side{display:none}
@@ -631,7 +631,7 @@ a{color:inherit;text-decoration:none}
 @media (prefers-reduced-motion:reduce){
   .pill,.h1,.sub,.cta,.marks,.proof,.app,.kpi__v{animation:none}
   /* переходы разделов, строк и карточек тоже должны замереть */
-  .view,.tbl tbody tr,.kcard,.ai li,.side__i,.btn{transition-duration:.01ms!important}
+  .view,.tbl tbody tr,.kcard,.ai li,.side__i,.uqhero-btn{transition-duration:.01ms!important}
 }
 
 /* подсветка строки под курсором — 0.16s, как все состояния у Linear */
