@@ -9,7 +9,7 @@
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/unbounded-var-cyrillic.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
-<link rel="stylesheet" href="/chernovik/hero/style.css?v=4">
+<link rel="stylesheet" href="/chernovik/hero/style.css?v=7">
 </head>
 <body>
 
@@ -59,6 +59,26 @@
 
             <!-- дальний слой: подсветка и «пыль» за панелью -->
             <div class="layer layer--glow" aria-hidden="true"></div>
+
+                        <!-- Экраны позади: сцена перестаёт быть одной крутящейся плоскостью.
+                 Чем дальше слой, тем сильнее расфокус и слабее свет. -->
+            <div class="back back--1" aria-hidden="true">
+              <span class="back__bar"><i></i><i></i><i></i><em>Заявки</em></span>
+              <span class="back__rows">
+                <b style="--w:78%"></b><b style="--w:54%"></b><b style="--w:88%"></b>
+                <b style="--w:41%"></b><b style="--w:66%"></b>
+              </span>
+            </div>
+
+            <div class="back back--2" aria-hidden="true">
+              <span class="back__bar"><i></i><i></i><i></i><em>Календарь</em></span>
+              <span class="back__cells">
+                <u></u><u></u><u class="on"></u><u></u><u></u><u></u><u class="on"></u>
+                <u></u><u></u><u></u><u class="on"></u><u></u><u></u><u></u>
+              </span>
+            </div>
+
+            <div class="back back--3" aria-hidden="true"></div>
 
             <!-- сама панель CRM -->
             <div class="panel">
@@ -155,11 +175,6 @@
               <figcaption><b>Заявки растут</b><small>из рекламы</small></figcaption>
             </figure>
 
-            <figure class="fcard fcard--b" data-depth="190" data-float="1">
-              <span class="fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg></span>
-              <figcaption><b>Всё в одной системе</b><small>сайт · CRM · реклама</small></figcaption>
-            </figure>
-
             <figure class="fcard fcard--c" data-depth="120" data-float="2">
               <span class="fcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 11h18"/></svg></span>
               <figcaption><b>4–6 дней</b><small>на разработку</small></figcaption>
@@ -175,6 +190,6 @@
   </div>
 </section>
 
-<script src="/chernovik/hero/scene.js?v=4" defer></script>
+<script src="/chernovik/hero/scene.js?v=7" defer></script>
 </body>
 </html>
