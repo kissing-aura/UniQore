@@ -10,3 +10,4 @@ _proto/
 
 # временные стенды для headless-съёмки
 lab/_shot*.html
+lab/_wip-*.html
