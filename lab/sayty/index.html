@@ -2414,7 +2414,9 @@
        в отличие от россыпи карточек, где тот же приём читался как дрожь.
        Курсор ведём от центра секции, а не от самой воронки: она узкая, и
        по ней одной наклон срабатывал бы только при попадании точно в неё. */
-    (function(){
+    /* Этот скрипт стоит выше воронки в разметке, поэтому ждём разбора DOM —
+       иначе querySelector возвращает null и обработчик молча не вешается. */
+    function uqfTilt(){
       var wrap = document.querySelector('.uqf'), scene = wrap && wrap.querySelector('.uqf__scene');
       if (!scene) return;
       if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
@@ -2437,7 +2439,9 @@
       zone.addEventListener('pointerleave', function(){
         tx = ty = nx = ny = 0; if (!raf) raf = requestAnimationFrame(apply);
       });
-    })();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', uqfTilt);
+    else uqfTilt();
     </script>
 
 
