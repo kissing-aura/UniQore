@@ -16,6 +16,18 @@
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
   var coarse = window.matchMedia && matchMedia('(hover:none)').matches;
 
+  /* В скрытой вкладке rAF спит, а CSS-переходы заморожены: счётчики застревают
+     на нуле, линия графика не прочерчивается. Всё, что анимируется один раз,
+     запускаем только когда вкладку видно. */
+  function когдаВидно(fn) {
+    if (!document.hidden) { fn(); return; }
+    document.addEventListener('visibilitychange', function один() {
+      if (document.hidden) return;
+      document.removeEventListener('visibilitychange', один);
+      fn();
+    });
+  }
+
   /* ── 1. Разносим слои по глубине ──────────────────────────────── */
   document.querySelectorAll('[data-depth]').forEach(function (el) {
     var z = parseFloat(el.dataset.depth) || 0;
@@ -99,11 +111,13 @@
     line.style.strokeDasharray = len;
     line.style.strokeDashoffset = len;
     if (dot) dot.style.opacity = '0';
-    setTimeout(function () {
-      line.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)';
-      line.style.strokeDashoffset = '0';
-      if (dot) { dot.style.transition = 'opacity .5s ease 1.25s'; dot.style.opacity = '1'; }
-    }, 420);
+    когдаВидно(function () {
+      setTimeout(function () {
+        line.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)';
+        line.style.strokeDashoffset = '0';
+        if (dot) { dot.style.transition = 'opacity .5s ease 1.25s'; dot.style.opacity = '1'; }
+      }, 420);
+    });
   })();
 
   /* ── 4. Счётчики KPI ──────────────────────────────────────────── */
@@ -116,13 +130,15 @@
       var суф = el.dataset.suffix || '';
       if (reduce) { el.textContent = формат(цель) + суф; return; }
 
-      var старт = null, длит = 1250;
-      requestAnimationFrame(function тик(t) {
-        if (!старт) старт = t;
-        var k = Math.min(1, (t - старт) / длит);
-        var e = 1 - Math.pow(1 - k, 3);            // ease-out: быстро стартует, мягко доводит
-        el.textContent = формат(Math.round(цель * e)) + суф;
-        if (k < 1) requestAnimationFrame(тик);
+      когдаВидно(function () {
+        var старт = null, длит = 1250;
+        requestAnimationFrame(function тик(t) {
+          if (!старт) старт = t;
+          var k = Math.min(1, (t - старт) / длит);
+          var e = 1 - Math.pow(1 - k, 3);          // ease-out: быстро стартует, мягко доводит
+          el.textContent = формат(Math.round(цель * e)) + суф;
+          if (k < 1) requestAnimationFrame(тик);
+        });
       });
     });
 
