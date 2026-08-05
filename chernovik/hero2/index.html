@@ -7,7 +7,7 @@
 <title>[черновик 2] hero по эталонам — Uniqore</title>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
-<link rel="stylesheet" href="/chernovik/hero2/style.css?v=25">
+<link rel="stylesheet" href="/chernovik/hero2/style.css?v=26">
 </head>
 <body>
 <div class="lab-note">черновик 2 · собран по замерам Linear / Attio / Vercel · <b>/chernovik/hero2/</b></div>
@@ -45,7 +45,7 @@
   <!-- Мокап сознательно уходит за сгиб: у Linear фрейм 1320×720 стартует на
        y=526 при вьюпорте 900, у Attio окно 1058×607 — на y=586. Треть внизу
        не влезает, и это читается как «продукта больше, чем поместилось». -->
-  <div class="shell">
+  <div class="shell" aria-hidden="true">
     <div class="app" data-app>
       <div class="chrome">
         <span class="chrome__dots"><i></i><i></i><i></i></span>
@@ -60,12 +60,12 @@
           <span class="side__name">Uniqore CRM</span>
         </div>
         <nav class="side__nav">
-          <a class="side__i is-on" data-go="dash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1.4"/><rect x="9" y="2" width="5" height="5" rx="1.4"/><rect x="2" y="9" width="5" height="5" rx="1.4"/><rect x="9" y="9" width="5" height="5" rx="1.4"/></svg>Дашборд</a>
-          <a class="side__i" data-go="deals"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 4.5h11v9h-11z"/><path d="M2.5 7.5h11M6 2.5v3"/></svg>Сделки<b class="is-hot">24</b></a>
-          <a class="side__i" data-go="stats"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 13V8M6.5 13V4M10.5 13v-6M14 13H2"/></svg>Аналитика</a>
-          <a class="side__i"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 12.5c1-2.4 2.9-3.6 6-3.6s5 1.2 6 3.6"/><circle cx="8" cy="5" r="2.4"/></svg>Клиенты<b>128</b></a>
-          <a class="side__i"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="5.5"/><path d="M8 5.2v3l1.9 1.2"/></svg>Задачи<b>7</b></a>
-          <a class="side__i"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.2 2.8h3.6l.5 1.9 1.8.7 1.7-.9 1.8 3.1-1.4 1.3v1.9l1.4 1.3-1.8 3.1-1.7-.9-1.8.7-.5 1.9H6.2"/></svg>Настройки</a>
+          <button type="button" class="side__i is-on" data-go="dash" tabindex="-1"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="5" height="5" rx="1.4"/><rect x="9" y="2" width="5" height="5" rx="1.4"/><rect x="2" y="9" width="5" height="5" rx="1.4"/><rect x="9" y="9" width="5" height="5" rx="1.4"/></svg>Дашборд</button>
+          <button type="button" class="side__i" data-go="deals" tabindex="-1"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 4.5h11v9h-11z"/><path d="M2.5 7.5h11M6 2.5v3"/></svg>Сделки<b class="is-hot">18</b></button>
+          <button type="button" class="side__i" data-go="stats" tabindex="-1"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 13V8M6.5 13V4M10.5 13v-6M14 13H2"/></svg>Аналитика</button>
+          <span class="side__i"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 12.5c1-2.4 2.9-3.6 6-3.6s5 1.2 6 3.6"/><circle cx="8" cy="5" r="2.4"/></svg>Клиенты<b>268</b></span>
+          <span class="side__i"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="5.5"/><path d="M8 5.2v3l1.9 1.2"/></svg>Задачи<b>7</b></span>
+          <span class="side__i"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6.2 2.8h3.6l.5 1.9 1.8.7 1.7-.9 1.8 3.1-1.4 1.3v1.9l1.4 1.3-1.8 3.1-1.7-.9-1.8.7-.5 1.9H6.2"/></svg>Настройки</span>
         </nav>
         <div class="side__foot">
           <span class="ava ava--u">В</span>
@@ -73,14 +73,14 @@
         </div>
       </aside>
 
-      <main class="main">
+      <div class="main">
        <div class="views">
 
         <!-- ── 1. Дашборд ── -->
         <section class="view is-on" data-view="dash">
         <header class="top">
           <div class="top__l">
-            <h2 class="top__t">Дашборд</h2>
+            <span class="top__t">Дашборд</span>
             <span class="top__b">Обновлено 2 мин назад</span>
           </div>
           <div class="top__r">
@@ -89,34 +89,43 @@
           </div>
         </header>
 
+        <!-- Все числа на трёх экранах выведены из одной базы, а не набраны
+             «на глаз»: неделя н8 — 53 заявки, 18 оплат, средний чек 164 000.
+             Отсюда выручка 2 952 000 (18×164 000) и конверсия 34,0% (18/53).
+             Раньше дашборд показывал 184 заявки за неделю, а собственный
+             график той же недели — 29: расхождение в 6,3 раза. -->
         <div class="kpis">
-          <div class="kpi"><span class="kpi__l">Выручка</span><b class="kpi__v">2 995 000 ₽</b><span class="kpi__d up">+18,2% к прошлой неделе</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 18 L11 15 L22 16 L33 11 L44 12 L55 7 L66 8 L77 4 L88 2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
-          <div class="kpi"><span class="kpi__l">Заявки</span><b class="kpi__v">184</b><span class="kpi__d up">+12 за неделю</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 16 L11 17 L22 12 L33 14 L44 9 L55 11 L66 6 L77 7 L88 3" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
+          <div class="kpi"><span class="kpi__l">Выручка</span><b class="kpi__v">2 952 000 ₽</b><span class="kpi__d up">+16,5% к прошлой неделе</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 18 L11 15 L22 16 L33 11 L44 12 L55 7 L66 8 L77 4 L88 2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
+          <div class="kpi"><span class="kpi__l">Заявки</span><b class="kpi__v">53</b><span class="kpi__d up">+6 за неделю</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 16 L11 17 L22 12 L33 14 L44 9 L55 11 L66 6 L77 7 L88 3" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
           <!-- порядок по важности: правый край окна срезан кромкой экрана,
                поэтому последний KPI виден лишь на треть — там наименее
                ценная метрика, а не конверсия -->
-          <div class="kpi"><span class="kpi__l">Конверсия счёт → оплата</span><b class="kpi__v">67,4%</b><span class="kpi__d up">+4,0 п.п.</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 14 L11 13 L22 15 L33 10 L44 11 L55 8 L66 9 L77 5 L88 4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
-          <div class="kpi"><span class="kpi__l">Средний чек</span><b class="kpi__v">162 800 ₽</b><span class="kpi__d down">−3,1%</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 6 L11 8 L22 5 L33 9 L44 8 L55 12 L66 10 L77 14 L88 13" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
+          <div class="kpi"><span class="kpi__l">Конверсия в оплату</span><b class="kpi__v">34,0%</b><span class="kpi__d up">+2,1 п.п.</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 14 L11 13 L22 15 L33 10 L44 11 L55 8 L66 9 L77 5 L88 4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
+          <div class="kpi"><span class="kpi__l">Средний чек</span><b class="kpi__v">164 000 ₽</b><span class="kpi__d down">−3,0%</span><svg class="spark" viewBox="0 0 88 22" preserveAspectRatio="none"><path d="M0 6 L11 8 L22 5 L33 9 L44 8 L55 12 L66 10 L77 14 L88 13" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></div>
         </div>
 
         <div class="row">
           <section class="box box--table">
             <div class="box__h">
               <span class="box__t">Сделки в работе</span>
-              <span class="box__m">24 · сумма 3,9 млн ₽</span>
+              <span class="box__m">18 · сумма 2,80 млн ₽</span>
             </div>
+            <!-- Словарь этапов один и тот же, что на канбане: Новая ·
+                 Переговоры · Счёт выставлен · Счёт не оплачен · Оплачено.
+                 Раньше таблица знала «Согласование» и «Договор подписан»,
+                 которым на доске не соответствовало ни одной колонки. -->
             <table class="tbl">
               <thead><tr><th>Клиент</th><th>Этап</th><th>Источник</th><th>Сумма</th><th>Ответственный</th><th>Обновлено</th></tr></thead>
               <tbody>
                 <tr><td><span class="ava">М</span>Магазин «Стиль»</td><td><span class="st st--go">Счёт выставлен</span></td><td>Instagram</td><td class="num">187 000 ₽</td><td><span class="ava ava--s">А</span>Анна</td><td class="dim">4 мин назад</td></tr>
-                <tr class="is-warn"><td><span class="ava">Ф</span>Фитнес «Пульс»</td><td><span class="st st--wait">Ждёт ответа 5 дн.</span></td><td>Реклама</td><td class="num">212 000 ₽</td><td><span class="ava ava--s">Д</span>Дмитрий</td><td class="dim">вчера, 18:40</td></tr>
-                <tr><td><span class="ava">К</span>Кофейня Roasters</td><td><span class="st st--go">Согласование</span></td><td>Сайт</td><td class="num">144 000 ₽</td><td><span class="ava ava--s">А</span>Анна</td><td class="dim">28 мин назад</td></tr>
-                <tr><td><span class="ava">А</span>Автосервис «Драйв»</td><td><span class="st st--new">Новая</span></td><td>Telegram</td><td class="num">250 000 ₽</td><td class="dim">—</td><td class="dim">только что</td></tr>
-                <tr><td><span class="ava">К</span>Клиника «Мед+»</td><td><span class="st st--go">Договор подписан</span></td><td>Сайт</td><td class="num">178 000 ₽</td><td><span class="ava ava--s">Д</span>Дмитрий</td><td class="dim">2 ч назад</td></tr>
+                <tr class="is-warn"><td><span class="ava">Ф</span>Фитнес «Пульс»</td><td><span class="st st--wait">Счёт не оплачен</span></td><td>Директ</td><td class="num">212 000 ₽</td><td><span class="ava ava--s">Д</span>Дмитрий</td><td class="dim">30 июля, 14:20</td></tr>
+                <tr><td><span class="ava">К</span>Кофейня Roasters</td><td><span class="st st--go">Переговоры</span></td><td>Сайт</td><td class="num">144 000 ₽</td><td><span class="ava ava--s">А</span>Анна</td><td class="dim">28 мин назад</td></tr>
+                <tr><td><span class="ava">А</span>Автосервис «Драйв»</td><td><span class="st st--new">Новая</span></td><td>Telegram</td><td class="num">250 000 ₽</td><td class="dim">—</td><td class="dim">12 мин назад</td></tr>
+                <tr><td><span class="ava">У</span>Кабинет «Улыбка»</td><td><span class="st st--new">Новая</span></td><td>Instagram</td><td class="num">168 000 ₽</td><td><span class="ava ava--s">А</span>Анна</td><td class="dim">2 ч назад</td></tr>
                 <tr><td><span class="ava">С</span>Салон «Стрижка»</td><td><span class="st st--wait">Счёт не оплачен</span></td><td>Instagram</td><td class="num">96 000 ₽</td><td><span class="ava ava--s">А</span>Анна</td><td class="dim">3 ч назад</td></tr>
                 <tr><td><span class="ava">Ш</span>Школа «Лингва»</td><td><span class="st st--go">Счёт выставлен</span></td><td>Директ</td><td class="num">134 000 ₽</td><td><span class="ava ava--s">Д</span>Дмитрий</td><td class="dim">вчера, 11:05</td></tr>
-                <tr><td><span class="ava">Ц</span>Цветы «Флора»</td><td><span class="st st--new">Новая</span></td><td>Instagram</td><td class="num">78 000 ₽</td><td class="dim">—</td><td class="dim">12 мин назад</td></tr>
-                <tr><td><span class="ava">Д</span>Доставка «Вкус»</td><td><span class="st st--go">Согласование</span></td><td>Директ</td><td class="num">203 000 ₽</td><td><span class="ava ava--s">Д</span>Дмитрий</td><td class="dim">1 ч назад</td></tr>
+                <tr><td><span class="ava">Ц</span>Цветы «Флора»</td><td><span class="st st--new">Новая</span></td><td>Instagram</td><td class="num">78 000 ₽</td><td class="dim">—</td><td class="dim">34 мин назад</td></tr>
+                <tr><td><span class="ava">Д</span>Доставка «Вкус»</td><td><span class="st st--go">Переговоры</span></td><td>Директ</td><td class="num">203 000 ₽</td><td><span class="ava ava--s">Д</span>Дмитрий</td><td class="dim">1 ч назад</td></tr>
                 <tr><td><span class="ava">Б</span>Барбершоп «Бор»</td><td><span class="st st--new">Новая</span></td><td>Сайт</td><td class="num">112 000 ₽</td><td><span class="ava ava--s">А</span>Анна</td><td class="dim">40 мин назад</td></tr>
               </tbody>
             </table>
@@ -132,27 +141,31 @@
               <ul class="src">
                 <li>
                   <i style="--c:#CDFF4F"></i><span class="src__n">Instagram</span>
-                  <span class="src__v">77</span><em class="up">+9</em>
+                  <span class="src__v">22</span><em class="up">+4</em>
                   <span class="src__bar"><b style="--w:100%"></b></span>
                 </li>
                 <li>
                   <i style="--c:#31e0b0"></i><span class="src__n">Telegram</span>
-                  <span class="src__v">52</span><em class="up">+4</em>
-                  <span class="src__bar"><b style="--w:67%"></b></span>
+                  <span class="src__v">15</span><em class="up">+2</em>
+                  <span class="src__bar"><b style="--w:68%"></b></span>
                 </li>
                 <li>
                   <i style="--c:#5b9dff"></i><span class="src__n">Сайт</span>
-                  <span class="src__v">33</span><em class="down">−2</em>
-                  <span class="src__bar"><b style="--w:43%"></b></span>
+                  <span class="src__v">10</span><em class="down">−1</em>
+                  <span class="src__bar"><b style="--w:45%"></b></span>
                 </li>
                 <li>
                   <i style="--c:#8792a3"></i><span class="src__n">Яндекс Директ</span>
-                  <span class="src__v">22</span><em class="up">+1</em>
-                  <span class="src__bar"><b style="--w:28%"></b></span>
+                  <span class="src__v">6</span><em class="up">+1</em>
+                  <span class="src__bar"><b style="--w:27%"></b></span>
                 </li>
               </ul>
+              <!-- 6 440 ₽, а не 412: при среднем чеке 164 000 и конверсии 34%
+                   заявка приносит 55 800 ₽. Цена в 412 ₽ означала бы отдачу
+                   ×135 — таких каналов не существует, и вся связка «чек ↔
+                   окупаемость» разваливалась. -->
               <div class="src__foot">
-                <span>Стоимость заявки</span><b>412 ₽</b><em class="down">−38 ₽ к прошлой</em>
+                <span>Стоимость заявки</span><b>6 440 ₽</b><em class="down">−450 ₽ к прошлой</em>
               </div>
             </section>
 
@@ -162,11 +175,14 @@
                 <span class="box__m">3</span>
               </div>
               <ul class="ai">
+                <!-- каждый пункт опирается на конкретные строки таблицы:
+                     Драйв (12 мин) и Флора (34 мин) — без ответственного;
+                     Пульс — счёт от 30 июля; Директ — 6 заявок по 11 600 ₽ -->
                 <li class="ai--hot">
                   <span class="ai__ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 5v4M8 11.4v.1"/><circle cx="8" cy="8" r="6"/></svg></span>
                   <span class="ai__b">
-                    <b>3 заявки без ответа &gt; 2 часов</b>
-                    <span>Конверсия падает после 40 минут</span>
+                    <b>2 заявки без ответственного</b>
+                    <span>В очереди 12 и 34 минуты · конверсия падает после 40</span>
                   </span>
                   <span class="ai__go">Открыть</span>
                 </li>
@@ -182,7 +198,7 @@
                   <span class="ai__ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.8 12.5h10.4M4.6 12.5V7.2M8 12.5V4.4M11.4 12.5V9"/></svg></span>
                   <span class="ai__b">
                     <b>Директ дороже плана на 18%</b>
-                    <span>412 ₽ против 350 ₽ за заявку</span>
+                    <span>11 600 ₽ против 9 800 ₽ за заявку</span>
                   </span>
                   <span class="ai__go">Отчёт</span>
                 </li>
@@ -196,8 +212,10 @@
         <section class="view" data-view="deals">
         <header class="top">
           <div class="top__l">
-            <h2 class="top__t">Сделки</h2>
-            <span class="top__b">24 в работе · 3,9 млн ₽</span>
+            <span class="top__t">Сделки</span>
+            <!-- «Оплачено» — закрытые, они не в работе: 6+7+5 = 18 на 2,80 млн.
+                 Раньше в «24 в работе» входила и колонка оплаченных -->
+            <span class="top__b">18 в работе · 2,80 млн ₽</span>
           </div>
           <div class="top__r">
             <span class="seg"><i class="is-on">Доска</i><i>Список</i></span>
@@ -207,41 +225,43 @@
 
         <div class="kan">
           <section class="kcol">
-            <div class="kcol__h"><span class="kdot" style="--c:#CDFF4F"></span>Новые<b>6</b><em>0,9 млн</em></div>
+            <div class="kcol__h"><span class="kdot" style="--c:#CDFF4F"></span>Новые<b>6</b><em>0,90 млн</em></div>
+            <!-- у Драйва и Флоры аватара нет: в таблице по ним стоит «—»,
+                 и на них же ссылается алерт «2 заявки без ответственного» -->
             <article class="kcard">
               <span class="kcard__t">Автосервис «Драйв»</span>
               <span class="kcard__m"><b>250 000 ₽</b><i class="tg">Telegram</i></span>
-              <span class="kcard__f"><span class="ava ava--s">А</span><span class="kcard__d">только что</span></span>
+              <span class="kcard__f"><span class="kcard__d kcard__d--warn">без ответственного · 12 мин</span></span>
             </article>
             <article class="kcard">
               <span class="kcard__t">Цветы «Флора»</span>
               <span class="kcard__m"><b>78 000 ₽</b><i class="ig">Instagram</i></span>
-              <span class="kcard__f"><span class="ava ava--s">Д</span><span class="kcard__d">12 мин</span></span>
-            </article>
-            <article class="kcard">
-              <span class="kcard__t">Барбершоп «Бор»</span>
-              <span class="kcard__m"><b>112 000 ₽</b><i class="st2">Сайт</i></span>
-              <span class="kcard__f"><span class="ava ava--s">А</span><span class="kcard__d">40 мин</span></span>
-            </article>
-            <article class="kcard">
-              <span class="kcard__t">Доставка «Вкус»</span>
-              <span class="kcard__m"><b>203 000 ₽</b><i class="ad">Директ</i></span>
-              <span class="kcard__f"><span class="ava ava--s">Д</span><span class="kcard__d">1 ч</span></span>
+              <span class="kcard__f"><span class="kcard__d kcard__d--warn">без ответственного · 34 мин</span></span>
             </article>
             <article class="kcard">
               <span class="kcard__t">Кабинет «Улыбка»</span>
               <span class="kcard__m"><b>168 000 ₽</b><i class="ig">Instagram</i></span>
               <span class="kcard__f"><span class="ava ava--s">А</span><span class="kcard__d">2 ч</span></span>
             </article>
-            <article class="kcard kcard--ghost"><span class="kcard__more">+ ещё 1</span></article>
+            <article class="kcard">
+              <span class="kcard__t">Барбершоп «Бор»</span>
+              <span class="kcard__m"><b>112 000 ₽</b><i class="st2">Сайт</i></span>
+              <span class="kcard__f"><span class="ava ava--s">А</span><span class="kcard__d">40 мин</span></span>
+            </article>
+            <article class="kcard kcard--ghost"><span class="kcard__more">+ ещё 2</span></article>
           </section>
 
           <section class="kcol">
-            <div class="kcol__h"><span class="kdot" style="--c:#5b9dff"></span>Переговоры<b>7</b><em>1,1 млн</em></div>
+            <div class="kcol__h"><span class="kdot" style="--c:#5b9dff"></span>Переговоры<b>7</b><em>1,10 млн</em></div>
             <article class="kcard">
               <span class="kcard__t">Кофейня Roasters</span>
               <span class="kcard__m"><b>144 000 ₽</b><i class="st2">Сайт</i></span>
               <span class="kcard__f"><span class="ava ava--s">А</span><span class="kcard__d">28 мин</span></span>
+            </article>
+            <article class="kcard">
+              <span class="kcard__t">Доставка «Вкус»</span>
+              <span class="kcard__m"><b>203 000 ₽</b><i class="ad">Директ</i></span>
+              <span class="kcard__f"><span class="ava ava--s">Д</span><span class="kcard__d">1 ч</span></span>
             </article>
             <article class="kcard">
               <span class="kcard__t">Студия «Кадр»</span>
@@ -258,19 +278,14 @@
               <span class="kcard__m"><b>194 000 ₽</b><i class="st2">Сайт</i></span>
               <span class="kcard__f"><span class="ava ava--s">Д</span><span class="kcard__d">вчера</span></span>
             </article>
-            <article class="kcard">
-              <span class="kcard__t">Пекарня «Корка»</span>
-              <span class="kcard__m"><b>87 000 ₽</b><i class="ig">Instagram</i></span>
-              <span class="kcard__f"><span class="ava ava--s">А</span><span class="kcard__d">вчера</span></span>
-            </article>
           </section>
 
 
           <section class="kcol">
-            <div class="kcol__h"><span class="kdot" style="--c:#f0b46b"></span>Счёт выставлен<b>5</b><em>0,8 млн</em></div>
+            <div class="kcol__h"><span class="kdot" style="--c:#f0b46b"></span>Счёт выставлен<b>5</b><em>0,80 млн</em></div>
             <article class="kcard kcard--warn">
               <span class="kcard__t">Фитнес «Пульс»</span>
-              <span class="kcard__m"><b>212 000 ₽</b><i class="ad">Реклама</i></span>
+              <span class="kcard__m"><b>212 000 ₽</b><i class="ad">Директ</i></span>
               <span class="kcard__f"><span class="ava ava--s">Д</span><span class="kcard__d kcard__d--warn">молчит 5 дн.</span></span>
             </article>
             <article class="kcard">
@@ -290,13 +305,15 @@
             </article>
             <article class="kcard">
               <span class="kcard__t">Мастерская «Дуб»</span>
-              <span class="kcard__m"><b>156 000 ₽</b><i class="st2">Сайт</i></span>
+              <span class="kcard__m"><b>171 000 ₽</b><i class="st2">Сайт</i></span>
               <span class="kcard__f"><span class="ava ava--s">Д</span><span class="kcard__d">вчера</span></span>
             </article>
           </section>
 
           <section class="kcol">
-            <div class="kcol__h"><span class="kdot" style="--c:#31e0b0"></span>Оплачено<b>6</b><em>1,1 млн</em></div>
+            <!-- отдельный скоуп «за неделю»: 18 оплат × 164 000 = 2,95 млн,
+                 ровно недельная выручка из KPI дашборда -->
+            <div class="kcol__h"><span class="kdot" style="--c:#31e0b0"></span>Оплачено<b>18</b><em>2,95 млн</em></div>
             <article class="kcard kcard--done">
               <span class="kcard__t">Клиника «Мед+»</span>
               <span class="kcard__m"><b>178 000 ₽</b><i class="st2">Сайт</i></span>
@@ -317,7 +334,7 @@
               <span class="kcard__m"><b>119 000 ₽</b><i class="st2">Сайт</i></span>
               <span class="kcard__f"><span class="ava ava--s">А</span><span class="kcard__d kcard__d--ok">оплачено</span></span>
             </article>
-            <article class="kcard kcard--ghost"><span class="kcard__more">+ ещё 2</span></article>
+            <article class="kcard kcard--ghost"><span class="kcard__more">+ ещё 14</span></article>
           </section>
         </div>
         </section>
@@ -326,7 +343,7 @@
         <section class="view" data-view="stats">
         <header class="top">
           <div class="top__l">
-            <h2 class="top__t">Аналитика</h2>
+            <span class="top__t">Аналитика</span>
             <span class="top__b">8 недель · все источники</span>
           </div>
           <div class="top__r">
@@ -341,7 +358,7 @@
               <span class="box__t">Выручка по неделям</span>
               <span class="an__legend"><i></i>выручка<i class="pl"></i>план<i class="bq"></i>заявки</span>
             </div>
-            <div class="an__now"><b>2 995 000 ₽</b><em class="up">+18,2%</em><span>текущая неделя</span></div>
+            <div class="an__now"><b>2 952 000 ₽</b><em class="up">+16,5%</em><span>текущая неделя</span></div>
 
             <!-- Одна линия на всю площадь читалась как растянутый примитив.
                  Здесь два ряда данных: выручка линией против пунктирного плана
@@ -367,18 +384,24 @@
                     <line x1="0" y1="83.7" x2="560" y2="83.7"/>
                     <line x1="0" y1="112.6" x2="560" y2="112.6"/>
                   </g>
+                  <!-- y = 130 − (выручка − 1,2 млн)/1,9 млн × 110.
+                       Ряд: 1,422 · 1,683 · 1,590 · 2,080 · 2,240 · 2,505 ·
+                       2,535 · 2,952 млн ₽ = 17,01 млн за 8 недель. Прежняя
+                       кривая давала н7→н8 рост 8,5%, а KPI обещал 18,2%. -->
                   <path class="achart__plan" d="M30 121 L101.4 111 L172.9 101 L244.3 91 L315.7 81 L387.1 71 L458.6 61 L530 51"/>
-                  <path class="achart__area" d="M30 117.3 L101.4 102.2 L172.9 107.4 L244.3 79.1 L315.7 69.8 L387.1 54.2 L458.6 39.7 L530 26.2 L530 134 L30 134 Z" fill="url(#ag)"/>
-                  <path class="achart__line" d="M30 117.3 L101.4 102.2 L172.9 107.4 L244.3 79.1 L315.7 69.8 L387.1 54.2 L458.6 39.7 L530 26.2"/>
+                  <path class="achart__area" d="M30 117.1 L101.4 102 L172.9 107.4 L244.3 79 L315.7 69.8 L387.1 54.4 L458.6 52.7 L530 28.6 L530 134 L30 134 Z" fill="url(#ag)"/>
+                  <path class="achart__line" d="M30 117.1 L101.4 102 L172.9 107.4 L244.3 79 L315.7 69.8 L387.1 54.4 L458.6 52.7 L530 28.6"/>
                 </svg>
                 <span class="an__dot" aria-hidden="true"></span>
               </div>
 
+              <!-- заявки по неделям: 27 · 32 · 30 · 38 · 41 · 44 · 47 · 53 = 312.
+                   Последний столбец = 53 = KPI недели, сумма = воронка. -->
               <div class="an__bars" aria-hidden="true">
-                <span style="--h:44%"></span><span style="--h:53%"></span>
-                <span style="--h:50%"></span><span style="--h:66%"></span>
-                <span style="--h:69%"></span><span style="--h:78%"></span>
-                <span style="--h:84%"></span><span class="is-now" style="--h:91%"></span>
+                <span style="--h:47%"></span><span style="--h:55%"></span>
+                <span style="--h:52%"></span><span style="--h:66%"></span>
+                <span style="--h:71%"></span><span style="--h:76%"></span>
+                <span style="--h:81%"></span><span class="is-now" style="--h:91%"></span>
               </div>
             </div>
             <div class="an__x"><span>н1</span><span>н2</span><span>н3</span><span>н4</span><span>н5</span><span>н6</span><span>н7</span><span>н8</span></div>
@@ -391,20 +414,25 @@
                    колонке она вставала после чисел и уезжала за кромку окна,
                    от воронки оставался голый список -->
               <ul class="fun">
-                <li style="--w:100%"><span class="fun__n">Заявки</span><b>184</b><em>—</em></li>
-                <li style="--w:66%"><span class="fun__n">Квалифицированы</span><b>121</b><em>65,8%</em></li>
-                <li style="--w:48%"><span class="fun__n">Счёт выставлен</span><b>88</b><em>72,7%</em></li>
-                <li style="--w:34%" class="is-ok"><span class="fun__n">Оплачено</span><b>62</b><em>70,5%</em></li>
+                <li style="--w:100%"><span class="fun__n">Заявки</span><b>312</b><em>—</em></li>
+                <li style="--w:66%"><span class="fun__n">В работе</span><b>205</b><em>65,7%</em></li>
+                <li style="--w:48%"><span class="fun__n">Счёт выставлен</span><b>149</b><em>72,7%</em></li>
+                <li style="--w:34%" class="is-ok"><span class="fun__n">Оплачено</span><b>105</b><em>70,5%</em></li>
               </ul>
             </section>
 
             <section class="box">
-              <div class="box__h"><span class="box__t">Окупаемость каналов</span><span class="box__m">ROMI</span></div>
+              <!-- средняя колонка подписана «расход» — раньше это было число
+                   без названия, и оно не сходилось ни при одном прочтении.
+                   Расходы дают 312 заявок и 17,01 млн выручки: Директ худший
+                   и по отдаче (×3,8), и по цене заявки — на него и ссылается
+                   алерт на дашборде. -->
+              <div class="box__h"><span class="box__t">Окупаемость каналов</span><span class="box__m">расход · ROMI</span></div>
               <ul class="romi">
-                <li><i style="--c:#CDFF4F"></i><span>Instagram</span><span class="romi__c">78 000 ₽</span><b class="up">×4,1</b></li>
-                <li><i style="--c:#31e0b0"></i><span>Telegram</span><span class="romi__c">41 000 ₽</span><b class="up">×3,6</b></li>
-                <li><i style="--c:#5b9dff"></i><span>Сайт / SEO</span><span class="romi__c">22 000 ₽</span><b class="up">×5,2</b></li>
-                <li><i style="--c:#8792a3"></i><span>Яндекс Директ</span><span class="romi__c">64 000 ₽</span><b class="down">×1,4</b></li>
+                <li><i style="--c:#CDFF4F"></i><span>Instagram</span><span class="romi__c">794 000 ₽</span><b class="up">×8,7</b></li>
+                <li><i style="--c:#31e0b0"></i><span>Telegram</span><span class="romi__c">449 000 ₽</span><b class="up">×9,9</b></li>
+                <li><i style="--c:#5b9dff"></i><span>Сайт / SEO</span><span class="romi__c">493 000 ₽</span><b class="up">×8,4</b></li>
+                <li><i style="--c:#8792a3"></i><span>Яндекс Директ</span><span class="romi__c">418 000 ₽</span><b class="down">×3,8</b></li>
               </ul>
             </section>
           </div>
@@ -412,13 +440,13 @@
         </section>
 
        </div>
-      </main>
+      </div>
       </div>
     </div>
   </div>
   </div>
 </section>
 
-<script src="/chernovik/hero2/scene.js?v=25" defer></script>
+<script src="/chernovik/hero2/scene.js?v=26" defer></script>
 </body>
 </html>

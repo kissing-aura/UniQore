@@ -37,6 +37,7 @@
 
   var текущий = 0;
   var таймер  = null;
+  var подсветка = null;  /* отложенный переход после hover-подсветки пункта */
   var пауза   = false;   /* курсор внутри окна — человек рассматривает */
   var виден   = true;    /* hero в кадре */
   var ручная  = 0;       /* до какого момента автоцикл молчит после клика */
@@ -44,6 +45,9 @@
   function перейти(key, вручную) {
     var i = РАЗДЕЛЫ.findIndex(function (р) { return р.key === key; });
     if (i < 0) return;
+    /* клик в те 300мс, пока ждёт отложенный автопереход, иначе перебивался
+       им же — человек нажал одно, через мгновение открылось другое */
+    clearTimeout(подсветка);
     текущий = i;
 
     for (var k in виды) виды[k].classList.toggle('is-on', k === key);
@@ -62,7 +66,7 @@
     var i = (текущий + 1) % РАЗДЕЛЫ.length;
     var кн = кнопки[РАЗДЕЛЫ[i].key];
     if (кн) кн.classList.add('is-pre');
-    setTimeout(function () { перейти(РАЗДЕЛЫ[i].key, false); }, 300);
+    подсветка = setTimeout(function () { перейти(РАЗДЕЛЫ[i].key, false); }, 300);
   }
 
   function расписать() {
@@ -108,13 +112,18 @@
   var время = document.querySelector('[data-view="dash"] .top__b');
   if (!время) return;
 
+  /* минута прибавляется раз в минуту, а не раз в 9 секунд: иначе за минуту
+     просмотра шапка доходила до «8 мин назад», пока строка таблицы всё ещё
+     писала «4 мин назад». Потолок 9 — дальше дашборд «обновляется» заново. */
   var мин = 2;
-  setInterval(function () {
+  var часы = setInterval(function () {
     if (document.hidden || !виден) return;
-    мин += 1;
+    мин = мин >= 9 ? 1 : мин + 1;
     время.textContent = 'Обновлено ' + мин + ' мин назад';
     if (конв && мин % 3 === 0) {
-      конв.textContent = (67.4 + (Math.random() * 1.2 - .6)).toFixed(1).replace('.', ',') + '%';
+      конв.textContent = (34 + (Math.random() * 1.2 - .6)).toFixed(1).replace('.', ',') + '%';
     }
-  }, 9000);
+  }, 60000);
+
+  addEventListener('pagehide', function () { clearInterval(часы); clearTimeout(таймер); clearTimeout(подсветка); });
 })();

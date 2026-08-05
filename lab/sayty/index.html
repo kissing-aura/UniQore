@@ -391,7 +391,7 @@
 .b3__lane.us .head .val{color:var(--mint)}
 .b3__lane.them .head .val{color:var(--coral)}
 .b3__track{height:5px;border-radius:3px;background:rgba(255,255,255,.05);position:relative;overflow:visible}
-.b3__track i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;transform-origin:left}
+.b3__track i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;transform-origin:left;width:100%}
 .b3__lane.us .b3__track i{background:linear-gradient(90deg,var(--mint),#7cf3cf)}
 .b3__lane.them .b3__track i{background:linear-gradient(90deg,var(--coral),#ff9c93)}
 .b3__lane.us.run .b3__track i{animation:b3us 5.5s ease-in-out infinite}
@@ -628,6 +628,17 @@
 .up__add{align-content:start}
 .up__add .tt{align-self:start}
 .up__add .pp{align-self:start;margin-top:1px}
+</style>
+
+<style>
+/* Полосы гонки рисовались только анимацией (0% = scaleX(0)). У пользователей
+   с «уменьшить движение» глобальное animation:none гасило её на первом кадре —
+   полосы исчезали совсем, карточка выглядела пустой. Теперь без анимации
+   показываем статичный результат: наш заполнен, конкурент — на 42%. */
+@media(prefers-reduced-motion:reduce){
+  .b3__lane.us .b3__track i{transform:scaleX(1)}
+  .b3__lane.them .b3__track i{transform:scaleX(.42)}
+}
 </style>
 </head>
 <body class="sy">
@@ -3092,6 +3103,21 @@ var WL = (function(){
     new IntersectionObserver(function(es){
       es.forEach(function(e){ if (e.isIntersecting) play(); });
     }, {threshold:0.3}).observe(bars[0].parentElement.parentElement);
+
+    /* Страховка. Пока счётчик не запустился, на экране висит «×0,0» —
+       для клиента это выглядит как сломанная цифра, хуже статики.
+       Если через 4с наблюдатель так и не отработал (вкладка в фоне,
+       блок не попал в область видимости) — ставим конечное значение
+       и поднимаем столбцы без анимации. */
+    setTimeout(function(){
+      if (played) return;
+      played = true;
+      val.textContent = '×3,4';
+      bars.forEach(function(b){
+        b.style.setProperty('height', b.getAttribute('data-h') + '%');
+        b.classList.add('grow');
+      });
+    }, 4000);
   } else { play(); }
 })();
 
@@ -3107,6 +3133,9 @@ var WL = (function(){
     new IntersectionObserver(function(es){
       es.forEach(function(e){ if (e.isIntersecting) start(); });
     }, {threshold:0.4}).observe(race);
+    /* Без запуска полосы имеют нулевую ширину — карточка выглядит пустой.
+       Если наблюдатель не отработал за 4с, стартуем принудительно. */
+    setTimeout(start, 4000);
   } else { start(); }
 })();
 
