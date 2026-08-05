@@ -69,7 +69,7 @@ a{color:inherit;text-decoration:none}
    горизонтали: «продукта больше, чем поместилось в кадр». */
 .grid{
   position:relative;z-index:3;width:100%;
-  display:grid;grid-template-columns:minmax(360px,440px) minmax(0,1fr);
+  display:grid;grid-template-columns:minmax(340px,400px) minmax(0,1fr);
   /* minmax(0,1fr) обязателен: иначе grid расширяет вторую колонку под
      фиксированные 900px окна и ужимает текст, а окно перестаёт уходить
      за край экрана — весь смысл приёма пропадает. */
@@ -113,7 +113,7 @@ a{color:inherit;text-decoration:none}
   /* 54 на 1440: на 58 строка «работает без вас» не влезала в колонку и
      «вас» повисало четвёртой строкой. Ниже 52 заголовок проигрывает окну
      960×620 по весу и читается как подпись к картинке */
-  font-size:clamp(38px,3.5vw,50px);line-height:1.04;font-weight:600;letter-spacing:-.028em;
+  font-size:clamp(38px,3.25vw,46px);line-height:1.04;font-weight:600;letter-spacing:-.028em;
   color:var(--ink);margin:0 0 22px;
 }
 /* Ступени кегля были 54 / 15,5 / 14 / 12,5 / 12,5 — четыре почти слитых
@@ -163,11 +163,11 @@ a{color:inherit;text-decoration:none}
   /* Панель заведомо уже деки: разница уходит на «подглядывание» соседей.
      По 38px с каждой стороны — этого хватает, чтобы прочитать «там ещё
      дашборды», и мало, чтобы сосед начал спорить с активной панелью. */
-  --peek:38px;
+  --peek:26px;
   --pw:calc(100% - var(--peek) * 2);
 }
 .deck__rail{
-  display:flex;align-items:stretch;gap:22px;padding:0 var(--peek);
+  display:flex;align-items:stretch;gap:22px;
   transition:transform .62s cubic-bezier(.32,.72,.28,1);
   will-change:transform;
 }
@@ -862,7 +862,7 @@ a{color:inherit;text-decoration:none}
 @media (min-width:1180.02px) and (max-width:1500px){
   /* 440, а не 500: заголовок на кегле 50 просит 421px под «Система, которая»,
      и всё, что сверх этого, лучше отдать окну */
-  .grid{grid-template-columns:minmax(320px,440px) minmax(0,1fr);gap:32px}
+  .grid{grid-template-columns:minmax(320px,400px) minmax(0,1fr);gap:30px}
   }
 /* 1001–1240 — самая тесная десктопная полоса: две колонки ещё стоят рядом,
    но окно шириной 960 показывалось лишь на 51%. Ужимаем текстовую колонку и

@@ -138,6 +138,7 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
 'use strict';
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DBG = window.__team = {step:'init', reduce};
 
 const stage = document.getElementById('stage');
 const vp    = document.getElementById('vp');
@@ -170,6 +171,7 @@ function rnd(s){ const v=Math.sin(s*12.9898)*43758.5453; return v-Math.floor(v);
 function resize(){
   const r = vp.getBoundingClientRect();
   // до первого layout размеры приходят нулевыми — строить по ним нечего
+  DBG.step = 'resize:' + Math.round(r.width) + 'x' + Math.round(r.height);
   if (r.width < 50 || r.height < 50){ ready = false; return; }
   const nw = Math.round(r.width), nh = Math.round(r.height);
   if (ready && nw === W && nh === H) return;   // пересобирать нечего
@@ -190,7 +192,7 @@ function resize(){
   gimg = gctx.createImageData(glowC.width, glowC.height);
   gimg32 = new Uint32Array(gimg.data.buffer);
 
-  N = Math.round(clamp((W * H) / 260, 2400, 9000));
+  N = Math.round(clamp((W * H) / 155, 3200, 11000));
   dustN = W < 700 ? 90 : 180;
 
   stage.style.setProperty('--runway', (W < 760 ? 170 : 195) + 'svh');
@@ -204,12 +206,12 @@ function sampleWord(n){
   c.width = Math.round(W*q); c.height = Math.round(H*q);
   const g = c.getContext('2d', {willReadFrequently:true});
 
-  const target = W * (W < 760 ? 0.88 : 0.60);
-  g.font = '800 200px Unbounded, sans-serif';
+  const target = W * (W < 760 ? 0.86 : 0.56);
+  g.font = '700 200px Unbounded, sans-serif';
   const probe = g.measureText('uniqore').width || 1;
-  const size = Math.min(200 * target / probe, H * 0.30);
+  const size = Math.min(200 * target / probe, H * 0.27);
 
-  g.font = `800 ${size*q}px Unbounded, sans-serif`;
+  g.font = `700 ${size*q}px Unbounded, sans-serif`;
   g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='#fff';
   g.fillText('uniqore', c.width/2, c.height*0.46);
 
@@ -310,7 +312,8 @@ function build(){
     cx:new Float32Array(N), cy:new Float32Array(N),
     dl:new Float32Array(N), du:new Float32Array(N),
     r1:new Float32Array(N), g1:new Float32Array(N), b1:new Float32Array(N),
-    sz:new Float32Array(N), sd:new Float32Array(N), lm:new Uint8Array(N),
+    sw:new Float32Array(N), sp:new Float32Array(N),
+    sd:new Float32Array(N), lm:new Uint8Array(N),
     px:new Float32Array(N), py:new Float32Array(N),
   };
 
@@ -339,7 +342,9 @@ function build(){
     P.cy[i]=my+ny*blast*0.6+(rnd(i*6.31)-.5)*H*0.09;
 
     P.r1[i]=dst.cr[b]; P.g1[i]=dst.cg[b]; P.b1[i]=dst.cb[b];
-    P.sz[i]=0.62+rnd(i*8.13)*0.72;
+    // в слове точка крупнее (буквы должны читаться), в портрете мельче (нужна деталь)
+    P.sw[i]=1.35+rnd(i*8.13)*0.75;
+    P.sp[i]=0.58+rnd(i*8.13)*0.62;
     P.sd[i]=rnd(i*9.41)*6.283;
     P.lm[i]=rnd(i*11.7)<0.12?1:0;
   }
@@ -352,6 +357,10 @@ function build(){
   }
 
   ready = true; shown = -1;
+  DBG.step='built'; DBG.N=N; DBG.W=W; DBG.H=H;
+  // ручки для покадровой проверки: вкладка в фоне не даёт rAF, а сцену смотреть надо
+  DBG.render = render; DBG.applyDom = applyDom; DBG.resize = resize;
+  DBG.at = p => { render(p, performance.now()); applyDom(p); };
 }
 
 /* ── аддитивный сплат с субпиксельной точностью ──────────────────── */
@@ -463,12 +472,16 @@ function applyDom(p){
 }
 
 /* ── цикл ────────────────────────────────────────────────────────── */
+function readProgress(){
+  const r = stage.getBoundingClientRect();
+  const runway = Math.max(1, stage.offsetHeight - vp.offsetHeight);
+  return clamp(-r.top/runway, 0, 1);
+}
+
 function frame(now){
   const r = stage.getBoundingClientRect();
-  const vh = window.innerHeight;
-  if (r.top < vh && r.bottom > 0){
-    const runway = Math.max(1, stage.offsetHeight - vp.offsetHeight);
-    progress = clamp(-r.top/runway, 0, 1);
+  if (r.top < window.innerHeight && r.bottom > 0){
+    progress = clamp(-r.top/Math.max(1, stage.offsetHeight - vp.offsetHeight), 0, 1);
     render(progress, now);
     if (Math.abs(progress-shown) > 0.0002){ applyDom(progress); shown = progress; }
   }
@@ -476,11 +489,13 @@ function frame(now){
 }
 
 function boot(){
-  requestAnimationFrame(() => {
-    resize();
-    if (reduce){ applyDom(1); return; }
-    requestAnimationFrame(frame);
-  });
+  resize();                       // сразу, не дожидаясь кадра: вкладка может быть в фоне
+  if (!ready) requestAnimationFrame(resize);
+  const p = readProgress();
+  render(p, performance.now());
+  applyDom(p);
+  if (reduce){ applyDom(1); return; }
+  requestAnimationFrame(frame);
 }
 
 // без шрифта и фото слово и портреты сэмплируются пустыми
@@ -488,7 +503,8 @@ Promise.all([
   document.fonts ? document.fonts.load('800 100px Unbounded').catch(()=>{}) : Promise.resolve(),
   ...cards.map(c => { const im=c.querySelector('img');
     return im.complete ? Promise.resolve() : new Promise(r => { im.onload=im.onerror=r; }); })
-]).then(boot);
+]).then(() => { DBG.step = 'assets-ready'; boot(); })
+  .catch(e => { DBG.step = 'assets-failed'; DBG.err = String(e); });
 
 // ResizeObserver ловит и появление размера после первого layout, и ресайз окна,
 // и смену высоты вьюпорта на телефоне при скрытии адресной строки
