@@ -7,3 +7,6 @@ assets/*.mp4
 .claude/
 skills-lock.json
 _proto/
+
+# временные стенды для headless-съёмки
+lab/_shot*.html
