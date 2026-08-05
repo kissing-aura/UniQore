@@ -171,8 +171,9 @@ function resize(){
   const r = vp.getBoundingClientRect();
   // до первого layout размеры приходят нулевыми — строить по ним нечего
   if (r.width < 50 || r.height < 50){ ready = false; return; }
-  W = Math.round(r.width);
-  H = Math.round(r.height);
+  const nw = Math.round(r.width), nh = Math.round(r.height);
+  if (ready && nw === W && nh === H) return;   // пересобирать нечего
+  W = nw; H = nh;
 
   // точки светятся и мелкие — полный ретина-буфер им не нужен,
   // зато вдвое дешевле очистка кадра

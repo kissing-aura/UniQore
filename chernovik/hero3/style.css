@@ -160,11 +160,14 @@ a{color:inherit;text-decoration:none}
    больше начинает спорить с активной панелью за внимание. */
 .deck{
   position:relative;width:100%;overflow:hidden;padding:26px 0 46px;
-  /* ширина панели = столько, сколько окну оставляет сетка, но не больше 908 */
-  --pw:min(908px, 100%);
+  /* Панель заведомо уже деки: разница уходит на «подглядывание» соседей.
+     По 38px с каждой стороны — этого хватает, чтобы прочитать «там ещё
+     дашборды», и мало, чтобы сосед начал спорить с активной панелью. */
+  --peek:38px;
+  --pw:calc(100% - var(--peek) * 2);
 }
 .deck__rail{
-  display:flex;align-items:stretch;gap:22px;
+  display:flex;align-items:stretch;gap:22px;padding:0 var(--peek);
   transition:transform .62s cubic-bezier(.32,.72,.28,1);
   will-change:transform;
 }
@@ -199,8 +202,9 @@ a{color:inherit;text-decoration:none}
 .deck__arw:hover{background:rgba(24,32,52,.9);border-color:rgba(205,255,79,.34);transform:scale(1.07)}
 .deck__arw:active{transform:scale(.96)}
 /* стрелки прижаты к краям самой панели, а не экрана */
-.deck__arw--prev{left:-10px}
-.deck__arw--next{right:-10px}
+/* стрелки стоят НАД краем соседней панели — оттуда они и «вытягивают» её */
+.deck__arw--prev{left:calc(var(--peek) - 32px)}
+.deck__arw--next{right:calc(var(--peek) - 32px)}
 
 /* Точки-подписи вместо безымянных кружков: человек сразу видит, что там
    не «слайд 2», а конкретная услуга */
