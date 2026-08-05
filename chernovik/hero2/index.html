@@ -7,7 +7,7 @@
 <title>[черновик 2] hero по эталонам — Uniqore</title>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
-<link rel="stylesheet" href="/chernovik/hero2/style.css?v=2">
+<link rel="stylesheet" href="/chernovik/hero2/style.css?v=5">
 </head>
 <body>
 <div class="lab-note">черновик 2 · собран по замерам Linear / Attio / Vercel · <b>/chernovik/hero2/</b></div>
@@ -16,21 +16,33 @@
   <div class="hero__bg" aria-hidden="true"></div>
   <div class="hero__grain" aria-hidden="true"></div>
 
-  <div class="wrap">
-    <p class="pill">Сайт, CRM, реклама и автоматизация — в одной системе</p>
+  <div class="grid">
+   <div class="wrap">
+    <p class="pill">Сайт · CRM · реклама · автоматизация</p>
     <h1 class="h1">Система, которая работает без вас</h1>
     <p class="sub">Собираем под процессы вашей ниши и передаём работающей. Разработка — 4–6 дней, цена зафиксирована в договоре до старта.</p>
     <div class="cta">
       <a class="btn btn--main" href="#">Посмотреть, как это выглядит</a>
       <a class="btn btn--ghost" href="#">Рассчитать стоимость</a>
     </div>
-  </div>
+
+    <ul class="marks">
+      <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 4.5 6.5 11 3 7.5"/></svg>Не приняли этап — дальше не платите</li>
+      <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 4.5 6.5 11 3 7.5"/></svg>Исходники и доступы остаются у вас</li>
+    </ul>
+   </div>
 
   <!-- Мокап сознательно уходит за сгиб: у Linear фрейм 1320×720 стартует на
        y=526 при вьюпорте 900, у Attio окно 1058×607 — на y=586. Треть внизу
        не влезает, и это читается как «продукта больше, чем поместилось». -->
   <div class="shell">
     <div class="app" data-app>
+      <div class="chrome">
+        <span class="chrome__dots"><i></i><i></i><i></i></span>
+        <span class="chrome__url">crm.uniqore.pro/dashboard</span>
+        <span class="chrome__side"><i></i><i></i></span>
+      </div>
+      <div class="app__body">
 
       <aside class="side">
         <div class="side__top">
@@ -110,6 +122,7 @@
           </div>
         </div>
       </main>
+      </div>
     </div>
 
     <!-- Сателлиты, как у Attio: не декоративные плашки, а куски системы -->
@@ -128,8 +141,9 @@
       </div>
     </aside>
   </div>
+  </div>
 </section>
 
-<script src="/chernovik/hero2/scene.js?v=2" defer></script>
+<script src="/chernovik/hero2/scene.js?v=5" defer></script>
 </body>
 </html>

@@ -35,8 +35,18 @@ a{color:inherit;text-decoration:none}
 }
 .lab-note b{color:var(--lime)}
 
-.hero{position:relative;overflow:hidden;padding:132px 0 0;min-height:100svh}
-.wrap{position:relative;z-index:3;max-width:1120px;margin:0 auto;padding:0 24px;text-align:center}
+.hero{position:relative;overflow:hidden;padding:120px 0 0;min-height:100svh;display:flex;align-items:center}
+
+/* Две колонки: слева обещание, справа продукт. Правая колонка сознательно
+   шире экрана — мокап уходит за край, как за сгиб у Linear, только по
+   горизонтали: «продукта больше, чем поместилось в кадр». */
+.grid{
+  position:relative;z-index:3;width:100%;
+  display:grid;grid-template-columns:minmax(360px,470px) 1fr;
+  align-items:center;gap:56px;
+  max-width:1560px;margin:0 auto;padding:0 0 0 max(24px,calc((100vw - 1240px)/2));
+}
+.wrap{position:relative;z-index:3;text-align:left;padding-bottom:24px}
 
 /* Фон: у Linear это radial + linear в два стопа, без «трёх пятен по вкусу» */
 .hero__bg{
@@ -61,15 +71,12 @@ a{color:inherit;text-decoration:none}
 
 /* H1: 64px / вес 600 / трекинг −0.022em / line-height 1.0 — медиана эталонов */
 .h1{
-  font-size:64px;line-height:1;font-weight:600;letter-spacing:-1.408px;
-  color:var(--ink);max-width:15ch;margin:0 auto 20px;
+  font-size:clamp(40px,3.9vw,56px);line-height:1.02;font-weight:600;letter-spacing:-.025em;
+  color:var(--ink);margin:0 0 18px;
 }
-.sub{
-  font-size:16px;line-height:24px;font-weight:400;color:var(--dim);
-  max-width:60ch;margin:0 auto 32px;
-}
+.sub{font-size:16px;line-height:25px;font-weight:400;color:var(--dim);max-width:44ch;margin:0 0 28px}
 
-.cta{display:flex;gap:10px;justify-content:center;margin-bottom:64px}
+.cta{display:flex;gap:10px;justify-content:flex-start;margin-bottom:26px;flex-wrap:wrap}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;
   border-radius:10px;font-size:14px;font-weight:500;
@@ -81,16 +88,20 @@ a{color:inherit;text-decoration:none}
 .btn--ghost{border:1px solid var(--hair);color:var(--ink)}
 .btn--ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
 
+.marks{list-style:none;display:flex;flex-direction:column;gap:9px}
+.marks li{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--dim)}
+.marks svg{width:15px;height:15px;color:var(--mint);flex:none}
+
 /* ── Мокап ────────────────────────────────────────────────────────────
    Фиксированная ширина, как у Linear (--width:1320px): интерфейс не
    тянется под экран, он показан в своём масштабе и обрезается сгибом. */
 .shell{
   position:relative;z-index:2;
-  width:1240px;max-width:none;margin:0 auto;
-  padding:0 24px;
+  width:1080px;      /* шире своей колонки — правый край уходит за экран */
+  margin:0;padding:0;
 }
 .app{
-  display:flex;height:620px;overflow:hidden;
+  display:flex;flex-direction:column;height:600px;overflow:hidden;
   border-radius:12px;
   background:#0D0F12;
   /* хайрлайн + стек теней: радиусы удваиваются, непрозрачность 2.5–6%,
@@ -103,6 +114,23 @@ a{color:inherit;text-decoration:none}
     0 16px 28px rgba(11,13,24,.4),
     0 28px 52px rgba(11,13,24,.44);
 }
+
+/* Планка окна: тонкая, 34px. У Framer рамка тоже почти не заметна —
+   1px hairline и radius 18px, вся работа на содержимом, а не на «шапке». */
+.chrome{
+  display:flex;align-items:center;gap:12px;height:34px;flex:none;
+  padding:0 12px;background:#0A0C0F;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.chrome__dots{display:flex;gap:6px}
+.chrome__dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
+.chrome__url{
+  flex:1;max-width:280px;margin:0 auto;text-align:center;
+  font:400 10.5px/1 var(--mono);color:#6b7280;
+  background:rgba(255,255,255,.04);border-radius:6px;padding:5px 10px;
+}
+.chrome__side{display:flex;gap:6px}
+.chrome__side i{width:11px;height:2px;border-radius:2px;background:rgba(255,255,255,.14)}
+.app__body{display:flex;flex:1;min-height:0}
 
 /* ── Сайдбар ── */
 .side{width:212px;flex:none;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;background:#0B0D10}
@@ -192,8 +220,11 @@ a{color:inherit;text-decoration:none}
   box-shadow:0 0 0 1px rgba(255,255,255,.07),0 2px 5px rgba(11,13,24,.3),
              0 8px 18px rgba(11,13,24,.36),0 20px 38px rgba(11,13,24,.42);
 }
-.sat--tg{left:-72px;top:214px}
-.sat--auto{right:-64px;top:392px;width:222px}
+/* Сателлиты живут НА мокапе, слегка выступая за его левый край, — как
+   мини-окна Attio. Заходить на текстовую колонку им нельзя: перекрытый
+   лид читается как ошибка вёрстки, а не как композиция. */
+.sat--tg{left:-38px;top:206px}
+.sat--auto{left:-38px;bottom:52px;width:230px}
 .sat__h{display:flex;align-items:center;gap:7px;padding:9px 11px;font-size:11px;color:#9099a6;border-bottom:1px solid rgba(255,255,255,.05)}
 .sat__ic{width:17px;height:17px;border-radius:5px;display:grid;place-items:center;background:rgba(255,255,255,.07);color:#9099a6}
 .sat__ic svg{width:10px;height:10px}
@@ -216,19 +247,21 @@ a{color:inherit;text-decoration:none}
 .app{animation-delay:.16s}.sat--tg{animation-delay:.3s}.sat--auto{animation-delay:.38s}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-@media (max-width:1420px){
-  /* места по бокам не осталось — сателлиты заходят на окно, как у Attio */
-  .sat--tg{left:-24px}
-  .sat--auto{right:-20px}
+@media (max-width:1500px){
+  .grid{grid-template-columns:minmax(330px,430px) 1fr;gap:40px}
+  .sat--tg{left:-28px}
+  .sat--auto{left:-28px}
 }
-@media (max-width:1300px){
-  .shell{width:100%}
-  .app{height:560px}
-  .sat--tg{left:0}
-  .sat--auto{right:0}
+@media (max-width:1240px){
+  /* места слева не осталось — сателлиты заходят на окно, как мини-окна Attio */
+  .sat--tg{left:-32px}
+  .sat--auto{left:-24px}
+  .app{height:540px}
 }
 @media (max-width:1000px){
-  .h1{font-size:48px;letter-spacing:-1.06px}
+  /* колонки складываются: сначала обещание, под ним продукт */
+  .grid{grid-template-columns:1fr;gap:44px;padding:0 24px;max-width:900px}
+  .shell{width:100%}
   .app{height:480px}
   .sat{display:none}
   .side{width:180px}
@@ -236,7 +269,8 @@ a{color:inherit;text-decoration:none}
   .col{display:none}
 }
 @media (max-width:720px){
-  .hero{padding:96px 0 0}
+  .hero{padding:96px 0 0;display:block}
+  .grid{padding:0 16px}
   .h1{font-size:34px;letter-spacing:-.75px;max-width:none}
   .sub{font-size:15px}
   .cta{flex-direction:column;margin-bottom:40px}
