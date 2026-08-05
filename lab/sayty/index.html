@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="description" content="Сайты под ключ от 11 700 ₽: лендинг за 3 дня, многостраничник за 5. Индивидуальный дизайн, SEO, мобильная версия, Telegram и CRM. Фиксированная цена в договоре, оплата после утверждения макета.">
+  <meta name="description" content="Сайты под ключ от 11 700 ₽: лендинг за 3 дня, многостраничник за 5. Дизайн под нишу, мобильная версия, заявки в Telegram. Фиксированная цена в договоре, оплата после утверждения макета.">
   <meta name="keywords" content="сайт под ключ, заказать сайт, разработка сайта, лендинг под ключ, сайт для бизнеса, создание сайта">
   <meta name="robots" content="noindex, nofollow"><!-- черновик -->
   <meta property="og:title" content="Сайты под ключ от 11 700 ₽ — под нишу, не шаблон | Uniqore">
@@ -523,6 +523,18 @@
    анимации (и если JS вообще не поднялся) блок выглядел как обычный «до/после». */
 .sy-slc__before{width:100%!important;border-right:0!important;clip-path:inset(0 50% 0 0)}
 </style>
+
+<style>
+/* импульс в конце счёта: наш показатель подпрыгивает, конкурент едва дёргается */
+.b4__g .val{transition:transform .2s ease}
+.b4__g.us .val.b4-pop{animation:b4popUs .5s cubic-bezier(.34,1.56,.64,1)}
+.b4__g.them .val.b4-pop{animation:b4popThem .5s ease}
+@keyframes b4popUs{0%{transform:scale(1)}45%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes b4popThem{0%{transform:scale(1)}45%{transform:scale(1.03)}100%{transform:scale(1)}}
+/* стрелка нашего gauge мягко «дышит» после доводки — карточка не выглядит замершей */
+.b4__g.us .b4__needle{animation:needleIdle 3.4s ease-in-out 2.6s infinite}
+@keyframes needleIdle{0%,100%{transform:rotate(var(--ang,0deg))}50%{transform:rotate(calc(var(--ang,0deg) + 1.2deg))}}
+</style>
 </head>
 <body class="sy">
 <div style="position:sticky;top:0;z-index:9999;background:linear-gradient(90deg,#1a1400,#0A0E1A);border-bottom:1px solid rgba(242,184,75,.35);padding:9px 16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#F2B84B;letter-spacing:.02em">
@@ -695,7 +707,7 @@
               <span class="sy-pricepill">от <b data-usd="150">$150</b></span>
               <span class="sy-pricepill__note">Платите один раз — дальше сайт ваш, без ежемесячной платы. Цену фиксируем в договоре, оплата после того, как утвердите макет.</span>
             </div>
-            <div class="lab-price"><span class="lab-price__i"><b>от 11 700 ₽</b>одна страница</span><span class="lab-price__i"><b>от 32 800 ₽</b>многостраничник с дизайном</span></div>
+            <div class="lab-price"><span class="lab-price__i"><b>от 11 700 ₽</b>одна страница</span><span class="lab-price__i"><b>от 32 800 ₽</b>многостраничник</span></div>
             <div class="sy-hero__cta sy-rev" data-d="4">
               <a href="#zayavka" class="sy-btn sy-btn--main sy-btn--lg" data-mag>Рассчитать мой сайт <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
               <a href="#portfolio" class="sy-btn sy-btn--ghost sy-btn--lg">Посмотреть проекты</a>
@@ -991,7 +1003,7 @@
             </g>
             <g class="needle-g"><line class="needle" data-v="98" x1="60" y1="60" x2="60" y2="20"/><circle class="needle-pivot" cx="60" cy="60" r="3"/></g>
           </svg>
-          <div class="val">98</div>
+          <div class="val" data-count="98">0</div>
           <div class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>Uniqore</div>
         </div>
         <div class="b4__g them">
@@ -1004,7 +1016,7 @@
             </g>
             <g class="needle-g"><line class="needle" data-v="34" x1="60" y1="60" x2="60" y2="20"/><circle class="needle-pivot" cx="60" cy="60" r="3"/></g>
           </svg>
-          <div class="val">34</div>
+          <div class="val" data-count="34">0</div>
           <div class="lbl"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Конструктор</div>
         </div>
       </div>
@@ -1057,10 +1069,10 @@
         <div class="q-always sy-rev" data-d="2" aria-label="Всегда входит">
           <span class="q-always__t">Всегда входит</span>
           <ul class="q-always__list">
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>Индивидуальный дизайн под нишу</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>Дизайн и вёрстка под вашу нишу</li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>Мобильная версия и адаптив</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>SEO-настройка и Метрика</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>Заявки в Telegram и CRM</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>Базовая SEO-разметка страниц</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6L9 17l-5-5"/></svg>Заявки приходят в Telegram</li>
           </ul>
         </div>
 
@@ -3090,6 +3102,50 @@ var WL = (function(){
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+})();
+</script>
+
+<script>
+/* «Мгновенная загрузка»: цифры набегают синхронно со стрелкой, а не появляются
+   готовыми — иначе стрелка едет, а число уже на месте, и движение не читается.
+   В конце короткий импульс: у нас — вверх, у конкурента — вяло. */
+(function(){
+  var vals = document.querySelectorAll('.b4__g .val[data-count]');
+  if (!vals.length) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches){
+    vals.forEach(function(v){ v.textContent = v.getAttribute('data-count'); });
+    return;
+  }
+
+  function run(el){
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
+    var to = +el.getAttribute('data-count');
+    var isUs = el.closest('.b4__g').classList.contains('us');
+    var dur = isUs ? 2200 : 2600;            /* совпадает с длительностью дуги */
+    var delay = isUs ? 0 : 300;
+    var t0 = null;
+    function tick(t){
+      if (t0 === null) t0 = t;
+      var p = Math.min(1, (t - t0) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);    /* та же кривая, что у дуги */
+      el.textContent = Math.round(to * eased);
+      if (p < 1) requestAnimationFrame(tick);
+      else { el.textContent = to; el.classList.add('b4-pop'); }
+    }
+    setTimeout(function(){ requestAnimationFrame(tick); }, delay);
+  }
+
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ run(e.target); io.unobserve(e.target); } });
+    }, { threshold:.4 });
+    vals.forEach(function(v){ io.observe(v); });
+    /* страховка: если наблюдатель не отработает — цифры не должны остаться нулями */
+    setTimeout(function(){ vals.forEach(run); }, 4000);
+  } else {
+    vals.forEach(run);
+  }
 })();
 </script>
 </body>
