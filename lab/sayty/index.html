@@ -238,19 +238,18 @@
   .up__cmp__row span:first-child{font-size:10px}
   .up__cmp__row--head{font-size:9px}
 
-  /* допы: 306px → ~98px на карточку */
-  .up__add{padding:10px 11px;border-radius:11px;grid-template-columns:18px 1fr auto;gap:9px;align-items:center}
-  .up__add .chk{width:16px;height:16px;margin-top:0}
+  /* допы: размеры. Модель показа описания живёт в едином дизайн-слое ниже
+     (раскрытие через max-height) — здесь только кегли, без display/clamp,
+     иначе два блока управляют одним и тем же и побеждает порядок в файле. */
+  .up__add{padding:10px 11px;border-radius:11px}
+  .up__add .chk{width:16px;height:16px}
   .up__add.on .chk::after{left:4px;top:1px;width:4px;height:8px;border-width:2px}
   .up__add .tt{font-size:12.5px}
   .up__add .tt b{font-size:12.5px;line-height:1.25}
-  .up__add.on .tt b::after{font-size:9.5px}
-  .up__add .tt .d{font-size:10px;margin-top:2px;line-height:1.35;
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .up__add .tt .val{display:none}
-  .up__add.on .tt .val{display:block;font-size:10px;margin-top:4px;line-height:1.35}
-  .up__add .pp{font-size:12.5px}
-  .up__add .fav{font-size:8.5px;padding:2px 6px;top:-6px;right:9px}
+  .up__add .tt .d{font-size:10px;line-height:1.35}
+  .up__add .tt .val{font-size:10px;line-height:1.35}
+  .up__add .pp{font-size:12px}
+  .up__add .fav{font-size:8.5px;padding:1px 5px}
   .up__toggle3d{width:30px!important;height:17px!important}
   .up__toggle3d .knob{width:13px;height:13px}
   .up__add.on .up__toggle3d .knob{transform:translateX(13px) rotate(180deg)}
@@ -622,15 +621,6 @@
 </style>
 
 <style>
-/* Карточки допов идут парами: если у соседа текст втрое длиннее, справа
-   зияет пустота. Прижимаем содержимое к верху и держим цену на одной
-   линии с заголовком — пара читается ровно даже при разной длине. */
-.up__add{align-content:start}
-.up__add .tt{align-self:start}
-.up__add .pp{align-self:start;margin-top:1px}
-</style>
-
-<style>
 /* Полосы гонки рисовались только анимацией (0% = scaleX(0)). У пользователей
    с «уменьшить движение» глобальное animation:none гасило её на первом кадре —
    полосы исчезали совсем, карточка выглядела пустой. Теперь без анимации
@@ -642,350 +632,308 @@
 </style>
 
 <style>
-/* Чек «прилипал» только на бумаге: у .up стоит align-items:start, поэтому
-   правая колонка получала высоту по своему контенту — sticky некуда было
-   ехать, и под чеком зияло больше тысячи пикселей пустоты (левая колонка
-   1625px против 576px). Обёртка тянется на всю высоту строки, а сам чек
-   липнет уже внутри неё — теперь он едет за прокруткой и пустота исчезает. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   КОНФИГУРАТОР — единый дизайн-слой. Заменил 7 патч-блоков, которые
+   правили одно и то же и воевали друг с другом (один ставил чеку sticky,
+   следующий отменял; один растил карточки, следующий сжимал padding'и).
+   Дизайн, собранный из отрицаний предыдущего дизайна, и выглядит дёшево.
+
+   ПРАВИЛО ИЕРАРХИИ, на котором держится весь блок:
+   крупных элементов ровно два — 4 базовых тарифа и итоговая сумма.
+   Всё остальное тихое. Плотность приходит не от уменьшения всего разом
+   (так получается мелко И убого), а от того что шумит только главное.
+
+   Три структурных решения:
+   1. Пресеты были 4 крупными карточками и дублировали ручной выбор ниже.
+      Стали строкой чипов: якорь на дорогой пакет остался, места в 4 раза меньше.
+   2. Доп в покое — строка 38px (галочка · название · цена). Описание и
+      выгода не живут в карточке постоянно, а раскрываются при наведении
+      или выборе. Было 8 допов × 3 предложения = 24 строки текста разом.
+   3. Таблица сравнения вышла из карточки-в-карточке (чёрный список
+      anti-ai-slop) в тонкую ссылку-раскрытие.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── ГЕОМЕТРИЯ ───────────────────────────────────────────────────────────
+   Ловушка, стоившая трёх ложных диагнозов: grid-колонка 1fr = minmax(auto,1fr),
+   её минимум равен min-content содержимого. Бегущая строка внутри чека имеет
+   width:max-content — она растянула колонку до 2264px и вытолкнула левую
+   часть в 513px. Отсюда сразу и рванье описаний по одному слову, и обрезка
+   чека, и «левая часть узкая и длинная». Лечение — minmax(0,…). */
+.up{grid-template-columns:minmax(0,1fr)}
+.up__col,.up__billwrap,.up__bill,.up__lines,.up__line,.up__line__row{min-width:0}
+.up__cat__grid,.up__base,.up__presets,.up__add .tt{min-width:0}
+.up__line__row .n{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.up__marquee{max-width:100%;overflow:hidden}
+.up__marquee__track{width:auto;min-width:max-content}   /* лента декоративна — ширину не диктует */
+
 @media(min-width:901px){
-  .up__billwrap{align-self:stretch;position:relative}
-  .up__bill{position:sticky;top:24px}
-  /* Ровно та ловушка, что записана у нас в правилах: body{overflow-x:hidden}
-     из общего bundle-page.css делает body scroll-контейнером и убивает
-     sticky на всей странице. Заменяем на clip — режет по горизонтали так
-     же, но контейнер прокрутки не создаёт. Правим только тут, потому что
-     bundle-page.css общий для 76 страниц. */
+  .up{grid-template-columns:minmax(0,1.85fr) minmax(0,1fr);gap:24px;margin-top:22px}
+  .up__billwrap{align-self:center}     /* чек по центру строки, а не прижат к верху */
+  .up__bill{position:static;top:auto}  /* идёт целиком, ничего не обрезается */
+  /* body{overflow-x:hidden} из общего bundle-page.css делает body scroll-
+     контейнером; clip режет так же, но контейнер прокрутки не создаёт.
+     Правим только здесь — bundle-page.css общий для 76 страниц. */
   html,body.sy{overflow-x:clip}
 }
-</style>
 
-<style>
-/* ═══════════════════════════════════════════════════════════════════
-   КОНФИГУРАТОР — мягче, скруглённее, приятнее нажимать.
-   Было: резкие прямоугольники, дробные подписи, наклон карточек за
-   курсором (он и «ехал неприятно»), плотная сетка мелких блоков.
-   ═══════════════════════════════════════════════════════════════════ */
+/* ─── ПАНЕЛИ ─────────────────────────────────────────────────────────── */
+.up__col{padding:22px;border-radius:20px;background:#0f131f;border:1px solid rgba(255,255,255,.075)}
+.up__lbl{font-size:9.5px;letter-spacing:.12em}
+.up__h{font-size:17px;margin-top:5px}
 
-/* 1. Наклон карточек убран совсем — от него рябило и «ехало». Вместо него
-      честный подъём и мягкое свечение: понятно, что элемент нажимаемый. */
-.up__add{transform:none!important;transition:transform .22s cubic-bezier(.22,1,.36,1),
-  box-shadow .22s ease,border-color .22s ease,background .22s ease!important}
-.up__add.tilting{transition:transform .22s cubic-bezier(.22,1,.36,1)!important}
-.up__add::before{display:none}          /* блик от курсора — тоже лишний шум */
+/* ─── 01. ПРЕСЕТЫ → строка чипов ─────────────────────────────────────── */
+.up__presets{margin-top:26px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;grid-template-columns:none}
+.up__presets::before{content:"быстрый старт";font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);margin-right:4px}
+.up__preset{padding:0 13px;height:33px;display:inline-flex;align-items:center;gap:8px;
+  border-radius:999px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  box-shadow:none;transition:background .18s ease,border-color .18s ease}
+.up__preset .k,.up__preset .ds{display:none}          /* метка и описание — в чипе лишние */
+.up__preset .nm{font-family:inherit;font-weight:600;font-size:12.5px;margin:0;
+  letter-spacing:0;color:#dfe5ef;display:inline}
+.up__preset .fr{display:inline;margin:0;font-size:11px;color:var(--mut2)}
+.up__preset .fr s,.up__preset .fr i{display:none}     /* зачёркнутая цена и «выгода» — шум в чипе */
+.up__preset .fr b{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--mut)}
+.up__preset:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}
+.up__preset:active{transform:scale(.97)}
+.up__preset.on{background:rgba(205,255,79,.1);border-color:rgba(205,255,79,.5);box-shadow:none}
+.up__preset.on .nm,.up__preset.on .fr b{color:var(--lime)}
+.up__preset--premium{background:rgba(242,184,75,.05);border-color:rgba(242,184,75,.2)}
+.up__preset--premium:hover{background:rgba(242,184,75,.09);border-color:rgba(242,184,75,.4)}
+.up__preset--premium.on{background:rgba(242,184,75,.11);border-color:rgba(242,184,75,.5)}
+.up__preset--premium.on .nm,.up__preset--premium.on .fr b{color:var(--amber)}
 
-/* 2. Скругления крупнее и единообразнее по всему блоку */
-.up__col,.up__bill{border-radius:22px}
-.up__add,.up__rad,.up__preset{border-radius:16px}
-.up__cmp{border-radius:18px}
-.up__cta{border-radius:14px}
+/* ─── 02. ТАРИФЫ — единственный крупный выбор ────────────────────────── */
+.up__base{margin-top:16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.up__rad{padding:15px 13px 14px;border-radius:14px;text-align:left;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);
+  transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .2s ease,
+             border-color .2s ease,background .2s ease}
+.up__rad .n{font-size:13px;font-weight:600;color:#fff;letter-spacing:-.01em;line-height:1.25}
+.up__rad .p{font-family:'Unbounded',sans-serif;font-weight:700;font-size:21px;color:#e8edf6;
+  margin-top:7px;letter-spacing:-.025em;line-height:1}
+.up__rad .d{font-size:10.5px;color:var(--mut2);margin-top:6px;line-height:1.35}
+.up__rad:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.17);
+  box-shadow:0 12px 28px -16px rgba(0,0,0,.6)}
+.up__rad:active{transform:translateY(0) scale(.99)}
+.up__rad.on{background:rgba(205,255,79,.07);border-color:rgba(205,255,79,.5);
+  box-shadow:0 0 0 1px rgba(205,255,79,.16),0 14px 32px -18px rgba(205,255,79,.3)}
+.up__rad.on .p{color:var(--lime)}
+.up__rad--premium.on .p{color:var(--amber)}
+.up__rad__badge{top:-7px;left:9px;right:auto;font-size:9px;padding:2px 7px}
+.up__rad__like{font-size:9.5px;margin-top:5px}
 
-/* 3. Карточки допов: воздух внутри, мягкая граница, приятное нажатие */
-.up__add{padding:16px 18px;background:rgba(255,255,255,.022);
-  border:1px solid rgba(255,255,255,.07);box-shadow:0 1px 0 rgba(255,255,255,.02) inset}
-.up__add:hover{transform:translateY(-2px);background:rgba(255,255,255,.045);
-  border-color:rgba(205,255,79,.28);box-shadow:0 10px 26px -14px rgba(0,0,0,.55)}
-.up__add:active{transform:translateY(0) scale(.995)}
-.up__add.on{background:linear-gradient(180deg,rgba(205,255,79,.10),rgba(205,255,79,.045));
-  border-color:rgba(205,255,79,.55);box-shadow:0 0 0 1px rgba(205,255,79,.18),0 12px 30px -16px rgba(205,255,79,.28)}
-.up__add.on:hover{transform:translateY(-2px)}
+/* ─── Сравнение: тонкая ссылка вместо карточки-в-карточке ───────────── */
+.up__cmp{margin-top:12px;padding:0;background:none;border:0;border-radius:0}
+.up__cmp__toggle{display:inline-flex;align-items:center;gap:6px;width:auto;padding:0 0 1px;
+  font-size:12px;color:var(--mut);cursor:pointer;
+  border-bottom:1px dashed rgba(255,255,255,.18);transition:color .18s ease,border-color .18s ease}
+.up__cmp__toggle:hover{color:var(--amber);border-bottom-color:rgba(242,184,75,.5)}
+.up__cmp__toggle:focus-visible{outline:2px solid var(--lime);outline-offset:3px;border-radius:3px}
+.up__cmp__chev{display:inline;color:var(--amber);font-size:9px;transition:transform .25s ease;flex:0 0 auto}
+.up__cmp:not(.is-open) .up__cmp__body{display:none}
+.up__cmp.is-open .up__cmp__chev{transform:rotate(180deg)}
+.up__cmp__body{margin-top:13px}
+.up__cmp__note{font-size:12px;line-height:1.5;margin:0 0 10px}
+.up__cmp__grid{margin:0}
+.up__cmp__row{grid-template-columns:78px minmax(0,1fr) minmax(0,1fr);gap:10px;padding:8px 11px;font-size:11.5px}
+.up__cmp__row span:first-child{font-size:11px}
+.up__cmp__row--head{font-size:9px}
 
-/* 4. Галочка крупнее и мягче — в неё хочется попасть пальцем */
-.up__add .chk{width:20px;height:20px;border-radius:7px;border-width:2px;
-  transition:background .2s ease,border-color .2s ease,box-shadow .2s ease}
-.up__add.on .chk{box-shadow:0 0 0 4px rgba(205,255,79,.14)}
-.up__add.on .chk::after{left:6px;top:2px}
+/* ─── 03. ДОПЫ — строка, а не карточка ───────────────────────────────
+   Одна колонка намеренно: при раскрытии описания сдвигается только то,
+   что ниже. В две колонки раскрытие дёргало бы высоту всего ряда — это
+   и есть то «едет неприятно», на которое жаловался Матвей. */
+.up__addH .l{font-size:9.5px;letter-spacing:.12em}
+.up__addH .r{font-size:10.5px;opacity:.8}
+.up__adds{margin-top:13px}
+.up__cat{margin-top:15px}
+.up__cat:first-child{margin-top:0}
+.up__cat__h{gap:7px;margin-bottom:6px}
+.up__cat__h i{width:5px;height:5px}
+.up__cat__h span{font-size:9px;letter-spacing:.14em;opacity:.7}
+.up__cat__grid{grid-template-columns:minmax(0,1fr);gap:5px}
 
-/* 5. Тарифы: те же правила, чтобы блок читался одной системой */
-.up__rad{padding:16px 14px;transition:transform .22s cubic-bezier(.22,1,.36,1),
-  box-shadow .22s ease,border-color .22s ease,background .22s ease}
-.up__rad:hover{transform:translateY(-2px);box-shadow:0 10px 26px -14px rgba(0,0,0,.5)}
-.up__rad:active{transform:translateY(0) scale(.995)}
-.up__rad.on{box-shadow:0 0 0 1px rgba(205,255,79,.2),0 12px 30px -16px rgba(205,255,79,.3)}
+.up__add{display:grid;grid-template-columns:19px minmax(0,1fr) auto;column-gap:11px;
+  align-items:start;padding:10px 13px;border-radius:11px;
+  background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06);
+  box-shadow:none;transform:none;
+  transition:background .18s ease,border-color .18s ease}
+.up__add::before{display:none}                       /* блик от курсора — лишний шум */
+.up__add:hover{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.14);transform:none}
+.up__add.on{background:rgba(205,255,79,.055);border-color:rgba(205,255,79,.4)}
+.up__add.on:hover{background:rgba(205,255,79,.08)}
 
-/* 6. Пресеты — крупная мягкая кнопка вместо плоской плашки */
-.up__preset{padding:20px 20px 18px;transition:transform .22s cubic-bezier(.22,1,.36,1),
-  box-shadow .22s ease,border-color .22s ease,background .22s ease}
-.up__preset:hover{transform:translateY(-3px);box-shadow:0 14px 32px -16px rgba(0,0,0,.55)}
-.up__preset:active{transform:translateY(-1px) scale(.995)}
+/* Галочка — единственное, что реагирует на нажатие. Карточка не прыгает:
+   строки списка, которые скачут под курсором, читаются как брак. */
+.up__add .chk{width:19px;height:19px;border-radius:6px;margin-top:-1px;
+  border:1.5px solid rgba(255,255,255,.2);
+  transition:background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .14s ease}
+.up__add:hover .chk{border-color:rgba(205,255,79,.45)}
+.up__add:active .chk{transform:scale(.88)}
+.up__add.on .chk{background:var(--lime);border-color:var(--lime);box-shadow:0 0 0 3px rgba(205,255,79,.13)}
+.up__add.on .chk::after{left:5.5px;top:2px;width:5px;height:9px;border-width:2.2px}
 
-/* 7. Строки чека — мягче, без жёстких пунктиров */
-.up__line{border-bottom:1px solid rgba(255,255,255,.05);padding:12px 0}
-.up__disc{border-top:1px solid rgba(49,224,176,.2);border-radius:12px;
-  background:rgba(49,224,176,.06);padding:10px 12px;margin-top:8px}
-.up__total{border-radius:18px;padding:22px}
+.up__add .tt{grid-column:2;font-size:13px;display:block}
+.up__add .tt b{display:inline;font-weight:600;font-size:13px;color:#eaeff7;line-height:1.3}
+/* «в пакете» под названием дублировало и галочку, и строку в чеке.
+   Специфичность повторяет исходное правило — иначе оно бы победило. */
+.up__add.on .tt b::after{content:none;display:none}
 
-/* 8. Итоговая кнопка — крупнее и «мясистее», её видно как главное действие */
-.up__cta{padding:17px 22px;font-size:15px;box-shadow:0 10px 26px -12px rgba(205,255,79,.5);
-  transition:transform .2s ease,box-shadow .2s ease}
-.up__cta:hover{transform:translateY(-2px);box-shadow:0 16px 34px -14px rgba(205,255,79,.62)}
-.up__cta:active{transform:translateY(0)}
-
-@media(max-width:620px){
-  .up__col,.up__bill{border-radius:18px}
-  .up__add,.up__rad,.up__preset{border-radius:14px}
-  .up__add{padding:13px 14px}
-  .up__add .chk{width:19px;height:19px}
-  .up__preset{padding:14px}
-  .up__total{padding:18px;border-radius:16px}
+/* Описание и выгода: max-height, а не display — иначе не анимируется.
+   На тач-экранах hover не срабатывает, поэтому раскрытие там только по выбору. */
+.up__add .tt .d,.up__add .tt .val{display:block;max-height:0;opacity:0;overflow:hidden;margin-top:0;
+  transition:max-height .3s cubic-bezier(.22,1,.36,1),opacity .22s ease,margin-top .3s ease}
+.up__add .tt .d{font-size:11.5px;color:var(--mut);line-height:1.45;hyphens:none;text-wrap:pretty}
+.up__add .tt .val{font-size:11px;color:var(--mint);font-weight:600;line-height:1.4;text-wrap:pretty}
+@media(hover:hover){
+  .up__add:hover .tt .d{max-height:52px;opacity:1;margin-top:4px}
+  .up__add:hover .tt .val{max-height:48px;opacity:1;margin-top:5px}
 }
-@media(prefers-reduced-motion:reduce){
-  .up__add,.up__rad,.up__preset,.up__cta{transition:none!important;transform:none!important}
-}
-</style>
+.up__add.on .tt .d{max-height:52px;opacity:1;margin-top:4px}
+.up__add.on .tt .val{max-height:48px;opacity:1;margin-top:5px}
 
-<style>
-/* ═══ Шаг 2: контакты прямо в чеке ═══ */
-.up__step2{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.07);
+/* Цена допа — моно и тихая. Unbounded оставлен только тарифам и итогу,
+   иначе в блоке пять «главных» чисел и ни одного главного. */
+.up__add .pp{grid-column:3;align-self:start;margin-top:1px;
+  font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px;color:var(--mut);
+  letter-spacing:-.01em;white-space:nowrap;transition:color .18s ease}
+.up__add.on .pp{color:var(--lime)}
+.up__add.is-included{border-color:rgba(49,224,176,.28)}
+.up__add.is-included .pp{color:var(--mint)!important;font-size:11px}
+
+/* «частый выбор» — чип у названия. Абсолютом сверху он налезал на строку. */
+.up__add .fav{position:static;display:inline-block;margin-left:7px;vertical-align:1px;
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:600;letter-spacing:.06em;
+  padding:1px 6px;border-radius:999px;background:none;color:var(--lime);
+  border:1px solid rgba(205,255,79,.35)}
+
+/* Переключатель у поддержки: она про месяцы, а не про «добавить в корзину» */
+.up__toggle3d{width:32px!important;height:18px!important;margin-top:0}
+.up__toggle3d .knob{width:14px;height:14px}
+.up__add.on .up__toggle3d .knob{transform:translateX(14px) rotate(180deg)}
+
+/* ─── ЧЕК ─────────────────────────────────────────────────────────────
+   Заливка убрана: зелёный ambient-градиент высотой 506px заливал блок
+   целиком — от него и шло ощущение дешёвого. Вместо неё световая линия. */
+.up__bill{padding:22px;border-radius:20px;
+  background:linear-gradient(180deg,#111726 0%,#0c1119 100%);
+  border:1px solid rgba(255,255,255,.085);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}
+.up__bill__amb{display:none}
+.up__bill::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:2;
+  background:linear-gradient(90deg,transparent,rgba(205,255,79,.5) 30%,rgba(49,224,176,.4) 70%,transparent)}
+.up__bill__lbl{font-size:9.5px;letter-spacing:.12em}
+.up__bill__h{font-size:16.5px;margin-top:5px}
+
+.up__lines{margin-top:14px}
+.up__line{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.up__line__val{display:none}          /* выгода отработала при выборе, в счёте она шум */
+.up__line__row .n{font-size:12.5px;color:#d7dde8}
+.up__line__row .p{font-family:'JetBrains Mono',monospace;font-size:12px;color:#98a1b0;font-weight:500}
+.up__line:first-child .up__line__row .n{color:#fff;font-weight:600}
+.up__line:first-child .up__line__row .p{color:var(--lime);font-weight:600}
+.up__line--empty .up__line__row .n{font-size:12px}
+.up__line--removing{background:rgba(255,110,99,.1);border-radius:8px;transition:background .16s ease}
+.up__line--removing .up__line__row .p{color:var(--coral)!important;transition:color .16s ease}
+
+.up__disc{background:none;border:0;border-top:1px dashed rgba(49,224,176,.26);border-radius:0;
+  padding:10px 0 0;margin-top:5px;font-size:11.5px}
+.up__total{margin-top:13px;padding:16px 18px;border-radius:14px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09)}
+.up__total .l{font-size:9.5px;letter-spacing:.11em}
+.up__total .v{font-size:34px}         /* второе и последнее крупное число в блоке */
+
+.up__level{margin-top:14px}
+.up__level__bar{height:5px}
+.up__level__labels{margin-top:7px;font-size:9.5px}
+
+.up__cta{margin-top:16px;padding:15px 20px;border-radius:13px;font-size:14px;
+  box-shadow:0 10px 26px -12px rgba(205,255,79,.45);
+  transition:transform .18s ease,box-shadow .18s ease}
+.up__cta:hover{transform:translateY(-2px);box-shadow:0 16px 34px -14px rgba(205,255,79,.6)}
+.up__cta:active{transform:translateY(0) scale(.99)}
+.up__cta__sub{margin-top:9px;font-size:11px}
+.up__reassure{margin-top:12px;gap:5px;font-size:11px}
+.up__marquee{margin-top:12px;padding:7px 0}
+.up__marquee__track span{font-size:9.5px}
+.up__note{margin-top:9px;font-size:11px}
+
+/* ─── ШАГ 2: контакты прямо в чеке ───────────────────────────────────── */
+.up__step2{margin-top:15px;padding-top:15px;border-top:1px solid rgba(255,255,255,.07);
   animation:up2in .38s cubic-bezier(.22,1,.36,1);position:relative;z-index:1}
 @keyframes up2in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-.up__step2__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:15px;letter-spacing:-.01em}
-.up__step2__pkg{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10.5px;
-  color:var(--mint);line-height:1.5;padding:9px 11px;border-radius:11px;
+.up__step2__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:14px;letter-spacing:-.01em}
+.up__step2__pkg{margin-top:8px;padding:9px 11px;border-radius:10px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mint);line-height:1.5;
   background:rgba(49,224,176,.07);border:1px solid rgba(49,224,176,.2)}
-.up__step2__f{display:block;margin-top:12px}
-.up__step2__f span{display:block;font-size:11.5px;color:var(--mut);margin-bottom:5px}
-.up__step2__f input{width:100%;padding:13px 14px;border-radius:13px;
+.up__step2__f{display:block;margin-top:11px}
+.up__step2__f span{display:block;margin-bottom:5px;font-size:11px;color:var(--mut)}
+.up__step2__f input{width:100%;padding:11px 13px;border-radius:11px;
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
-  color:var(--ink);font-family:inherit;font-size:14.5px;
+  color:var(--ink);font-family:inherit;font-size:14px;
   transition:border-color .2s ease,background .2s ease,box-shadow .2s ease}
 .up__step2__f input::placeholder{color:var(--mut2)}
 .up__step2__f input:focus{outline:none;border-color:var(--lime);
   background:rgba(255,255,255,.06);box-shadow:0 0 0 4px rgba(205,255,79,.12)}
 .up__step2__f input.is-bad{border-color:#ff6b6b;box-shadow:0 0 0 4px rgba(255,107,107,.12)}
-.up__step2__err{min-height:0;font-size:11.5px;color:#ff8a8a;margin-top:7px;display:none}
+.up__step2__err{display:none;margin-top:7px;font-size:11px;color:#ff8a8a}
 .up__step2__err.show{display:block}
-.up__cta--send{margin-top:14px}
+.up__cta--send{margin-top:13px}
 .up__cta--send[disabled]{opacity:.65;cursor:default;transform:none!important;box-shadow:none}
-.up__step2__back{display:block;width:100%;margin-top:10px;padding:8px;background:none;border:0;
-  color:var(--mut);font:inherit;font-size:12px;cursor:pointer;transition:color .2s ease}
+.up__step2__back{display:block;width:100%;margin-top:9px;padding:8px;background:none;border:0;
+  color:var(--mut);font:inherit;font-size:11.5px;cursor:pointer;transition:color .2s ease}
 .up__step2__back:hover{color:var(--lime)}
-.up__step2__note{margin-top:10px;font-size:10.5px;color:var(--mut2);text-align:center;line-height:1.5}
+.up__step2__note{margin-top:9px;font-size:10px;color:var(--mut2);text-align:center;line-height:1.5}
 .up__step2__note a{color:var(--mut)}
 
-/* ═══ Шаг 3: подтверждение ═══ */
-.up__done{margin-top:16px;padding:22px 18px;border-radius:18px;text-align:center;
+/* ─── ШАГ 3: подтверждение ───────────────────────────────────────────── */
+.up__done{margin-top:15px;padding:20px 16px;border-radius:16px;text-align:center;
   background:linear-gradient(180deg,rgba(49,224,176,.12),rgba(49,224,176,.04));
   border:1px solid rgba(49,224,176,.32);animation:up2in .4s cubic-bezier(.22,1,.36,1);
   position:relative;z-index:1}
-.up__done__ring{width:46px;height:46px;margin:0 auto;border-radius:50%;
+.up__done__ring{width:42px;height:42px;margin:0 auto;border-radius:50%;
   background:rgba(49,224,176,.16);border:1px solid rgba(49,224,176,.45);
   display:flex;align-items:center;justify-content:center;color:var(--mint)}
-.up__done__ring svg{width:22px;height:22px}
-.up__done__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:16px;margin-top:12px}
-.up__done__p{font-size:12.5px;color:var(--mut);margin-top:7px;line-height:1.55}
+.up__done__ring svg{width:20px;height:20px}
+.up__done__h{margin-top:11px;font-family:'Unbounded',sans-serif;font-weight:700;font-size:15px}
+.up__done__p{margin-top:7px;font-size:12px;color:var(--mut);line-height:1.55}
 .up__done__p a{color:var(--mint)}
-
-/* пока собираем пакет — незачем показывать «оплата после макета» дважды */
+/* пока собираем пакет — «оплата после макета» незачем показывать дважды */
 .up__bill.is-step2 .up__reassure,.up__bill.is-done .up__reassure,
 .up__bill.is-step2 .up__marquee,.up__bill.is-done .up__marquee{display:none}
 .up__bill.is-done .up__cta,.up__bill.is-done .up__step2{display:none}
 
+/* ─── АДАПТИВ ────────────────────────────────────────────────────────── */
+@media(max-width:900px){
+  .up__base{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(max-width:620px){
-  .up__step2__f input{padding:12px 13px;font-size:14px}
-  .up__done{padding:18px 14px}
-}
-</style>
-
-<style>
-/* ═══════════════════════════════════════════════════════════════════
-   РЕДИЗАЙН ЧЕКА И ТАРИФОВ
-   Диагноз: зелёный ambient-градиент высотой 506px заливал весь чек —
-   от этого блок выглядел дёшево. Плюс под каждой позицией шёл мятный
-   курсив: пять позиций давали десять строк текста вместо спокойного
-   счёта. И цена в тарифах была крупнее названия — иерархия наоборот.
-   Лайм оставляем только на акцентах: итог, выбранное, кнопка.
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* 1. Заливку убираем. Вместо неё — тонкая световая линия по верхнему краю. */
-.up__bill__amb{display:none}
-.up__bill{background:linear-gradient(180deg,#111726 0%,#0c1119 100%);
-  border:1px solid rgba(255,255,255,.09);
-  box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}
-.up__bill::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;z-index:2;
-  background:linear-gradient(90deg,transparent,rgba(205,255,79,.5) 30%,rgba(49,224,176,.4) 70%,transparent)}
-
-/* 2. Строки чека — спокойный счёт: название и цена. Курсив-пользу убираем,
-      она делала работу на этапе выбора, а в чеке была шумом. */
-.up__line__val{display:none}
-.up__line{padding:11px 0;border-bottom:1px solid rgba(255,255,255,.055)}
-.up__line__row .n{font-size:14px;color:#dfe5ef}
-.up__line__row .p{font-size:13.5px;color:#aab3c2;font-weight:500}
-.up__line:first-child .up__line__row .n{color:#fff;font-weight:600}
-.up__line:first-child .up__line__row .p{color:var(--lime);font-weight:600}
-.up__line--empty .up__line__row .n{font-size:13px}
-
-/* 3. Скидка — сдержанный чип, без заливки в пол-блока */
-.up__disc{background:none;border:0;border-top:1px dashed rgba(49,224,176,.28);
-  border-radius:0;padding:11px 0 0;margin-top:6px;font-size:12.5px}
-
-/* 4. Итог — единственное крупное число в блоке */
-.up__total{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);
-  border-radius:16px;padding:18px 20px;margin-top:14px}
-.up__total .l{font-size:10px;letter-spacing:.1em}
-.up__total .v{font-size:38px}
-
-/* 5. Тарифы: сначала название, потом цена — так читает глаз */
-.up__rad .n{font-size:14.5px;font-weight:600;color:#fff;letter-spacing:-.01em}
-.up__rad .p{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:700;
-  color:#e8edf6;margin-top:6px;letter-spacing:-.02em}
-.up__rad.on .p{color:var(--lime)}
-.up__rad--premium.on .p{color:var(--amber)}
-.up__rad .d{font-size:10.5px;color:var(--mut2);margin-top:5px}
-.up__rad{background:rgba(255,255,255,.025)}
-
-/* 6. Пресеты: три числа в строку читались кашей — разводим по ролям */
-.up__preset .fr{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:13px;font-size:10px}
-.up__preset .fr s{font-size:11px;order:1;opacity:.55}
-.up__preset .fr b{order:2;font-size:16px}
-.up__preset .fr i{order:3;font-size:10px;padding:2px 7px;border-radius:999px;
-  background:rgba(49,224,176,.12);border:1px solid rgba(49,224,176,.3)}
-
-/* 7. Категории допов — тише, они служебные */
-.up__cat__h span{font-size:9.5px;letter-spacing:.12em;opacity:.75}
-.up__addH .l{font-size:10px;letter-spacing:.1em}
-.up__addH .r{font-size:10.5px;opacity:.8}
-
-/* 8. Польза под допом — только когда доп выбран: пока выбираешь, важна суть */
-.up__add .tt .val{display:none}
-.up__add.on .tt .val{display:block;font-size:11px;margin-top:6px;opacity:.9}
-
-@media(max-width:620px){
-  .up__total{padding:15px 16px}
-  .up__total .v{font-size:30px}
-  .up__rad .p{font-size:17px}
-  .up__preset .fr b{font-size:14px}
-}
-</style>
-
-<style>
-/* ═══════════════════════════════════════════════════════════════════
-   ГЕОМЕТРИЯ КОНФИГУРАТОРА — корень всех жалоб был один.
-   Замер показал: чек раздулся до 2264px, левая колонка сжалась до 513px.
-   Причина — бегущая строка внутри чека имеет width:max-content, а
-   grid-колонка по умолчанию minmax(auto,1fr): её минимум равен min-content
-   содержимого, поэтому лента растянула колонку и вытолкнула всё остальное.
-   Отсюда сразу три беды: описания рвались по одному слову (ширина 61px),
-   чек уезжал за экран «частью», левая часть была узкой и длинной.
-   Лечение: minmax(0,…) обеим колонкам + лента больше не влияет на ширину.
-   ═══════════════════════════════════════════════════════════════════ */
-@media(min-width:901px){
-  /* левая часть заметно шире — блок перестаёт быть длинной кишкой */
-  .up{grid-template-columns:minmax(0,1.85fr) minmax(0,1fr);gap:26px}
-  .up__col,.up__billwrap,.up__bill{min-width:0}
-
-  /* чек по центру, а не прижат к верху; идёт целиком, ничего не обрезается */
-  .up__billwrap{align-self:center}
-  .up__bill{position:static;top:auto}
-}
-
-/* Та же болезнь была и на мобилке: одна колонка 1fr тоже имеет минимум
-   min-content, поэтому лента растягивала её до 1994px при экране 390 —
-   текст уходил за край, и только overflow:hidden прятал это от глаз. */
-.up{grid-template-columns:minmax(0,1fr)}
-.up__col,.up__billwrap,.up__bill,.up__lines,.up__line{min-width:0}
-.up__cat__grid,.up__base,.up__presets{min-width:0}
-
-/* лента не должна диктовать ширину колонки — она декоративная */
-.up__marquee{max-width:100%;overflow:hidden}
-.up__marquee__track{width:auto;min-width:max-content}
-/* строки чека: длинные названия не должны расширять блок */
-.up__line__row{min-width:0}
-.up__line__row .n{min-width:0;overflow:hidden;text-overflow:ellipsis}
-
-/* описания допов: даём тексту дышать и запрещаем висячие обрывки */
-.up__add .tt{min-width:0}
-.up__add .tt .d{hyphens:none;text-wrap:pretty}
-</style>
-
-<style>
-/* ═══════════════════════════════════════════════════════════════════
-   МАСШТАБ: было «бабушкин телефон» — элементы крупные, воздуха мало,
-   всё выглядит как увеличенный макет. Сжимаем плотно, как в Linear /
-   Stripe: мелкий уверенный текст, тонкие отступы, спокойные скругления.
-   Правим только десктоп — на мобилке компакт уже был.
-   ═══════════════════════════════════════════════════════════════════ */
-@media(min-width:901px){
-  /* панели */
-  .up__col,.up__bill{border-radius:16px;padding:20px}
-  .up__lbl{font-size:9.5px;letter-spacing:.09em}
-  .up__h{font-size:16px;margin-top:4px}
-
-  /* тарифы — компактная плитка, а не баннер */
-  .up__base{gap:8px;margin-top:14px}
+  .up__col,.up__bill{padding:16px;border-radius:16px}
+  .up__h{font-size:15.5px}
+  /* сбрасываем остатки прежнего мобильного компакта: он рассчитывал
+     сравнение как крупную кнопку-аккордеон, а пресеты — как сетку карточек */
+  .up__cmp__toggle{min-height:0;padding:0 0 1px;font-weight:400;font-size:11.5px;
+    justify-content:flex-start;color:var(--mut)}
+  .up__cmp__chev{font-size:9px}
+  .up__presets{display:flex;grid-template-columns:none;margin-top:20px;gap:6px}
+  .up__preset{height:30px;padding:0 11px;gap:7px}
+  .up__preset .nm{font-size:12px}
+  .up__base{gap:7px}
   .up__rad{padding:12px 11px;border-radius:12px}
-  .up__rad .n{font-size:12.5px}
-  .up__rad .p{font-size:16px;margin-top:4px}
-  .up__rad .d{font-size:9.5px;margin-top:3px;line-height:1.3}
-  .up__rad__badge{font-size:8.5px;padding:2px 7px;top:-7px}
-  .up__rad__like{font-size:9px;margin-top:4px}
+  .up__rad .p{font-size:18px;margin-top:6px}
+  .up__rad .d{font-size:10px}
+  .up__add{padding:9px 11px;column-gap:9px;border-radius:10px}
+  .up__total{padding:14px 15px}
+  .up__total .v{font-size:29px}
+  .up__step2__f input{padding:11px 12px;font-size:14px}
+  .up__done{padding:17px 14px}
+}
 
-  /* пресеты */
-  .up__presets{gap:9px;margin-top:26px}
-  .up__preset{padding:13px 14px 12px;border-radius:13px}
-  .up__preset .k{font-size:8.5px}
-  .up__preset .nm{font-size:14px;margin-top:5px}
-  .up__preset .ds{font-size:10.5px;margin-top:4px;line-height:1.35}
-  .up__preset .fr{margin-top:10px}
-  .up__preset .fr b{font-size:14px}
-  .up__preset .fr s{font-size:10px}
-  .up__preset .fr i{font-size:9px;padding:1px 6px}
-
-  /* сравнение тарифов */
-  .up__cmp{margin-top:14px;padding:13px 14px;border-radius:13px}
-  .up__cmp__note{font-size:11.5px;margin-bottom:10px;line-height:1.5}
-  .up__cmp__row{padding:7px 10px;font-size:11px;gap:8px;grid-template-columns:80px 1fr 1fr}
-  .up__cmp__row span:first-child{font-size:10.5px}
-  .up__cmp__row--head{font-size:9px}
-
-  /* допы — самое важное: их восемь, они и делали блок огромным */
-  .up__addH{margin-top:20px}
-  .up__adds{gap:14px;margin-top:10px}
-  .up__cat__grid{gap:8px}
-  .up__add{padding:11px 12px;border-radius:12px;gap:10px;grid-template-columns:18px 1fr auto}
-  .up__add .chk{width:17px;height:17px;border-radius:6px}
-  .up__add.on .chk{box-shadow:0 0 0 3px rgba(205,255,79,.13)}
-  .up__add.on .chk::after{left:5px;top:1px;width:4px;height:9px;border-width:2px}
-  .up__add .tt{font-size:12.5px}
-  .up__add .tt b{font-size:12.5px;line-height:1.25}
-  .up__add.on .tt b::after{font-size:9px;margin-top:2px}
-  .up__add .tt .d{font-size:10.5px;margin-top:3px;line-height:1.4}
-  .up__add.on .tt .val{font-size:10px;margin-top:4px}
-  .up__add .pp{font-size:12.5px}
-  .up__add .fav{font-size:8.5px;padding:2px 6px;top:-6px;right:9px}
-
-  /* чек */
-  .up__bill__lbl{font-size:9.5px}
-  .up__bill__h{font-size:16px;margin-top:4px}
-  .up__lines{margin-top:14px}
-  .up__line{padding:9px 0}
-  .up__line__row .n{font-size:12.5px}
-  .up__line__row .p{font-size:12px}
-  .up__disc{font-size:11.5px;padding:9px 0 0}
-  .up__total{padding:14px 16px;border-radius:14px;margin-top:12px}
-  .up__total .l{font-size:9px}
-  .up__total .v{font-size:30px}
-  .up__level{margin-top:14px}
-  .up__level__labels{font-size:9px}
-  .up__marquee{margin-top:12px;padding:7px 0}
-  .up__marquee__track span{font-size:9.5px}
-  .up__marquee__track{gap:28px}
-  .up__cta{padding:13px 18px;font-size:13.5px;border-radius:12px;margin-top:16px}
-  .up__reassure{margin-top:12px;gap:5px;font-size:10.5px}
-
-  /* шаг с контактами */
-  .up__step2{margin-top:14px;padding-top:14px}
-  .up__step2__h{font-size:13.5px}
-  .up__step2__pkg{font-size:9.5px;padding:8px 10px;border-radius:10px;margin-top:7px}
-  .up__step2__f{margin-top:10px}
-  .up__step2__f span{font-size:10.5px;margin-bottom:4px}
-  .up__step2__f input{padding:10px 12px;font-size:13px;border-radius:11px}
-  .up__step2__back{font-size:11px;margin-top:8px}
-  .up__step2__note{font-size:9.5px;margin-top:8px}
-  .up__done{padding:18px 16px;border-radius:14px}
-  .up__done__ring{width:38px;height:38px}
-  .up__done__ring svg{width:18px;height:18px}
-  .up__done__h{font-size:14.5px;margin-top:10px}
-  .up__done__p{font-size:11.5px}
+@media(prefers-reduced-motion:reduce){
+  .up__add,.up__rad,.up__preset,.up__cta{transition:none!important;transform:none!important}
+  /* без анимации max-height нечем раскрыть — показываем выбранное сразу */
+  .up__add .tt .d,.up__add .tt .val{transition:none!important}
+  .up__add.on .tt .d,.up__add.on .tt .val{max-height:none}
 }
 </style>
 </head>
@@ -1540,25 +1488,25 @@
               <span class="k">минимум</span>
               <span class="nm">Стартовый</span>
               <span class="ds">Лендинг с брендовым дизайном — без рекламы и интеграций</span>
-              <span class="fr">пакет · <b data-calc>$0</b></span>
+              <span class="fr"><b data-calc>$0</b></span>
             </button>
             <button class="up__preset" type="button" data-preset="ads" data-base="multi" data-adds="design,crm,ads,bot">
               <span class="k">с рекламой</span>
               <span class="nm">Рекламный</span>
               <span class="ds">CRM + реклама + Telegram-бот — ни один лид не потеряется</span>
-              <span class="fr">пакет · <b data-calc>$0</b></span>
+              <span class="fr"><b data-calc>$0</b></span>
             </button>
             <button class="up__preset" type="button" data-preset="full" data-base="crmsite" data-adds="design,crm,ads,bot,brand,seo,speed,support">
               <span class="k">всё включено</span>
               <span class="nm">Полный</span>
               <span class="ds">Сайт, CRM, реклама, SEO, скорость и поддержка на год</span>
-              <span class="fr">пакет · <b data-calc>$0</b></span>
+              <span class="fr"><b data-calc>$0</b></span>
             </button>
             <button class="up__preset up__preset--premium" type="button" data-preset="premium" data-base="premium" data-adds="design,crm,ads,bot,seo,speed,support">
               <span class="k">авторский, под ключ</span>
               <span class="nm">Премиум</span>
               <span class="ds">Ведущий дизайнер с нуля + все технические интеграции</span>
-              <span class="fr">пакет · <b data-calc>$0</b></span>
+              <span class="fr"><b data-calc>$0</b></span>
             </button>
           </div>
 
@@ -1612,15 +1560,13 @@
                   <div class="up__cat__grid">
                     <label class="up__add" data-p="180" data-n="CRM-интеграция" data-id="crm">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>CRM-интеграция</b><span class="d">Заявки автоматически попадают в CRM: статус, история, ответственный</span><span class="val">→ без CRM заявки тонут в WhatsApp — с ней остаются на виду</span></span>
+                      <span class="tt"><b>CRM-интеграция</b><span class="fav">частый выбор</span><span class="d">Заявки автоматически попадают в CRM: статус, история, ответственный</span><span class="val">→ без CRM заявки тонут в WhatsApp — с ней остаются на виду</span></span>
                       <span class="pp" data-usd="180" data-prefix="+">+$180</span>
-                      <span class="fav">частый выбор</span>
                     </label>
                     <label class="up__add" data-p="120" data-n="Метрика + Директ" data-id="ads">
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Метрика + Директ</b><span class="d">Настройка целей, Вебвизор, первая рекламная кампания</span><span class="val">→ видно, с какой рекламы приходят именно деньги, а не просто клики</span></span>
+                      <span class="tt"><b>Метрика + Директ</b><span class="fav">частый выбор</span><span class="d">Настройка целей, Вебвизор, первая рекламная кампания</span><span class="val">→ видно, с какой рекламы приходят именно деньги, а не просто клики</span></span>
                       <span class="pp" data-usd="120" data-prefix="+">+$120</span>
-                      <span class="fav">частый выбор</span>
                     </label>
                     <label class="up__add" data-p="130" data-n="Telegram-бот" data-id="bot">
                       <input type="checkbox"><span class="chk"></span>
@@ -2067,7 +2013,9 @@
            числа из той же формулы, что итог, разойтись не могут */
         if (calc){
           if (c.disc > 0){
-            calc.parentElement.innerHTML = 'пакет · <s data-usd="' + c.pre + '">' + money(c.pre) + '</s> ' +
+            /* без слова «пакет» — чипу хватает имени и цены; зачёркнутую цену
+               и экономию рисуем в разметке, но в чипе их прячет CSS */
+            calc.parentElement.innerHTML = '<s data-usd="' + c.pre + '">' + money(c.pre) + '</s> ' +
               '<b data-calc data-usd="' + c.total + '">' + money(c.total) + '</b> ' +
               '<i data-usd="' + c.disc + '" data-prefix="−">' + money(c.disc, '−') + '</i>';
           } else {
@@ -2262,26 +2210,9 @@
         });
       }
 
-      /* 3D-tilt карточек допов — только мышь, только без reduced-motion */
-      (function(){
-        var canHover = matchMedia('(hover:hover) and (pointer:fine)').matches;
-        if (!canHover || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        var MAX = 7;
-        adds.forEach(function(el){
-          el.addEventListener('pointermove', function(ev){
-            var r = el.getBoundingClientRect();
-            var px = (ev.clientX - r.left) / r.width, py = (ev.clientY - r.top) / r.height;
-            el.classList.add('tilting');
-            el.style.transform = 'perspective(700px) rotateX(' + ((0.5-py)*MAX*2).toFixed(2) + 'deg) rotateY(' + ((px-0.5)*MAX*2).toFixed(2) + 'deg) translateZ(4px)';
-            el.style.setProperty('--mx', (px*100).toFixed(1) + '%');
-            el.style.setProperty('--my', (py*100).toFixed(1) + '%');
-          });
-          el.addEventListener('pointerleave', function(){
-            el.classList.remove('tilting');
-            el.style.transform = '';
-          });
-        });
-      })();
+      /* 3D-tilt карточек допов удалён. Он крутил каждую карточку на каждый
+         pointermove и ставил inline transform — это и было «едет неприятно».
+         Отдача на нажатие теперь одна и точная: галочка сжимается (CSS). */
     })();
     </script>
 

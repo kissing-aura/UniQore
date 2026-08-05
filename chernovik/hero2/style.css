@@ -493,6 +493,98 @@ a{color:inherit;text-decoration:none}
 .romi li b.is-up{color:var(--mint)}
 .romi li b.is-down{color:#f0b46b}
 
+
+/* ══ Раздел «Клиенты» ══════════════════════════════════════════════════
+   Сетка карточек, а не таблица: третий подряд табличный экран читался бы
+   как один и тот же раздел. */
+.cli{
+  flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);
+  grid-auto-rows:1fr;gap:1px;background:var(--border);
+}
+.cli__c{
+  background:var(--surface-2);padding:11px 12px;display:flex;flex-direction:column;gap:3px;
+  min-width:0;transition:background-color .16s cubic-bezier(.25,.46,.45,.94);
+}
+.cli__c:hover{background:#121a2b}
+.cli__c--cold{opacity:.62}
+.cli__c .ava{margin-bottom:4px}
+.cli__n{font-size:11.5px;font-weight:500;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli__s{font-size:10px;color:var(--dim2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli__c b{font-size:12.5px;font-weight:600;letter-spacing:-.015em;font-variant-numeric:tabular-nums;margin-top:auto;white-space:nowrap}
+.cli__d{font-size:9.5px;color:var(--dim2)}
+.cli__d--warn{color:#f0b46b}
+.cli__f{
+  flex:none;display:flex;align-items:center;gap:10px;padding:9px 14px;
+  border-top:1px solid var(--border);font-size:10.5px;color:var(--dim2);
+}
+.cli__f em{font-style:normal;margin-left:auto}
+
+/* ══ Раздел «Задачи» ═══════════════════════════════════════════════════ */
+.tsk{flex:1;min-height:0;padding:10px 14px 0;overflow:hidden}
+.tsk__g{display:flex;align-items:center;gap:7px;margin:9px 0 6px}
+.tsk__g:first-child{margin-top:0}
+.tsk__gt{font:400 9.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--dim2)}
+.tsk__gt--hot{color:#f0796b}
+.tsk__g b{font-size:9.5px;font-weight:500;color:var(--dim2);background:rgba(255,255,255,.06);border-radius:4px;padding:1px 5px}
+.tsk__i{
+  display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;margin-bottom:4px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045);
+  transition:background-color .16s cubic-bezier(.25,.46,.45,.94);
+}
+.tsk__i:hover{background:rgba(255,255,255,.05)}
+.tsk__i--hot{border-color:rgba(240,121,107,.22);background:rgba(240,121,107,.05)}
+.tsk__box{
+  width:13px;height:13px;flex:none;border-radius:4px;
+  border:1.4px solid rgba(255,255,255,.22);
+}
+.tsk__i--hot .tsk__box{border-color:rgba(240,121,107,.5)}
+.tsk__b{flex:1;min-width:0}
+.tsk__b b{display:block;font-size:11.5px;font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsk__b > span{display:block;font-size:10.5px;color:var(--dim2);line-height:1.35;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsk__m{display:flex;align-items:center;gap:6px;flex:none}
+.tsk__d{font-style:normal;font-size:10px;color:var(--dim2);white-space:nowrap}
+.tsk__d--warn{color:#f0796b}
+
+/* ══ Раздел «Настройки» ════════════════════════════════════════════════ */
+.set{flex:1;min-height:0;display:grid;grid-template-columns:168px minmax(0,1fr);gap:1px;background:var(--border)}
+.set__nav{background:var(--surface-2);padding:10px 8px;display:flex;flex-direction:column;gap:1px}
+.set__n{
+  font-size:11.5px;color:#9099a6;padding:7px 9px;border-radius:6px;
+  transition:background-color .16s,color .16s;
+}
+.set__n:hover{background:rgba(255,255,255,.04);color:#c3cad4}
+.set__n.is-on{background:rgba(255,255,255,.06);color:var(--ink)}
+.set__body{background:var(--surface-2);padding:12px 14px;min-width:0;overflow:hidden}
+
+.intg{list-style:none;display:flex;flex-direction:column;gap:6px}
+.intg li{display:flex;align-items:center;gap:8px;font-size:11.5px;line-height:1}
+.intg li i{width:6px;height:6px;border-radius:2px;background:var(--c);flex:none}
+.intg__n{width:118px;flex:none;color:#c3cad4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intg__v{font-size:10.5px;color:var(--dim2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.intg--off .intg__n{color:var(--dim2)}
+/* переключатель: 26×14 — минимальный размер, при котором он читается
+   как переключатель, а не как полоска */
+.sw{
+  width:26px;height:14px;flex:none;margin-left:auto;border-radius:8px;position:relative;
+  background:rgba(255,255,255,.09);transition:background-color .16s;
+}
+.sw::after{
+  content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;
+  background:#8b96a6;transition:transform .16s cubic-bezier(.25,.46,.45,.94),background-color .16s;
+}
+.sw.is-on{background:rgba(205,255,79,.28)}
+.sw.is-on::after{transform:translateX(12px);background:var(--lime)}
+
+.set__rule{
+  display:flex;align-items:center;gap:9px;margin-top:12px;padding:9px 10px;border-radius:7px;
+  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045);
+}
+.set__ri{width:15px;height:15px;flex:none;color:var(--mint)}
+.set__ri svg{width:15px;height:15px}
+.set__rb{flex:1;min-width:0}
+.set__rb b{display:block;font-size:11.5px;font-weight:500;line-height:1.3}
+.set__rb span{display:block;font-size:10.5px;color:var(--dim2);margin-top:1px}
+
 /* ── Вход: 4px и 0.4s, как внутри мокапа Linear ── */
 .pill,.h1,.sub,.cta,.marks,.proof{animation:in .45s cubic-bezier(.25,.46,.45,.94) backwards}
 .h1{animation-delay:.05s}.sub{animation-delay:.1s}.cta{animation-delay:.15s}
@@ -537,6 +629,11 @@ a{color:inherit;text-decoration:none}
   .st{font-size:0;padding:2px 6px}
   .st::before{content:attr(data-s);font-size:10px}
   .kcol__h em{display:none}
+  /* три колонки вместо четырёх: карточка клиента при 4 колонках сжималась
+     до 130px и имена уходили в многоточие */
+  .cli{grid-template-columns:repeat(3,1fr)}
+  .cli__c:nth-child(n+13){display:none}
+  .set{grid-template-columns:140px minmax(0,1fr)}
   /* колонка доски тут 152px: «Автосервис «Драйв»» просил 116 при доступных
      112 и обрезался многоточием — полкегля и трекинг возвращают его целиком */
   .kcard__t{font-size:11px;letter-spacing:-.012em}
@@ -571,6 +668,12 @@ a{color:inherit;text-decoration:none}
   .kpi__d{padding-right:0}
   .kan{grid-template-columns:repeat(3,1fr)}
   .kcol:last-child{display:none}
+  /* окно во всю ширину экрана, но само уже: карточек в ряд — три, а
+     навигация настроек уходит, оставляя содержимое */
+  .cli{grid-template-columns:repeat(3,1fr)}
+  .cli__c:nth-child(n+10){display:none}
+  .set{grid-template-columns:1fr}
+  .set__nav{display:none}
   /* окно тут 486px → колонке достаётся 389, это ровно четыре карточки */
   .kcol > :nth-child(n+6){display:none}
   .an{grid-template-columns:1fr}
@@ -614,6 +717,14 @@ a{color:inherit;text-decoration:none}
      а не как «не поместилось»: у карточек всё равно нет места на детали */
   .kan{grid-template-columns:repeat(2,1fr)}
   .kcol:nth-child(3){display:none}
+  .cli{grid-template-columns:repeat(2,1fr)}
+  .cli__c:nth-child(n+7){display:none}
+  .cli__f em{display:none}
+  .tsk{padding:8px 12px 0}
+  .tsk__i{padding:6px 8px}
+  .tsk__m .ava--s{display:none}
+  .intg__n{width:auto;flex:1}
+  .intg__v{display:none}
   /* колонки на телефоне ещё уже, чем на узком десктопе — тот же приём,
      плюс 2px с боков карточки: названию не хватало ровно трёх */
   .kcard__t{font-size:11px;letter-spacing:-.012em}

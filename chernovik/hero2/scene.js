@@ -20,11 +20,19 @@
 
   /* ── 1. Переключение разделов ───────────────────────────────────────── */
 
+  /* Автопоказ гоняет только три главных раздела: шесть подряд растянули бы
+     цикл до сорока секунд, и человек не дождался бы повтора. Остальные три
+     открываются кликом — поэтому адреса заданы для всех шести. */
   var РАЗДЕЛЫ = [
     { key: 'dash',  url: 'crm.uniqore.pro/dashboard', держать: 7000 },
     { key: 'deals', url: 'crm.uniqore.pro/deals',     держать: 6000 },
     { key: 'stats', url: 'crm.uniqore.pro/analytics', держать: 6000 }
   ];
+  var АДРЕСА = {
+    dash: 'crm.uniqore.pro/dashboard', deals: 'crm.uniqore.pro/deals',
+    stats: 'crm.uniqore.pro/analytics', clients: 'crm.uniqore.pro/clients',
+    tasks: 'crm.uniqore.pro/tasks', setup: 'crm.uniqore.pro/settings'
+  };
 
   var виды    = {};
   var кнопки  = {};
@@ -43,17 +51,20 @@
   var ручная  = 0;       /* до какого момента автоцикл молчит после клика */
 
   function перейти(key, вручную) {
-    var i = РАЗДЕЛЫ.findIndex(function (р) { return р.key === key; });
-    if (i < 0) return;
+    if (!виды[key]) return;
     /* клик в те 300мс, пока ждёт отложенный автопереход, иначе перебивался
        им же — человек нажал одно, через мгновение открылось другое */
     clearTimeout(подсветка);
-    текущий = i;
+
+    var i = РАЗДЕЛЫ.findIndex(function (р) { return р.key === key; });
+    /* раздел вне автоцикла (Клиенты / Задачи / Настройки) не двигает
+       счётчик: после паузы показ продолжится с того же места в цикле */
+    if (i >= 0) текущий = i;
 
     for (var k in виды) виды[k].classList.toggle('is-on', k === key);
     for (var b in кнопки) кнопки[b].classList.remove('is-on', 'is-pre');
     if (кнопки[key]) кнопки[key].classList.add('is-on');
-    if (адрес) адрес.textContent = РАЗДЕЛЫ[i].url;
+    if (адрес && АДРЕСА[key]) адрес.textContent = АДРЕСА[key];
 
     if (вручную) ручная = Date.now() + 18000;
     расписать();
