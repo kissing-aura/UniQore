@@ -48,18 +48,21 @@
   font-size:1.055em;font-weight:inherit;letter-spacing:0;
   margin-left:.2em;white-space:nowrap;
 }
-body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow-x:clip}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;overflow-x:clip}
 a{color:inherit;text-decoration:none}
 
 .lab-note{
   position:fixed;left:14px;bottom:14px;z-index:99;
   font:500 11px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.04em;color:var(--dim2);
   background:rgba(10,12,16,.86);border:1px solid var(--hair);
-  padding:7px 11px;border-radius:999px;backdrop-filter:blur(8px);
+  padding:7px 11px;border-radius:999px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
 }
 .lab-note b{color:var(--lime)}
 
-.uqhero{position:relative;overflow:hidden;padding:104px 0 40px;min-height:100svh;display:flex;align-items:center}
+/* min-height двумя строками: Safari до 15.4 не знает svh и пропустит
+   вторую — останется рабочая vh. Обратный порядок сломал бы новые. */
+.uqhero{position:relative;overflow:hidden;padding:104px 0 40px;min-height:100vh;min-height:100svh;display:flex;align-items:center}
 
 /* Две колонки: слева обещание, справа продукт. Правая колонка сознательно
    шире экрана — мокап уходит за край, как за сгиб у Linear, только по
@@ -160,6 +163,10 @@ a{color:inherit;text-decoration:none}
      с отступами героя (144px) перестанет помещаться. */
   display:flex;flex-direction:column;height:620px;overflow:hidden;
   border-radius:12px;
+  /* isolation обязателен для WebKit: без своего стекового контекста
+     скруглённые углы не обрезают потомков с transform, и содержимое
+     вылезает за рамку окна в момент смены раздела */
+  isolation:isolate;
   background:var(--surface-2);
   /* хайрлайн + стек теней: радиусы удваиваются, непрозрачность 2.5–6%,
      цвет сине-серый #0b0d18, как у Attio — не чёрный */
@@ -199,7 +206,7 @@ a{color:inherit;text-decoration:none}
 .side__name{font-size:13px;font-weight:600;letter-spacing:-.01em}
 .side__nav{display:flex;flex-direction:column;gap:1px;padding:4px 8px}
 .side__i{
-  appearance:none;background:none;border:0;font:inherit;text-align:left;width:100%;
+  -webkit-appearance:none;appearance:none;background:none;border:0;font:inherit;text-align:left;width:100%;
   display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:6px;
   font-size:12px;color:#9099a6;transition:background-color .16s,color .16s;
 }
@@ -430,7 +437,7 @@ a{color:inherit;text-decoration:none}
 .an__y li:nth-child(2){top:44.8%}
 .an__y li:nth-child(3){top:68.6%}
 .an__y li:nth-child(4){top:92.3%}
-.achart{width:100%;height:100%;display:block}
+.achart{position:absolute;inset:0;width:100%;height:100%;display:block}
 .achart__g line{stroke:rgba(255,255,255,.05);stroke-width:1}
 /* точка последнего значения — HTML, чтобы остаться круглой: 530/560 по X,
    26.2/134 по Y — те же координаты, что у конца линии в SVG */
