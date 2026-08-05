@@ -551,6 +551,24 @@ a{color:inherit;text-decoration:none}
 .tsk__d{font-style:normal;font-size:10px;color:var(--dim2);white-space:nowrap}
 .tsk__d--warn{color:#f0796b}
 
+
+.set__h2{margin-top:14px}
+.team{list-style:none;display:flex;flex-direction:column;gap:7px}
+.team li{display:flex;align-items:center;gap:8px;font-size:11.5px;line-height:1}
+.team__n{font-weight:500;color:#c3cad4}
+.team__r{font-size:10.5px;color:var(--dim2)}
+
+/* закрытые задачи приглушены и зачёркнуты: они показывают, что система
+   не только копит дела, но и закрывает их */
+.tsk__i--done{opacity:.5;background:none;border-color:rgba(255,255,255,.035)}
+.tsk__i--done .tsk__b b{text-decoration:line-through;text-decoration-thickness:1px}
+.tsk__box--on{background:rgba(49,224,176,.22);border-color:rgba(49,224,176,.5);position:relative}
+.tsk__box--on::after{
+  content:'';position:absolute;left:3px;top:4px;width:5px;height:2.5px;
+  border-left:1.6px solid var(--mint);border-bottom:1.6px solid var(--mint);
+  transform:rotate(-45deg);
+}
+
 /* ══ Раздел «Настройки» ════════════════════════════════════════════════ */
 .set{flex:1;min-height:0;display:grid;grid-template-columns:168px minmax(0,1fr);gap:1px;background:var(--border)}
 .set__nav{background:var(--surface-2);padding:10px 8px;display:flex;flex-direction:column;gap:1px}

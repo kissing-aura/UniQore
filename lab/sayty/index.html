@@ -593,6 +593,12 @@
 .b2__big small i{display:block;font-style:normal;font-size:9.5px;opacity:.62;margin-top:2px;letter-spacing:.03em}
 .b2__flow .to{font-size:9px;letter-spacing:.04em;opacity:.55;text-transform:uppercase}
 
+/* Метки капсом сидели в слишком тесной строке: у JetBrains Mono высокий
+   ascender, и строка обрезала буквы сверху — заметно по прямоугольнику
+   выделения, он шёл вплотную к верху литер. Плюс хвостовой letter-spacing
+   добавлял пустой шаг справа, из-за которого текст читался несимметрично. */
+.bento__lbl{line-height:1.5;padding-right:.08em}
+
 /* Движение: график не должен замирать после первого показа — по столбцам
    бесконечно бежит волна подсветки, слева направо, как «неделя за неделей». */
 .b2-bar{position:relative;overflow:hidden}
@@ -607,16 +613,40 @@
 .b2-bar:nth-child(6)::before{animation-delay:.9s}
 @keyframes b2wave{0%,72%{opacity:0}80%{opacity:.30}100%{opacity:0}}
 
-/* последний столбец — цель, к которой шли: тихо пульсирует */
-.b2-bar:last-child{animation:b2goal 4.2s ease-in-out infinite}
-@keyframes b2goal{0%,70%{filter:none}82%{filter:brightness(1.18)}100%{filter:none}}
+/* ШЕСТОЙ СТОЛБЕЦ НЕ РОС. Правило `.b2-bar:last-child{animation:b2goal}`
+   стояло ниже `.b2-bar.grow{animation:b2grow}` при равной специфичности и
+   перебивало его целиком — у последнего столбца оставался базовый
+   scaleY(0), и на графике из шести столбцов было видно пять.
+   Пульсацию цели переносим на ::after, чтобы она не спорила с ростом. */
+.b2-bar:last-child::after{animation:b2goal 4.2s ease-in-out infinite}
+@keyframes b2goal{0%,70%{color:var(--mut2)}82%{color:var(--amber)}100%{color:var(--mut2)}}
+
+/* ДВИЖЕНИЕ СТОЛБЦОВ. Раньше двигался только блик поверх — сам график стоял
+   мёртво. Теперь столбцы дышат по высоте: волна идёт слева направо, как
+   «неделя за неделей». Амплитуда 3,5% — читается как живой график и при
+   этом не искажает пропорции данных. Вторая анимация в списке перекрывает
+   b2grow только после того, как та отработала (задержка ≥ .9s). */
+.b2-bar.grow{animation:b2grow .8s cubic-bezier(.22,1,.36,1) forwards,
+             b2breathe 3.6s ease-in-out infinite}
+@keyframes b2breathe{
+  0%,100%{transform:scaleY(1) translateZ(var(--z,0px))}
+  50%{transform:scaleY(1.035) translateZ(var(--z,0px))}
+}
+.b2-bar:nth-child(1).grow{animation-delay:0s,.90s}
+.b2-bar:nth-child(2).grow{animation-delay:0s,1.02s}
+.b2-bar:nth-child(3).grow{animation-delay:0s,1.14s}
+.b2-bar:nth-child(4).grow{animation-delay:0s,1.26s}
+.b2-bar:nth-child(5).grow{animation-delay:0s,1.38s}
+.b2-bar:nth-child(6).grow{animation-delay:0s,1.50s}
 
 /* стрелка тренда живёт вместе с волной */
 .b2__trend{animation:b2trend 4.2s ease-in-out infinite}
 @keyframes b2trend{0%,74%{transform:translate(0,0)}86%{transform:translate(1.5px,-1.5px)}100%{transform:translate(0,0)}}
 
 @media(prefers-reduced-motion:reduce){
-  .b2-bar::before,.b2-bar:last-child,.b2__trend{animation:none}
+  .b2-bar::before,.b2-bar:last-child::after,.b2__trend{animation:none}
+  /* дыхание снимаем, но рост оставляем — иначе столбцы схлопнутся в ноль */
+  .b2-bar.grow{animation:b2grow .8s cubic-bezier(.22,1,.36,1) forwards}
 }
 </style>
 
@@ -668,8 +698,13 @@
 
 @media(min-width:901px){
   .up{grid-template-columns:minmax(0,1.85fr) minmax(0,1fr);gap:24px;margin-top:22px}
-  .up__billwrap{align-self:center}     /* чек по центру строки, а не прижат к верху */
-  .up__bill{position:static;top:auto}  /* идёт целиком, ничего не обрезается */
+  /* Чек больше не центрируется по строке. Центрирование означало, что любое
+     изменение высоты левой колонки — а раскрытие допа под курсором меняет её
+     на 41px — сдвигало чек на половину этой величины. Отсюда и прыжки при
+     наведении. Теперь чек прибит к верху и стоит намертво, а «по центру
+     экрана» его держит sticky: при прокрутке он едет вместе с глазом. */
+  .up__billwrap{align-self:stretch;position:relative}
+  .up__bill{position:sticky;top:24px}
   /* body{overflow-x:hidden} из общего bundle-page.css делает body scroll-
      контейнером; clip режет так же, но контейнер прокрутки не создаёт.
      Правим только здесь — bundle-page.css общий для 76 страниц. */
@@ -683,17 +718,17 @@
 
 /* ─── 01. ПРЕСЕТЫ → строка чипов ─────────────────────────────────────── */
 .up__presets{margin-top:26px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;grid-template-columns:none}
-.up__presets::before{content:"быстрый старт";font-family:'JetBrains Mono',monospace;font-size:9px;
-  letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);margin-right:4px}
-.up__preset{padding:0 13px;height:33px;display:inline-flex;align-items:center;gap:8px;
+.up__presets::before{content:"быстрый старт";font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);margin-right:5px}
+.up__preset{padding:0 15px;height:38px;display:inline-flex;align-items:center;gap:9px;
   border-radius:999px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
   box-shadow:none;transition:background .18s ease,border-color .18s ease}
 .up__preset .k,.up__preset .ds{display:none}          /* метка и описание — в чипе лишние */
-.up__preset .nm{font-family:inherit;font-weight:600;font-size:12.5px;margin:0;
+.up__preset .nm{font-family:inherit;font-weight:600;font-size:13.5px;margin:0;
   letter-spacing:0;color:#dfe5ef;display:inline}
-.up__preset .fr{display:inline;margin:0;font-size:11px;color:var(--mut2)}
+.up__preset .fr{display:inline;margin:0;font-size:12px;color:var(--mut2)}
 .up__preset .fr s,.up__preset .fr i{display:none}     /* зачёркнутая цена и «выгода» — шум в чипе */
-.up__preset .fr b{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--mut)}
+.up__preset .fr b{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--mut)}
 .up__preset:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}
 .up__preset:active{transform:scale(.97)}
 .up__preset.on{background:rgba(205,255,79,.1);border-color:rgba(205,255,79,.5);box-shadow:none}
@@ -788,7 +823,8 @@
 /* Описание и выгода: max-height, а не display — иначе не анимируется.
    На тач-экранах hover не срабатывает, поэтому раскрытие там только по выбору. */
 .up__add .tt .d,.up__add .tt .val{display:block;max-height:0;opacity:0;overflow:hidden;margin-top:0;
-  transition:max-height .3s cubic-bezier(.22,1,.36,1),opacity .22s ease,margin-top .3s ease}
+  transition:max-height .5s cubic-bezier(.25,.8,.3,1),opacity .34s ease .08s,
+             margin-top .5s cubic-bezier(.25,.8,.3,1)}
 .up__add .tt .d{font-size:11.5px;color:var(--mut);line-height:1.45;hyphens:none;text-wrap:pretty}
 .up__add .tt .val{font-size:11px;color:var(--mint);font-weight:600;line-height:1.4;text-wrap:pretty}
 @media(hover:hover){
@@ -933,8 +969,9 @@
     justify-content:flex-start;color:var(--mut)}
   .up__cmp__chev{font-size:9px}
   .up__presets{margin-top:20px;gap:6px}
-  .up__preset{height:30px;padding:0 11px;gap:7px}
-  .up__preset .nm{font-size:12px}
+  .up__preset{height:34px;padding:0 13px;gap:8px}
+  .up__preset .nm{font-size:12.5px}
+  .up__preset .fr,.up__preset .fr b{font-size:11.5px}
   /* «частый выбор» + название = 187px в колонке 185px: бейдж срывался на
      вторую строку и растил каждую такую строку с 41px до 62px. Мельчить
      дальше некуда (8px — предел читаемости), поэтому сокращаем слово. */
