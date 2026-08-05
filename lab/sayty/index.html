@@ -650,6 +650,12 @@
 @media(min-width:901px){
   .up__billwrap{align-self:stretch;position:relative}
   .up__bill{position:sticky;top:24px}
+  /* Ровно та ловушка, что записана у нас в правилах: body{overflow-x:hidden}
+     из общего bundle-page.css делает body scroll-контейнером и убивает
+     sticky на всей странице. Заменяем на clip — режет по горизонтали так
+     же, но контейнер прокрутки не создаёт. Правим только тут, потому что
+     bundle-page.css общий для 76 страниц. */
+  html,body.sy{overflow-x:clip}
 }
 </style>
 </head>
