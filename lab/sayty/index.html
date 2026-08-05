@@ -598,11 +598,12 @@
    Причина: слой .bento__tilt позиционирован абсолютно и растянут по
    inset:0, поэтому padding:22px самой карточки на него не действует —
    текст начинался в 1px от края, а overflow:hidden срезал выступающее.
-   Абсолютных детей (графики, гeuges) это не двигает: их containing block —
-   padding-box слоя, он от собственного padding не меняется. */
-.uq-grid--bento .bento__tilt{padding:22px}
-.uq-grid--bento .bento__tilt>.bento__lbl,
-.uq-grid--bento .bento__tilt>.bento__h{margin-left:0}
+   Абсолютных детей (графики, шкалы) это не двигает: их containing block —
+   padding-box слоя, он от собственного padding не меняется.
+   Padding строго горизонтальный: вертикальный сдвигал заголовки вниз, и
+   они наезжали на абсолютные подписи («4 канала заявок», «каждая лишняя
+   секунда загрузки»), которые стоят на своих фиксированных top. */
+.uq-grid--bento .bento__tilt{padding-left:22px;padding-right:22px}
 
 /* Метки капсом сидели в слишком тесной строке: у JetBrains Mono высокий
    ascender, и строка обрезала верх литер — видно по прямоугольнику

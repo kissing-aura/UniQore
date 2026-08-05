@@ -705,9 +705,15 @@ a{color:inherit;text-decoration:none}
   .cnt::before{content:attr(data-s)}
   .set{grid-template-columns:1fr}
   .set__nav{display:none}
-  /* окно тут 486px: семь задач с группами просили 416 при доступных 389.
-     Ужимаем строки, а не прячем задачи — иначе счётчики групп («4»)
-     разойдутся с тем, что видно */
+  /* окно тут 486px, доступно 389. Прячем справочные блоки — закрытые
+     задачи и получателей уведомлений: они не несут счётчиков, поэтому
+     их отсутствие ничего не искажает. Открытые задачи остаются все семь */
+  .tsk__g--done,
+  .tsk__g--done ~ .tsk__i{display:none}
+  .team,
+  .set__h2:last-of-type{display:none}
+  .set__rule:nth-of-type(3){display:none}
+  .set__h2 .box__m{display:none}
   .tsk{padding:8px 12px 0}
   .tsk__i{padding:5px 8px;margin-bottom:3px}
   .tsk__g{margin:6px 0 4px}
