@@ -152,7 +152,7 @@ a{color:inherit;text-decoration:none}
   /* Стартовый разворот; дальше сцену крутит scene.js, подставляя inline-transform.
      Раньше значения шли через var(--rx,6deg): переменные нигде не объявлены,
      и transform схлопывался в identity — сцена стояла плоско. */
-  transform:rotateX(6deg) rotateY(-15deg) rotateZ(.6deg);
+  transform:rotateX(4deg) rotateY(-9deg) rotateZ(.4deg);
   transition:transform .18s cubic-bezier(.22,.61,.36,1);
   will-change:transform;
 }
@@ -333,6 +333,50 @@ a{color:inherit;text-decoration:none}
 }
 @keyframes sheen{0%{transform:translateX(-120%)}38%,100%{transform:translateX(120%)}}
 
+/* Блик под курсором: панель ведёт себя как стекло, а не как картинка.
+   Позиция приходит из scene.js в --gx/--gy, поэтому свет живёт отдельно
+   от поворота сцены и не дёргается вместе с ним. */
+.panel__glare{
+  position:absolute;inset:0;pointer-events:none;border-radius:inherit;z-index:4;
+  background:radial-gradient(240px 240px at var(--gx,50%) var(--gy,0%),
+             rgba(255,255,255,.12), rgba(255,255,255,.045) 38%, transparent 68%);
+  opacity:0;transition:opacity .45s ease;mix-blend-mode:screen;
+}
+.stage:hover .panel__glare{opacity:1}
+
+/* Прилетающая заявка: строка вставляется сверху списка и подсвечивается,
+   счётчик в шапке в этот момент подрастает — сцена выглядит работающей. */
+.deals li.is-new{animation:dealIn .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes dealIn{
+  from{opacity:0;transform:translateY(-10px) scale(.98);background:rgba(205,255,79,.16)}
+  to{opacity:1;transform:none;background:rgba(255,255,255,.022)}
+}
+.kpi__n.is-bump{animation:bump .5s cubic-bezier(.2,.9,.3,1)}
+@keyframes bump{0%{transform:none}38%{transform:translateY(-3px) scale(1.06);color:#CDFF4F}100%{transform:none}}
+
+/* Точка на конце графика дышит — глаз цепляется за «сейчас» */
+.chart__dot{animation:dotPulse 2.6s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{r:4.2}50%{r:5.4}}
+.chart__halo{fill:none;stroke:#CDFF4F;stroke-width:1.2;opacity:0;animation:halo 2.6s ease-out infinite}
+@keyframes halo{0%{r:4;opacity:.55}70%,100%{r:16;opacity:0}}
+
+/* Сборка при загрузке: слои занимают места по очереди, а не появляются скопом */
+.scene .panel{animation:layerIn .9s cubic-bezier(.2,.8,.2,1) both}
+.scene .back--1{animation:layerIn 1s cubic-bezier(.2,.8,.2,1) .1s both}
+.scene .back--2{animation:layerIn 1s cubic-bezier(.2,.8,.2,1) .2s both}
+.scene .back--3{animation:layerIn 1s cubic-bezier(.2,.8,.2,1) .28s both}
+@keyframes layerIn{from{opacity:0;transform:translateY(26px) scale(.97)}to{opacity:inherit;transform:none}}
+/* задним слоям возвращаем их собственный разворот после сборки */
+.scene .back--1{animation-name:layerIn1}
+.scene .back--2{animation-name:layerIn2}
+.scene .back--3{animation-name:layerIn3}
+@keyframes layerIn1{from{opacity:0;transform:translateZ(-130px) rotateY(4deg) rotateX(-1deg) translateY(26px)}
+                    to{opacity:.9;transform:translateZ(-130px) rotateY(4deg) rotateX(-1deg)}}
+@keyframes layerIn2{from{opacity:0;transform:translateZ(-230px) rotateY(-6deg) translateY(26px)}
+                    to{opacity:.72;transform:translateZ(-230px) rotateY(-6deg)}}
+@keyframes layerIn3{from{opacity:0;transform:translateZ(-330px) translateY(26px)}
+                    to{opacity:.62;transform:translateZ(-330px)}}
+
 /* ── Плавающие карточки ──────────────────────────────────────────── */
 .fcard{
   position:absolute;z-index:6;
@@ -424,6 +468,8 @@ a{color:inherit;text-decoration:none}
 }
 
 @media (prefers-reduced-motion:reduce){
-  .fcard,.panel__sheen,.hero__aurora{animation:none}
+  .fcard,.panel__sheen,.hero__aurora,.chart__dot,.chart__halo,
+  .scene .panel,.scene .back--1,.scene .back--2,.scene .back--3{animation:none}
+  .panel__glare{display:none}
   .scene{transition:none}
 }

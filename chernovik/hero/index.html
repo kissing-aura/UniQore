@@ -9,7 +9,7 @@
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/unbounded-var-cyrillic.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
-<link rel="stylesheet" href="/chernovik/hero/style.css?v=7">
+<link rel="stylesheet" href="/chernovik/hero/style.css?v=8">
 </head>
 <body>
 
@@ -135,6 +135,7 @@
                         </g>
                         <path class="chart__area" id="area" d=""/>
                         <path class="chart__line" id="line" d="" filter="url(#soft)"/>
+                        <circle class="chart__halo" id="halo" r="4"/>
                         <circle class="chart__dot" id="dot" r="4.2"/>
                       </svg>
                       <div class="chart__x"><span>н1</span><span>н2</span><span>н3</span><span>н4</span><span>н5</span><span>н6</span><span>н7</span><span>н8</span></div>
@@ -167,6 +168,7 @@
 
               <!-- блик по стеклу -->
               <span class="panel__sheen" aria-hidden="true"></span>
+              <span class="panel__glare" aria-hidden="true"></span>
             </div>
 
             <!-- ── плавающие карточки: каждая на своей глубине и со своей фазой ── -->
@@ -190,6 +192,6 @@
   </div>
 </section>
 
-<script src="/chernovik/hero/scene.js?v=7" defer></script>
+<script src="/chernovik/hero/scene.js?v=8" defer></script>
 </body>
 </html>

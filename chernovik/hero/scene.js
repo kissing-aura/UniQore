@@ -75,38 +75,52 @@
     }
   }
 
-  /* ── 3. Линия графика: строим из данных, а не из захардкоженного пути ── */
+  /* ── 3. График: строится из данных и умеет перерисовываться ─────
+     Путь пересобирается на лету, потому что хвост тянется вслед за каждой
+     новой заявкой. Сглаживание Катмулла–Рома: линия живая, без углов. */
   (function chart() {
     var line = document.getElementById('line');
     var area = document.getElementById('area');
     var dot = document.getElementById('dot');
+    var halo = document.getElementById('halo');
     if (!line || !area) return;
 
-    var знач = [26, 34, 30, 46, 42, 62, 74, 96];   // условная выручка по неделям
+    var знач = [26, 34, 30, 46, 42, 62, 74, 96];
     var W = 320, H = 118, top = 14, bot = 104;
-    var max = Math.max.apply(null, знач), min = Math.min.apply(null, знач);
-    var точки = знач.map(function (v, i) {
-      return {
-        x: (i / (знач.length - 1)) * W,
-        y: bot - ((v - min) / (max - min || 1)) * (bot - top)
-      };
-    });
 
-    // сглаживание Катмулла–Рома → кубические Безье: линия живая, без углов
-    var d = 'M' + точки[0].x.toFixed(1) + ',' + точки[0].y.toFixed(1);
-    for (var i = 0; i < точки.length - 1; i++) {
-      var p0 = точки[i - 1] || точки[i], p1 = точки[i], p2 = точки[i + 1], p3 = точки[i + 2] || p2;
-      var c1x = p1.x + (p2.x - p0.x) / 6, c1y = p1.y + (p2.y - p0.y) / 6;
-      var c2x = p2.x - (p3.x - p1.x) / 6, c2y = p2.y - (p3.y - p1.y) / 6;
-      d += 'C' + c1x.toFixed(1) + ',' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ',' + c2y.toFixed(1)
-         + ' ' + p2.x.toFixed(1) + ',' + p2.y.toFixed(1);
+    function путь() {
+      var max = Math.max.apply(null, знач), min = Math.min.apply(null, знач);
+      var точки = знач.map(function (v, i) {
+        return { x: (i / (знач.length - 1)) * W,
+                 y: bot - ((v - min) / (max - min || 1)) * (bot - top) };
+      });
+      var d = 'M' + точки[0].x.toFixed(1) + ',' + точки[0].y.toFixed(1);
+      for (var i = 0; i < точки.length - 1; i++) {
+        var p0 = точки[i - 1] || точки[i], p1 = точки[i], p2 = точки[i + 1], p3 = точки[i + 2] || p2;
+        d += 'C' + (p1.x + (p2.x - p0.x) / 6).toFixed(1) + ',' + (p1.y + (p2.y - p0.y) / 6).toFixed(1)
+           + ' ' + (p2.x - (p3.x - p1.x) / 6).toFixed(1) + ',' + (p2.y - (p3.y - p1.y) / 6).toFixed(1)
+           + ' ' + p2.x.toFixed(1) + ',' + p2.y.toFixed(1);
+      }
+      return { d: d, конец: точки[точки.length - 1] };
     }
-    line.setAttribute('d', d);
-    area.setAttribute('d', d + 'L' + W + ',' + H + 'L0,' + H + 'Z');
-    if (dot) { dot.setAttribute('cx', точки[точки.length - 1].x); dot.setAttribute('cy', точки[точки.length - 1].y); }
+
+    function перерисовать(плавно) {
+      var r = путь();
+      if (плавно) line.style.transition = 'd .8s cubic-bezier(.4,0,.2,1)';
+      line.setAttribute('d', r.d);
+      area.setAttribute('d', r.d + 'L' + W + ',' + H + 'L0,' + H + 'Z');
+      [dot, halo].forEach(function (el) {
+        if (!el) return;
+        el.style.transition = плавно ? 'cx .8s cubic-bezier(.4,0,.2,1), cy .8s cubic-bezier(.4,0,.2,1)' : '';
+        el.setAttribute('cx', r.конец.x); el.setAttribute('cy', r.конец.y);
+      });
+    }
+
+    перерисовать(false);
+    // отдаём наружу, чтобы блок «жизни» мог тянуть хвост за новой заявкой
+    window.__chart = { знач: знач, перерисовать: перерисовать };
 
     if (reduce) return;
-    // линия прочерчивается один раз при появлении
     var len = line.getTotalLength();
     line.style.strokeDasharray = len;
     line.style.strokeDashoffset = len;
@@ -143,6 +157,83 @@
     });
 
     function формат(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+  })();
+
+  /* ── 6. Блик под курсором ─────────────────────────────────────── */
+  (function glare() {
+    var panel = document.querySelector('.panel');
+    var g = document.querySelector('.panel__glare');
+    if (!panel || !g || reduce || coarse) return;
+    window.addEventListener('pointermove', function (e) {
+      var r = panel.getBoundingClientRect();
+      // проценты внутри панели; за её пределами блик просто уезжает за край
+      g.style.setProperty('--gx', (((e.clientX - r.left) / r.width) * 100).toFixed(1) + '%');
+      g.style.setProperty('--gy', (((e.clientY - r.top) / r.height) * 100).toFixed(1) + '%');
+    }, { passive: true });
+  })();
+
+  /* ── 7. Жизнь внутри панели ───────────────────────────────────────
+     Раз в несколько секунд «прилетает» заявка: строка вставляется сверху
+     списка, счётчик заявок подрастает, хвост графика тянется вверх. Именно
+     это отличает работающую систему от скриншота системы. */
+  (function life() {
+    if (reduce) return;
+    var список = document.querySelector('.deals');
+    var счётчикЗаявок = document.querySelectorAll('.kpi__n')[1];
+    var счётчикВыручки = document.querySelectorAll('.kpi__n')[0];
+    var всего = document.querySelector('.card--deals .card__m');
+    if (!список) return;
+
+    var ЗАЯВКИ = [
+      { б: 'С', имя: 'Салон «Стрижка»',      ист: 'Instagram', сум: 96000 },
+      { б: 'Ф', имя: 'Фитнес «Пульс»',       ист: 'Сайт',      сум: 212000 },
+      { б: 'К', имя: 'Клиника «Мед+»',       ист: 'Реклама',   сум: 178000 },
+      { б: 'Т', имя: 'Тюнинг «Драйв»',       ист: 'Telegram',  сум: 134000 },
+      { б: 'Р', имя: 'Ресторан «Гранат»',    ист: 'Сайт',      сум: 265000 }
+    ];
+    var i = 0, заявок = 184, выручка = 2995, счёт = 24;
+
+    function пришла() {
+      if (document.hidden) return;                 // в фоне не копим мусор
+      var d = ЗАЯВКИ[i++ % ЗАЯВКИ.length];
+      var li = document.createElement('li');
+      li.className = 'is-new';
+      li.innerHTML =
+        '<span class="ava">' + d.б + '</span>' +
+        '<span class="deals__n">' + d.имя + '</span>' +
+        '<span class="deals__src">' + d.ист + '</span>' +
+        '<b>' + пробелы(d.сум) + ' ₽</b>' +
+        '<span class="tag tag--on">новая</span>';
+      список.insertBefore(li, список.firstChild);
+      while (список.children.length > 3) список.removeChild(список.lastChild);
+
+      заявок += 1; счёт += 1; выручка += Math.round(d.сум / 1000);
+      подрасти(счётчикЗаявок, заявок);
+      подрасти(счётчикВыручки, выручка);
+      if (всего) всего.textContent = счёт + ' всего';
+      тянемГрафик();
+    }
+
+    function подрасти(el, к) {
+      if (!el) return;
+      el.textContent = пробелы(к);
+      el.classList.remove('is-bump'); void el.offsetWidth; el.classList.add('is-bump');
+    }
+    function пробелы(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+
+    setTimeout(function цикл() {
+      пришла();
+      setTimeout(цикл, 5200 + Math.random() * 2600);   // неровный ритм живее метронома
+    }, 3400);
+
+    // хвост графика подтягивается вслед за новой заявкой
+    function тянемГрафик() {
+      if (!window.__chart) return;
+      var з = window.__chart.знач;
+      з.push(Math.min(112, з[з.length - 1] + 6 + Math.random() * 10));
+      з.shift();
+      window.__chart.перерисовать(true);
+    }
   })();
 
   /* ── 5. Фон: точки-данные, стягивающиеся к панели ─────────────── */
