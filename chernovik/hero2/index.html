@@ -7,7 +7,7 @@
 <title>[черновик 2] hero по эталонам — Uniqore</title>
 <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
 <link rel="stylesheet" href="/css/fonts.css?v=20260731b">
-<link rel="stylesheet" href="/chernovik/hero2/style.css?v=24">
+<link rel="stylesheet" href="/chernovik/hero2/style.css?v=25">
 </head>
 <body>
 <div class="lab-note">черновик 2 · собран по замерам Linear / Attio / Vercel · <b>/chernovik/hero2/</b></div>
@@ -380,7 +380,6 @@
                 <span style="--h:69%"></span><span style="--h:78%"></span>
                 <span style="--h:84%"></span><span class="is-now" style="--h:91%"></span>
               </div>
-              <span class="an__blab">заявки, шт</span>
             </div>
             <div class="an__x"><span>н1</span><span>н2</span><span>н3</span><span>н4</span><span>н5</span><span>н6</span><span>н7</span><span>н8</span></div>
           </section>
@@ -388,11 +387,14 @@
           <div class="an__side">
             <section class="box">
               <div class="box__h"><span class="box__t">Воронка</span><span class="box__m">33,7% в оплату</span></div>
+              <!-- полоса — фон строки, а не отдельный элемент справа: в узкой
+                   колонке она вставала после чисел и уезжала за кромку окна,
+                   от воронки оставался голый список -->
               <ul class="fun">
-                <li><span class="fun__n">Заявки</span><b>184</b><em>—</em><span class="fun__b" style="--w:100%"></span></li>
-                <li><span class="fun__n">Квалифицированы</span><b>121</b><em>65,8%</em><span class="fun__b" style="--w:66%"></span></li>
-                <li><span class="fun__n">Счёт выставлен</span><b>88</b><em>72,7%</em><span class="fun__b" style="--w:48%"></span></li>
-                <li><span class="fun__n">Оплачено</span><b>62</b><em>70,5%</em><span class="fun__b fun__b--ok" style="--w:34%"></span></li>
+                <li style="--w:100%"><span class="fun__n">Заявки</span><b>184</b><em>—</em></li>
+                <li style="--w:66%"><span class="fun__n">Квалифицированы</span><b>121</b><em>65,8%</em></li>
+                <li style="--w:48%"><span class="fun__n">Счёт выставлен</span><b>88</b><em>72,7%</em></li>
+                <li style="--w:34%" class="is-ok"><span class="fun__n">Оплачено</span><b>62</b><em>70,5%</em></li>
               </ul>
             </section>
 
@@ -417,6 +419,6 @@
   </div>
 </section>
 
-<script src="/chernovik/hero2/scene.js?v=24" defer></script>
+<script src="/chernovik/hero2/scene.js?v=25" defer></script>
 </body>
 </html>
