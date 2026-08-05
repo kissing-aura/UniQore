@@ -90,6 +90,7 @@
     /* скрытая вкладка, курсор в окне, недавний клик или hero за кадром —
        переносим, а не пропускаем: иначе после возврата на вкладку
        прилетает пачка отложенных переключений */
+    if (пауза && Date.now() > паузаДо) пауза = false;   /* leave потерялся */
     if (document.hidden || пауза || !виден || Date.now() < ручная) {
       таймер = setTimeout(тик, 1200);
       return;
@@ -97,7 +98,19 @@
     следующий();
   }
 
-  окно.addEventListener('pointerenter', function () { пауза = true; });
+  /* Пауза только под мышью. На тач-устройстве pointerenter приходит при
+     тапе, а pointerleave — нет: после первого касания показ вставал
+     навсегда. Плюс страховка по времени: если курсор ушёл со страницы и
+     leave потерялся, через 20 секунд пауза снимается сама. */
+  var паузаДо = 0;
+  окно.addEventListener('pointerenter', function (e) {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    пауза = true; паузаДо = Date.now() + 20000;
+  });
+  окно.addEventListener('pointermove', function (e) {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    паузаДо = Date.now() + 20000;
+  });
   окно.addEventListener('pointerleave', function () { пауза = false; });
 
   if (window.IntersectionObserver) {
