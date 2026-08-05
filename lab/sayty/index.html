@@ -273,12 +273,18 @@
   --mut2:var(--sy-mut2);--line:var(--sy-line);--lime:var(--sy-l);--mint:var(--sy-mint);
   --amber:#F2B84B;--coral:#FF6E63;--lav:#A78BFA}
 
-/* сброс раскладки обёртки — ТОЛЬКО на десктопе: на ≤768px обёртка обязана
-   скрываться правилом из css/sayty.css, иначе на мобилке покажутся оба блока */
-@media(min-width:769px){
-  .uq-grid--bento{display:block!important;background:none!important;border:0!important;
-    border-radius:0!important;overflow:visible!important;margin-top:0!important}
+/* сброс раскладки обёртки: bento сам управляет своей сеткой */
+.uq-grid--bento{display:block!important;background:none!important;border:0!important;
+  border-radius:0!important;overflow:visible!important;margin-top:0!important}
+
+/* На мобилке показываем bento вместо старых плиток: в css/sayty.css лежит
+   правило «.uq-grid{display:none}» на ≤768px — перебиваем его, а старый
+   компактный блок наоборот прячем, чтобы не дублировать одно и то же. */
+@media(max-width:768px){
+  .sy-get__grid{display:none!important}
 }
+
+
 .bento{margin-top:44px;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(220px,auto);gap:16px;perspective:1400px}
 .bento__card{position:relative;border-radius:18px;overflow:hidden;padding:22px;background:#0f131f;border:1px solid var(--line);transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;outline:none;transform-style:preserve-3d;--shx:0px;--shy:14px;box-shadow:var(--shx) var(--shy) 32px -16px rgba(0,0,0,.55)}
 /* entrance-каскад: скрыто до появления в вьюпорте, JS переключает классы */
@@ -446,6 +452,76 @@
   .bento__card::after{opacity:0!important}
 }
 
+
+/* ═══ BENTO НА МОБИЛКЕ — компактно, без растягивания на четыре экрана ═══ */
+@media(max-width:768px){
+  .bento{grid-template-columns:1fr 1fr;grid-auto-rows:auto;gap:9px;margin-top:22px}
+  .b1,.b2,.b3,.b4{grid-column:span 2;grid-row:auto;min-height:0}
+  .bento__card{padding:14px 13px;border-radius:13px}
+  .bento__num{font-size:9.5px;top:12px;right:13px}
+  .bento__lbl{font-size:9px;letter-spacing:.06em}
+  .bento__h{font-size:15px;margin-top:4px;line-height:1.15}
+
+  /* 01 лента заявок: показываем 2 последние строки вместо четырёх */
+  .b1{min-height:0}
+  .b1__top{position:static;margin-top:9px;font-size:9px}
+  .b1__body{position:static;margin-top:8px;gap:6px}
+  .b1-row{grid-template-columns:7px 48px 1fr auto;gap:8px;padding:8px 10px;font-size:11px}
+  .b1-row:nth-child(n+3){display:none}
+  .b1-row .t{font-size:9.5px}
+  .b1-row .a{font-size:9px;padding:2px 6px}
+  .b1-foot{position:static;margin-top:9px;font-size:10.5px}
+  .b1-foot .cnt{font-size:16px}
+  .b1-foot .cnt::after{font-size:10.5px}
+
+  /* 02 ROI: цифра остаётся крупной — это главный аргумент карточки */
+  .b2{min-height:0}
+  .b2__big{position:static;margin-top:10px}
+  .b2__val{font-size:38px!important}
+  .b2__big small{font-size:9.5px;margin-top:4px}
+  .b2__flow{position:static;margin-top:8px;font-size:10.5px;gap:7px}
+  .b2__chart{position:static;margin-top:10px;height:48px;gap:4px}
+  .b2-bar::after{font-size:8px;bottom:-13px}
+  .b2-bar .spark{font-size:8px;top:-16px}
+  .b2__foot{position:static;margin-top:18px;font-size:10px}
+
+  /* 03 гонка */
+  .b3{min-height:0;padding-bottom:14px}
+  .b3__hint{position:static;margin-top:6px;font-size:10.5px}
+  .b3__race{position:static;margin-top:10px;gap:8px}
+  .b3__lane{padding:9px 11px 10px}
+  .b3__lane .head{font-size:9.5px;margin-bottom:5px}
+  .b3__lane .head .val{font-size:12.5px}
+
+  /* 04 два gauge рядом */
+  .b4{min-height:0;padding-bottom:14px}
+  .b4__hint{position:static;margin-top:6px;font-size:10.5px;text-align:left}
+  .b4__gauges{position:static;margin-top:10px;gap:10px}
+  .b4__g svg{max-width:96px}
+  .b4__g .val{font-size:21px;top:30%}
+  .b4__g .lbl{font-size:9.5px}
+
+  /* Слой-обёртка внутри карточки позиционирован абсолютно (нужно для 3D-наклона).
+     На мобилке наклона нет, а из-за absolute карточка не держала высоту
+     и схлопывалась в 30px — возвращаем слой в обычный поток. */
+  .bento__tilt{position:static!important;transform:none!important}
+  .bento__card::after{opacity:0!important}
+}
+</style>
+
+<!-- ═══ Струнный разделитель в «Было и стало» (из /proto/string-slider.html) ═══
+     Вместо ручки-ползунка: граница изгибается за курсором и возвращается
+     пружиной. Курсор ушёл — струна плавно уплывает в центр, ничего не залипает. -->
+<style>
+.sy-slc{cursor:default}
+.sy-slc__handle{display:none}                       /* старая ручка больше не нужна */
+.sy-slc__svg{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:visible}
+.sy-slc__string{fill:none;stroke:rgba(233,240,251,.72);stroke-width:1.4;stroke-linecap:round;
+  filter:drop-shadow(0 0 2px rgba(0,0,0,.55))}
+/* Панель «до» теперь обрезается кривой, а не шириной: расширяем её на всю
+   картинку и задаём стартовый clip ровно по центру — чтобы до первого кадра
+   анимации (и если JS вообще не поднялся) блок выглядел как обычный «до/после». */
+.sy-slc__before{width:100%!important;border-right:0!important;clip-path:inset(0 50% 0 0)}
 </style>
 </head>
 <body class="sy">
@@ -1588,7 +1664,7 @@
       <div class="sy-container">
         <div class="sy-head">
           <h2 class="sy-h2 sy-rev">Было и стало</h2>
-          <p class="sy-sub sy-rev" data-d="1">Потяните ползунок. Слева — каким был сайт клиента, справа — что мы сделали под ключ.</p>
+          <p class="sy-sub sy-rev" data-d="1">Ведите курсор по картинке — струна тянется за ним. Слева каким был сайт клиента, справа что мы сделали под ключ.</p>
         </div>
         <div class="sy-slcwrap sy-rev">
           <div class="sy-slc" data-slc>
@@ -1596,7 +1672,7 @@
             <div class="sy-slc__pane sy-slc__before"><img src="/assets/before-nemecia.jpg?v=20260720s" alt="Автосервис Немеция — старый сайт из конструктора до Uniqore" loading="lazy"></div>
             <span class="sy-slc__lbl sy-slc__lbl--b">До</span>
             <span class="sy-slc__lbl sy-slc__lbl--a">После · Uniqore</span>
-            <div class="sy-slc__handle"><span><svg viewBox="0 0 24 24" fill="none" stroke="#08130a" stroke-width="2.4"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></span></div>
+            <svg class="sy-slc__svg" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true"><path class="sy-slc__string"></path></svg>
           </div>
           <div class="sy-slc__cap"><b>Автосервис «Немеция», Омск.</b> Было: сайт-визитка без записи и цен. Стало: запись на ремонт, услуги по маркам (VAG, Mercedes, BMW), заявки в Telegram. <a href="/keysy/" target="_blank" rel="noopener">Смотреть кейсы →</a></div>
         </div>
@@ -2941,6 +3017,79 @@ var WL = (function(){
       WL.spring(-90, target, function(v){ n.style.transform = 'rotate(' + v.toFixed(2) + 'deg)'; }, 48, 7);
     }, delay);
   });
+})();
+</script>
+
+<script>
+/* Струна вместо ползунка. Одна пружина на позицию, вторая на изгиб —
+   курсор тянет линию, но она отстаёт, поэтому и читается как натянутая.
+   Магнит работает и за пределами картинки: курсор ушёл в сторону —
+   струна плавно возвращается сама, без рывка на границе. */
+(function(){
+  var slc = document.querySelector('.sy-slc[data-slc]');
+  if (!slc) return;
+  var pane = slc.querySelector('.sy-slc__before');
+  var path = slc.querySelector('.sy-slc__string');
+  var svg  = slc.querySelector('.sy-slc__svg');
+  if (!pane || !path || !svg) return;
+
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;  // оставляем статичную границу
+
+  var STIFF = 0.017, DAMP = 0.905;          /* ~3.5-4с на успокоение */
+  var BEND_STIFF = 0.045, BEND_DAMP = 0.86;
+  var MAGNET = 380;                          /* дальше этого расстояния курсор уже не тянет */
+
+  var W = 0, H = 0;
+  var posT = .5, posC = .5, posV = 0;
+  var kyT  = .5, kyC  = .5, kyV  = 0;
+  var bendT = 0, bendC = 0, bendV = 0;
+  var gx = null, gy = null;
+
+  function resize(){
+    var r = slc.getBoundingClientRect();
+    if (r.width < 20 || r.height < 20) return;
+    W = r.width; H = r.height;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(resize).observe(slc);
+  window.addEventListener('resize', resize);
+  resize();
+
+  window.addEventListener('pointermove', function(e){ gx = e.clientX; gy = e.clientY; }, {passive:true});
+  slc.addEventListener('touchmove', function(e){
+    var t = e.touches[0]; gx = t.clientX; gy = t.clientY; e.preventDefault();
+  }, {passive:false});
+  slc.addEventListener('touchend', function(){ gx = null; gy = null; });
+
+  function frame(){
+    if (W > 0){
+      if (gx == null){ posT = .5; kyT = .5; }
+      else {
+        var r = slc.getBoundingClientRect();
+        var ix = Math.max(r.left, Math.min(r.right, gx));
+        var iy = Math.max(r.top,  Math.min(r.bottom, gy));
+        var dx = gx - ix, dy = gy - iy;
+        var pull = Math.max(0, 1 - Math.sqrt(dx*dx + dy*dy) / MAGNET);
+        pull = pull * pull * pull;                       /* мягкий выход в покой */
+        posT = .5 + ((ix - r.left) / r.width  - .5) * pull;
+        kyT  = .5 + ((iy - r.top)  / r.height - .5) * pull;
+      }
+      posV += (posT - posC) * STIFF;  posV *= DAMP;  posC += posV;
+      kyV  += (kyT  - kyC ) * STIFF;  kyV  *= DAMP;  kyC  += kyV;
+      bendT = (posT - posC) * W * 0.42;                  /* изгиб = отставание линии от курсора */
+      bendV += (bendT - bendC) * BEND_STIFF;  bendV *= BEND_DAMP;  bendC += bendV;
+
+      var cx = posC * W, by = kyC * H, ctrl = cx + bendC;
+      var d = 'M ' + cx.toFixed(1) + ' 0 Q ' + ctrl.toFixed(1) + ' ' + by.toFixed(1) + ' ' + cx.toFixed(1) + ' ' + H;
+      path.setAttribute('d', d);
+      var clip = 'path("M 0 0 L ' + cx.toFixed(1) + ' 0 Q ' + ctrl.toFixed(1) + ' ' + by.toFixed(1) +
+                 ' ' + cx.toFixed(1) + ' ' + H + ' L 0 ' + H + ' Z")';
+      pane.style.clipPath = clip;
+      pane.style.webkitClipPath = clip;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
