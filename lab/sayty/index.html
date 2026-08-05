@@ -961,10 +961,14 @@
    промах намеренно уходит мимо стенки — иначе картинка врёт про 100%.
    Сцена наклоняется за курсором: 3D на одном крупном объекте читается
    как глубина, в отличие от наклона у россыпи мелких карточек. */
-.sy-emo__funnel.uqf{width:auto;height:auto;background:none;border-radius:0;
+/* height:auto с !important и запрет сжатия: у .sy-emo__funnel в общем
+   css/sayty.css есть мобильное правило height:22px, и без этого корпус
+   воронки сплющивался как flex-элемент со 158px до 15. */
+.sy-emo__funnel.uqf{width:auto;height:auto!important;background:none;border-radius:0;
   margin:26px auto 0;perspective:760px;display:flex;justify-content:center}
-.uqf__scene{display:flex;flex-direction:column;align-items:center;gap:9px;
+.uqf__scene{display:flex;flex-direction:column;align-items:center;gap:9px;flex:0 0 auto;
   transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.uqf__body,.uqf__cap{flex:0 0 auto}
 .uqf__cap{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;line-height:1.5;transform:translateZ(14px)}
 .uqf__cap--top{color:var(--sy-mut2)}
