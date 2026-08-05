@@ -712,6 +712,19 @@ var WL = (function(){
       });
     }, { threshold:.18 });
     cards.forEach(function(c){ io.observe(c); });
+
+    /* Страховка: wl-pre держит карточку на opacity:0, и если наблюдатель
+       почему-то не сработает (скрытая вкладка, нестандартный вьюпорт,
+       блок под display:none в момент подписки) — контент пропадёт навсегда.
+       Через 4с снимаем принудительно: анимация украшение, содержимое важнее. */
+    setTimeout(function(){
+      cards.forEach(function(c){
+        if (c.classList.contains('wl-pre')){
+          c.classList.remove('wl-pre');
+          c.classList.add('wl-in');
+        }
+      });
+    }, 4000);
   }
 
   return { spring:spring, reduce:reduce };

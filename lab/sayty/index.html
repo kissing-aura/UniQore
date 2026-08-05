@@ -260,6 +260,15 @@
      «скрыть на ≤768px» (на мобилке остаётся компактный .sy-get__grid).
      Раскладку обёртки сбрасываем — сеткой управляет сам .bento. -->
 <style>
+/* Палитра прототипа → палитра боевой страницы через алиасы (тот же приём,
+   что уже применён к .up-wrap в css/sayty.css). Без этого блока все
+   var(--lime/--mint/--amber/--lav/--line/--mut...) внутри bento пустые:
+   глобально на /sayty/ объявлены только --sy-*, а --lime и др. живут
+   в чужом скоупе .mh-vp. Отсюда и были «баги в каждом блоке». */
+.uq-grid--bento{--bg:var(--sy-bg);--surf:#0F131F;--ink:var(--sy-txt);--mut:var(--sy-mut);
+  --mut2:var(--sy-mut2);--line:var(--sy-line);--lime:var(--sy-l);--mint:var(--sy-mint);
+  --amber:#F2B84B;--coral:#FF6E63;--lav:#A78BFA}
+
 /* сброс раскладки обёртки — ТОЛЬКО на десктопе: на ≤768px обёртка обязана
    скрываться правилом из css/sayty.css, иначе на мобилке покажутся оба блока */
 @media(min-width:769px){
@@ -2720,6 +2729,19 @@ var WL = (function(){
       });
     }, { threshold:.18 });
     cards.forEach(function(c){ io.observe(c); });
+
+    /* Страховка: wl-pre держит карточку на opacity:0, и если наблюдатель
+       почему-то не сработает (скрытая вкладка, нестандартный вьюпорт,
+       блок под display:none в момент подписки) — контент пропадёт навсегда.
+       Через 4с снимаем принудительно: анимация украшение, содержимое важнее. */
+    setTimeout(function(){
+      cards.forEach(function(c){
+        if (c.classList.contains('wl-pre')){
+          c.classList.remove('wl-pre');
+          c.classList.add('wl-in');
+        }
+      });
+    }, 4000);
   }
 
   return { spring:spring, reduce:reduce };
