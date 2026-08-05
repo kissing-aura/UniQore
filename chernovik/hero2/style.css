@@ -22,7 +22,9 @@
   --border:#1E2536;
   --ink:#E7EAF0;
   --dim:#949BA8;
-  --dim2:#7a8699;
+  /* #808c9f, не #7a8699: на чипе (белый 5% поверх поверхности) старый цвет
+     давал 4,42:1 при норме AA 4,5. Новый — 4,79 на чипе и 5,4 на панели */
+  --dim2:#808c9f;
   --lime:#CDFF4F;
   --lime-dim:#9BC22F;
   --mint:#31e0b0;
@@ -174,7 +176,7 @@ a{color:inherit;text-decoration:none}
 .chrome__dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.14)}
 .chrome__url{
   flex:1;max-width:280px;margin:0 auto;text-align:center;
-  font:400 10.5px/1 var(--mono);color:#6b7280;
+  font:400 10.5px/1 var(--mono);color:#767f8e;
   background:rgba(255,255,255,.04);border-radius:6px;padding:5px 10px;
 }
 .chrome__side{display:flex;gap:6px}
@@ -193,7 +195,7 @@ a{color:inherit;text-decoration:none}
   font-size:12px;color:#9099a6;transition:background-color .16s,color .16s;
 }
 .side__i svg{width:14px;height:14px;flex:none;opacity:.85}
-.side__i b{margin-left:auto;font-size:11px;font-weight:500;color:#6b7280}
+.side__i b{margin-left:auto;font-size:11px;font-weight:500;color:#767f8e}
 .side__i b.is-hot{color:var(--lime)}
 .side__i.is-on{background:rgba(255,255,255,.06);color:var(--ink)}
 /* состояние «курсор навёлся, сейчас кликнет» — держится 300мс перед сменой */
