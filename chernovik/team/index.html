@@ -76,7 +76,10 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
    он трансформом — это композитинг на видеокарте, бесплатно. */
 .ph-veil{position:absolute;left:-2%;right:-2%;top:-105%;height:210%;z-index:2;pointer-events:none;
   background:linear-gradient(178deg,#070A12 0%,#070A12 44%,rgba(7,10,18,.55) 58%,transparent 72%);
-  transform:translate3d(0,calc(var(--rise,0) * -102%),0);will-change:transform}
+  /* сдвиг задан в процентах от самой шторки, а она вдвое выше карточки:
+     -50% её высоты это ровно -105% карточки, то есть полностью открытый кадр.
+     С -102% фото открывалось вдвое быстрее, чем таяли точки. */
+  transform:translate3d(0,calc(var(--rise,0) * -50%),0);will-change:transform}
 .card:hover .ph--sharp{transform:scale(1.045)}
 /* каркас сетки проступает раньше фото — лицам из точек нужна опора */
 .card__edge{position:absolute;inset:0;border-radius:inherit;z-index:3;pointer-events:none;
@@ -271,6 +274,7 @@ void main(){
   float off  = a_card * 0.022;
   float rise = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
   float melt = smoothstep(a_ry.x - 0.30, a_ry.x + 0.30, rise);
+  melt = max(melt, smoothstep(0.88, 1.0, rise));   // добивка: к концу не остаётся ни одной
   // наведение возвращает частицы этой карточки: человек рассыпается под курсором
   float onCard = step(abs(a_card - u_hoverCard), 0.5) * u_hoverAmt;
   melt *= 1.0 - onCard;
@@ -638,7 +642,7 @@ function render(p, time, speed){
   const gain = 1;
 
   // растворением теперь управляет шейдер покарточно; здесь только общий хвост
-  const vis = Math.max(1 - smooth(clamp((p-T.cardEnd-0.02)/0.06,0,1)), hoverAmt);
+  const vis = Math.max(1 - smooth(clamp((p-T.cardEnd+0.01)/0.04,0,1)), hoverAmt);
   if (vis <= 0.004) return;
 
   mx += (mtx-mx)*0.06; my += (mty-my)*0.06;
