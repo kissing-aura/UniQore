@@ -241,7 +241,7 @@ void main(){
   float off  = a_card * 0.022;
   float rise = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
   float melt = smoothstep(a_ry.x - 0.30, a_ry.x + 0.30, rise);
-  melt = max(melt, smoothstep(0.88, 1.0, rise));   // добивка: к концу не остаётся ни одной
+  melt = max(melt, smoothstep(0.78, 0.97, rise));  // добивка: к концу не остаётся ни одной
   // наведение возвращает частицы этой карточки: человек рассыпается под курсором
   float onCard = step(abs(a_card - u_hoverCard), 0.5) * u_hoverAmt;
   melt *= 1.0 - onCard;
