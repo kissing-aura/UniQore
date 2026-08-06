@@ -1123,6 +1123,50 @@
   .up__add[data-id="design"] .tt b::before{display:none}
 }
 
+/* ═══ ОБЪЁМ ПЕРВОГО ЭКРАНА ══════════════════════════════════════════════
+   Было: окно браузера, телефон и четыре карточки лежали в одной плоскости,
+   3D жило только у телефона. Сцена читалась как коллаж из картинок.
+   Стало: у сцены появилась перспектива, а слои разнесены по глубине —
+   окно дальше всех, телефон ближе, карточки почти у зрителя. При движении
+   курсора они смещаются с разной скоростью, и мозг достраивает объём.
+
+   Двигаем независимыми свойствами translate/rotate, а НЕ transform:
+   у телефона и мокапа уже висят свои анимации через transform (syPhoneFloat,
+   syFloatY), и запись в него их бы сорвала. Независимые свойства
+   применяются до transform и складываются с ним без конфликта. */
+.sy-hero__right{perspective:1700px;perspective-origin:58% 42%}
+.sy-mock{transform-style:preserve-3d;
+  transition:translate .5s cubic-bezier(.22,1,.36,1),rotate .5s cubic-bezier(.22,1,.36,1)}
+.sy-browser,.sy-phone,.sy-mock > .sy-fcard{
+  transition:translate .55s cubic-bezier(.22,1,.36,1)}
+/* Базовая глубина задана здесь, а не только в скрипте: иначе до первого
+   движения мыши сцена плоская, а на первом же движении слои выпрыгивают
+   вперёд рывком. Скрипт потом обновляет те же значения. */
+.sy-phone{translate:0 0 34px}
+.sy-mock > .sy-fcard:nth-of-type(1){translate:0 0 58px}
+.sy-mock > .sy-fcard:nth-of-type(2){translate:0 0 68px}
+.sy-mock > .sy-fcard:nth-of-type(3){translate:0 0 78px}
+.sy-mock > .sy-fcard:nth-of-type(4){translate:0 0 58px}
+/* тень под сценой: без неё объём есть, а веса нет */
+.sy-mock::after{content:"";position:absolute;left:8%;right:8%;bottom:-26px;height:60px;z-index:-1;
+  pointer-events:none;border-radius:50%;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(0,0,0,.55),transparent 72%);
+  filter:blur(10px);opacity:.7;
+  transition:translate .55s cubic-bezier(.22,1,.36,1),opacity .4s ease}
+
+/* На телефоне курсора нет, а мокап телефона там и вовсе скрыт — 3D-контекст
+   остался бы висеть впустую и заставлял композитор держать лишние слои.
+   Отключаем по двум признакам сразу: тач и узкий экран. Одного мало —
+   тач-медиазапрос не срабатывает в эмуляции размера на десктопе. */
+@media(hover:none),(pointer:coarse),(max-width:860px){
+  .sy-hero__right{perspective:none}
+  .sy-mock{transform-style:flat}
+  .sy-phone,.sy-mock > .sy-fcard{translate:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .sy-mock,.sy-browser,.sy-phone,.sy-mock > .sy-fcard,.sy-mock::after{transition:none}
+}
+
 /* ═══ ОКНО ПЕРЕПИСКИ вокруг вопросов ═══════════════════════════════════
    Одни пузыри в пустоте — это стилизация. Рамка окна, статус «на связи» и
    поле внизу превращают её в разговор, который человек видит целиком и
@@ -3728,6 +3772,54 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', uqdBind);
     else uqdBind();
+
+    /* Параллакс первого экрана: слои сцены двигаются с разной скоростью,
+       поэтому она читается объёмной, а не как коллаж. Чем ближе слой к
+       зрителю, тем больше ход: окно 4px, телефон 12px, карточки 20px.
+       Пишем в translate/rotate, а не в transform — там уже висят
+       собственные анимации всплытия, их сорвало бы. Один rAF на всё. */
+    function uqxDepth(){
+      var scene = document.querySelector('.sy-mock');
+      var zone  = document.querySelector('.sy-hero');
+      if (!scene || !zone) return;
+      if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      var win   = scene.querySelector('.sy-browser');
+      var phone = scene.querySelector('.sy-phone');
+      var cards = scene.querySelectorAll(':scope > .sy-fcard');
+      var raf = 0, nx = 0, ny = 0;
+
+      function apply(){
+        raf = 0;
+        /* Третье значение в translate — это Z: слои реально расставлены по
+           глубине сцены, поэтому при повороте они расходятся сами, как
+           объекты, а не как слои в фотошопе. Ради этого и нужна была
+           perspective на родителе и preserve-3d на сцене. */
+        scene.style.rotate    = 'y ' + (nx * 4.4).toFixed(2) + 'deg';
+        scene.style.translate = (nx * 5).toFixed(1) + 'px ' + (ny * 3).toFixed(1) + 'px';
+        if (win)   win.style.translate   = (nx * 7).toFixed(1)  + 'px ' + (ny * 5).toFixed(1) + 'px 0px';
+        if (phone) phone.style.translate = (nx * 21).toFixed(1) + 'px ' + (ny * 13).toFixed(1) + 'px 34px';
+        for (var i = 0; i < cards.length; i++){
+          /* карточки разлетаются по-разному и стоят ещё ближе к зрителю:
+             одинаковый ход у всех читался бы как сдвиг одной картинки */
+          var k = 30 + (i % 3) * 7;
+          cards[i].style.translate = (nx * k).toFixed(1) + 'px ' +
+                                     (ny * (k * 0.6)).toFixed(1) + 'px ' + (58 + (i % 3) * 10) + 'px';
+        }
+      }
+      zone.addEventListener('pointermove', function(ev){
+        var r = zone.getBoundingClientRect();
+        nx = ((ev.clientX - r.left) / r.width)  - 0.5;
+        ny = ((ev.clientY - r.top)  / r.height) - 0.5;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      zone.addEventListener('pointerleave', function(){
+        nx = ny = 0; if (!raf) raf = requestAnimationFrame(apply);
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', uqxDepth);
+    else uqxDepth();
 
     /* Этот скрипт стоит выше воронки в разметке, поэтому ждём разбора DOM —
        иначе querySelector возвращает null и обработчик молча не вешается. */
