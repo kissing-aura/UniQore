@@ -55,7 +55,7 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
 .head p{margin:7px auto 0;max-width:60ch;color:var(--dim);font-size:clamp(12px,1.1vw,14px);line-height:1.5;text-wrap:balance}
 
 .grid{position:absolute;z-index:4;left:0;right:0;
-  top:clamp(86px,14.5vh,158px);bottom:clamp(16px,3.4vh,34px);
+  top:var(--grid-top,158px);bottom:clamp(16px,3.4vh,34px);
   padding:0 clamp(14px,3vw,44px);
   display:grid;grid-template-columns:repeat(4,auto);grid-auto-rows:1fr;
   gap:var(--gap);justify-content:center;align-content:center}
@@ -91,7 +91,7 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
   box-shadow:inset 0 0 0 1px rgba(205,255,79,.55), 0 0 26px -6px rgba(205,255,79,.45)}
 
 @media (max-width:760px){
-  .grid{grid-template-columns:repeat(2,auto);top:clamp(130px,19.5vh,178px);bottom:clamp(12px,2.4vh,26px)}
+  .grid{grid-template-columns:repeat(2,auto);bottom:clamp(12px,2.4vh,26px)}
   .card{aspect-ratio:1/1}
   .card img{object-position:50% 58%}
   .head h2{font-size:clamp(17px,4.7vw,25px)}
@@ -194,6 +194,7 @@ attribute vec2 a_dst;      // куда прилетает (пиксель пор
 attribute vec4 a_meta;     // delay, dur, seed, depth
 attribute vec3 a_col;      // цвет пикселя портрета
 attribute vec2 a_size;     // размер в слове / в портрете
+attribute float a_card;    // индекс карточки: точки тают в такт своему фото
 
 uniform vec2  u_res;
 uniform float u_t0;        // прогресс перелёта
@@ -201,6 +202,8 @@ uniform float u_time;
 uniform float u_dpr;
 uniform vec2  u_par;       // параллакс за курсором
 uniform float u_vis;       // общая видимость точек
+uniform float u_p;         // прогресс сцены
+uniform vec2  u_fade;      // начало и конец растворения точек
 uniform float u_gain;      // компенсация накопления кадров
 
 varying vec3  v_col;
@@ -239,7 +242,15 @@ void main(){
   gl_Position = vec4((pos / u_res) * 2.0 - 1.0, 0.0, 1.0);
   gl_Position.y = -gl_Position.y;
 
+  // точки тают ровно по той же лесенке, по какой проявляется фото их карточки,
+  // но с отставанием — сначала под точками проступает снимок, потом они гаснут
+  float rev  = clamp((u_p - u_fade.x) / max(0.001, u_fade.y - u_fade.x), 0.0, 1.0);
+  float off  = a_card * 0.022 + 0.14;
+  float melt = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
+  melt = melt * melt * (3.0 - 2.0 * melt);
+
   float size = mix(a_size.x, a_size.y, e) * (1.0 + air * 0.55) * (0.62 + depth * 0.75);
+  size *= 1.0 - melt * 0.55;                 // на прощание точка ужимается, а не просто гаснет
   float haze = step(0.88, fract(seed * 7.31));      // редкие крупные и мягкие — дымка
   size *= mix(1.0, 2.6, haze);
   gl_PointSize = size * u_dpr;
@@ -251,7 +262,7 @@ void main(){
   float toFace = smoothstep(0.55, 1.0, e);
   v_col = mix(mix(base, lime, air * 0.28), face, toFace);
 
-  v_alpha = u_vis * u_gain * (0.95 + air * 0.10) * (0.66 + depth * 0.44) * mix(1.0, 0.30, haze);
+  v_alpha = u_vis * u_gain * (1.0 - melt) * (0.95 + air * 0.10) * (0.66 + depth * 0.44) * mix(1.0, 0.30, haze);
 }`;
 
 const FRAG = `
@@ -311,9 +322,9 @@ function initGL(){
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)){ DBG.linkError = gl.getProgramInfoLog(prog); return false; }
   gl.useProgram(prog);
 
-  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size'].forEach(n => { loc[n] = gl.getAttribLocation(prog, n); });
-  ['u_res','u_t0','u_time','u_dpr','u_par','u_vis','u_gain'].forEach(n => { loc[n] = gl.getUniformLocation(prog, n); });
-  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size'].forEach(n => { buf[n] = gl.createBuffer(); });
+  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card'].forEach(n => { loc[n] = gl.getAttribLocation(prog, n); });
+  ['u_res','u_t0','u_time','u_dpr','u_par','u_vis','u_gain','u_p','u_fade'].forEach(n => { loc[n] = gl.getUniformLocation(prog, n); });
+  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card'].forEach(n => { buf[n] = gl.createBuffer(); });
 
   const fv = compile(gl.VERTEX_SHADER, FADE_VERT), ff = compile(gl.FRAGMENT_SHADER, FADE_FRAG);
   if (!fv || !ff) return false;
@@ -375,6 +386,7 @@ function samplePortraits(n){
   const per = Math.floor(n / cards.length);
   const xs=new Float32Array(n), ys=new Float32Array(n);
   const cr=new Float32Array(n), cg=new Float32Array(n), cb=new Float32Array(n);
+  const cardOf=new Float32Array(n);
   let k=0;
 
   const c = document.createElement('canvas');
@@ -431,10 +443,11 @@ function samplePortraits(n){
       ys[k] = top  + (py + rnd(i*7.7+ci))*r.height/sh;
       if (data){ cr[k]=data[lo*4]/255; cg[k]=data[lo*4+1]/255; cb[k]=data[lo*4+2]/255; }
       else { cr[k]=0.6; cg[k]=0.65; cb[k]=0.75; }
+      cardOf[k]=ci;
       k++;
     }
   });
-  return {xs,ys,cr,cg,cb};
+  return {xs,ys,cr,cg,cb,cardOf};
 }
 
 /* ── сборка буферов ──────────────────────────────────────────────── */
@@ -455,6 +468,7 @@ function build(){
 
   const aWord=new Float32Array(N*2), aCtrl=new Float32Array(N*2), aDst=new Float32Array(N*2);
   const aMeta=new Float32Array(N*4), aCol=new Float32Array(N*3), aSize=new Float32Array(N*2);
+  const aCard=new Float32Array(N);
 
   const cX=W/2, cY=H*0.46, scale=Math.min(W,H);
   let minX=1e9, maxX=-1e9;
@@ -486,6 +500,7 @@ function build(){
     aMeta[i*4+3] = depth;
 
     aCol[i*3]=dst.cr[b]; aCol[i*3+1]=dst.cg[b]; aCol[i*3+2]=dst.cb[b];
+    aCard[i]=dst.cardOf[b];
 
     const L = dst.cr[b]*0.299 + dst.cg[b]*0.587 + dst.cb[b]*0.114;
     aSize[i*2]   = 0.95 + rnd(i*8.13)*0.70;                     // в слове видны отдельные точки
@@ -499,6 +514,7 @@ function build(){
   };
   put('a_word',aWord,2); put('a_ctrl',aCtrl,2); put('a_dst',aDst,2);
   put('a_meta',aMeta,4); put('a_col',aCol,3);   put('a_size',aSize,2);
+  put('a_card',aCard,1);
 
   ready = true; shown = -1;
   DBG.step='built'; DBG.N=N; DBG.W=W; DBG.H=H;
@@ -521,6 +537,13 @@ function resize(){
   // на GPU частицы почти бесплатны — плотность держим высокой,
   // именно она делает портрет из точек читаемым
   N = Math.round(clamp((W*H)/19, 24000, 58000));
+
+  // заголовок мерим по факту: на широком экране он в одну строку, на узком в две,
+  // и угаданный отступ его перекрывал
+  const headRect = head.getBoundingClientRect();
+  const vpTop = vp.getBoundingClientRect().top;
+  const gap = H < 700 ? 14 : (H < 900 ? 20 : 28);
+  grid.style.setProperty('--grid-top', Math.round(headRect.bottom - vpTop + gap) + 'px');
 
   stage.style.setProperty('--runway', (W<760 ? 260 : 320) + 'svh');
   measureStage();
@@ -561,7 +584,8 @@ function render(p, time, speed){
   // иначе на быстром листании картинка уходит в пересвет
   const gain = (1 - keep) * 1.42;
 
-  const vis = 1 - smooth(clamp((p-T.fadeIn)/(T.fadeEnd-T.fadeIn),0,1));
+  // растворением теперь управляет шейдер покарточно; здесь только общий хвост
+  const vis = 1 - smooth(clamp((p-T.cardEnd-0.02)/0.06,0,1));
   if (vis <= 0.004) return;
 
   mx += (mtx-mx)*0.06; my += (mty-my)*0.06;
@@ -575,6 +599,8 @@ function render(p, time, speed){
   gl.uniform2f(loc.u_par, mx*16, my*11);
   gl.uniform1f(loc.u_vis, vis);
   gl.uniform1f(loc.u_gain, gain);
+  gl.uniform1f(loc.u_p, p);
+  gl.uniform2f(loc.u_fade, T.cardIn, T.cardEnd);
   gl.drawArrays(gl.POINTS, 0, N);
 }
 
