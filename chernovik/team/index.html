@@ -74,15 +74,11 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
 /* Шторка вместо маски: mask-image с переменной пересчитывается каждый кадр
    для каждого фото и вешает страницу. Здесь градиент постоянный, а двигается
    он трансформом — это композитинг на видеокарте, бесплатно. */
-.ph-veil{position:absolute;left:-2%;right:-2%;top:-100%;height:200%;z-index:2;pointer-events:none;
-  /* Непрозрачная половина должна лежать НА карточке, а прозрачная — над ней.
-     Раньше градиент шёл наоборот: глухая часть уходила выше кадра, и снимок
-     был открыт с самого начала сцены. */
-  background:linear-gradient(179deg,transparent 0%,transparent 38%,rgba(7,10,18,.5) 46%,#070A12 54%,#070A12 100%);
-  /* сдвиг задан в процентах от самой шторки, а она вдвое выше карточки:
-     -50% её высоты это ровно -105% карточки, то есть полностью открытый кадр.
-     С -102% фото открывалось вдвое быстрее, чем таяли точки. */
-  transform:translate3d(0,calc(var(--rise,0) * -50%),0);will-change:transform}
+/* Шторки больше нет: глухой прямоугольник поверх фото сам был виден на фоне
+   сцены — до начала перехода на экране висели восемь тёмных плашек. Снимок
+   проявляется прозрачностью (это композитинг, кадру ничего не стоит), а
+   ощущение налива снизу даёт таяние точек, которое идёт той же волной. */
+.card .ph--sharp{opacity:var(--rise,0)}
 .card:hover .ph--sharp{transform:scale(1.045)}
 /* каркас сетки проступает раньше фото — лицам из точек нужна опора */
 .card__edge{position:absolute;inset:0;border-radius:inherit;z-index:3;pointer-events:none;
@@ -143,14 +139,14 @@ body.frame-mode .stage{height:100svh}
     </div>
 
     <div class="grid" id="grid">
-      <figure class="card"><img class="ph--sharp" src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><span class="ph-veil"></span><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Матвей</b></figcaption></figure>
-      <figure class="card"><img class="ph--sharp" src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><span class="ph-veil"></span><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Илья</b></figcaption></figure>
-      <figure class="card"><img class="ph--sharp" src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><span class="ph-veil"></span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Ведущий дизайнер</b></figcaption></figure>
-      <figure class="card"><img class="ph--sharp" src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><span class="ph-veil"></span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Full-stack разработчик</b></figcaption></figure>
-      <figure class="card"><img class="ph--sharp" src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><span class="ph-veil"></span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Backend-разработчик</b></figcaption></figure>
-      <figure class="card"><img class="ph--sharp" src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><span class="ph-veil"></span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Frontend-разработчик</b></figcaption></figure>
-      <figure class="card"><img class="ph--sharp" src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><span class="ph-veil"></span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Проджект-менеджер</b></figcaption></figure>
-      <figure class="card"><img class="ph--sharp" src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><span class="ph-veil"></span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Team&nbsp;Lead</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Матвей</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Илья</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Ведущий дизайнер</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Full-stack разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Backend-разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Frontend-разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Проджект-менеджер</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Team&nbsp;Lead</b></figcaption></figure>
     </div>
   </div>
 </section>
