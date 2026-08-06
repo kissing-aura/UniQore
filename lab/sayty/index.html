@@ -1092,6 +1092,37 @@
   .uqf__scene{transition:none}
 }
 
+/* ═══ Дизайн под бренд — выделенный доп ════════════════════════════════
+   Именно этот доп отличает наш сайт от «сверстали по шаблону», поэтому он
+   не должен теряться в ряду одинаковых строк. Обводка сделана внешним
+   кольцом через box-shadow, а не увеличением border-width: толщина рамки
+   сдвинула бы содержимое строки на пиксель и сломала ровный ряд в 43px.
+   Бейдж «советуем» — наша позиция, а не выдуманная статистика вроде
+   «берут 8 из 10»: такое написать нечем подтвердить. */
+.up__add[data-id="design"]{
+  border-color:rgba(205,255,79,.4);
+  box-shadow:0 0 0 1px rgba(205,255,79,.22),0 8px 22px -14px rgba(205,255,79,.35);
+  background:linear-gradient(180deg,rgba(205,255,79,.045),rgba(205,255,79,.015))}
+.up__add[data-id="design"]:hover{
+  border-color:rgba(205,255,79,.62);
+  box-shadow:0 0 0 1px rgba(205,255,79,.34),0 10px 26px -14px rgba(205,255,79,.45);
+  background:linear-gradient(180deg,rgba(205,255,79,.075),rgba(205,255,79,.03))}
+.up__add[data-id="design"].on{
+  border-color:rgba(205,255,79,.72);
+  box-shadow:0 0 0 1px rgba(205,255,79,.4),0 12px 28px -14px rgba(205,255,79,.5)}
+.up__add[data-id="design"] .chk{border-color:rgba(205,255,79,.5)}
+.up__add[data-id="design"] .tt b{color:#fff}
+/* бейдж живёт в потоке рядом с названием, как «хит» у частых допов */
+.up__add[data-id="design"] .tt b::before{content:"советуем";display:inline-block;
+  margin-right:7px;vertical-align:1px;padding:1px 7px;border-radius:999px;
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:.06em;
+  color:#08130a;background:var(--sy-l,#CDFF4F)}
+@media(max-width:620px){
+  /* «Дизайн под бренд» + бейдж не помещаются в строку 41px и уносят
+     название на второй ряд — на узком экране оставляем одну обводку */
+  .up__add[data-id="design"] .tt b::before{display:none}
+}
+
 /* ═══ FAQ КАК ПЕРЕПИСКА ════════════════════════════════════════════════
    Обычный аккордеон «вопрос-плюсик» ничего не сообщает о компании. А выше
    на странице мы обещаем ответ в Telegram за 15 минут — блок вопросов и
