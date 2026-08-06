@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Черновик — команда из частиц</title>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/unbounded-var-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/geist-var-cyrillic.woff2" crossorigin>
+<style>
+@font-face{font-family:'Unbounded';src:url('/assets/fonts/unbounded-var-latin.woff2') format('woff2');font-weight:200 900;font-display:block;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Unbounded';src:url('/assets/fonts/unbounded-var-cyrillic.woff2') format('woff2');font-weight:200 900;font-display:swap;unicode-range:U+0400-04FF}
+@font-face{font-family:'Geist';src:url('/assets/fonts/geist-var-latin.woff2') format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Geist';src:url('/assets/fonts/geist-var-cyrillic.woff2') format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+0400-04FF}
+
+:root{
+  --ink:#070A12;
+  --lime:#CDFF4F;
+  --txt:#E9EEF7;
+  --dim:#93A0B4;
+  --gap:clamp(8px,.9vw,14px);
+}
+*{box-sizing:border-box}
+html{background:var(--ink);-webkit-text-size-adjust:100%;overflow-x:clip}
+body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-ui,sans-serif;overflow-x:clip}
+
+.pad{min-height:70svh;display:grid;place-items:center;padding:60px 20px;text-align:center}
+.pad p{max-width:46ch;color:var(--dim);font-size:15px;line-height:1.65;margin:12px auto 0}
+.pad h1{font-family:'Unbounded';font-weight:700;font-size:clamp(21px,3.2vw,38px);letter-spacing:-.02em;margin:0}
+.pad small{display:block;margin-top:26px;color:#5C6981;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase}
+.hint{display:inline-flex;align-items:center;gap:10px;margin-top:30px;color:var(--dim);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.hint i{width:21px;height:33px;border:1.5px solid rgba(148,163,184,.4);border-radius:11px;position:relative;display:block}
+.hint i::after{content:"";position:absolute;left:50%;top:7px;width:3px;height:6px;margin-left:-1.5px;border-radius:2px;background:var(--lime);animation:wheel 1.9s cubic-bezier(.4,0,.2,1) infinite}
+@keyframes wheel{0%{transform:translateY(0);opacity:1}70%{transform:translateY(11px);opacity:0}100%{opacity:0}}
+
+/* ── сцена ── */
+.stage{position:relative;height:calc(100svh + var(--runway,200svh))}
+.stage__vp{position:sticky;top:0;height:100svh;overflow:hidden;
+  background:
+    radial-gradient(120% 78% at 50% 2%,rgba(205,255,79,.05),transparent 58%),
+    radial-gradient(95% 62% at 50% 114%,rgba(96,132,255,.05),transparent 62%),
+    var(--ink)}
+.stage__vp::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:6;
+  background:radial-gradient(118% 84% at 50% 46%,transparent 54%,rgba(3,5,11,.52) 100%)}
+
+.fx,.fx-glow{position:absolute;inset:0;width:100%;height:100%;display:block}
+.fx{z-index:3}
+.fx-glow{z-index:2;filter:blur(10px) saturate(1.2);opacity:.6;mix-blend-mode:screen}
+
+.head{position:absolute;left:0;right:0;top:clamp(16px,4vh,42px);z-index:5;text-align:center;
+  padding:0 20px;opacity:0;pointer-events:none;will-change:opacity,transform}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim)}
+.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px rgba(205,255,79,.9)}
+.head h2{font-family:'Unbounded';font-weight:700;letter-spacing:-.025em;line-height:1.1;
+  font-size:clamp(18px,2.4vw,31px);margin:9px 0 0}
+.head p{margin:7px auto 0;max-width:60ch;color:var(--dim);font-size:clamp(12px,1.1vw,14px);line-height:1.5;text-wrap:balance}
+
+.grid{position:absolute;z-index:4;left:0;right:0;
+  top:clamp(86px,14.5vh,158px);bottom:clamp(16px,3.4vh,34px);
+  padding:0 clamp(14px,3vw,44px);
+  display:grid;grid-template-columns:repeat(4,auto);grid-auto-rows:1fr;
+  gap:var(--gap);justify-content:center;align-content:center}
+
+.card{position:relative;height:100%;aspect-ratio:13/16;margin:0;border-radius:clamp(10px,1vw,16px);
+  overflow:hidden;background:#0A0E1A;isolation:isolate;opacity:0;will-change:opacity,transform}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
+.card{--focus:0}
+/* масштаб на время сборки не трогаем: transition на transform дал бы лаг за скроллом.
+   Сборку показывает расфокус, hover — отдельный плавный зум. */
+.card img{filter:blur(calc((1 - var(--focus)) * 7px));transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.card__edge{position:absolute;inset:0;border-radius:inherit;z-index:3;pointer-events:none;
+  border:1px solid rgba(148,163,184,.16);transition:border-color .35s}
+.card:hover .card__edge{border-color:rgba(205,255,79,.42)}
+.card:hover img{transform:scale(1.04)}
+.card__cap{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:30px clamp(8px,.85vw,13px) clamp(8px,.85vw,12px);
+  background:linear-gradient(transparent,rgba(6,9,17,.72) 52%,rgba(6,9,17,.93));opacity:0}
+.card__cap b{display:block;font-family:'Unbounded';font-weight:700;color:#fff;letter-spacing:-.012em;
+  line-height:1.16;font-size:clamp(10.5px,.92vw,14.5px)}
+.card__flag{position:absolute;top:8px;left:8px;z-index:4;font-weight:600;
+  font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:#08130A;background:var(--lime);
+  padding:3px 8px;border-radius:999px;opacity:0;box-shadow:0 4px 14px -4px rgba(205,255,79,.6)}
+/* блик по кромке в момент проявления карточки */
+.card__sheen{position:absolute;inset:0;border-radius:inherit;z-index:5;pointer-events:none;opacity:0;
+  background:linear-gradient(102deg,transparent 45%,rgba(205,255,79,.75) 50%,rgba(255,255,255,.35) 52%,transparent 57%);
+  background-size:300% 100%}
+
+@media (max-width:760px){
+  /* шапке нужен свой запас: на узком экране подзаголовок уходит в две строки */
+  .grid{grid-template-columns:repeat(2,auto);top:clamp(130px,19.5vh,178px);bottom:clamp(12px,2.4vh,26px)}
+  .card{aspect-ratio:1/1}
+  .card img{object-position:50% 58%}
+  .head h2{font-size:clamp(17px,4.7vw,25px)}
+  .head p{font-size:11.5px;max-width:34ch}
+}
+
+/* режим одиночного кадра (?frame=…): сцена одна на экране */
+body.frame-mode .pad{display:none}
+body.frame-mode .stage{height:100svh}
+
+@media (prefers-reduced-motion:reduce){
+  .fx,.fx-glow{display:none}
+  .card,.head,.card__cap,.card__flag{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<section class="pad">
+  <div>
+    <h1>Черновик блока «Команда»</h1>
+    <p>Слово собрано из микрочастиц. Листайте вниз — оно рассыпается и пересобирается в состав команды.</p>
+    <div class="hint"><i></i> листайте</div>
+  </div>
+</section>
+
+<section class="stage" id="stage">
+  <div class="stage__vp" id="vp">
+    <canvas class="fx-glow" id="glow" aria-hidden="true"></canvas>
+    <canvas class="fx" id="fx" aria-hidden="true"></canvas>
+
+    <div class="head" id="head">
+      <span class="eyebrow"><span class="dot"></span>Живые люди, а не бот в чате</span>
+      <h2>Команда, которая сделает ваш сайт</h2>
+      <p>Не фрилансер на аутсорсе — своя команда: дизайн, разработка, маркетинг.</p>
+    </div>
+
+    <div class="grid" id="grid">
+      <figure class="card"><img src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Матвей</b></figcaption></figure>
+      <figure class="card"><img src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Илья</b></figcaption></figure>
+      <figure class="card"><img src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Ведущий дизайнер</b></figcaption></figure>
+      <figure class="card"><img src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Full-stack разработчик</b></figcaption></figure>
+      <figure class="card"><img src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Backend-разработчик</b></figcaption></figure>
+      <figure class="card"><img src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Frontend-разработчик</b></figcaption></figure>
+      <figure class="card"><img src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Проджект-менеджер</b></figcaption></figure>
+      <figure class="card"><img src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Team&nbsp;Lead</b></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="pad">
+  <div>
+    <p>Дальше идёт обычный контент страницы — сцена отработала и не мешает.</p>
+    <small>черновик · в прод не подключён</small>
+  </div>
+</section>
+
+<script>
+(() => {
+'use strict';
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DBG = window.__team = {step:'init', reduce};
+
+const stage = document.getElementById('stage');
+const vp    = document.getElementById('vp');
+const grid  = document.getElementById('grid');
+const head  = document.getElementById('head');
+const fx    = document.getElementById('fx');
+const glowC = document.getElementById('glow');
+const cards = [...grid.querySelectorAll('.card')];
+const caps  = cards.map(c => c.querySelector('.card__cap'));
+const flags = cards.map(c => c.querySelector('.card__flag'));
+const sheens= cards.map(c => c.querySelector('.card__sheen'));
+
+const ctx  = fx.getContext('2d');
+const gctx = glowC.getContext('2d');
+
+/* тайминги сцены в долях прогресса скролла */
+const T = { hold:0.13, flyEnd:0.74,
+             fadeIn:0.79, fadeEnd:0.94,      // точки гаснут
+             cardIn:0.755, cardEnd:0.91,   // фото проявляются
+             capIn:0.90, headIn:0.60 };
+
+let W=0, H=0, dpr=1, gq=1;      // gq — множитель канвы свечения
+let N=0, P=null, dustN=0, dust=null;
+let ready=false, progress=0, shown=-1;
+
+let mx=0, my=0, mtx=0, mty=0;      // параллакс за курсором
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const smooth=t=>t*t*(3-2*t);
+const easeInOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+function rnd(s){ const v=Math.sin(s*12.9898)*43758.5453; return v-Math.floor(v); }
+
+/* ── размеры и плотность ─────────────────────────────────────────── */
+function resize(){
+  const r = vp.getBoundingClientRect();
+  // до первого layout размеры приходят нулевыми — строить по ним нечего
+  DBG.step = 'resize:' + Math.round(r.width) + 'x' + Math.round(r.height);
+  if (r.width < 50 || r.height < 50){ ready = false; return; }
+  const nw = Math.round(r.width), nh = Math.round(r.height);
+  if (ready && nw === W && nh === H) return;   // пересобирать нечего
+  W = nw; H = nh;
+
+  // точки светятся и мелкие — полный ретина-буфер им не нужен,
+  // зато вдвое дешевле очистка кадра
+  dpr = Math.min(1.35, window.devicePixelRatio || 1);
+  fx.width  = Math.round(W * dpr);
+  fx.height = Math.round(H * dpr);
+
+  gq = 1/3;
+  glowC.width  = Math.max(1, Math.round(W * gq));
+  glowC.height = Math.max(1, Math.round(H * gq));
+
+  N = Math.round(clamp((W * H) / 132, 4000, 10000));
+  dustN = W < 700 ? 90 : 180;
+  allocBuckets(N * 2);            // запас на следы
+
+  stage.style.setProperty('--runway', (W < 760 ? 155 : 175) + 'svh');
+  build();
+}
+
+/* ── точки слова ─────────────────────────────────────────────────── */
+function sampleWord(n){
+  const q = 2;
+  const c = document.createElement('canvas');
+  // канва шире экрана: слово должно попасть в неё целиком, иначе обрезанные
+  // глифы теряются ещё до замера и ужать их уже нечем
+  const OV = 1.7;
+  c.width = Math.round(W*q*OV); c.height = Math.round(H*q);
+  const offX = (W*OV - W)/2;
+  const g = c.getContext('2d', {willReadFrequently:true});
+
+  const target = W * (W < 760 ? 0.86 : 0.56);
+  g.font = '700 200px Unbounded, sans-serif';
+  const probe = g.measureText('uniqore').width || 1;
+  let size = Math.min(200 * target / probe, H * 0.27);
+
+  // подгоняем по факту: если шрифт применился позже замера, расчётный кегль
+  // окажется великоват и слово уедет за экран
+  for (let k=0;k<5;k++){
+    g.font = `700 ${size*q}px Unbounded, sans-serif`;
+    const w = g.measureText('uniqore').width / q;
+    if (w <= target) break;
+    size *= (target / w) * 0.985;
+  }
+  g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='#fff';
+  g.fillText('uniqore', c.width/2, c.height*0.46);
+
+  const d = g.getImageData(0,0,c.width,c.height).data;
+  const hits=[];
+  for (let y=0; y<c.height; y+=2)
+    for (let x=0; x<c.width; x+=2)
+      if (d[(y*c.width+x)*4+3] > 140) hits.push(x/q - offX, y/q);
+
+  const total = hits.length/2;
+  const out = new Float32Array(n*2);
+  if (!total) return out;
+  for (let i=0;i<n;i++){
+    const k = Math.floor(i*total/n)*2;
+    out[i*2]   = hits[k]   + (rnd(i*1.7)-.5)*1.8;
+    out[i*2+1] = hits[k+1] + (rnd(i*3.1)-.5)*1.8;
+  }
+
+  // страховка: если шрифт не успел примениться к моменту замера, слово выходит
+  // за экран. Ужимаем к центру по факту, а не по расчёту.
+  let x0=1e9, x1=-1e9;
+  for (let i=0;i<n;i++){ const v=out[i*2]; if(v<x0)x0=v; if(v>x1)x1=v; }
+  const wid = x1-x0, lim = W*0.92;
+  if (wid > lim){
+    const k = lim/wid, cx = (x0+x1)/2, cy = H*0.46;
+    for (let i=0;i<n;i++){
+      out[i*2]   = cx + (out[i*2]-cx)*k;
+      out[i*2+1] = cy + (out[i*2+1]-cy)*k;
+    }
+  }
+  return out;
+}
+
+/* ── точки портретов: из тех же файлов, что показываются в карточках ─ */
+function samplePortraits(n){
+  const vr = vp.getBoundingClientRect();
+  const per = Math.floor(n / cards.length);
+  const xs=new Float32Array(n), ys=new Float32Array(n);
+  const cr=new Float32Array(n), cg=new Float32Array(n), cb=new Float32Array(n);
+  let k=0;
+
+  const c = document.createElement('canvas');
+  const g = c.getContext('2d',{willReadFrequently:true});
+
+  cards.forEach((card, ci) => {
+    const r = card.getBoundingClientRect();
+    const left = r.left - vr.left, top = r.top - vr.top;
+    const im = card.querySelector('img');
+
+    const sw = 80, sh = Math.max(1, Math.round(80 * r.height / r.width));
+    c.width = sw; c.height = sh;
+    g.clearRect(0,0,sw,sh);
+
+    let data = null;
+    if (im.complete && im.naturalWidth){
+      // повторяем object-fit:cover, чтобы точки легли на те же пиксели
+      const s = Math.max(sw/im.naturalWidth, sh/im.naturalHeight);
+      const dw = im.naturalWidth*s, dh = im.naturalHeight*s;
+      const opY = parseFloat((getComputedStyle(im).objectPosition.split(' ')[1]||'50'));
+      g.drawImage(im, (sw-dw)/2, (sh-dh)*(opY/100), dw, dh);
+      data = g.getImageData(0,0,sw,sh).data;
+    }
+
+    // Куда сажать точки. Одной яркости мало — выходит ровное пятно.
+    // Основной вес даёт контур (глаза, губы, край лица, волосы): по нему
+    // портрет узнаётся даже парой тысяч точек.
+    const lum = new Float32Array(sw*sh);
+    if (data) for (let i=0;i<sw*sh;i++)
+      lum[i] = (data[i*4]*.299 + data[i*4+1]*.587 + data[i*4+2]*.114)/255;
+
+    const cum = new Float32Array(sw*sh);
+    let acc=0;
+    for (let y=0;y<sh;y++) for (let x=0;x<sw;x++){
+      const i = y*sw+x;
+      let w = 0.12;
+      if (data){
+        let edge = 0;
+        if (x>0 && x<sw-1 && y>0 && y<sh-1){
+          const gx = lum[i-1] - lum[i+1];
+          const gy = lum[i-sw] - lum[i+sw];
+          edge = Math.min(1, Math.sqrt(gx*gx + gy*gy) * 2.6);
+        }
+        w = 0.010 + Math.pow(lum[i],2.4)*1.5 + Math.pow(edge,1.15)*5.0;
+        // лицо важнее плеч: смещаем плотность в верхнюю часть кадра
+        w *= y < sh*0.52 ? 1.55 : (y < sh*0.72 ? 0.85 : 0.45);
+      }
+      acc += w; cum[i]=acc;
+    }
+
+    const take = (ci === cards.length-1) ? n-k : per;
+    for (let i=0;i<take;i++){
+      const t = rnd(ci*97.3 + i*0.618)*acc;
+      let lo=0, hi=sw*sh-1;
+      while (lo<hi){ const m=(lo+hi)>>1; if (cum[m]<t) lo=m+1; else hi=m; }
+      const px = lo%sw, py=(lo/sw)|0;
+      xs[k] = left + (px + rnd(i*5.1+ci))*r.width/sw;
+      ys[k] = top  + (py + rnd(i*7.7+ci))*r.height/sh;
+      if (data){ cr[k]=data[lo*4]; cg[k]=data[lo*4+1]; cb[k]=data[lo*4+2]; }
+      else { cr[k]=150; cg[k]=165; cb[k]=190; }
+      k++;
+    }
+  });
+  return {xs,ys,cr,cg,cb};
+}
+
+/* ── сборка ──────────────────────────────────────────────────────── */
+function build(){
+  const word = sampleWord(N);
+  const dst  = samplePortraits(N);
+
+  // слева направо: слово перетекает в команду, а не хаотично
+  const wi = new Uint32Array(N), di = new Uint32Array(N);
+  const wk = new Float32Array(N), dk = new Float32Array(N);
+  for (let i=0;i<N;i++){
+    wi[i]=i; di[i]=i;
+    wk[i] = word[i*2]  + (rnd(i*2.3)-.5)*50;
+    dk[i] = dst.xs[i]  + (rnd(i*4.9)-.5)*50;
+  }
+  Array.prototype.sort.call(wi,(a,b)=>wk[a]-wk[b]);
+  Array.prototype.sort.call(di,(a,b)=>dk[a]-dk[b]);
+
+  P = {
+    x0:new Float32Array(N), y0:new Float32Array(N),
+    x1:new Float32Array(N), y1:new Float32Array(N),
+    cx:new Float32Array(N), cy:new Float32Array(N),
+    dl:new Float32Array(N), du:new Float32Array(N),
+    r1:new Float32Array(N), g1:new Float32Array(N), b1:new Float32Array(N),
+    sw:new Float32Array(N), sp:new Float32Array(N),
+    sd:new Float32Array(N), lm:new Uint8Array(N), tn:new Uint8Array(N),
+    px:new Float32Array(N), py:new Float32Array(N),
+  };
+
+  const cX = W/2, cY = H*0.46;
+  let minX=1e9, maxX=-1e9;
+  for (let i=0;i<N;i++){ const v=word[wi[i]*2]; if(v<minX)minX=v; if(v>maxX)maxX=v; }
+  const span = Math.max(1, maxX-minX);
+  const blastScale = Math.min(W,H);
+
+  for (let i=0;i<N;i++){
+    const a=wi[i], b=di[i];
+    const sx=word[a*2], sy=word[a*2+1];
+    const tx=dst.xs[b], ty=dst.ys[b];
+
+    P.x0[i]=sx; P.y0[i]=sy; P.x1[i]=tx; P.y1[i]=ty;
+    P.px[i]=sx; P.py[i]=sy;
+
+    // волна распада слева направо; длительность у всех близкая, иначе часть
+    // частиц долетает раньше и разлёт не читается как единое движение
+    P.dl[i] = ((sx-minX)/span)*0.24 + rnd(i*1.13)*0.05;
+    P.du[i] = 0.56 + rnd(i*2.71)*0.14;
+
+    const mx=(sx+tx)/2, my=(sy+ty)/2;
+    let nx=mx-cX, ny=my-cY;
+    const nl=Math.hypot(nx,ny)||1; nx/=nl; ny/=nl;
+    const blast=(0.22+rnd(i*3.77)*0.72)*blastScale*0.60;
+    P.cx[i]=mx+nx*blast+(rnd(i*5.19)-.5)*W*0.14;
+    P.cy[i]=my+ny*blast*0.62+(rnd(i*6.31)-.5)*H*0.13;
+
+    P.r1[i]=dst.cr[b]; P.g1[i]=dst.cg[b]; P.b1[i]=dst.cb[b];
+    const L = (dst.cr[b]*.299 + dst.cg[b]*.587 + dst.cb[b]*.114)/255;
+    P.tn[i] = Math.min(B_TONE-1, (L*B_TONE)|0);
+    // в слове точка крупнее (буквы должны читаться), в портрете мельче (нужна деталь)
+    P.sw[i]=1.30+rnd(i*8.13)*0.70;
+    P.sp[i]=0.88+rnd(i*8.13)*0.62;
+    P.sd[i]=rnd(i*9.41)*6.283;
+    P.lm[i]=rnd(i*11.7)<0.12?1:0;
+  }
+
+  dust = {x:new Float32Array(dustN), y:new Float32Array(dustN),
+          s:new Float32Array(dustN), p:new Float32Array(dustN)};
+  for (let i=0;i<dustN;i++){
+    dust.x[i]=rnd(i*1.7)*W; dust.y[i]=rnd(i*3.3)*H;
+    dust.s[i]=0.35+rnd(i*5.5)*0.6; dust.p[i]=rnd(i*7.1)*6.283;
+  }
+
+  ready = true; shown = -1;
+  DBG.step='built'; DBG.N=N; DBG.W=W; DBG.H=H;
+  // ручки для покадровой проверки: вкладка в фоне не даёт rAF, а сцену смотреть надо
+  DBG.render = render; DBG.applyDom = applyDom; DBG.resize = resize;
+  DBG.at = p => { render(p, performance.now()); applyDom(p); };
+}
+
+/* ── корзины цвета ───────────────────────────────────────────────────
+   Точки рисуются нативным fillRect в режиме lighter. Смена fillStyle —
+   самая дорогая операция, поэтому частицы раскладываются по корзинам
+   «оттенок × стадия перелёта», и стиль ставится один раз на корзину.   */
+const B_TONE = 6, B_STAGE = 8, NB = 2 * B_STAGE * B_TONE;
+let bx=null, by=null, bs=null, bBucket=null, bCount=null, bStart=null, bOrder=null, bCursor=null;
+
+function allocBuckets(n){
+  bx = new Float32Array(n); by = new Float32Array(n); bs = new Float32Array(n);
+  bBucket = new Uint8Array(n); bOrder = new Uint32Array(n);
+  bCount = new Uint32Array(NB); bStart = new Uint32Array(NB + 1); bCursor = new Uint32Array(NB);
+}
+
+// цвет корзины: базовый (белый / лаймовый) → тон портрета по мере перелёта
+function bucketColor(lime, stage, tone){
+  const e = (stage + 0.5) / B_STAGE;
+  // до конца не уходим в цвет фото: иначе портрет из точек получается тёмным
+  // силуэтом вместо светящегося облака
+  const mix = (e < 0.58 ? 0 : smooth((e - 0.58) / 0.42)) * 0.72;
+  const L = Math.min(255, 70 + ((tone + 0.5) / B_TONE) * 255 * 1.55);
+  let r = lime ? 205 : 226, g = lime ? 255 : 238, b = lime ? 79 : 255;
+  r += (L - r) * mix; g += (L * 1.03 - g) * mix; b += (L * 1.06 - b) * mix;
+  return [r|0, g|0, b|0];
+}
+
+/* ── кадр частиц ─────────────────────────────────────────────────── */
+function render(p, time){
+  if (!ready) return;
+  const cw=fx.width, ch=fx.height, gw=glowC.width, gh=glowC.height;
+  ctx.clearRect(0,0,cw,ch);
+  gctx.clearRect(0,0,gw,gh);
+  ctx.globalCompositeOperation = 'lighter';
+  gctx.globalCompositeOperation = 'lighter';
+
+  const vis = 1 - smooth(clamp((p-T.fadeIn)/(T.fadeEnd-T.fadeIn),0,1));
+  const t0  = Math.max(0, p-T.hold) / (T.flyEnd-T.hold);
+  const gs  = gw/W;
+
+  // облако едва заметно ведётся за курсором и замирает, когда собралось в лица
+  mx += (mtx - mx) * 0.06; my += (mty - my) * 0.06;
+  const par = vis * 14, parX = mx * par, parY = my * par * 0.7;
+
+  if (vis > 0.004){
+    bCount.fill(0);
+    let n = 0;
+
+    for (let i=0;i<N;i++){
+      const t = clamp((t0-P.dl[i])/P.du[i], 0, 1);
+      const e = easeInOut(t);
+      const om = 1-e;
+
+      let x = om*om*P.x0[i] + 2*om*e*P.cx[i] + e*e*P.x1[i];
+      let y = om*om*P.y0[i] + 2*om*e*P.cy[i] + e*e*P.y1[i];
+
+      const air = Math.sin(Math.PI*t);           // 0 на концах, 1 в середине полёта
+      const idle = t<=0 ? 1 : 0;
+      x += Math.sin(time*0.0009 + P.sd[i])     * (0.8*idle + air*5.0) + parX*(1-e*0.85);
+      y += Math.cos(time*0.0011 + P.sd[i]*1.7) * (0.8*idle + air*5.0) + parY*(1-e*0.85);
+
+      const S = (P.sw[i] + (P.sp[i]-P.sw[i])*e) * (1+air*0.22) * dpr;
+      const stage = clamp((e*B_STAGE)|0, 0, B_STAGE-1);
+      const bk = (P.lm[i] ? B_STAGE*B_TONE : 0) + stage*B_TONE + P.tn[i];
+
+      bx[n]=x*dpr; by[n]=y*dpr; bs[n]=S; bBucket[n]=bk; bCount[bk]++; n++;
+
+      // след по вектору — читается как motion blur на быстром скролле
+      // след рисуем не всем и только на заметном движении — иначе фаза разлёта
+      // упирается в заливку и кадр проседает
+      const vx=x-P.px[i], vy=y-P.py[i];
+      if ((i&3)===0 && vx*vx+vy*vy > 9 && n < bx.length){
+        bx[n]=(x-vx*0.5)*dpr; by[n]=(y-vy*0.5)*dpr; bs[n]=S*0.7;
+        bBucket[n]=bk; bCount[bk]++; n++;
+      }
+      P.px[i]=x; P.py[i]=y;
+    }
+
+    let acc=0;
+    for (let k=0;k<NB;k++){ bStart[k]=acc; bCursor[k]=acc; acc+=bCount[k]; }
+    bStart[NB]=acc;
+    for (let i=0;i<n;i++) bOrder[bCursor[bBucket[i]]++] = i;
+
+    for (let k=0;k<NB;k++){
+      const c0=bStart[k], c1=bStart[k+1];
+      if (c1<=c0) continue;
+      const lime = k >= B_STAGE*B_TONE ? 1 : 0;
+      const rest = k - lime*B_STAGE*B_TONE;
+      const stage = (rest / B_TONE) | 0, tone = rest % B_TONE;
+      const col = bucketColor(lime, stage, tone);
+      const air = Math.sin(Math.PI * ((stage+0.5)/B_STAGE));
+      const a = clamp((0.90 + air*0.26) * vis, 0, 1);
+
+      ctx.fillStyle  = `rgba(${col[0]},${col[1]},${col[2]},${a.toFixed(3)})`;
+      gctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${(a*0.85).toFixed(3)})`;
+      for (let j=c0;j<c1;j++){
+        const i=bOrder[j], s=bs[i];
+        ctx.fillRect(bx[i]-s*0.5, by[i]-s*0.5, s, s);
+        if ((j & 7) === 0){
+          const gsz = s*gs*3.2;
+          gctx.fillRect(bx[i]*gs/dpr - gsz*0.5, by[i]*gs/dpr - gsz*0.5, gsz, gsz);
+        }
+      }
+    }
+  }
+
+  const da = 0.13 + 0.20*(1-vis);
+  ctx.fillStyle = `rgba(178,196,224,${da.toFixed(3)})`;
+  for (let i=0;i<dustN;i++){
+    const x = (dust.x[i] + Math.sin(time*0.00013 + dust.p[i])*26) * dpr;
+    const y = (dust.y[i] + Math.cos(time*0.00010 + dust.p[i]*1.3)*20) * dpr;
+    const s = dust.s[i]*dpr*1.4;
+    ctx.fillRect(x, y, s, s);
+  }
+
+  ctx.globalCompositeOperation = 'source-over';
+  gctx.globalCompositeOperation = 'source-over';
+}
+
+/* ── DOM по прогрессу ────────────────────────────────────────────── */
+function applyDom(p){
+  const rev = smooth(clamp((p-T.cardIn)/(T.cardEnd-T.cardIn),0,1));
+  const cap = smooth(clamp((p-T.capIn)/(1-T.capIn),0,1));
+  const hd  = smooth(clamp((p-T.headIn)/0.18,0,1));
+
+  head.style.opacity = hd;
+  head.style.transform = `translate3d(0,${(1-hd)*10}px,0)`;
+
+  for (let i=0;i<cards.length;i++){
+    const off = i*0.022;                      // лесенка, чтобы не включались щелчком
+    const k = smooth(clamp((rev-off)/(1-off),0,1));
+    cards[i].style.opacity = k;
+    cards[i].style.transform = `scale(${0.975+0.025*k})`;
+    cards[i].style.setProperty('--focus', k.toFixed(3));   // фото схлопывается из расфокуса
+    caps[i].style.opacity = cap;
+    caps[i].style.transform = `translate3d(0,${(1-cap)*6}px,0)`;
+    if (flags[i]) flags[i].style.opacity = cap;
+    const s = clamp((rev-off)*1.7,0,1);
+    sheens[i].style.opacity = Math.sin(Math.PI*s)*0.85;
+    sheens[i].style.backgroundPosition = `${100-s*200}% 0`;
+  }
+}
+
+/* ── цикл ────────────────────────────────────────────────────────── */
+function readProgress(){
+  const r = stage.getBoundingClientRect();
+  const runway = Math.max(1, stage.offsetHeight - vp.offsetHeight);
+  return clamp(-r.top/runway, 0, 1);
+}
+
+function frame(now){
+  const r = stage.getBoundingClientRect();
+  if (r.top < window.innerHeight && r.bottom > 0){
+    progress = clamp(-r.top/Math.max(1, stage.offsetHeight - vp.offsetHeight), 0, 1);
+    render(progress, now);
+    if (Math.abs(progress-shown) > 0.0002){ applyDom(progress); shown = progress; }
+  }
+  requestAnimationFrame(frame);
+}
+
+function boot(){
+  resize();                       // сразу, не дожидаясь кадра: вкладка может быть в фоне
+  if (!ready) requestAnimationFrame(resize);
+
+  // ?frame=0.35 — застывший кадр нужной фазы: удобно смотреть и снимать отдельные моменты
+  const forced = parseFloat(new URLSearchParams(location.search).get('frame'));
+  if (isFinite(forced)){
+    document.body.classList.add('frame-mode');   // прячем подводку, сцена встаёт в экран
+    resize();
+    const p = clamp(forced, 0, 1);
+    render(p, 0);
+    applyDom(p);
+    if (new URLSearchParams(location.search).has('dbg')){
+      let x0=1e9,x1=-1e9;
+      for (let i=0;i<N;i++){ const v=P.x0[i]; if(v<x0)x0=v; if(v>x1)x1=v; }
+      const el = document.createElement('div');
+      el.style.cssText='position:fixed;left:6px;top:6px;z-index:99;color:#CDFF4F;font:12px monospace;background:#000a;padding:5px 8px;border-radius:6px';
+      el.textContent = `vw=${innerWidth} W=${W} N=${N} word=[${Math.round(x0)}..${Math.round(x1)}] шир=${Math.round(x1-x0)} fonts=${document.fonts.check('700 100px Unbounded')}`;
+      document.body.appendChild(el);
+    }
+    return;
+  }
+
+  const p = readProgress();
+  render(p, performance.now());
+  applyDom(p);
+  if (reduce){ applyDom(1); return; }
+  requestAnimationFrame(frame);
+}
+
+// без шрифта и фото слово и портреты сэмплируются пустыми
+Promise.all([
+  // ждём именно тот вес, которым рисуем слово, иначе замер уйдёт по fallback-шрифту
+  document.fonts
+    ? document.fonts.load('700 100px Unbounded').then(() => document.fonts.ready).catch(()=>{})
+    : Promise.resolve(),
+  ...cards.map(c => { const im=c.querySelector('img');
+    return im.complete ? Promise.resolve() : new Promise(r => { im.onload=im.onerror=r; }); })
+]).then(() => { DBG.step = 'assets-ready'; boot(); })
+  .catch(e => { DBG.step = 'assets-failed'; DBG.err = String(e); });
+
+// ResizeObserver ловит и появление размера после первого layout, и ресайз окна,
+// и смену высоты вьюпорта на телефоне при скрытии адресной строки
+let rt=0;
+const reflow = () => { clearTimeout(rt); rt=setTimeout(resize,150); };
+new ResizeObserver(reflow).observe(vp);
+
+if (matchMedia('(pointer:fine)').matches){
+  addEventListener('pointermove', e => {
+    mtx = (e.clientX / innerWidth  - 0.5) * 2;
+    mty = (e.clientY / innerHeight - 0.5) * 2;
+  }, {passive:true});
+}
+addEventListener('orientationchange', () => setTimeout(resize,320));
+})();
+</script>
+</body>
+</html>
