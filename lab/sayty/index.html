@@ -1092,12 +1092,87 @@
   .uqf__scene{transition:none}
 }
 
+/* ═══ FAQ КАК ПЕРЕПИСКА ════════════════════════════════════════════════
+   Обычный аккордеон «вопрос-плюсик» ничего не сообщает о компании. А выше
+   на странице мы обещаем ответ в Telegram за 15 минут — блок вопросов и
+   есть место, где это обещание можно показать, а не повторить словами.
+   Поэтому вопрос выглядит как сообщение клиента, ответ приходит от нас:
+   сначала полсекунды «печатает», потом текст. Разметка не тронута, всё
+   держится на существующих .sy-obj__q / .sy-obj__a, поэтому кнопка
+   остаётся кнопкой и клавиатурная навигация не ломается. */
+.sy-obj{gap:16px;max-width:720px}
+.sy-obj__i{border:0!important;background:none!important;border-radius:0;overflow:visible}
+.sy-obj__i.open{border-color:transparent}
+
+/* вопрос — реплика клиента, прижата вправо */
+.sy-obj__q{width:auto;max-width:86%;margin-left:auto;padding:13px 17px;
+  border-radius:16px 16px 4px 16px;
+  background:linear-gradient(180deg,rgba(205,255,79,.13),rgba(205,255,79,.07));
+  border:1px solid rgba(205,255,79,.26);color:#eaf3d8;font-size:14.5px;
+  justify-content:flex-start;gap:10px;
+  transition:background .2s ease,border-color .2s ease,transform .16s ease}
+.sy-obj__q:hover{background:linear-gradient(180deg,rgba(205,255,79,.18),rgba(205,255,79,.1));
+  border-color:rgba(205,255,79,.42)}
+.sy-obj__q:active{transform:scale(.99)}
+/* плюсик убираем: в переписке ему неоткуда взяться */
+.sy-obj__ic{display:none}
+
+/* ответ — реплика от нас, слева, с кружком-аватаром */
+.sy-obj__a{position:relative;max-width:86%;margin-top:10px;padding-left:38px}
+.sy-obj__a p{padding:12px 16px;margin:0;font-size:13.5px;line-height:1.55;
+  color:#c3cbd8;background:#131824;border:1px solid rgba(255,255,255,.07);
+  border-radius:16px 16px 16px 4px}
+/* аватар: кружок с лаймовой точкой — тот же знак, что у бренда в шапке */
+.sy-obj__a::before{content:"";position:absolute;left:0;bottom:10px;width:28px;height:28px;
+  border-radius:50%;background:radial-gradient(circle at 50% 45%,rgba(205,255,79,.9) 0 22%,transparent 24%),
+  linear-gradient(180deg,#1b2130,#141926);border:1px solid rgba(205,255,79,.3);
+  opacity:0;transition:opacity .25s ease .1s}
+.sy-obj__i.open .sy-obj__a::before{opacity:1}
+
+/* «печатает…»: три точки живут первые 0,45 с, потом их сменяет текст.
+   Целиком на CSS — задержками анимации, без единой строки JS. */
+.sy-obj__a::after{content:"";position:absolute;left:44px;bottom:18px;width:5px;height:5px;
+  border-radius:50%;background:var(--sy-mut);
+  box-shadow:9px 0 0 var(--sy-mut),18px 0 0 var(--sy-mut);opacity:0}
+.sy-obj__i.open .sy-obj__a::after{animation:uqqType .45s ease-out}
+@keyframes uqqType{0%,70%{opacity:.85}100%{opacity:0}}
+.sy-obj__i.open .sy-obj__a p{animation:uqqSay .32s cubic-bezier(.22,1,.36,1) .34s both}
+@keyframes uqqSay{from{opacity:0;transform:translateY(6px) scale(.985)}to{opacity:1;transform:none}}
+
+@media(max-width:620px){
+  .sy-obj{gap:13px}
+  .sy-obj__q{max-width:92%;padding:11px 14px;font-size:13.5px}
+  .sy-obj__a{max-width:94%;padding-left:32px}
+  .sy-obj__a p{font-size:12.5px;padding:10px 13px}
+  .sy-obj__a::before{width:24px;height:24px}
+  .sy-obj__a::after{left:38px}
+}
+@media(prefers-reduced-motion:reduce){
+  /* без анимации «печатает» не нужно: ответ показываем сразу и целиком */
+  .sy-obj__i.open .sy-obj__a::after{animation:none;opacity:0}
+  .sy-obj__i.open .sy-obj__a p{animation:none}
+  .sy-obj__q:active{transform:none}
+}
+
 /* ─── Три шага дизайнера ──────────────────────────────────────────────
    Ставится сразу после конфигуратора: человек только что увидел цену и
    первым делом думает «а не нарисует ли мне это программист за вечер».
    Блок отвечает ровно на это, поэтому он тихий: моно-номера, тонкие
    разделители, никакой заливки. Спорить с чеком выше он не должен. */
-.uqd-flow{margin:30px auto 0;max-width:1000px}
+/* Блок живёт только когда дизайнера выбрали в конфигураторе: если человек
+   его не добавил, рассказывать о работе дизайнера незачем — это обещание
+   того, за что он не платит. Появление через grid-template-rows 0fr→1fr,
+   а не max-height: высота считается по факту, без холостого хода в конце. */
+.uqd-flow{margin:0 auto;max-width:1000px;display:grid;grid-template-rows:0fr;
+  opacity:0;transition:grid-template-rows .5s cubic-bezier(.22,.9,.28,1),
+  opacity .34s ease,margin-top .5s cubic-bezier(.22,.9,.28,1)}
+.uqd-flow[hidden]{display:none}          /* до первого показа не занимает место */
+.uqd-flow > .uqd-flow__in{min-height:0;overflow:hidden}
+.uqd-flow.is-on{grid-template-rows:1fr;opacity:1;margin-top:30px}
+@media(prefers-reduced-motion:reduce){
+  .uqd-flow{transition:none}
+  .uqd-flow.is-on{grid-template-rows:1fr}
+}
 .uqd-flow__h{font-family:'Unbounded',sans-serif;font-weight:700;font-size:17px;
   line-height:1.3;letter-spacing:-.015em;text-align:center;margin-bottom:18px;text-wrap:balance}
 .uqd-flow__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;
@@ -2857,7 +2932,7 @@
                   <div class="up__cat__grid">
                     <label class="up__add" data-p="100" data-n="Дизайн под бренд" data-id="design" data-price-map='{"landing":50,"multi":100,"crmsite":110,"premium":0}'>
                       <input type="checkbox"><span class="chk"></span>
-                      <span class="tt"><b>Дизайн под бренд</b><span class="d"><span class="i">Не шаблон, а айдентика: цвет, шрифт, фото-подбор</span></span><span class="val"><span class="i">→ ваш сайт не спутают с шаблоном конкурента</span></span></span>
+                      <span class="tt"><b>Дизайн под бренд</b><span class="d"><span class="i">Подключается UI/UX-дизайнер: айдентика, цвет, шрифт, фото-подбор</span></span><span class="val"><span class="i">→ созвон до макета, ведёт разработку, принимает работу сам</span></span></span>
                       <span class="pp" data-usd="100" data-prefix="+">+$100</span>
                     </label>
                     <label class="up__add" data-p="80" data-n="Логотип и фирстиль" data-id="brand">
@@ -2967,8 +3042,9 @@
         <!-- Как работает дизайнер: три шага, по одной фразе на шаг.
              Смысл блока — снять частый страх «отдам деньги, получу шаблон,
              который рисовал программист между делом». -->
-        <div class="uqd-flow sy-rev" data-d="2">
-          <div class="uqd-flow__h">Сайт рисует UI/UX-дизайнер, а не программист между делом</div>
+        <div class="uqd-flow" id="uqdFlow" hidden>
+         <div class="uqd-flow__in">
+          <div class="uqd-flow__h">Дизайнер в вашем пакете: что он сделает</div>
           <div class="uqd-flow__grid">
             <div class="uqd-step">
               <span class="uqd-step__n">01</span>
@@ -2986,6 +3062,7 @@
               <span>Проверяет каждый экран, телефон в том числе. Что поехало, переделываем до сдачи, а не после ваших замечаний.</span>
             </div>
           </div>
+         </div>
         </div>
 
         <div class="sy-reel sy-rev" data-d="1">
@@ -3519,6 +3596,44 @@
        в отличие от россыпи карточек, где тот же приём читался как дрожь.
        Курсор ведём от центра секции, а не от самой воронки: она узкая, и
        по ней одной наклон срабатывал бы только при попадании точно в неё. */
+    /* Блок «что сделает дизайнер» показывается только когда дизайнера
+       добавили в пакет. Слушаем change на самом чекбоксе, а не click по
+       label: пресеты включают допы программно, и клика там не будет.
+       Премиум-тариф включает дизайн принудительно (цена 0, класс is-included),
+       поэтому проверяем фактическое состояние, а не то, кто его поставил. */
+    function uqdSync(){
+      var box = document.getElementById('uqdFlow');
+      var add = document.querySelector('.up__add[data-id="design"]');
+      if (!box || !add) return;
+      var on = add.classList.contains('on');
+      if (on){
+        box.hidden = false;
+        /* Снятие hidden и добавление класса в одном кадре transition не даёт:
+           браузеру нужно сначала применить display. Форсируем пересчёт чтением
+           offsetHeight — синхронно и без зависимости от requestAnimationFrame,
+           который в фоновой вкладке не вызывается вовсе. */
+        void box.offsetHeight;
+        box.classList.add('is-on');
+      } else {
+        box.classList.remove('is-on');
+      }
+      box.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+    /* Скрипт стоит выше блока в разметке, поэтому ждём разбора DOM: иначе
+       getElementById вернёт null и связка молча не заработает. */
+    function uqdBind(){
+      var add = document.querySelector('.up__add[data-id="design"]');
+      if (!add) return;
+      var inp = add.querySelector('input');
+      if (inp) inp.addEventListener('change', function(){ setTimeout(uqdSync, 0); });
+      /* пресеты и смена тарифа меняют класс .on мимо события change —
+         наблюдаем за атрибутом, это дешевле, чем опрашивать по таймеру */
+      new MutationObserver(uqdSync).observe(add, {attributes:true, attributeFilter:['class']});
+      uqdSync();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', uqdBind);
+    else uqdBind();
+
     /* Этот скрипт стоит выше воронки в разметке, поэтому ждём разбора DOM —
        иначе querySelector возвращает null и обработчик молча не вешается. */
     function uqfTilt(){
