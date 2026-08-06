@@ -190,6 +190,7 @@ let progress=0, shown=-1;
 let mtx=0,mty=0,mx=0,my=0;
 let mPx=-9999, mPy=-9999, mOn=0, mOnT=0;        // курсор в координатах сцены
 let hoverCard=-1, hoverAmt=0, hoverT=0;         // карточка под курсором
+const riseArr = new Array(8).fill(0);           // насколько проявлено фото каждой
 
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const smooth=t=>t*t*(3-2*t);
@@ -691,6 +692,7 @@ function applyDom(p){
     const k = smooth(clamp((rev-off)/(1-off),0,1));
     cards[i].style.transform = `scale(${0.972+0.028*k})`;
     const back = (i === hoverCard) ? hoverAmt : 0;
+    riseArr[i] = rise;
     cards[i].style.setProperty('--rise', (rise * (1 - back)).toFixed(3));
     cards[i].style.setProperty('--focus', k.toFixed(3));
     cards[i].style.setProperty('--edge', (edge*(0.45+0.55*k)).toFixed(3));
@@ -818,8 +820,10 @@ if (matchMedia('(pointer:fine)').matches){
 
   // наведение на человека возвращает его в точки, уход — собирает обратно
   cards.forEach((c, i) => {
-    // наводить имеет смысл только когда сцена доиграла — иначе мешает самой анимации
-    c.addEventListener('pointerenter', () => { if (progress > 0.9){ hoverCard = i; hoverT = 1; } });
+    // наводить имеет смысл только когда снимок уже собран: до этого сцена
+    // сама занята переходом. Смотрим на состояние карточки, а не на скролл —
+    // в режиме одиночного кадра прогресса нет вовсе
+    c.addEventListener('pointerenter', () => { if (riseArr[i] > 0.85){ hoverCard = i; hoverT = 1; } });
     c.addEventListener('pointerleave', () => { hoverT = 0; });
   });
 }
