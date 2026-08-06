@@ -233,6 +233,19 @@ float easeInOut(float t){
 void main(){
   float delay = a_meta.x, dur = a_meta.y, seed = a_meta.z, depth = a_meta.w;
 
+  // фото карточки наливается снизу вверх — точка гаснет тогда, когда волна
+  // дошла до её высоты. Никакого промежуточного размытия: где снимок появился,
+  // там точек уже нет
+  float rev  = clamp((u_p - u_fade.x) / max(0.001, u_fade.y - u_fade.x), 0.0, 1.0);
+  float off  = a_card * 0.022;
+  float rise = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
+  float melt = smoothstep(a_ry.x - 0.30, a_ry.x + 0.30, rise);
+  melt = max(melt, smoothstep(0.88, 1.0, rise));   // добивка: к концу не остаётся ни одной
+  // наведение возвращает частицы этой карточки: человек рассыпается под курсором
+  float onCard = step(abs(a_card - u_hoverCard), 0.5) * u_hoverAmt;
+  melt *= 1.0 - onCard;
+
+
   float t = clamp((u_t0 - delay) / dur, 0.0, 1.0);
   float e = easeInOut(t);
   float air = sin(3.14159265 * t);          // 0 на концах, 1 в середине перелёта
@@ -256,28 +269,18 @@ void main(){
   // параллакс: ближние слои ведутся сильнее
   pos += u_par * (0.4 + depth) * (1.0 - e*0.8);
 
-  // курсор расталкивает точки — облако живое даже когда сцена доиграла
-  vec2 dm = pos - u_mouse;
-  float dist = length(dm) + 0.001;
-  float R = 115.0;
-  float push = u_mouseOn * smoothstep(R, 0.0, dist);
-  pos += (dm / dist) * push * 19.0;          // возмущение, а не взрыв: лицо должно читаться
-  float lit = push * 0.55;                   // и лёгкая подсветка рядом с курсором
+  // Наведение срывает точки с их мест: каждая уходит на свою орбиту и живёт
+  // там, пока курсор на карточке. Человек рассыпается целиком, а не только
+  // под самим курсором.
+  float spin = seed * 39.7 + u_time * (0.45 + seed * 1.25);
+  float orbit = (14.0 + seed * 96.0) * onCard;
+  pos += vec2(cos(spin), sin(spin)) * orbit;
+  pos.y += sin(u_time * 0.85 + seed * 21.0) * 22.0 * onCard;
+  pos.x += cos(u_time * 0.62 + seed * 15.0) * 18.0 * onCard;
+  float lit = onCard * 0.35;
 
   gl_Position = vec4((pos / u_res) * 2.0 - 1.0, 0.0, 1.0);
   gl_Position.y = -gl_Position.y;
-
-  // фото карточки наливается снизу вверх — точка гаснет тогда, когда волна
-  // дошла до её высоты. Никакого промежуточного размытия: где снимок появился,
-  // там точек уже нет
-  float rev  = clamp((u_p - u_fade.x) / max(0.001, u_fade.y - u_fade.x), 0.0, 1.0);
-  float off  = a_card * 0.022;
-  float rise = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
-  float melt = smoothstep(a_ry.x - 0.30, a_ry.x + 0.30, rise);
-  melt = max(melt, smoothstep(0.88, 1.0, rise));   // добивка: к концу не остаётся ни одной
-  // наведение возвращает частицы этой карточки: человек рассыпается под курсором
-  float onCard = step(abs(a_card - u_hoverCard), 0.5) * u_hoverAmt;
-  melt *= 1.0 - onCard;
 
   float size = mix(a_size.x, a_size.y, e) * (1.0 + air * 0.12) * (0.62 + depth * 0.75);
   size *= 1.0 - melt * 0.55;                 // на прощание точка ужимается, а не просто гаснет
@@ -642,7 +645,7 @@ function render(p, time, speed){
   const gain = 1;
 
   // растворением теперь управляет шейдер покарточно; здесь только общий хвост
-  const vis = Math.max(1 - smooth(clamp((p-T.cardEnd+0.01)/0.04,0,1)), hoverAmt);
+  const vis = Math.max(1 - smooth(clamp((p-T.cardEnd+0.01)/0.04,0,1)), hoverAmt * 1.15);
   if (vis <= 0.004) return;
 
   mx += (mtx-mx)*0.06; my += (mty-my)*0.06;
