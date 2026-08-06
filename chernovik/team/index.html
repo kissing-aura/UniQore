@@ -197,7 +197,7 @@ attribute vec4 a_meta;     // delay, dur, seed, depth
 attribute vec3 a_col;      // цвет пикселя портрета
 attribute vec2 a_size;     // размер в слове / в портрете
 attribute float a_card;    // индекс карточки: точки тают в такт своему фото
-attribute float a_ry;      // высота внутри карточки: 0 у макушки, 1 у низа
+attribute vec2 a_ry;       // x: высота в карточке (0 макушка, 1 низ), y: метка дымки
 
 uniform vec2  u_res;
 uniform float u_t0;        // прогресс перелёта
@@ -251,9 +251,9 @@ void main(){
   float rev  = clamp((u_p - u_fade.x) / max(0.001, u_fade.y - u_fade.x), 0.0, 1.0);
   float off  = a_card * 0.022;
   float rise = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
-  float melt = smoothstep(a_ry - 0.30, a_ry + 0.30, rise);
+  float melt = smoothstep(a_ry.x - 0.30, a_ry.x + 0.30, rise);
 
-  float size = mix(a_size.x, a_size.y, e) * (1.0 + air * 0.55) * (0.62 + depth * 0.75);
+  float size = mix(a_size.x, a_size.y, e) * (1.0 + air * 0.12) * (0.62 + depth * 0.75);
   size *= 1.0 - melt * 0.55;                 // на прощание точка ужимается, а не просто гаснет
   float haze = step(0.88, fract(seed * 7.31));      // редкие крупные и мягкие — дымка
   size *= mix(1.0, 2.6, haze);
@@ -266,7 +266,10 @@ void main(){
   float toFace = smoothstep(0.55, 1.0, e);
   v_col = mix(mix(base, lime, air * 0.28), face, toFace);
 
-  v_alpha = u_vis * u_gain * (1.0 - melt) * (0.95 + air * 0.10) * (0.66 + depth * 0.44) * mix(1.0, 0.30, haze);
+  // дымка вокруг слова тусклая, пока слово стоит, и разгорается в полёте
+  float mist = a_ry.y * (1.0 - smoothstep(0.0, 0.45, e));
+  v_alpha = u_vis * u_gain * (1.0 - melt) * (1.30 - air * 0.45) * (0.66 + depth * 0.44)
+          * mix(1.0, 0.30, haze) * (1.0 - mist * 0.82);
 }`;
 
 const FRAG = `
@@ -348,7 +351,7 @@ function initGL(){
 
 /* ── точки слова ─────────────────────────────────────────────────── */
 function sampleWord(n){
-  const q = 2, OV = 1.7;
+  const q = 1.5, OV = 1.7;
   const c = document.createElement('canvas');
   c.width = Math.round(W*q*OV); c.height = Math.round(H*q);
   const offX = (W*OV - W)/2;
@@ -369,8 +372,10 @@ function sampleWord(n){
 
   const d = g.getImageData(0,0,c.width,c.height).data;
   const hits=[];
-  for (let y=0; y<c.height; y+=1)
-    for (let x=0; x<c.width; x+=1)
+  // шаг 2: при большом экране проход по каждому пикселю — это миллионы итераций,
+  // а точек для выборки хватает и так
+  for (let y=0; y<c.height; y+=2)
+    for (let x=0; x<c.width; x+=2)
       if (d[(y*c.width+x)*4+3] > 140) hits.push(x/q - offX, y/q);
 
   const total = hits.length/2;
@@ -402,7 +407,7 @@ function samplePortraits(n){
     const im = card.querySelector('img');
 
     // разрешение сэмплера: чем выше, тем детальнее лицо из точек
-    const sw = 150, sh = Math.max(1, Math.round(150 * r.height / r.width));
+    const sw = 230, sh = Math.max(1, Math.round(230 * r.height / r.width));
     c.width = sw; c.height = sh;
     g.clearRect(0,0,sw,sh);
 
@@ -473,7 +478,7 @@ function build(){
 
   const aWord=new Float32Array(N*2), aCtrl=new Float32Array(N*2), aDst=new Float32Array(N*2);
   const aMeta=new Float32Array(N*4), aCol=new Float32Array(N*3), aSize=new Float32Array(N*2);
-  const aCard=new Float32Array(N), aRy=new Float32Array(N);
+  const aCard=new Float32Array(N), aRy=new Float32Array(N*2);
 
   const cX=W/2, cY=H*0.46, scale=Math.min(W,H);
   let minX=1e9, maxX=-1e9;
@@ -482,7 +487,17 @@ function build(){
 
   for (let i=0;i<N;i++){
     const a=wi[i], b=di[i];
-    const sx=word[a*2], sy=word[a*2+1];
+    // в буквы кладём меньше половины частиц: при такой плотности слово иначе
+    // заливается в сплошное пятно. Остальные висят дымкой вокруг и разгораются
+    // уже в полёте
+    const mist = rnd(i*3.31) >= 0.44;
+    let sx=word[a*2], sy=word[a*2+1];
+    if (mist){
+      const ang = rnd(i*4.77)*6.2832, rad = Math.sqrt(rnd(i*5.53));
+      sx = cX + Math.cos(ang)*rad*W*0.42;
+      sy = cY + Math.sin(ang)*rad*H*0.30;
+      aRy[i*2+1] = 1;
+    }
     const tx=dst.xs[b], ty=dst.ys[b];
     const depth = rnd(i*12.7);
 
@@ -499,17 +514,17 @@ function build(){
     aCtrl[i*2+1] = my2 + ny*blast*0.5 - blast*0.55 + (rnd(i*6.31)-.5)*H*0.05;
 
     // волна распада слева направо, длительность у всех близкая
-    aMeta[i*4]   = ((sx-minX)/span)*0.22 + rnd(i*1.13)*0.06;
-    aMeta[i*4+1] = 0.46 + rnd(i*2.71)*0.12;
+    aMeta[i*4]   = ((sx-minX)/span)*0.50 + rnd(i*1.13)*0.11;
+    aMeta[i*4+1] = 0.30 + rnd(i*2.71)*0.10;
     aMeta[i*4+2] = rnd(i*9.41);
     aMeta[i*4+3] = depth;
 
     aCol[i*3]=dst.cr[b]; aCol[i*3+1]=dst.cg[b]; aCol[i*3+2]=dst.cb[b];
-    aCard[i]=dst.cardOf[b]; aRy[i]=dst.ryOf[b];
+    aCard[i]=dst.cardOf[b]; aRy[i*2]=dst.ryOf[b];
 
     const L = dst.cr[b]*0.299 + dst.cg[b]*0.587 + dst.cb[b]*0.114;
-    aSize[i*2]   = 0.95 + rnd(i*8.13)*0.70;                     // в слове видны отдельные точки
-    aSize[i*2+1] = (1.25 + rnd(i*8.13)*0.75) * (0.72 + L*0.7);  // в портрете светлое крупнее — даёт объём
+    aSize[i*2]   = 0.86 + rnd(i*8.13)*0.56;                     // в слове видны отдельные точки
+    aSize[i*2+1] = (0.96 + rnd(i*8.13)*0.58) * (0.72 + L*0.7);  // в портрете светлое крупнее — даёт объём
   }
 
   const put=(name,arr,size)=>{
@@ -519,7 +534,7 @@ function build(){
   };
   put('a_word',aWord,2); put('a_ctrl',aCtrl,2); put('a_dst',aDst,2);
   put('a_meta',aMeta,4); put('a_col',aCol,3);   put('a_size',aSize,2);
-  put('a_card',aCard,1); put('a_ry',aRy,1);
+  put('a_card',aCard,1); put('a_ry',aRy,2);
 
   ready = true; shown = -1;
   DBG.step='built'; DBG.N=N; DBG.W=W; DBG.H=H;
@@ -541,7 +556,9 @@ function resize(){
 
   // на GPU частицы почти бесплатны — плотность держим высокой,
   // именно она делает портрет из точек читаемым
-  N = Math.round(clamp((W*H)/19, 24000, 58000));
+  // на телефоне столько же точек класть нельзя — там и GPU слабее, и карточки мельче
+  N = Math.round(W < 760 ? clamp((W*H)/9, 32000, 62000)
+                         : clamp((W*H)/6.4, 70000, 175000));
 
   // заголовок мерим по факту: на широком экране он в одну строку, на узком в две,
   // и угаданный отступ его перекрывал
