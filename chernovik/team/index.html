@@ -63,8 +63,11 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
   display:grid;grid-template-columns:repeat(4,auto);grid-auto-rows:1fr;
   gap:var(--gap);justify-content:center;align-content:center}
 
+/* Пока карточка рассыпана, с ней улетает всё: снимок, рамка, подпись, бейдж.
+   Раньше оставалась висеть пустая рамка с текстом. */
 .card{position:relative;height:100%;aspect-ratio:13/16;margin:0;border-radius:clamp(10px,1vw,16px);
-  overflow:hidden;background:transparent;isolation:isolate;--focus:0;--edge:0;--rise:0;will-change:transform}
+  overflow:hidden;background:transparent;isolation:isolate;--focus:0;--edge:0;--rise:0;--blow:0;
+  opacity:calc(1 - var(--blow));will-change:transform,opacity}
 /* масштаб на время сборки не анимируем через transition — тянулся бы за скроллом */
 /* Фото проявляется резким и наливается снизу вверх через маску.
    Промежуточная размытая стадия убрана: кадр из восьми расфокусированных лиц
@@ -188,8 +191,10 @@ let gl=null, prog=null, buf={}, loc={}, ready=false;
 let progress=0, shown=-1;
 let mtx=0,mty=0,mx=0,my=0;
 let mPx=-9999, mPy=-9999, mOn=0, mOnT=0;        // курсор в координатах сцены
-let hoverCard=-1, hoverAmt=0, hoverT=0, pendingCard=-1;   // карточка под курсором
-const riseArr = new Array(8).fill(0);           // насколько проявлено фото каждой
+const infl = new Float32Array(8);              // насколько рассыпана каждая карточка
+const inflT = new Float32Array(8);             // и куда она стремится
+const rects = [];                              // геометрия карточек, обновляется при ресайзе
+const riseArr = new Array(8).fill(0);          // насколько проявлено фото каждой
 
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const smooth=t=>t*t*(3-2*t);
@@ -217,8 +222,8 @@ uniform float u_dpr;
 uniform vec2  u_par;       // параллакс за курсором
 uniform vec2  u_mouse;     // курсор в координатах сцены
 uniform float u_mouseOn;   // курсор в кадре
-uniform float u_hoverCard; // карточка под курсором, -1 если нет
-uniform float u_hoverAmt;  // насколько она рассыпана обратно в точки
+uniform vec4  u_infl0;     // насколько рассыпана каждая карточка: 0..3
+uniform vec4  u_infl1;     // и 4..7
 uniform float u_vis;       // общая видимость точек
 uniform float u_p;         // прогресс сцены
 uniform vec2  u_fade;      // начало и конец растворения точек
@@ -242,8 +247,13 @@ void main(){
   float rise = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
   float melt = smoothstep(a_ry.x - 0.30, a_ry.x + 0.30, rise);
   melt = max(melt, smoothstep(0.78, 0.97, rise));  // добивка: к концу не остаётся ни одной
-  // наведение возвращает частицы этой карточки: человек рассыпается под курсором
-  float onCard = step(abs(a_card - u_hoverCard), 0.5) * u_hoverAmt;
+  // Влияние курсора на свою карточку. Оно непрерывное: у края фото только
+  // начинает крошиться, в центре рассыпается целиком.
+  float onCard =
+      step(abs(a_card - 0.0), 0.5) * u_infl0.x + step(abs(a_card - 1.0), 0.5) * u_infl0.y +
+      step(abs(a_card - 2.0), 0.5) * u_infl0.z + step(abs(a_card - 3.0), 0.5) * u_infl0.w +
+      step(abs(a_card - 4.0), 0.5) * u_infl1.x + step(abs(a_card - 5.0), 0.5) * u_infl1.y +
+      step(abs(a_card - 6.0), 0.5) * u_infl1.z + step(abs(a_card - 7.0), 0.5) * u_infl1.w;
   melt *= 1.0 - onCard;
 
 
@@ -370,7 +380,7 @@ function initGL(){
   gl.useProgram(prog);
 
   ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry','a_rect'].forEach(n => { loc[n] = gl.getAttribLocation(prog, n); });
-  ['u_res','u_t0','u_time','u_dpr','u_par','u_vis','u_gain','u_p','u_fade','u_mouse','u_mouseOn','u_hoverCard','u_hoverAmt'].forEach(n => { loc[n] = gl.getUniformLocation(prog, n); });
+  ['u_res','u_t0','u_time','u_dpr','u_par','u_vis','u_gain','u_p','u_fade','u_mouse','u_mouseOn','u_infl0','u_infl1'].forEach(n => { loc[n] = gl.getUniformLocation(prog, n); });
   ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry','a_rect'].forEach(n => { buf[n] = gl.createBuffer(); });
 
   const fv = compile(gl.VERTEX_SHADER, FADE_VERT), ff = compile(gl.FRAGMENT_SHADER, FADE_FRAG);
@@ -590,6 +600,17 @@ function build(){
   put('a_meta',aMeta,4); put('a_col',aCol,3);   put('a_size',aSize,2);
   put('a_card',aCard,1); put('a_ry',aRy,2); put('a_rect',aRect,4);
 
+  rects.length = 0;
+  const vr = vp.getBoundingClientRect();
+  cards.forEach(c => {
+    const r = c.getBoundingClientRect();
+    rects.push({
+      cx: r.left - vr.left + r.width/2,
+      cy: r.top - vr.top + r.height/2,
+      reach: Math.max(r.width, r.height) * 0.92   // «рядом» начинается чуть за краем кадра
+    });
+  });
+
   ready = true; shown = -1;
   drawN = Math.min(N, 45000);        // стартуем с безопасного числа
   DBG.step='built'; DBG.N=N; DBG.W=W; DBG.H=H;
@@ -662,10 +683,24 @@ function render(p, time, speed){
   // точек нет, отрисовка выходит, а значит и hoverAmt не растёт
   mx += (mtx-mx)*0.06; my += (mty-my)*0.06;
   mOn += (mOnT - mOn) * 0.12;
-  hoverAmt += (hoverT - hoverAmt) * 0.16;
-  if (pendingCard >= 0 && hoverAmt < 0.05){        // предыдущий собрался — берём следующего
-    hoverCard = pendingCard; pendingCard = -1; hoverT = 1;
+
+  // Чем ближе курсор к центру карточки, тем сильнее она рассыпана. У края —
+  // только крошится, в центре — рассыпается целиком. Никаких включений разом.
+  let maxInfl = 0;
+  for (let i=0;i<rects.length;i++){
+    const r = rects[i];
+    let t = 0;
+    if (mOn > 0.02 && riseArr[i] > 0.85 && r){
+      const d = Math.hypot(mPx - r.cx, mPy - r.cy);
+      const k = clamp(1 - d / r.reach, 0, 1);
+      t = smooth(k) * mOn;
+    }
+    inflT[i] = t;
+    infl[i] += (t - infl[i]) * 0.14;
+    if (infl[i] < 0.002) infl[i] = 0;
+    if (infl[i] > maxInfl) maxInfl = infl[i];
   }
+  hoverAmt = maxInfl;
 
   const vis = Math.max(1 - smooth(clamp((p-T.cardEnd+0.01)/0.04,0,1)), hoverAmt * 1.15);
   if (vis <= 0.004) return;
@@ -683,8 +718,8 @@ function render(p, time, speed){
   gl.uniform2f(loc.u_fade, T.cardIn, T.cardEnd);
   gl.uniform2f(loc.u_mouse, mPx, mPy);
   gl.uniform1f(loc.u_mouseOn, mOn);
-  gl.uniform1f(loc.u_hoverCard, hoverCard);
-  gl.uniform1f(loc.u_hoverAmt, hoverAmt);
+  gl.uniform4f(loc.u_infl0, infl[0], infl[1], infl[2], infl[3]);
+  gl.uniform4f(loc.u_infl1, infl[4], infl[5], infl[6], infl[7]);
   gl.drawArrays(gl.POINTS, 0, drawN || N);
 }
 
@@ -708,9 +743,9 @@ function applyDom(p){
     const rise = clamp((revLin-off)/(1-off),0,1);
     const k = smooth(clamp((rev-off)/(1-off),0,1));
     cards[i].style.transform = `scale(${0.972+0.028*k})`;
-    const back = (i === hoverCard) ? hoverAmt : 0;
     riseArr[i] = rise;
-    cards[i].style.setProperty('--rise', (rise * (1 - back)).toFixed(3));
+    cards[i].style.setProperty('--rise', rise.toFixed(3));
+    cards[i].style.setProperty('--blow', infl[i].toFixed(3));
     cards[i].style.setProperty('--focus', k.toFixed(3));
     cards[i].style.setProperty('--edge', (edge*(0.45+0.55*k)).toFixed(3));
     caps[i].style.opacity = cap;
@@ -779,7 +814,7 @@ function frame(now){
     render(eased, now, speed);
     // Пересчитывать стили только по скроллу нельзя: наведение его не двигает,
     // и снимок после ухода курсора некому вернуть — карточка остаётся пустой.
-    const hoverLive = hoverAmt > 0.002 || hoverT > 0;
+    const hoverLive = hoverAmt > 0.002 || mOn > 0.02;
     if (Math.abs(eased-shown) > 0.0012 || hoverLive){ applyDom(eased); shown = eased; }
   }
   requestAnimationFrame(frame);
@@ -839,21 +874,7 @@ if (matchMedia('(pointer:fine)').matches){
   }, {passive:true});
   addEventListener('pointerleave', () => { mOnT = 0; }, {passive:true});
 
-  // наведение на человека возвращает его в точки, уход — собирает обратно
-  cards.forEach((c, i) => {
-    // наводить имеет смысл только когда снимок уже собран: до этого сцена
-    // сама занята переходом. Смотрим на состояние карточки, а не на скролл —
-    // в режиме одиночного кадра прогресса нет вовсе
-    c.addEventListener('pointerenter', () => {
-      if (riseArr[i] <= 0.85) return;
-      if (hoverCard >= 0 && hoverCard !== i && hoverAmt > 0.08){
-        pendingCard = i; hoverT = 0;      // предыдущего сначала собираем, потом рассыпаем нового
-      } else {
-        hoverCard = i; pendingCard = -1; hoverT = 1;
-      }
-    });
-    c.addEventListener('pointerleave', () => { hoverT = 0; pendingCard = -1; });
-  });
+  // отдельные обработчики не нужны: влияние считается по расстоянию до курсора
 }
 })();
 </script>
