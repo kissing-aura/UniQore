@@ -1186,6 +1186,869 @@
   .up__add.on .tt .d,.up__add.on .tt .val{max-height:none}
 }
 </style>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   UQT · КИНОСКЛЕЙКИ МЕЖДУ СЕКЦИЯМИ   (все имена с префиксом uqt-)
+
+   Задача: страница перестаёт читаться как список блоков и начинает
+   читаться как один непрерывный кадр, в котором меняется свет.
+
+   Три слоя, работающие вместе:
+     1) ГРЕЙД — фиксированный светофильтр во весь экран. У каждой секции
+        свой температурный регистр; кроссфейд 1,25 с делает шаг между
+        соседями незаметным, но верх (холодный индиго) и низ (мята)
+        отличаются очевидно. Драматургия: свежий старт → холод проблемы →
+        первое тепло → амбер премиума → раскол «до/после» → мятный итог.
+     2) СКЛЕЙКА — на стыке секций вместо резкой границы зажигается
+        световой шов: дымка растворяет край предыдущего кадра, из центра
+        прорезается линия, вдоль неё один раз проезжает блик.
+     3) ПЛЁНКА — статичные виньетка и зерно поверх фона. Именно они
+        собирают разные секции в одно изображение: кадр один, свет разный.
+
+   Почему это дёшево на длинной странице: ни один эффект не привязан к
+   позиции скролла. Работают IntersectionObserver + CSS-transition, и
+   анимируются только opacity/transform на фиксированных слоях —
+   composite-only, ноль layout и ноль работы на кадр прокрутки.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── СЛОЙ ПЛЁНКИ ───────────────────────────────────────────────────────
+   z-index:-1 и вставка сразу после .sy-bgfx: при равном z-index порядок
+   рисования решает DOM, поэтому грейд ложится поверх штатной авроры, но
+   остаётся под всем контентом (обычный поток рисуется выше отрицательных
+   слоёв). contain:layout paint — чтобы слой не участвовал в пересчётах
+   остальной страницы. */
+.uqt-film{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:layout paint}
+
+/* Тинт одной сцены. inset:-8% + стартовый scale — это и есть «камера»:
+   свет наплывает, а текст не двигается, поэтому не укачивает.
+   will-change не ставим: 10 слоёв × will-change = 10 лишних текстур,
+   браузер сам промоутит слой на время transition. */
+.uqt-film > i{position:absolute;inset:-5%;display:block;opacity:0;transform:scale(1.045);
+  transition:opacity 1.25s cubic-bezier(.4,0,.28,1),transform 1.9s cubic-bezier(.16,.72,.24,1)}
+.uqt-film > i.uqt-on{opacity:1;transform:scale(1)}
+
+/* Температурные регистры. Альфы 0,07–0,22: замерял средний RGB кромки на
+   живой странице — на .05–.15 арка не читалась вовсе, кромку съедала
+   виньетка и все сцены сходились в один и тот же hue 224°. Выше 0,22
+   начинает плыть контраст текста, это потолок.
+   Доминанта страницы — лайм; холодные сцены сознательно короче тёплых. */
+.uqt-film > .uqt-s0{background:                                     /* первый экран: свежий старт */
+  radial-gradient(62% 48% at 79% 6%,rgba(205,255,79,.13),transparent 64%),
+  radial-gradient(58% 44% at 2% 22%,rgba(49,224,176,.10),transparent 68%)}
+.uqt-film > .uqt-s1{background:                                     /* работы: камера отъезжает, холоднее */
+  radial-gradient(66% 50% at 90% 14%,rgba(167,139,250,.16),transparent 68%),
+  radial-gradient(70% 52% at 4% 84%,rgba(49,224,176,.12),transparent 68%)}
+.uqt-film > .uqt-s2{background:                                     /* цифры: сталь, почти монохром */
+  radial-gradient(92% 60% at 50% 2%,rgba(96,126,214,.17),transparent 70%),
+  radial-gradient(50% 40% at 92% 90%,rgba(205,255,79,.07),transparent 64%),
+  linear-gradient(180deg,rgba(8,11,26,0),rgba(8,11,26,.18))}
+.uqt-film > .uqt-s3{background:                                     /* «не просто сайт»: самая холодная точка + коралловый край проблемы */
+  radial-gradient(78% 58% at 86% 66%,rgba(167,139,250,.19),transparent 68%),
+  radial-gradient(50% 40% at 0% 8%,rgba(255,110,99,.11),transparent 66%),
+  linear-gradient(180deg,rgba(9,12,28,0),rgba(10,13,32,.30))}
+.uqt-film > .uqt-s4{background:                                     /* mid-CTA: первый тёплый вдох */
+  radial-gradient(62% 62% at 50% 50%,rgba(205,255,79,.18),transparent 64%),
+  radial-gradient(50% 40% at 8% 94%,rgba(49,224,176,.09),transparent 66%)}
+.uqt-film > .uqt-s5{background:                                     /* конфигуратор: амбер = деньги на столе */
+  radial-gradient(68% 54% at 16% 8%,rgba(242,184,75,.17),transparent 66%),
+  radial-gradient(62% 50% at 90% 88%,rgba(205,255,79,.12),transparent 68%)}
+.uqt-film > .uqt-s6{background:                                     /* «Было и стало»: кадр расколот по температуре */
+  radial-gradient(50% 88% at 0% 50%,rgba(255,110,99,.20),transparent 64%),
+  radial-gradient(50% 88% at 100% 50%,rgba(205,255,79,.19),transparent 64%)}
+.uqt-film > .uqt-s7{background:                                     /* вопросы: тепло спадает, низкий контраст */
+  radial-gradient(88% 58% at 50% 4%,rgba(205,255,79,.09),transparent 70%),
+  radial-gradient(56% 46% at 8% 90%,rgba(242,184,75,.08),transparent 68%),
+  linear-gradient(180deg,rgba(9,12,26,0),rgba(9,12,26,.22))}
+.uqt-film > .uqt-s8{background:                                     /* о компании: человеческое тепло */
+  radial-gradient(64% 50% at 78% 16%,rgba(205,255,79,.15),transparent 66%),
+  radial-gradient(60% 50% at 8% 88%,rgba(242,184,75,.13),transparent 68%)}
+.uqt-film > .uqt-s9{background:                                     /* заявка: мята = результат, самый светлый кадр */
+  radial-gradient(82% 62% at 50% 88%,rgba(49,224,176,.22),transparent 68%),
+  radial-gradient(54% 42% at 88% 2%,rgba(205,255,79,.13),transparent 66%)}
+
+/* Плёнка: зерно и виньетка живут в ОДНОМ элементе, слоями одного
+   background. Разными элементами это два полноэкранных прохода
+   композитинга вместо одного — на длинной странице разница измеримая
+   (проверял по времени кадра в headless: два слоя дороже одного вдвое).
+   Виньетка делает «кадр»: края собираются, фон под текстом темнеет.
+   Зерно статичное и без mix-blend-mode — blend пересчитывался бы при
+   каждом изменении подложки во время прокрутки. */
+.uqt-film .uqt-gv{position:absolute;inset:0;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E") 0 0/170px 170px repeat,
+    radial-gradient(128% 86% at 50% 44%,transparent 50%,rgba(2,4,11,.44) 100%),
+    linear-gradient(180deg,rgba(2,4,11,.30),transparent 15%,transparent 85%,rgba(2,4,11,.28))}
+
+/* ── СКЛЕЙКА НА СТЫКЕ ──────────────────────────────────────────────────
+   Шов вставляется между секциями отдельным элементом, а не через ::before
+   существующих секций: у чужих классов псевдоэлементы уже заняты, и любое
+   вмешательство в них — риск для 76 страниц общего CSS.
+   height:1px + margin-bottom:-1px: по вёрстке ноль, но у элемента есть
+   площадь — иначе IntersectionObserver на нулевом прямоугольнике
+   ведёт себя по-разному в разных движках. */
+.uqt-seam{position:relative;height:1px;margin-bottom:-1px;pointer-events:none;z-index:0}
+.uqt-seam > span{position:absolute;left:0;right:0;display:block;pointer-events:none}
+
+/* Дымка: низ предыдущего кадра уходит в тень, верх нового выходит из неё.
+   Это и есть «перетекание» вместо стыка двух div. */
+.uqt-seam__h{top:-130px;height:260px;opacity:0;transition:opacity 1.1s ease;
+  background:linear-gradient(180deg,transparent,rgba(3,5,13,.42) 44%,rgba(3,5,13,.42) 56%,transparent)}
+/* Ореол шва в цвете сцены, в которую входим */
+.uqt-seam__g{top:-95px;height:190px;opacity:0;transform:scaleX(.45);
+  transition:opacity 1.15s ease,transform 1.5s cubic-bezier(.16,.86,.24,1);
+  background:radial-gradient(50% 52% at 50% 50%,var(--uqt-cg,rgba(205,255,79,.1)),transparent 72%)}
+/* Линия — прорезается из центра */
+.uqt-seam__l{top:0;height:1px;opacity:0;transform:scaleX(0);transform-origin:50% 50%;
+  transition:opacity .55s ease,transform 1s cubic-bezier(.18,.86,.22,1);
+  background:linear-gradient(90deg,transparent 1%,var(--uqt-cd,rgba(205,255,79,.14)) 18%,var(--uqt-cl,rgba(205,255,79,.42)) 50%,var(--uqt-cd,rgba(205,255,79,.14)) 82%,transparent 99%)}
+/* Обойма блика: клипует его по горизонтали, чтобы проезд не смог
+   расширить документ (ловушка горизонтального скролла на 390px). */
+.uqt-seam__fw{top:-5px;height:10px;overflow:hidden}
+/* Без filter:blur — мягкость даёт сам градиент, а blur на восьми швах
+   означал бы восемь постоянных композитных слоёв ради 1,5 пикселя. */
+.uqt-seam__f{position:absolute;top:2.5px;left:38%;width:24%;height:5px;border-radius:5px;opacity:0;
+  background:radial-gradient(50% 50% at 50% 50%,var(--uqt-cl,rgba(205,255,79,.42)),transparent 76%)}
+
+.uqt-seam.uqt-in .uqt-seam__h{opacity:1}
+.uqt-seam.uqt-in .uqt-seam__g{opacity:1;transform:scaleX(1)}
+.uqt-seam.uqt-in .uqt-seam__l{opacity:1;transform:scaleX(1)}
+.uqt-seam.uqt-in .uqt-seam__f{animation:uqtFlare 1.15s cubic-bezier(.32,.06,.2,1) .16s both}
+@keyframes uqtFlare{
+  0%{opacity:0;transform:translateX(-170%) scaleX(.5)}
+  16%{opacity:1}
+  70%{opacity:.9}
+  100%{opacity:0;transform:translateX(170%) scaleX(1.5)}}
+
+/* «Было и стало» — единственный шов с расколом: слева коралл (было),
+   справа лайм (стало). Склейка договаривает то, о чём секция. */
+.uqt-seam[data-uqt-split] .uqt-seam__l{
+  background:linear-gradient(90deg,transparent 1%,rgba(255,110,99,.14) 14%,rgba(255,110,99,.46) 34%,rgba(205,255,79,.46) 66%,rgba(205,255,79,.14) 86%,transparent 99%)}
+.uqt-seam[data-uqt-split] .uqt-seam__g{
+  background:
+    radial-gradient(34% 52% at 30% 50%,rgba(255,110,99,.10),transparent 72%),
+    radial-gradient(34% 52% at 70% 50%,rgba(205,255,79,.10),transparent 72%)}
+
+/* Финальный шов перед формой — самый яркий: последняя склейка фильма */
+.uqt-seam[data-uqt-final] .uqt-seam__g{transform:scaleX(.55)}
+.uqt-seam[data-uqt-final].uqt-in .uqt-seam__g{transform:scaleX(1.12)}
+
+/* ── МОБИЛКА 390 ───────────────────────────────────────────────────────
+   Экран меньше, воздуха между секциями меньше (--sy-section-y падает со
+   150 до 50px), поэтому дымка и ореол сжимаются втрое — иначе соседние
+   швы наложатся друг на друга и получится каша. Виньетка тоже слабее:
+   на узком экране она съедает полезную ширину текста. */
+@media(max-width:640px){
+  .uqt-seam__h{top:-58px;height:116px;
+    background:linear-gradient(180deg,transparent,rgba(3,5,13,.34) 46%,rgba(3,5,13,.34) 54%,transparent)}
+  .uqt-seam__g{top:-42px;height:84px}
+  .uqt-film .uqt-gv{background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E") 0 0/128px 128px repeat,
+    radial-gradient(150% 78% at 50% 46%,transparent 56%,rgba(2,4,11,.34) 100%),
+    linear-gradient(180deg,rgba(2,4,11,.24),transparent 13%,transparent 88%,rgba(2,4,11,.22))}
+}
+
+/* ── REDUCED MOTION ────────────────────────────────────────────────────
+   Ключевое: ничего не «замораживаем» на невидимом кадре. Швы сразу в
+   финальном состоянии и не зависят ни от IntersectionObserver, ни от
+   класса .uqt-in; грейд остаётся, но переключается без кроссфейда и без
+   наплыва камеры; блик — единственное, что действительно ездит, — снят. */
+@media(prefers-reduced-motion:reduce){
+  .uqt-film > i{transform:none;transition:none}
+  .uqt-film > i.uqt-on{transform:none}
+  .uqt-seam__h{opacity:1;transition:none}
+  .uqt-seam__g{opacity:1;transform:scaleX(1);transition:none}
+  .uqt-seam__l{opacity:1;transform:scaleX(1);transition:none}
+  .uqt-seam[data-uqt-final].uqt-in .uqt-seam__g{transform:scaleX(1)}
+  .uqt-seam__fw{display:none}
+}
+</style>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   uqh — «свет включается»: усиление первого экрана /sayty/.
+   Ничего не переставляем и не переписываем: добавляем три слоя света
+   поверх существующей вёрстки и сводим россыпь независимых fade-in
+   в одну партитуру входа.
+
+   Почему именно так:
+   • Раньше каждый элемент героя жил своей анимацией syHeroIn с шагом
+     50-60 мс — на глаз это «всё появилось разом», без смысла и веса.
+     Здесь один ритм (шаг ~80-100 мс) и один тайминг-кёрв на всё.
+   • Слои света — псевдоэлементы уже существующих узлов, поэтому блок
+     самодостаточен: разметку страницы менять не нужно.
+   • Все стартовые состояния лежат ВНУТРИ @keyframes, базовое состояние
+     элемента — финальное. Если анимации выключены (reduce, старый
+     движок, страховочный таймер) — контент просто виден.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.sy-hero{
+  /* свой контекст наложения: слой плёнки идёт с z-index 6, а без изоляции
+     он считался бы в корневом контексте и лез поверх фикс-шапки (z 100 —
+     пронесло, но любой слой ниже неё оказался бы накрыт) */
+  isolation:isolate;
+  --uqh-e:cubic-bezier(.16,.84,.24,1);      /* общий «кинематографичный» выкат */
+  --uqh-e2:cubic-bezier(.3,.7,.2,1);
+}
+
+/* ─────────── 1. АУРА: объёмный свет, который дышит ─────────── */
+/* z-index:-1 — как у существующего .sy-hero__left::before, поэтому наша
+   аура ложится под него и под весь контент, но над фоном страницы. */
+.sy-hero::before{
+  content:'';position:absolute;z-index:-1;inset:-14% -12% -18%;pointer-events:none;
+  background:
+    /* виньетка первым слоем = она поверх остальных градиентов этого слоя:
+       края уходят в тень, взгляд собирается на заголовке и мокапе.
+       Свет держим лужами: залить лаймом весь экран — это как раз тот
+       «размытый фон без доминанты», из-за которого дорогой дарк
+       превращается в оливковую кашу. Фон обязан оставаться чёрным. */
+    radial-gradient(124% 92% at 46% 30%, transparent 44%, rgba(2,5,12,.55) 100%),
+    radial-gradient(24% 28% at 20% 20%, rgba(205,255,79,.13), transparent 68%),
+    radial-gradient(20% 24% at 1% 70%, rgba(49,224,176,.075), transparent 70%),
+    radial-gradient(32% 38% at 90% 38%, rgba(167,139,250,.065), transparent 70%);
+  opacity:.88;
+  /* translate отдельным свойством, а не в transform: дыхание анимирует
+     scale/opacity, и им нельзя драться за один transform с курсором */
+  translate:calc(var(--uqh-mx,0) * 26px) calc(var(--uqh-my,0) * 16px);
+  /* две анимации подряд: разгон с fill:both, дальше бесконечное дыхание.
+     Вторая в списке перебивает первую, но только когда её задержка вышла */
+  animation:uqhAuraIn 1.5s var(--uqh-e) both,
+            uqhAuraBreath 13s ease-in-out 1.5s infinite;
+}
+/* всплеск на 58% (~0.87 с) совпадает с моментом, когда загорается акцентное
+   слово: свет в «комнате» подхватывает вспышку, а не живёт отдельно */
+@keyframes uqhAuraIn   {0%{opacity:0;scale:.9} 58%{opacity:1;scale:1.02} 100%{opacity:.88;scale:1}}
+@keyframes uqhAuraBreath{0%,100%{opacity:.88;scale:1} 50%{opacity:1;scale:1.045}}
+
+/* ─────────── 2. ЛУЧ: одноразовый прогон света при загрузке ─────────── */
+/* Первый такт партитуры: по герою слева направо проходит мягкий лайм —
+   «включили свет», и уже в этом свете проявляются заголовок и мокап. */
+.sy-hero > .sy-container::before{
+  content:'';position:absolute;z-index:-1;top:-12%;bottom:-8%;left:0;width:34%;
+  pointer-events:none;opacity:0;
+  background:linear-gradient(102deg,transparent 0%,rgba(205,255,79,.12) 38%,rgba(233,255,205,.10) 52%,rgba(49,224,176,.06) 68%,transparent 100%);
+  filter:blur(26px);
+  animation:uqhBeam 1.7s cubic-bezier(.3,.62,.25,1) .06s both;
+}
+@keyframes uqhBeam{
+  0%  {opacity:0;  transform:translate3d(-130%,0,0) skewX(-9deg)}
+  16% {opacity:1}
+  72% {opacity:.5}
+  100%{opacity:0;  transform:translate3d(330%,0,0) skewX(-9deg)}
+}
+
+/* ─────────── 3. ПРОЖЕКТОР ЗА КУРСОРОМ ─────────── */
+/* Свет реагирует на мышь: пятно живёт в системе координат героя и ездит
+   только transform-ом (никаких repaint на градиенте). На тач-устройствах
+   класс .uqh-lit не появляется — слой остаётся невидимым и безвредным. */
+.sy-hero .sy-hero__grid::before{
+  content:'';position:absolute;z-index:-1;left:0;top:0;width:620px;height:620px;
+  margin:-310px 0 0 -310px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(205,255,79,.14),rgba(205,255,79,.05) 46%,transparent 72%);
+  opacity:0;transition:opacity .55s ease;
+  transform:translate3d(var(--uqh-px,50%),var(--uqh-py,40%),0);
+  will-change:transform;                     /* точечно: единственный слой, который ездит покадрово */
+}
+.sy-hero.uqh-lit .sy-hero__grid::before{opacity:1}
+
+/* ─────────── 4. ПЛЁНКА: зерно + мягкая тень по краям ─────────── */
+/* Зерно поверх всего (z 6) убирает «плоский CSS»: чистые градиенты на
+   тёмном всегда выдают генерацию, лёгкий шум читается как фотоплёнка.
+   Слой статичный — ни анимации, ни промоушена в отдельный слой. */
+.sy-hero::after{
+  content:'';position:absolute;z-index:6;inset:0;pointer-events:none;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size:180px 180px;
+}
+
+/* ═══════════ ПАРТИТУРА ВХОДА ═══════════ */
+/* Базовое правило перебивает syHeroIn. Задержки задаём поэлементно и
+   селектором из трёх классов: в sayty.css лежит .sy-hero .sy-rev[data-d="N"]
+   (0,3,0) — правило из двух классов проиграло бы ему по весу, а не по порядку. */
+.sy-hero .sy-rev{
+  animation-name:uqhRise;animation-duration:.8s;
+  animation-timing-function:var(--uqh-e);animation-fill-mode:both;
+}
+@keyframes uqhRise{
+  from{opacity:0;transform:translate3d(0,20px,0);filter:blur(6px)}
+  to  {opacity:1;transform:none;filter:none}
+}
+/* правая колонка приезжает «с весом»: дольше, дальше, с лёгким приближением.
+   Без blur — под ним целое поддерево мокапа, это дорогой кадр */
+@keyframes uqhStage{
+  from{opacity:0;transform:translate3d(0,26px,0) scale(.968)}
+  to  {opacity:1;transform:none}
+}
+
+/* Партитура (десктоп), одна сетка шагов ~80-110 мс:
+   свет → заголовок → сцена справа → обещание → цена → кнопка → мелочи. */
+.sy-hero .sy-rev.sy-hero__h1      {animation-delay:.08s;animation-duration:.9s}
+.sy-hero .sy-rev.sy-hero__right   {animation-name:uqhStage;animation-delay:.22s;animation-duration:.95s}
+.sy-hero .sy-rev.sy-hero__lead    {animation-delay:.28s}
+.sy-hero .sy-rev.sy-mfirst        {animation-delay:.36s}
+.sy-hero .sy-rev.sy-hero__pricebar{animation-delay:.42s}
+.sy-hero .sy-rev.sy-hero__cta     {animation-delay:.54s}
+.sy-hero .sy-rev.sy-guar          {animation-delay:.64s;animation-duration:.7s}
+.sy-hero .sy-rev.sy-hero__benefits{animation-delay:.72s;animation-duration:.7s}
+.sy-hero .sy-rev.sy-trustrow      {animation-delay:.80s;animation-duration:.7s}
+.sy-hero .sy-rev.sy-hero__proof   {animation-delay:.88s;animation-duration:.7s}
+
+/* ── заголовок: строки выезжают из-под кромки ──
+   Обёртки строк ставит скрипт. clip-path вместо overflow:hidden осознанно:
+   overflow потребовал бы padding + отрицательный margin, а тот схлопнулся бы
+   с margin-top самого h1 и сдвинул первый экран. clip-path на раскладку не
+   влияет вообще.
+   Кромку держим ровно по низу строки, иначе выносные элементы («р» в
+   «который») и подчёркивание выезжают из-под маски раньше времени и приём
+   рассыпается. Поэтому же маска СНИМАЕТСЯ в последнем кадре: в покое
+   ничего резать нельзя — там живут и хвосты букв, и лаймовая черта. */
+.sy-hero__h1 .uqh-l{display:block;clip-path:none}
+.sy-hero__h1 .uqh-li{display:block}
+.sy-hero .sy-rev.uqh-split{animation:none}          /* заголовок целиком больше не едет — едут строки */
+.sy-hero__h1.uqh-split .uqh-l{
+  animation:uqhMask .78s linear both;
+  animation-delay:calc(.08s + var(--uqh-i,0) * .11s);
+}
+.sy-hero__h1.uqh-split .uqh-li{
+  animation:uqhLine .78s var(--uqh-e) both;
+  animation-delay:calc(.08s + var(--uqh-i,0) * .11s);
+}
+/* Намеренно без opacity: строка выезжает из-за кромки, а не проявляется.
+   С фейдом приём умирает — на быстром выкате текст успевает стать видимым
+   раньше, чем сдвинется, и получается обычный fade-up, как у всех. */
+@keyframes uqhLine{from{transform:translate3d(0,150%,0)}to{transform:none}}
+@keyframes uqhMask{
+  0%,99%{clip-path:inset(-.55em -.35em 0 -.14em)}
+  100%  {clip-path:none}                            /* дискретное переключение в самом конце */
+}
+
+/* ── акцентное слово: приезжает белым и загорается лаймом ──
+   Через filter, а не color: filter в списке дешёвых свойств, а grayscale
+   на #CDFF4F даёт ровно тон основного текста — переход читается как
+   «слово включили», а не как смена краски. */
+/* Задержка .88s не случайна: к этому моменту маска строки уже снята,
+   иначе ореол drop-shadow срезало бы кромкой ровно по низу букв. */
+.sy-hero__h1 em{animation:uqhIgnite .5s var(--uqh-e2) .88s both}
+@keyframes uqhIgnite{
+  0%  {filter:grayscale(1) brightness(1.05)}
+  58% {filter:grayscale(.12) brightness(1.16) drop-shadow(0 0 14px rgba(205,255,79,.55))}
+  100%{filter:none}
+}
+/* подчёркивание — последний удар партитуры.
+   Заодно чиним хрупкость: раньше scaleX(1) приходил классом .in от
+   IntersectionObserver, и там, где IO не срабатывает, подчёркивания не было
+   вообще. Теперь это чистый CSS. */
+.sy-hero .sy-hero__h1 em::after{
+  transform-origin:left;
+  animation:uqhUnderline .55s var(--uqh-e) 1.12s both;
+}
+@keyframes uqhUnderline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ── кнопка «загорается» в конце фразы ── */
+.sy-hero .sy-btn--main{animation:uqhCta .9s var(--uqh-e2) .78s both}
+@keyframes uqhCta{
+  0%  {filter:brightness(.6) saturate(.7)}
+  58% {filter:brightness(1.12) saturate(1.06)}
+  100%{filter:none}
+}
+
+/* ── экран мокапа «включается»: блик проходит по стеклу ──
+   Совпадает по времени с тем, как демо-сайт внутри собирает себя (msBuild),
+   поэтому читается как одно событие, а не как два независимых. */
+.sy-hero .sy-browser::before{
+  content:'';position:absolute;z-index:5;top:0;bottom:0;left:-42%;width:38%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(205,255,79,.10) 40%,rgba(255,255,255,.13) 52%,transparent);
+  opacity:0;animation:uqhGlass 1.25s cubic-bezier(.35,.6,.25,1) .62s both;
+}
+@keyframes uqhGlass{
+  0%  {opacity:0;transform:translate3d(0,0,0) skewX(-14deg)}
+  14% {opacity:1}
+  100%{opacity:0;transform:translate3d(400%,0,0) skewX(-14deg)}
+}
+
+/* ── стекло ловит свет: блик на окне браузера ходит за курсором ──
+   Только transform по переменной — градиент не перерисовывается. */
+.sy-hero .sy-browser__view::after{
+  content:'';position:absolute;z-index:5;left:50%;top:50%;width:150%;height:200%;
+  margin:-100% 0 0 -75%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,255,255,.075),rgba(205,255,79,.03) 46%,transparent 72%);
+  transform:translate3d(calc(var(--uqh-mx,0) * 46px),calc(var(--uqh-my,0) * 34px),0);
+}
+
+/* ── страховка ──
+   Скрипт вешает .uqh-done через 2.4 с, когда партитура заведомо отыграна.
+   Если что-то застряло (сорванная анимация, вкладка проснулась в фоне,
+   чужой !important) — всё мгновенно снимается в финальное состояние.
+   Подчёркиванию финал нужно назначить явно: его базовое значение scaleX(0). */
+.sy-hero.uqh-done::before,
+.sy-hero.uqh-done .sy-rev,
+.sy-hero.uqh-done .uqh-l,
+.sy-hero.uqh-done .uqh-li,
+.sy-hero.uqh-done .sy-btn--main,
+.sy-hero.uqh-done .sy-browser::before,
+.sy-hero.uqh-done > .sy-container::before{animation:none}
+.sy-hero.uqh-done .sy-hero__h1 em{animation:none;filter:none}
+.sy-hero.uqh-done .sy-hero__h1 em::after{animation:none;transform:scaleX(1)}
+
+/* ═══════════ МОБИЛКА (≤768) ═══════════ */
+/* Тот же порядок тактов, но сжатый: трафик платный, ждать полторы секунды
+   ради красоты на телефоне нельзя. Прожектора нет — курсора нет. */
+@media (max-width:768px){
+  .sy-hero::before{
+    inset:-10% -20% -14%;
+    background:
+      radial-gradient(120% 74% at 50% 30%, transparent 54%, rgba(2,5,12,.38) 100%),
+      radial-gradient(46% 20% at 26% 12%, rgba(205,255,79,.20), transparent 72%),
+      radial-gradient(52% 22% at 74% 48%, rgba(49,224,176,.12), transparent 74%),
+      radial-gradient(60% 20% at 40% 84%, rgba(167,139,250,.10), transparent 74%);
+  }
+  .sy-hero > .sy-container::before{width:52%;animation-duration:1.2s;filter:blur(18px)}
+  .sy-hero::after{opacity:.045}
+
+  .sy-hero .sy-rev.sy-hero__h1   {animation-delay:.06s;animation-duration:.75s}
+  .sy-hero .sy-rev.sy-hero__lead {animation-delay:.20s;animation-duration:.7s}
+  .sy-hero .sy-rev.sy-hero__right{animation-delay:.26s;animation-duration:.85s}
+  .sy-hero .sy-rev.sy-hero__cta  {animation-delay:.44s;animation-duration:.65s}
+  .sy-hero__h1.uqh-split .uqh-l,
+  .sy-hero__h1.uqh-split .uqh-li {animation-duration:.66s;animation-delay:calc(.06s + var(--uqh-i,0) * .09s)}
+  .sy-hero__h1 em                {animation-delay:.72s}   /* после снятия маски второй строки (.15+.66) */
+  .sy-hero .sy-hero__h1 em::after{animation-delay:.92s;animation-duration:.5s}
+  .sy-hero .sy-btn--main         {animation-delay:.58s;animation-duration:.8s}
+  .sy-hero .sy-browser::before   {animation-delay:.5s;animation-duration:1s}
+
+  /* .lab-price и .lab-guar — не .sy-rev (на десктопе они скрыты),
+     но на телефоне это такты той же партитуры: цена → кнопка → гарантия */
+  .sy-hero .lab-price{animation:uqhRise .65s var(--uqh-e) .36s both}
+  .sy-hero .lab-guar {animation:uqhRise .65s var(--uqh-e) .54s both}
+  .sy-hero .lab-cap  {animation:uqhRise .65s var(--uqh-e) .46s both}
+  .sy-hero.uqh-done .lab-price,
+  .sy-hero.uqh-done .lab-guar,
+  .sy-hero.uqh-done .lab-cap{animation:none}
+}
+
+/* ═══════════ REDUCE ═══════════ */
+/* Глобальное animation:none заморозило бы кадр — поэтому здесь не только
+   выключаем движение, но и назначаем каждому слою финальный вид. */
+@media (prefers-reduced-motion:reduce){
+  .sy-hero::before,
+  .sy-hero .sy-rev,
+  .sy-hero__h1.uqh-split .uqh-l,
+  .sy-hero__h1.uqh-split .uqh-li,
+  .sy-hero__h1 em,
+  .sy-hero .sy-hero__h1 em::after,
+  .sy-hero .sy-btn--main,
+  .sy-hero .sy-browser::before,
+  .sy-hero .lab-price,
+  .sy-hero .lab-guar,
+  .sy-hero .lab-cap{animation:none!important}
+  .sy-hero::before{opacity:.9;scale:1}
+  .sy-hero__h1 em{filter:none}
+  .sy-hero .sy-hero__h1 em::after{transform:scaleX(1)}   /* иначе подчёркивание навсегда останется scaleX(0) */
+  .sy-hero__h1 .uqh-l{clip-path:none}
+  .sy-hero > .sy-container::before{display:none}         /* луч — чистый декор, в reduce он не нужен */
+  .sy-hero .sy-hero__grid::before{display:none}
+  .sy-hero .sy-browser__view::after{transform:none}
+}
+</style>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   UNIQORE · ФИРМЕННЫЙ ПРИЁМ «НАВОДКА» (focus pull)
+
+   Логотип бренда — лупа, продукт — «навести резкость на бизнес: хаос →
+   система». Отсюда единственный фирменный жест страницы: по каждому
+   заголовку один раз проходит лаймовое лезвие фокуса. Справа от него
+   слово ещё расфокусировано и двоится цветной каймой, под ним вспыхивает
+   лаймом, слева — стоит резко. Один приём, применённый подряд ко всем
+   заголовкам: H1 первого экрана и все восемь H2.
+
+   Почему это фирменное, а не универсальная красивость: визирный язык на
+   странице уже был заложен (sayty.css, «SIGNATURE 2 · Визир-скобки»), но
+   отключён `display:none!important` — скобки считались от чернил слова и
+   на многострочных заголовках разъезжались. Лезвие снимает эту привязку:
+   оно идёт по ширине блока и одинаково честно работает на одной строке и
+   на трёх.
+
+   Архитектура (важно, почему именно так): маску нельзя вешать на сам
+   заголовок — она обрезала бы и его потомков, то есть слои эффекта.
+   Поэтому текст заголовка на время прохода делается прозрачным, а рисуют
+   его три абсолютных клона внутри него; маски живут на клонах.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Единственная анимируемая величина всего приёма — положение лезвия в
+   долях ширины заголовка. Её читают все четыре слоя, поэтому анимация
+   ровно одна, а не четыре несинхронных.
+
+   initial-value:128% значит «лезвие уже ушло за правый край», то есть
+   ПОЛНОСТЬЮ ПРОЯВЛЕННЫЙ заголовок. Так задумано: если анимация не
+   стартует вообще (нет @property, анимации отключены, упал JS), маски
+   считаются с этого значения — резкий клон виден целиком, остальные
+   пустые. Состояния «по умолчанию невидимо» у приёма нет. */
+@property --uqs-p{syntax:'<percentage>';inherits:true;initial-value:128%}
+
+/* Заголовок-цель в покое. filter:none снимает родной blur(6px) у .sy-rev:
+   иначе первые 0,55 с накладываются два разных расфокуса и приём читается
+   как каша вместо наводки (заодно уходит самый дорогой кадр — filter на
+   тексте в 60px). */
+.uqs-h{position:relative;filter:none!important}
+
+/* ── заголовок на время прохода ───────────────────────────────────────
+   Текст оригинала прозрачный, но остаётся в потоке и в дереве
+   доступности: скринридер и поисковик видят обычный заголовок, меняется
+   только то, кто его рисует. Клоны — прямые потомки, поэтому `> em`
+   бьёт по акценту оригинала и не задевает акценты внутри клонов. */
+.uqs-run{color:transparent!important;text-shadow:none!important;
+  animation:uqsPull var(--uqs-dur,1020ms) cubic-bezier(.26,.7,.18,1) both}
+.uqs-run > em{color:transparent!important}
+.uqs-run > em::before,.uqs-run > em::after{opacity:0!important}
+
+/* Общее для трёх текстовых слоёв. inset:0 повторяет бокс заголовка, так
+   что переносы строк у клона те же, что у оригинала. */
+.uqs-cr,.uqs-gh,.uqs-wk{
+  position:absolute;inset:0;pointer-events:none;
+  -webkit-user-select:none;user-select:none;
+}
+
+/* ── слой 1: резкий текст, виден ТОЛЬКО слева от лезвия ───────────────
+   Кромка узкая (≈6% ширины) — граница «резко / не резко» должна читаться
+   как физический край стекла, а не как мягкий фейд.
+   Цвет проставляется инлайном из computed-стиля оригинала: заголовки
+   стоят на разных подложках, угадывать его константой нельзя. */
+.uqs-cr{
+  -webkit-mask-image:linear-gradient(90deg,#000 0 calc(var(--uqs-p) - 3%),rgba(0,0,0,.32) calc(var(--uqs-p) + .8%),rgba(0,0,0,0) calc(var(--uqs-p) + 3.4%));
+          mask-image:linear-gradient(90deg,#000 0 calc(var(--uqs-p) - 3%),rgba(0,0,0,.32) calc(var(--uqs-p) + .8%),rgba(0,0,0,0) calc(var(--uqs-p) + 3.4%));
+}
+
+/* ── слой 2: расфокус, виден ТОЛЬКО справа от лезвия ──────────────────
+   Радиус блюра и разбег каймы заданы в em, а не в px: заголовки на
+   странице от 24 до 60px, в пикселях эффект был бы либо не виден на
+   крупном, либо кашей на мелком.
+   Кайма лайм/лаванда — это хроматическая аберрация настоящей линзы, но
+   собранная из цветов бренда, чтобы не читалась как glitch-приём. */
+.uqs-gh{
+  color:#8e99ab;
+  filter:blur(.065em);
+  text-shadow:.06em 0 rgba(205,255,79,.58),-.055em 0 rgba(167,139,250,.5);
+  -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,0) 0 calc(var(--uqs-p) - 1.5%),rgba(0,0,0,.6) calc(var(--uqs-p) + 2.5%),#000 calc(var(--uqs-p) + 8%));
+          mask-image:linear-gradient(90deg,rgba(0,0,0,0) 0 calc(var(--uqs-p) - 1.5%),rgba(0,0,0,.6) calc(var(--uqs-p) + 2.5%),#000 calc(var(--uqs-p) + 8%));
+}
+/* акцентное слово в расфокусе — приглушённый лайм: это боке акцента, а не
+   второй акцент рядом с настоящим */
+.uqs-gh em{color:rgba(205,255,79,.48)!important}
+
+/* ── слой 3: лайм-след. Узкая полоса ровно под лезвием — буквы вспыхивают
+   фирменным цветом в момент прохода и гаснут в белый. Это и есть «щелчок
+   фокуса», и он работает на любом заголовке, даже без акцентного <em>. */
+.uqs-wk{
+  color:var(--sy-l,#CDFF4F);
+  text-shadow:0 0 .34em rgba(205,255,79,.45);
+  -webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,0) calc(var(--uqs-p) - 26%),rgba(0,0,0,.5) calc(var(--uqs-p) - 13%),#000 calc(var(--uqs-p) - 1.5%),rgba(0,0,0,.34) calc(var(--uqs-p) + 1.6%),rgba(0,0,0,0) calc(var(--uqs-p) + 2.8%));
+          mask-image:linear-gradient(90deg,rgba(0,0,0,0) calc(var(--uqs-p) - 26%),rgba(0,0,0,.5) calc(var(--uqs-p) - 13%),#000 calc(var(--uqs-p) - 1.5%),rgba(0,0,0,.34) calc(var(--uqs-p) + 1.6%),rgba(0,0,0,0) calc(var(--uqs-p) + 2.8%));
+}
+/* Инверсия на акценте: белое слово под лезвием вспыхивает лаймом, а
+   лаймовое (<em>) — добела. Так «щелчок фокуса» виден на любом слове,
+   а не пропадает ровно на самом важном. */
+.uqs-wk em{color:#f4ffd4!important;text-shadow:0 0 .3em rgba(205,255,79,.7)}
+
+/* Клоны не должны тащить декор оригинала: у .sy-hero__h1 em есть
+   подчёркивание ::after, у .sy-h2 em — визир-скобки. В трёх экземплярах
+   они читаются как артефакт вёрстки. */
+.uqs-cr em::before,.uqs-cr em::after,
+.uqs-gh em::before,.uqs-gh em::after,
+.uqs-wk em::before,.uqs-wk em::after{display:none!important}
+
+/* ── слой 4: само лезвие ──────────────────────────────────────────────
+   Рамка обрезает свет по краям заголовка: лезвие не вылезает в соседние
+   блоки и не может дать горизонтальную прокрутку.
+   Рамка по горизонтали строго 0/0 — её ширина обязана совпадать с шириной
+   заголовка, иначе translateX в процентах разойдётся с процентами в
+   масках и свет поедет мимо кромки. */
+.uqs-fr{position:absolute;left:0;right:0;top:-.26em;bottom:-.26em;
+  overflow:hidden;pointer-events:none}
+/* Двигаем только transform — единственное, что здесь идёт мимо layout.
+   Ширина = 100% рамки, поэтому translateX(-100% + p) ставит правый край
+   лезвия ровно в точку p. */
+.uqs-lens{position:absolute;top:0;left:0;width:100%;height:100%;
+  transform:translateX(calc(-100% + var(--uqs-p)));will-change:transform;
+  animation:uqsLens var(--uqs-dur,1020ms) cubic-bezier(.26,.7,.18,1) both}
+/* Свечение тянется ВЛЕВО, за лезвием — так читается направление движения.
+   Размеры в em, а не в %: одинаковая физика света на коротком и длинном
+   заголовке. Гаснет и по вертикали (эллипс, а не полоса): рамка обрезана
+   по краям заголовка, и у прямоугольного свечения был виден жёсткий срез
+   снизу — свет читался как заливка, а не как свет. */
+.uqs-lens::before{content:'';position:absolute;top:0;bottom:0;right:-.15em;width:3.6em;
+  background:radial-gradient(115% 58% at 100% 50%,rgba(205,255,79,.30),rgba(205,255,79,.10) 46%,rgba(205,255,79,0) 82%);
+  filter:blur(.16em);mix-blend-mode:screen}
+/* Само лезвие: 2px, с растворением на концах — читается как щель
+   объектива, а не как граница таблицы. mix-blend-mode:screen — свет
+   складывается с буквами, а не закрашивает их. */
+.uqs-lens::after{content:'';position:absolute;top:0;bottom:0;right:0;width:2px;
+  background:linear-gradient(180deg,rgba(205,255,79,0),rgba(238,255,190,.95) 16%,rgba(238,255,190,.95) 84%,rgba(205,255,79,0));
+  box-shadow:0 0 .5em rgba(205,255,79,.7);mix-blend-mode:screen}
+
+@keyframes uqsPull{from{--uqs-p:-16%}to{--uqs-p:128%}}
+/* лезвие гаснет на подлёте и на выходе — иначе на первом кадре оно
+   «включается» вспышкой у самого края заголовка */
+@keyframes uqsLens{0%{opacity:0}9%{opacity:1}85%{opacity:1}100%{opacity:0}}
+
+/* Тач: hover в приёме не участвует вообще — он срабатывает от появления в
+   кадре, на телефоне ровно то же, что на десктопе. Правится только физика
+   света: на заголовке 27px радиусы в em дают слишком мягкое пятно. */
+@media(max-width:768px){
+  .uqs-gh{filter:blur(.05em);text-shadow:.04em 0 rgba(205,255,79,.48),-.035em 0 rgba(167,139,250,.4)}
+  .uqs-lens::before{width:2.6em}
+  .uqs-lens::after{width:1.5px}
+  .uqs-fr{top:-.2em;bottom:-.2em}
+}
+
+/* Обязательная ветка. Здесь нельзя просто «выключить анимацию»: это
+   заморозило бы приём на первом кадре, где текст оригинала уже прозрачный,
+   и заголовок исчез бы навсегда. Поэтому ветка ВОЗВРАЩАЕТ статику —
+   оригиналу цвет, клоны прочь. JS в этом режиме и не стартует, правило
+   страхует случай, когда режим включили уже после запуска. */
+@media(prefers-reduced-motion:reduce){
+  .uqs-run{color:inherit!important;animation:none!important}
+  .uqs-run > em{color:var(--sy-l,#CDFF4F)!important}
+  .uqs-run > em::before,.uqs-run > em::after{opacity:.92!important}
+  .uqs-cr,.uqs-gh,.uqs-wk,.uqs-fr{display:none!important}
+}
+</style>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   uqm — микроанимации: цифры · карточки · переходы состояний
+   Один язык движения на всю страницу: вход быстрый, возврат медленный,
+   «перелёт» живёт в масштабе, а не в значении.
+   Всё, что двигается, лежит внутри @media (prefers-reduced-motion:no-preference) —
+   в reduce-режиме браузер просто не видит этих правил, поэтому заморозить
+   контент на невидимом первом кадре физически нечем.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{
+  --uqm-out:cubic-bezier(.16,1,.3,1);    /* уход/возврат — длинный хвост, ощущение массы */
+  --uqm-soft:cubic-bezier(.22,1,.36,1);  /* въезд контента */
+  --uqm-fast:cubic-bezier(.3,0,.7,1);    /* момент нажатия — почти линейно, палец не ждёт */
+}
+
+/* ── 1. ЦИФРЫ ─────────────────────────────────────────────────────────────
+   Пропорциональные цифры имеют разную ширину: во время счёта строка дышит
+   и тянет за собой соседей. tnum выравнивает все глифы по одной ширине.
+   Ставим на все числовые узлы страницы, даже статичные — при смене валюты
+   (₽ ↔ $ ↔ Br) длина строки меняется, и дрожание видно ровно так же.
+   Конфигуратор (.up*) не трогаем — там своя выверенная механика.        */
+.sy-trust__n,.sy-ba2__m b,.sy-pricepill,.sy-mr__pv,.sy-sticky__t,
+.sy-emo__proof,.sy-legal__req b,.sy-trustrow{
+  font-variant-numeric:tabular-nums lining-nums;
+  font-feature-settings:'tnum' 1,'lnum' 1;
+}
+/* Разрядность растёт (0 → 5 → 50) — ширина всё равно прыгнула бы на шаг цифры.
+   min-width JS проставляет по финальному значению ДО старта счёта. */
+.uqm-cnt{display:inline-block;text-align:center}
+
+@media (prefers-reduced-motion:no-preference){
+  /* Перелёт пружины отдаём масштабу ячейки. Показать «51» вместо 50 хотя бы
+     на 80 мс — соврать про цифру, а числа на этой странице проверяемые. */
+  .sy-trust__i.uqm-pop{animation:uqmPop .62s var(--uqm-soft) both}
+  @keyframes uqmPop{0%{scale:1}30%{scale:1.032}100%{scale:1}}
+  /* Подпись догоняет число: пока идёт счёт — приглушена и на 3px ниже.
+     Базовое состояние (без класса) — нормальное и видимое, поэтому даже
+     зависший JS не может её спрятать. */
+  .sy-trust__l{transition:opacity .45s ease .09s,translate .45s var(--uqm-out) .09s}
+  .sy-trust__i.uqm-run .sy-trust__l{opacity:.42;translate:0 3px;transition-delay:0s}
+  /* Метрики «было/стало» — не счётчик, а короткий подъём по одной.
+     Прозрачность не трогаем: её уже ведёт .sy-rev у родителя, второй
+     фейд поверх первого читался бы как подтормаживание. */
+  .sy-ba2__meta.in .sy-ba2__m{animation:uqmRise .5s var(--uqm-soft) both;animation-delay:calc(var(--uqm-i,0)*70ms)}
+  @keyframes uqmRise{from{translate:0 9px}to{translate:0 0}}
+}
+
+/* ── 2. КАРТОЧКИ: появление · наведение · нажатие ─────────────────────────
+   Нажатие делаем отдельным свойством scale, а не transform: оно
+   перемножается с чужими трансформами (hover-подъём карточки, инлайновый
+   magnetic-translate у кнопок) и потому ничего не перебивает и не ломает.
+   Длительности вынесены в переменные --uqm-d (наведение) и --uqm-s (нажатие):
+   так :hover и .uqm-press меняют только скорость, не переписывая весь
+   список transition — иначе одно правило молча гасит переходы из другого. */
+@media (prefers-reduced-motion:no-preference){
+
+  /* Появление карточек-фотографий. Было filter:blur(6px) на семи больших
+     карточках сразу — самый дорогой кадр страницы: каждая уходит в свой слой,
+     и растр пересобирается на каждом шаге анимации. Смысл («наводка на
+     резкость») не пропадает и без блюра, а кадр становится композитным. */
+  .sy-pf.sy-rev,.sy-tm.sy-rev{filter:none;transform:none;translate:0 24px}
+  .sy-pf.sy-rev.in,.sy-tm.sy-rev.in{translate:0 0}
+
+  /* Наведение: вход 260мс, уход 520мс. Асимметрия и есть ощущение веса —
+     предмет откликается мгновенно, а возвращается сам, по инерции. */
+  .sy-pf{--uqm-d:.52s;--uqm-s:.44s;
+    transition:opacity .62s var(--uqm-soft),translate .62s var(--uqm-soft),
+               transform var(--uqm-d) var(--uqm-out),border-color var(--uqm-d) ease,
+               box-shadow var(--uqm-d) var(--uqm-out),scale var(--uqm-s) var(--uqm-out)}
+  .sy-tm{transition:opacity .62s var(--uqm-soft),translate .62s var(--uqm-soft)}
+  .sy-get{--uqm-d:.48s;
+    transition:transform var(--uqm-d) var(--uqm-out),border-color var(--uqm-d) ease,
+               box-shadow var(--uqm-d) var(--uqm-out)}
+  .sy-pf:hover,.sy-get:hover{--uqm-d:.26s}
+
+  /* Нажатие. На тач-устройствах hover не существует вовсе — до этого
+     единственным откликом на палец было открытие новой вкладки. */
+  .sy-obj__i{--uqm-s:.42s;transition:border-color .25s ease,scale var(--uqm-s) var(--uqm-out)}
+  .sy-trust__names{--uqm-s:.42s;transition:color .2s ease,scale var(--uqm-s) var(--uqm-out)}
+  .sy-filter__b{--uqm-s:.4s;
+    transition:background-color .22s ease,color .22s ease,border-color .22s ease,
+               scale var(--uqm-s) var(--uqm-out)}
+  .sy-btn{--uqm-s:.42s;
+    transition:transform .2s cubic-bezier(.2,1,.3,1),box-shadow .3s ease,background .2s,
+               border-color .2s,scale var(--uqm-s) var(--uqm-out)}
+
+  /* Правила нажатия идут последними и имеют тот же вес, что :hover, —
+     нажатие поверх наведения обязано выигрывать, иначе палец ждёт 260мс. */
+  .sy-pf.uqm-press{--uqm-s:.09s;--uqm-d:.09s;scale:.985}
+  .sy-obj__i.uqm-press{--uqm-s:.09s;scale:.992}
+  .sy-trust__names.uqm-press{--uqm-s:.09s;scale:.99}
+  .sy-filter__b.uqm-press{--uqm-s:.08s;scale:.93}
+  .sy-btn.uqm-press{--uqm-s:.08s;scale:.96}
+  .uqm-press{transition-timing-function:var(--uqm-fast)}
+}
+/* Тач без анимаций тоже должен получать отклик — он не моторный, а цветовой */
+@media (prefers-reduced-motion:reduce){
+  .uqm-press{border-color:rgba(205,255,79,.45)}
+}
+
+/* ── 3. ПЕРЕХОДЫ СОСТОЯНИЙ ────────────────────────────────────────────── */
+@media (prefers-reduced-motion:no-preference){
+
+  /* 3a. Фильтр работ. Ушедшие карточки на 300мс становятся position:fixed
+     «призраком» — сетка перестраивается сразу, а гаснут они уже вне потока,
+     поэтому оставшиеся успевают доехать на новые места (FLIP), а не телепортироваться. */
+  .sy-pf.uqm-pf-ghost{display:flex!important}
+  .uqm-pf-in{animation:uqmPfIn .46s var(--uqm-soft) both}
+  @keyframes uqmPfIn{from{opacity:0;scale:.965;translate:0 10px}to{opacity:1;scale:1;translate:0 0}}
+
+  /* 3b. Аккордеон. Текст не проявляется на месте, а въезжает сверху —
+     схлопывание перестаёт читаться как обрыв. Закрытие быстрее открытия:
+     уходящий контент не должен размазываться. */
+  .sy-obj__i .sy-obj__a{transition:max-height .44s var(--uqm-soft),opacity .28s ease}
+  .sy-obj__i:not(.open) .sy-obj__a{transition:max-height .32s cubic-bezier(.4,0,.9,.5),opacity .15s ease}
+  .sy-obj__i .sy-obj__a p{translate:0 -8px;transition:translate .46s var(--uqm-soft)}
+  .sy-obj__i.open .sy-obj__a p{translate:0 0}
+  /* «+» → «×» с лёгким перелётом; rotate как отдельное свойство, чтобы
+     не спорить с transform из базового правила (его гасим явно). */
+  .sy-obj .sy-obj__i.open .sy-obj__ic{transform:none;rotate:45deg}
+  .sy-obj .sy-obj__i .sy-obj__ic{rotate:0deg;transition:rotate .5s cubic-bezier(.28,1.5,.45,1),background-color .25s ease}
+
+  /* 3c. Смена валюты. Цена не подменяется в кадре, а «садится» на место.
+     Класс вешаем ПОСЛЕ пересчёта currency.js — иначе анимировали бы
+     старое значение. Счётчики этим не трогаются: цены не считаются. */
+  .uqm-swap{animation:uqmSwap .34s var(--uqm-soft) both}
+  @keyframes uqmSwap{
+    0%{opacity:.12;translate:0 4px;filter:blur(2px)}
+    55%{opacity:1;filter:blur(0)}
+    100%{opacity:1;translate:0 0;filter:blur(0)}
+  }
+}
+</style>
+<style>
+/* ══════════════ UQE · дорогие интерактивные эффекты ══════════════
+   Дорого = точность отклика, а не количество эффектов. Поэтому всё держится
+   на одной физике: пружины с недодемпфированием (возврат с лёгким перелётом)
+   и ОДИН общий rAF-тик. Ни одного анимируемого width/height/top/left.
+
+   Что здесь:
+     1. Портфолио — наклон с инерцией, магнит, подъём, блик за курсором,
+        параллакс снимка (позиция + СКОРОСТЬ скролла), физика нажатия.
+     2. CTA — магнитное поле выходит за габарит кнопки: она тянется к руке
+        ещё до наведения и отпускает с перелётом.
+     3. Курсор-компаньон — кольцо отстаёт от курсора и сплющивается по
+        направлению движения; над карточкой показывает подпись.
+   Все подсистемы кормятся из одних источников (позиция курсора, его скорость,
+   скорость скролла), посчитанных один раз за кадр. */
+
+/* ── карточка портфолио ──
+   Убираем transform из списка transition: им теперь правит пружина, а
+   параллельный CSS-переход превращал бы каждый кадр в кашу. Тень и рамка
+   по-прежнему на CSS — их нельзя гнать покадрово, это paint, а не композит. */
+.uqe-card{
+  position:relative;                       /* якорь для блика: у .sy-pf position был static */
+  transition-property:border-color,box-shadow!important;
+  transition-duration:.42s!important;
+  transition-timing-function:cubic-bezier(.16,1,.3,1)!important;
+}
+.uqe-card.uqe-live{will-change:transform;z-index:2}   /* слой поднимаем только на время касания */
+
+/* Блик — отдельный элемент, а не подвижный градиент: его двигает transform,
+   поэтому свет за курсором не стоит ни одного перерисованного пикселя. */
+.uqe-sheen{
+  position:absolute;left:0;top:0;width:62%;height:104%;
+  margin-left:-31%;margin-top:-52%;                    /* центр блика попадает в точку (0,0) владельца */
+  border-radius:50%;pointer-events:none;opacity:0;z-index:6;
+  /* Слабый и холодный: под курсором фотография клиентского сайта, и заметная
+     лаймовая заливка читается как цветофильтр, а не как отсвет стекла. */
+  background:radial-gradient(closest-side,rgba(216,255,150,.115),rgba(205,255,79,.045) 44%,rgba(205,255,79,0) 76%);
+  mix-blend-mode:screen;will-change:transform,opacity;
+}
+/* На лаймовой кнопке лайм поверх лайма не читается — там блик белый и узкий,
+   как отсвет на полированной поверхности. */
+.uqe-sheen--white{
+  width:54%;height:240%;margin-left:-27%;margin-top:-120%;
+  background:radial-gradient(closest-side,rgba(255,255,255,.6),rgba(255,255,255,.18) 45%,rgba(255,255,255,0) 76%);
+  mix-blend-mode:soft-light;
+}
+
+/* Снимок внутри рамки: базовый зум — это запас, чтобы параллакс не обнажил край. */
+.uqe-ph{transition:none!important;will-change:transform;backface-visibility:hidden}
+
+/* Стрелка «Открыть →» уезжает вперёд вместе с подъёмом карточки */
+.uqe-card .sy-pf__cta{display:inline-block;transition:transform .55s cubic-bezier(.16,1,.3,1)}
+.uqe-card.uqe-live .sy-pf__cta{transform:translateX(5px)}
+
+/* ── магнитная кнопка ── */
+.uqe-mag{
+  position:relative;overflow:hidden;
+  transition-property:box-shadow,background-color,border-color,color!important;
+  transition-duration:.3s!important;
+}
+.uqe-mag.uqe-live{will-change:transform}
+
+/* ── курсор-компаньон ──
+   Фиксированный слой в клиппере: fixed-элемент, уехавший за правый край,
+   умеет расширять область прокрутки, а горизонтальный скролл тут запрещён. */
+.uqe-cwrap{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:9990}
+.uqe-ring{
+  position:absolute;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;
+  border:1px solid rgba(205,255,79,.5);background:rgba(205,255,79,0);opacity:0;
+  transition:opacity .2s ease,background-color .3s ease,border-color .3s ease;
+  will-change:transform,opacity;
+}
+.uqe-ring.uqe-oncard{background:rgba(205,255,79,.10);border-color:rgba(205,255,79,.8)}
+/* Подпись у курсора — тёмная плашка с лаймовым текстом, а не ещё один лаймовый
+   бейдж: на карточках уже висят «живой сайт», и второй яркий чип рядом с
+   курсором превращает аккуратную деталь в мигающую рекламу. */
+.uqe-pill{
+  position:absolute;left:0;top:0;transform-origin:0 50%;opacity:0;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8.5px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--sy-l,#CDFF4F);
+  background:rgba(9,13,22,.92);border:1px solid rgba(205,255,79,.4);
+  padding:4px 8px 3px;border-radius:5px;white-space:nowrap;
+  box-shadow:0 8px 22px -10px rgba(0,0,0,.9);
+  transition:opacity .18s ease;will-change:transform,opacity;
+}
+
+/* ── тач-ветка: hover не существует, но вес нажатия передать можно ──
+   Никакого rAF на телефоне: только короткий отклик на палец. */
+.uqe-tap{transition:transform .19s cubic-bezier(.2,.8,.3,1)!important}
+.uqe-tap.uqe-down{transform:scale(.968)!important}
+.sy-pf.uqe-tap.uqe-down{transform:scale(.985)!important}   /* большая карточка садится меньше */
+
+/* ── reduce-ветка ──
+   Скрипт в этом режиме вообще не стартует, классы не навешиваются. Правила
+   ниже — страховка на случай другой сборки: они ничего не прячут, только
+   возвращают статичный вид. Ни одно правило блока не ставит контенту
+   opacity:0 и не масштабирует его в ноль, поэтому «замерзание на первом
+   кадре» здесь невозможно в принципе — нечему пропадать. */
+@media (prefers-reduced-motion: reduce){
+  .uqe-cwrap,.uqe-sheen{display:none!important}
+  .uqe-ph{transform:none!important}
+  .uqe-card,.uqe-mag{transition-property:border-color,box-shadow!important}
+  .uqe-card .sy-pf__cta,.uqe-card.uqe-live .sy-pf__cta{transition:none;transform:none}
+  .uqe-tap.uqe-down,.sy-pf.uqe-tap.uqe-down{transform:none!important}
+}
+</style>
 </head>
 <body class="sy">
 <div style="position:sticky;top:0;z-index:9999;background:linear-gradient(90deg,#1a1400,#0A0E1A);border-bottom:1px solid rgba(242,184,75,.35);padding:9px 16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#F2B84B;letter-spacing:.02em">
@@ -4048,6 +4911,1040 @@ var WL = (function(){
     io.observe(items[0]);
     setTimeout(strike, 4000);        /* страховка: фраза не должна остаться незачёркнутой */
   } else { strike(); }
+})();
+</script>
+<script>
+/* UQT · сборка киносклеек. Скрипт только вешает наблюдателей и один раз
+   строит DOM — ничего не считает при прокрутке. Если он не отработает,
+   страница остаётся ровно такой, какой была: ни один блок контента от
+   него не зависит. */
+(function () {
+  'use strict';
+  if (window.__uqtFlow) return; window.__uqtFlow = 1;
+
+  var main = document.querySelector('main');
+  if (!main) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ── 1. Слой плёнки ────────────────────────────────────────────────
+     Ставим сразу после .sy-bgfx: одинаковый z-index:-1, поэтому порядок
+     в DOM решает, кто выше. Так грейд ложится на аврору, а не под неё. */
+  var film = document.createElement('div');
+  film.className = 'uqt-film';
+  film.setAttribute('aria-hidden', 'true');
+  var tints = [];
+  for (var s = 0; s < 10; s++) {
+    var i = document.createElement('i');
+    i.className = 'uqt-s' + s;
+    film.appendChild(i); tints.push(i);
+  }
+  var gv = document.createElement('div'); gv.className = 'uqt-gv'; film.appendChild(gv);
+  var bgfx = document.querySelector('.sy-bgfx');
+  if (bgfx && bgfx.parentNode) bgfx.parentNode.insertBefore(film, bgfx.nextSibling);
+  else document.body.insertBefore(film, document.body.firstChild);
+
+  var cur = -1;
+  function scene(n) {
+    if (n < 0 || n === cur) return;
+    if (cur >= 0) tints[cur].classList.remove('uqt-on');
+    tints[n].classList.add('uqt-on');
+    cur = n;
+  }
+  scene(0); /* первый экран получает свет до всякого IO */
+
+  /* ── 2. Карта сцен ────────────────────────────────────────────────
+     Привязка по id/классу, а не по порядковому номеру: на мобилке
+     .sy-hero скрыт, а .mh-vp показан — по индексу вся температурная
+     дуга съехала бы на одну секцию. Незнакомый блок сцену не меняет. */
+  function sceneOf(el) {
+    if (el.classList.contains('mh-vp') || el.classList.contains('sy-hero')) return 0;
+    if (el.id === 'portfolio') return 1;
+    if (el.classList.contains('sy-trust')) return 2;
+    if (el.id === 'features') return 3;
+    if (el.classList.contains('sy-midcta')) return 4;
+    if (el.id === 'design-team') return 5;
+    if (el.querySelector('.sy-slc')) return 6;   /* «Было и стало» — у секции нет id, ловим по струне */
+    if (el.id === 'faq') return 7;
+    if (el.id === 'o-kompanii') return 8;
+    if (el.id === 'zayavka') return 9;
+    return -1;
+  }
+
+  var blocks = [];
+  var mh = main.querySelector(':scope > .mh-vp');
+  if (mh) blocks.push(mh);
+  Array.prototype.forEach.call(main.querySelectorAll(':scope > section'), function (el) { blocks.push(el); });
+
+  if ('IntersectionObserver' in window) {
+    /* Полоса шириной 8% высоты экрана по центру: активна та секция,
+       которая сейчас реально перед глазами. */
+    var sio = new IntersectionObserver(function (es) {
+      for (var k = 0; k < es.length; k++) if (es[k].isIntersecting) scene(+es[k].target.dataset.uqtScene);
+    }, { rootMargin: '-46% 0px -46% 0px', threshold: 0 });
+    blocks.forEach(function (el) {
+      var n = sceneOf(el);
+      if (n < 0) return;
+      el.dataset.uqtScene = n;
+      sio.observe(el);
+    });
+  }
+
+  /* ── 3. Швы ────────────────────────────────────────────────────────
+     Цвет шва = температура секции, в которую входим: склейка «зажигает»
+     следующий кадр. Первая секция в DOM пропускается — над ней шапка. */
+  var RGB = ['205,255,79', '49,224,176', '205,255,79', '167,139,250', '205,255,79',
+             '242,184,75', '255,110,99', '205,255,79', '242,184,75', '49,224,176'];
+  var seams = [];
+  var lit = 0;
+
+  Array.prototype.forEach.call(main.querySelectorAll(':scope > section'), function (el, idx) {
+    if (idx === 0) return;                       /* .sy-hero — первый кадр, склеивать не с чем */
+    var n = sceneOf(el);
+    if (n < 0) return;
+
+    /* Если предыдущий блок закончился вплотную (у #features
+       padding-bottom:0 и снизу лежит bento), шов сядет на карточки —
+       такой стык не читается как склейка, он читается как царапина. */
+    var prev = el.previousElementSibling;
+    while (prev && prev.getBoundingClientRect().height === 0) prev = prev.previousElementSibling;
+    if (prev && parseFloat(getComputedStyle(prev).paddingBottom) < 24) return;
+
+    var c = RGB[n];
+    var seam = document.createElement('div');
+    seam.className = 'uqt-seam';
+    seam.setAttribute('aria-hidden', 'true');
+    seam.style.setProperty('--uqt-cl', 'rgba(' + c + ',.44)');
+    seam.style.setProperty('--uqt-cd', 'rgba(' + c + ',.13)');
+    seam.style.setProperty('--uqt-cg', 'rgba(' + c + ',.105)');
+    if (n === 6) seam.setAttribute('data-uqt-split', '');
+    if (n === 9) seam.setAttribute('data-uqt-final', '');
+    seam.innerHTML = '<span class="uqt-seam__h"></span><span class="uqt-seam__g"></span>' +
+                     '<span class="uqt-seam__l"></span><span class="uqt-seam__fw">' +
+                     '<span class="uqt-seam__f"></span></span>';
+    el.parentNode.insertBefore(seam, el);
+    seams.push(seam);
+  });
+
+  function lightAll() { seams.forEach(function (s) { s.classList.add('uqt-in'); }); lit = seams.length; }
+
+  if (!('IntersectionObserver' in window) || reduce) {
+    lightAll();                                  /* без IO и в reduced-motion шов виден сразу */
+  } else {
+    var bio = new IntersectionObserver(function (es) {
+      for (var k = 0; k < es.length; k++) if (es[k].isIntersecting) {
+        es[k].target.classList.add('uqt-in'); lit++; bio.unobserve(es[k].target);
+      }
+    }, { rootMargin: '0px 0px -16% 0px', threshold: 0 });
+    seams.forEach(function (s) { bio.observe(s); });
+
+    /* Страховка: начальное состояние шва невидимо, поэтому если IO по
+       какой-то причине не выстрелил ни разу — показываем всё как есть. */
+    setTimeout(function () { if (!lit) lightAll(); }, 3000);
+  }
+})();
+</script>
+<script>
+(function () {
+  'use strict';
+  var mm = window.matchMedia;
+  var reduce = !!(mm && mm('(prefers-reduced-motion:reduce)').matches);
+
+  /* ─── 1. Заголовок: обёртки строк ───
+     Ловим h1 через rAF, а не DOMContentLoaded: колбэк rAF выполняется ПЕРЕД
+     отрисовкой кадра, поэтому подмена успевает пройти раньше, чем строка
+     впервые попадёт на экран, и никакого мигания нет. */
+  var tries = 0, done = false;
+  function hunt() {
+    var h1 = document.querySelector('.sy-hero__h1');
+    if (!h1) { if (++tries < 240) requestAnimationFrame(hunt); return; }
+    if (done) return; done = true;
+    split(h1);
+    light();
+  }
+
+  function split(h1) {
+    if (reduce) return;                       // в reduce строки не едут — рвать разметку незачем
+    try {
+      /* если блочная анимация заголовка уже пошла (блок вставили в конец
+         body, а не в head) — не подменяем на лету, иначе будет рывок.
+         Тогда работает запасной вариант: h1 выезжает целиком. */
+      if (h1.getAnimations) {
+        var a = h1.getAnimations();
+        for (var k = 0; k < a.length; k++) if ((a[k].currentTime || 0) > 60) return;
+      } else if (performance.now() > 400) return;
+
+      if (h1.querySelectorAll('br').length !== 1) return;   // разметку сменили — тихо выходим
+
+      var groups = [[]], n = h1.childNodes, i;
+      for (i = 0; i < n.length; i++) {
+        if (n[i].nodeName === 'BR') { groups.push([]); continue; }
+        groups[groups.length - 1].push(n[i]);
+      }
+      var frag = document.createDocumentFragment();
+      groups.forEach(function (g, gi) {
+        var line = document.createElement('span'); line.className = 'uqh-l';
+        var inner = document.createElement('span'); inner.className = 'uqh-li';
+        inner.style.setProperty('--uqh-i', gi);
+        /* узлы переносим, а не клонируем: <em> должен остаться тем же
+           элементом — на него смотрит brackets.js и с ним связано
+           подчёркивание ::after */
+        g.forEach(function (node) { inner.appendChild(node); });
+        line.appendChild(inner); frag.appendChild(line);
+      });
+      h1.textContent = '';                    // остался только <br>
+      h1.appendChild(frag);
+      h1.classList.add('uqh-split');
+    } catch (e) { /* заголовок остаётся как был — блочная анимация его покажет */ }
+  }
+
+  /* ─── 2. Свет за курсором ───
+     Один rAF-тик на все переменные, инерционный лерп, остановка на финише.
+     Слушатель висит на самом герое, поэтому вне первого экрана не будит петлю. */
+  function light() {
+    var hero = document.querySelector('.sy-hero');
+    if (!hero || reduce) return;
+    if (!(mm && mm('(pointer:fine)').matches)) return;      // тач: пятна света нет, аура дышит сама
+
+    var raf = 0, box = null, first = true;
+    var tmx = 0, tmy = 0, cmx = 0, cmy = 0, tpx = 0, tpy = 0, cpx = 0, cpy = 0;
+
+    function tick() {
+      raf = 0;
+      var e = 0.12;
+      cmx += (tmx - cmx) * e; cmy += (tmy - cmy) * e;
+      cpx += (tpx - cpx) * e; cpy += (tpy - cpy) * e;
+      var s = hero.style;
+      s.setProperty('--uqh-mx', cmx.toFixed(4));
+      s.setProperty('--uqh-my', cmy.toFixed(4));
+      s.setProperty('--uqh-px', cpx.toFixed(1) + 'px');
+      s.setProperty('--uqh-py', cpy.toFixed(1) + 'px');
+      if (Math.abs(tmx - cmx) > .0015 || Math.abs(tmy - cmy) > .0015 ||
+          Math.abs(tpx - cpx) > .4 || Math.abs(tpy - cpy) > .4) kick();
+    }
+    function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+
+    hero.addEventListener('pointermove', function (ev) {
+      if (ev.pointerType === 'touch') return;
+      if (!box) box = hero.getBoundingClientRect();
+      tpx = ev.clientX - box.left; tpy = ev.clientY - box.top;
+      tmx = (tpx / box.width - .5) * 2; tmy = (tpy / box.height - .5) * 2;
+      if (first) { first = false; cpx = tpx; cpy = tpy; }   // первое пятно зажигаем под курсором, без заезда через полэкрана
+      hero.classList.add('uqh-lit');
+      kick();
+    }, { passive: true });
+
+    hero.addEventListener('pointerleave', function () {
+      tmx = 0; tmy = 0; hero.classList.remove('uqh-lit'); kick();
+    }, { passive: true });
+
+    /* прямоугольник героя сбрасываем на скролле и ресайзе — читаем его
+       заново на первом же движении мыши, а не каждый кадр */
+    function drop() { box = null; }
+    addEventListener('scroll', drop, { passive: true });
+    addEventListener('resize', drop, { passive: true });
+  }
+
+  /* ─── 3. Страховка ───
+     Партитура отыгрывает за ~1.65 с. На 2.4 с снимаем всё в финальное
+     состояние. Таймер заводится СРАЗУ и намеренно не зависит ни от rAF, ни от
+     IntersectionObserver: в окне, где отрисовка заморожена (фоновая вкладка,
+     перекрытое окно, часть webview), CSS-анимации стоят на нулевом кадре — а
+     это opacity:0. setTimeout в таком окне работает, и первый экран
+     проявляется, пусть и без анимации. */
+  setTimeout(function () {
+    var hero = document.querySelector('.sy-hero');
+    if (hero) hero.classList.add('uqh-done');
+  }, 2400);
+
+  requestAnimationFrame(hunt);
+  /* rAF в замороженном окне не приходит вовсе — дублируем вход по DOM-событию */
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hunt);
+  else hunt();
+})();
+</script>
+<script>
+/* Фирменный приём «Наводка»: один проход лезвия фокуса по каждому
+   заголовку. Разметку страницы не трогает — слои создаются на лету и
+   удаляются сразу после прохода; в покое от приёма остаётся один класс
+   на заголовке и больше ничего. */
+(function(){
+  'use strict';
+  var mm = window.matchMedia;
+  if (mm && mm('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+  /* Без @property var(--uqs-p) в маске невалиден на этапе computed-value:
+     mask-image схлопнулась бы в none, и все три клона легли бы друг на
+     друга непромаскированными. Проще не запускаться совсем. */
+  if (!(window.CSS && CSS.registerProperty)) return;
+  if (!(CSS.supports('mask-image','linear-gradient(#000,#000)') ||
+        CSS.supports('-webkit-mask-image','linear-gradient(#000,#000)'))) return;
+
+  var targets = [].slice.call(document.querySelectorAll('.sy-hero__h1, .sy-h2'));
+  if (!targets.length) return;
+  for (var i = 0; i < targets.length; i++) targets[i].classList.add('uqs-h');
+
+  function layer(cls, html){
+    var n = document.createElement('span');
+    n.className = cls;
+    n.setAttribute('aria-hidden','true');   /* клоны — только картинка */
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+
+  function run(el){
+    if (el.__uqs) return;
+    el.__uqs = 1;
+
+    /* H1 первого экрана крупнее и стоит один — ему нужен более длинный,
+       «кинематографический» проход; H2 идут пачкой и должны быть быстрее. */
+    var dur = el.classList.contains('sy-hero__h1') ? 1320 : 1020;
+    el.style.setProperty('--uqs-dur', dur + 'ms');
+
+    /* цвет снимаем ДО того, как оригинал станет прозрачным */
+    var ink = getComputedStyle(el).color;
+    var html = el.innerHTML;                /* <br> и <em> сохраняются —
+                                               клон ломается по строкам
+                                               ровно как оригинал */
+    var gh = layer('uqs-gh', html);
+    var cr = layer('uqs-cr', html); cr.style.color = ink;
+    var wk = layer('uqs-wk', html);
+    var fr = layer('uqs-fr', null);
+    fr.appendChild(document.createElement('i')).className = 'uqs-lens';
+
+    el.appendChild(gh); el.appendChild(cr); el.appendChild(wk); el.appendChild(fr);
+    el.classList.add('uqs-run');
+
+    var t = 0;
+    function clean(){
+      if (!t) return;
+      clearTimeout(t); t = 0;
+      el.removeEventListener('animationend', onEnd);
+      el.classList.remove('uqs-run');
+      el.style.removeProperty('--uqs-dur');
+      var n = [gh, cr, wk, fr];
+      for (var k = 0; k < 4; k++) if (n[k].parentNode) n[k].parentNode.removeChild(n[k]);
+    }
+    function onEnd(e){
+      /* animationend всплывает и от лезвия — реагируем только на свою */
+      if (e.animationName === 'uqsPull' && e.target === el) clean();
+    }
+    el.addEventListener('animationend', onEnd);
+    /* Страховка: вкладка могла уйти в фон и animationend не прийти —
+       по таймеру заголовок всё равно вернётся в чистое состояние. */
+    t = setTimeout(clean, dur + 1200);
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    for (var i = 0; i < entries.length; i++){
+      var e = entries[i];
+      if (!e.isIntersecting) continue;
+      io.unobserve(e.target);
+      run(e.target);
+    }
+  }, {threshold:.35, rootMargin:'0px 0px -5% 0px'});
+
+  var started = false;
+  function start(){
+    if (started) return; started = true;
+    for (var i = 0; i < targets.length; i++) io.observe(targets[i]);
+  }
+
+  /* Стартуем после шрифтов: Unbounded догружается, и клон, снятый до
+     подмены, разъехался бы по строкам относительно оригинала.
+     Плюс выдержка 950 мс — на первом экране в это время доигрывает родная
+     syHeroIn, а .uqs-run перебивает animation у того же элемента; оборвать
+     её на середине означало бы рывок заголовка. */
+  var wait = 950, t0 = Date.now();
+  function later(){ setTimeout(start, Math.max(0, wait - (Date.now() - t0))); }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(later);
+    setTimeout(later, 2200);              /* fonts.ready может не резолвнуться */
+  } else later();
+})();
+</script>
+<script>
+/* uqm — микроанимации. Инлайн в конце body: выполняется РАНЬШЕ любого defer-скрипта,
+   поэтому успевает забрать себе счётчики до того, как их подхватит sayty.js. */
+(function(){
+  'use strict';
+  var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches);
+  var canScale = !!(window.CSS && CSS.supports && CSS.supports('scale','1'));
+
+  /* ── общий rAF-тик: одна петля на все пружины, тик умирает сам ── */
+  var springs = [], running = false, last = 0;
+  function tick(now){
+    var dt = last ? Math.min(.032,(now-last)/1000) : .016; last = now;
+    for (var i = springs.length-1; i >= 0; i--){
+      var s = springs[i];
+      s.vel += (s.k*(s.to - s.v) - s.d*s.vel) * dt;
+      s.v   += s.vel * dt;
+      s.set(s.v);
+      if (Math.abs(s.to - s.v) < .004 && Math.abs(s.vel) < .02){ s.set(s.to); springs.splice(i,1); if (s.end) s.end(); }
+    }
+    if (springs.length) requestAnimationFrame(tick); else running = false;
+  }
+  function spring(from,to,set,k,d,end){
+    springs.push({v:from,vel:0,to:to,set:set,k:k,d:d,end:end});
+    if (!running){ running = true; last = 0; requestAnimationFrame(tick); }
+  }
+
+  /* ════════ 1. ЦИФРЫ ════════════════════════════════════════════════════
+     sayty.js крутит .sy-cnt своим ease-out'ом и пишет в тот же узел.
+     Забираем элементы себе прямо сейчас — defer-скрипт стартует позже
+     и просто не найдёт .sy-cnt, двух писателей в одном узле не будет. */
+  var cnts = [].slice.call(document.querySelectorAll('.sy-cnt'));
+  cnts.forEach(function(el){ el.classList.remove('sy-cnt'); el.classList.add('uqm-cnt'); });
+
+  var trustGrid = document.querySelector('.sy-trust__grid');
+  var trustCells = trustGrid ? [].slice.call(trustGrid.querySelectorAll('.sy-trust__i')) : [];
+  var numsDone = false;
+
+  function finishNums(){                      // конечные значения без анимации
+    numsDone = true;
+    cnts.forEach(function(el){
+      if (el.dataset.uqmRun) return;
+      el.dataset.uqmRun = '1';
+      var to = parseFloat(el.getAttribute('data-to')) || 0;
+      var dec = parseInt(el.getAttribute('data-dec'),10) || 0;
+      el.textContent = to.toFixed(dec) + (el.getAttribute('data-suf') || '');
+    });
+    trustCells.forEach(function(c){ c.classList.remove('uqm-run'); });
+  }
+
+  function lockWidths(){
+    /* Держим ширину коробки по ФИНАЛЬНОЙ строке, а не по той, что сейчас на
+       экране: если шрифты догрузились посреди счёта, замер «23+» дал бы узкий
+       замок и число потом раздвинуло бы соседей. Подмена текста и замер идут
+       в одном кадре — до отрисовки, поэтому мигания нет. */
+    cnts.forEach(function(el){
+      var to  = parseFloat(el.getAttribute('data-to')) || 0;
+      var dec = parseInt(el.getAttribute('data-dec'),10) || 0;
+      var fin = to.toFixed(dec) + (el.getAttribute('data-suf') || '');
+      var cur = el.textContent;
+      if (cur !== fin) el.textContent = fin;
+      var w = el.getBoundingClientRect().width;
+      if (cur !== fin) el.textContent = cur;
+      /* только расширяем: первый замер мог пройти на fallback-гарнитуре
+         (она уже), и тогда узкий замок не удержал бы настоящую ширину */
+      if (w > 0 && Math.ceil(w) + 1 > (parseFloat(el.style.minWidth) || 0))
+        el.style.minWidth = (Math.ceil(w) + 1) + 'px';
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(lockWidths).catch(function(){});
+  setTimeout(lockWidths, 900);                // подстраховка, если FontFaceSet не отдал промис
+  setTimeout(lockWidths, 2500);
+
+  function runCell(cell){
+    var el = cell.querySelector('.uqm-cnt');
+    if (!el){                                  // ячейка без счётчика («0 ₽») — только импульс
+      cell.classList.add('uqm-pop');
+      return;
+    }
+    if (el.dataset.uqmRun) return;
+    el.dataset.uqmRun = '1';
+    var to  = parseFloat(el.getAttribute('data-to')) || 0;
+    var dec = parseInt(el.getAttribute('data-dec'),10) || 0;
+    var suf = el.getAttribute('data-suf') || '';
+    var fin = to.toFixed(dec) + suf;
+    if (reduce){ el.textContent = fin; return; }
+    lockWidths();
+    cell.classList.add('uqm-run');
+    var stopped = false;
+    function land(){                        // финал: цифра на месте, подпись возвращается
+      if (stopped) return;
+      stopped = true;
+      el.textContent = fin;
+      cell.classList.remove('uqm-run');
+      cell.classList.add('uqm-pop');
+    }
+    spring(0, to, function(v){
+      if (stopped) return;
+      var shown = Math.min(to, Math.max(0, v));
+      el.textContent = shown.toFixed(dec) + suf;
+      /* импульс запускаем чуть раньше финиша — иначе масштаб «догоняет»
+         уже остановившееся число и читается как два отдельных события */
+      if (to - shown < Math.max(.6, to * .025)){
+        cell.classList.remove('uqm-run');
+        cell.classList.add('uqm-pop');
+      }
+    }, 72, 14.5, land);
+    /* Сторож: если кадры идут редко (слабый телефон, фоновая вкладка),
+       счёт растянется — а подпись всё это время приглушена. Через 1,6с
+       ставим финал сами: цифра важнее анимации. */
+    setTimeout(land, 1600);
+  }
+
+  function startTrust(){
+    if (numsDone) return;
+    numsDone = true;
+    if (reduce){ finishNums(); return; }
+    trustCells.forEach(function(cell,i){ setTimeout(function(){ runCell(cell); }, i * 90); });
+  }
+
+  if (trustCells.length){
+    if ('IntersectionObserver' in window){
+      var nio = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if (e.isIntersecting){ startTrust(); nio.disconnect(); } });
+      }, { threshold:.45 });
+      nio.observe(trustGrid);
+      /* Страховка: в разметке уже стоят финальные значения, счёт их только
+         оживляет. Если наблюдатель не отработал (фоновая вкладка, скрытый
+         контейнер) — через 3с оставляем цифры как есть, без анимации. */
+      setTimeout(function(){ if (!numsDone) finishNums(); }, 3000);
+    } else finishNums();
+  }
+
+  /* метрики «было/стало»: порядковый номер для CSS-каскада */
+  [].slice.call(document.querySelectorAll('.sy-ba2__meta .sy-ba2__m')).forEach(function(m,i){
+    m.style.setProperty('--uqm-i', i);
+  });
+
+  /* ════════ 2. КАРТОЧКИ ═════════════════════════════════════════════════ */
+
+  /* 2a. Порядок появления. В разметке data-d расставлены вручную и вразнобой
+     (2, —, 1, 2, 1, 1) — карточки всплывают в случайном порядке. Считаем
+     задержку по реальной строке сетки: слева направо, каждая новая строка
+     начинается заново. Инлайн-стиль перебивает [data-d]. */
+  function stagger(sel, step){
+    var grid = document.querySelector(sel);
+    if (!grid) return;
+    var rows = {};
+    [].slice.call(grid.children).forEach(function(c){
+      if (!c.classList || !c.classList.contains('sy-rev') || c.classList.contains('in')) return;
+      if (c.getBoundingClientRect().width < 1) return;         // скрытые по медиазапросу — мимо
+      var row = Math.round(c.offsetTop / 10);
+      rows[row] = (rows[row] || 0) + 1;
+      c.style.transitionDelay = Math.min(rows[row]-1, 5) * step + 'ms';
+    });
+  }
+  function restagger(){ stagger('.sy-pf__grid', 65); stagger('.sy-team__grid', 55); }
+  if (!reduce){
+    restagger();
+    var rt = 0;
+    window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(restagger, 200); }, {passive:true});
+  }
+
+  /* 2b. Нажатие. Один делегированный слушатель на всё; класс снимается
+     и по отпусканию, и по скроллу — палец, уехавший в прокрутку, не должен
+     оставить карточку «залипшей». */
+  if (canScale && !reduce){
+    var PRESS = '.sy-pf,.sy-filter__b,.sy-obj__i,.sy-btn,.sy-trust__names';
+    var held = null;
+    function release(){ if (held){ held.classList.remove('uqm-press'); held = null; } }
+    document.addEventListener('pointerdown', function(e){
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      var t = e.target && e.target.closest ? e.target.closest(PRESS) : null;
+      if (!t) return;
+      release();
+      held = t; t.classList.add('uqm-press');
+    }, {passive:true, capture:true});
+    document.addEventListener('pointerup', release, {passive:true, capture:true});
+    document.addEventListener('pointercancel', release, {passive:true, capture:true});
+    window.addEventListener('scroll', release, {passive:true});
+    window.addEventListener('blur', release);
+  }
+
+  /* ════════ 3. ПЕРЕХОДЫ ═════════════════════════════════════════════════ */
+
+  /* 3a. Фильтр работ — FLIP.
+     sayty.js подписан на сами кнопки (target-фаза) и ставит display:none.
+     Наш слушатель висит на document в capture — гарантированно раньше,
+     поэтому исходные позиции успеваем снять до перестройки сетки.
+     Конечные читаем в rAF: он всегда после всех обработчиков клика,
+     независимо от того, в каком порядке кто подписался. */
+  var pfGrid = document.querySelector('.sy-pf__grid');
+  if (pfGrid && canScale && !reduce){
+    var ghosts = [];                       // незавершённые уходы — чистим перед новым кликом
+    function clearGhosts(){
+      ghosts.splice(0).forEach(function(g){ clearTimeout(g.t); g.done(); });
+    }
+    function visible(el){
+      return el.style.display !== 'none' && el.getBoundingClientRect().width > 1;
+    }
+    function ghost(el, r){
+      var st = el.style, g = { t:0, done:function(){
+        el.classList.remove('uqm-pf-ghost');
+        st.position = st.left = st.top = st.width = st.height = st.margin = '';
+        st.zIndex = st.pointerEvents = st.transition = st.opacity = st.scale = '';
+      }};
+      st.position = 'fixed'; st.left = r.left + 'px'; st.top = r.top + 'px';
+      st.width = r.width + 'px'; st.height = r.height + 'px'; st.margin = '0';
+      st.zIndex = '4'; st.pointerEvents = 'none';
+      st.transition = 'opacity .26s ease,scale .3s cubic-bezier(.4,0,1,1)';
+      el.classList.add('uqm-pf-ghost');     // display:flex!important перебивает инлайновый none
+      requestAnimationFrame(function(){ st.opacity = '0'; st.scale = '.955'; });
+      g.t = setTimeout(function(){
+        var k = ghosts.indexOf(g); if (k > -1) ghosts.splice(k,1);
+        g.done();
+      }, 310);
+      ghosts.push(g);
+    }
+    document.addEventListener('click', function(e){
+      var btn = e.target && e.target.closest ? e.target.closest('.sy-filter__b') : null;
+      if (!btn) return;
+      clearGhosts();
+      var first = [].slice.call(pfGrid.querySelectorAll('.sy-pf')).map(function(el){
+        var v = visible(el);
+        return { el:el, v:v, r: v ? el.getBoundingClientRect() : null };
+      });
+      requestAnimationFrame(function(){
+        try {
+          var entered = 0;
+          first.forEach(function(f){
+            var el = f.el, now = visible(el);
+            if (f.v && !now){ ghost(el, f.r); return; }
+            if (!f.v && now){
+              el.style.animationDelay = (entered++ * 45) + 'ms';
+              el.classList.add('uqm-pf-in');
+              setTimeout(function(){ el.classList.remove('uqm-pf-in'); el.style.animationDelay = ''; }, 700);
+              return;
+            }
+            if (!f.v || !now) return;
+            var r = el.getBoundingClientRect();
+            var dx = f.r.left - r.left, dy = f.r.top - r.top;
+            if (Math.abs(dx) < .5 && Math.abs(dy) < .5) return;
+            el.style.transition = 'none';
+            el.style.translate = dx.toFixed(1) + 'px ' + dy.toFixed(1) + 'px';
+            requestAnimationFrame(function(){
+              el.style.transition = 'translate .5s cubic-bezier(.22,1,.36,1)';
+              el.style.translate = '0px 0px';
+              setTimeout(function(){ el.style.transition = ''; el.style.translate = ''; }, 540);
+            });
+          });
+        } catch(err){ /* движение — украшение: фильтр уже отработал сам по себе */ }
+      });
+    }, true);
+  }
+
+  /* 3b. Смена валюты. currency.js переписывает innerHTML всех [data-usd];
+     ждём кадр, чтобы анимировать уже новое значение, а не старое.
+     Это не счётчик — при каждом переключении ничего не пересчитывается
+     заново, только 340мс «посадки» готовой строки. */
+  if (!reduce){
+    document.addEventListener('click', function(e){
+      var b = e.target && e.target.closest ? e.target.closest('.cur-switch__btn') : null;
+      if (!b) return;
+      requestAnimationFrame(function(){
+        var list = [].slice.call(document.querySelectorAll('[data-usd]')).filter(function(el){
+          return !el.closest('.up');          // конфигуратор подсвечивает свой итог сам
+        });
+        list.forEach(function(el){ el.classList.remove('uqm-swap'); });
+        if (list.length) void list[0].offsetWidth;   // один общий reflow, а не по одному на элемент
+        list.forEach(function(el){ el.classList.add('uqm-swap'); });
+      });
+    }, true);
+    document.addEventListener('animationend', function(e){
+      if (e.animationName === 'uqmSwap') e.target.classList.remove('uqm-swap');
+    }, true);
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var W = window, D = document;
+var mq = W.matchMedia ? function(q){ return W.matchMedia(q).matches; } : function(){ return false; };
+var reduce = mq('(prefers-reduced-motion: reduce)');
+var fine   = mq('(hover:hover) and (pointer:fine)');
+
+/* Старый магнит из общего js/sayty.js писал transform прямо в pointermove и
+   возвращал кнопку мгновенным переходом — именно это читается «дёшево».
+   Снимаем атрибут ДО того, как отложенный sayty.js его найдёт: инлайн-скрипт
+   в конце body выполняется раньше defer-скриптов. Соберут иначе — не страшно:
+   rAF пишет transform последним в кадре и всё равно побеждает. */
+try{
+  var olds = D.querySelectorAll('[data-mag]');
+  for (var oi=0; oi<olds.length; oi++) olds[oi].removeAttribute('data-mag');
+}catch(e){}
+
+if (reduce) return;                                   /* уважаем настройку: ни одного слушателя */
+
+var rich = fine && W.innerWidth >= 900;               /* настоящая мышь + широкий экран */
+
+/* ────────── общая физика ────────── */
+function Spring(k,d){ this.v=0; this.t=0; this.vel=0; this.k=k; this.d=d; }
+/* полуявный Эйлер: дёшево и устойчиво при dt ≤ 33мс.
+   d/(2√k) ≈ 0.56 — недодемпфирование: возврат перелетает цель примерно на 9%
+   и подтягивается обратно за ~0.5с, а не «доехал и встал». Это и есть разница
+   между инерцией и ease-out. Проверено численно на dt от 16 до 33мс. */
+Spring.prototype.step = function(dt){
+  if (this.v === this.t && this.vel === 0) return true;
+  this.vel += (this.k*(this.t-this.v) - this.d*this.vel)*dt;
+  this.v   += this.vel*dt;
+  if (Math.abs(this.t-this.v) < .0007 && Math.abs(this.vel) < .007){ this.v = this.t; this.vel = 0; return true; }
+  return false;
+};
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+function soft(x){ return x/(1+Math.abs(x)); }         /* мягкое насыщение вместо жёсткого среза */
+
+var subs = [], running = false, last = 0;
+function tick(now){
+  var dt = last ? Math.min(.033, (now-last)/1000) : .016;
+  last = now;
+  var alive = false;
+  for (var i=0;i<subs.length;i++){ if (subs[i](dt)) alive = true; }
+  if (alive) requestAnimationFrame(tick);
+  else { running = false; last = 0; }
+}
+/* ОДИН тик на все подсистемы; засыпает, когда всё успокоилось */
+function kick(){ if (!running){ running = true; last = 0; requestAnimationFrame(tick); } }
+
+/* ────────── источники движения ────────── */
+var pX = -9999, pY = -9999, pvx = 0, pvy = 0, lx = null, ly = null, lt = 0;
+var scrollAcc = 0, svel = 0, sy = W.pageYOffset || 0;
+/* innerHeight читаем ТОЛЬКО вне кадра. Обращение к нему после записи стилей
+   заставляет браузер синхронно пересчитать layout — на замере это стоило
+   больше миллисекунды на кадр, то есть дороже всей остальной физики. */
+var vh = W.innerHeight || 800;
+W.addEventListener('resize', function(){ vh = W.innerHeight || 800; }, {passive:true});
+
+function onMove(e){
+  var t = e.timeStamp || performance.now();
+  if (lx !== null){
+    var d = Math.max(8, t - lt);                       /* нижняя граница: защита от деления на ~0 */
+    pvx = pvx*.55 + ((e.clientX-lx)/d*1000)*.45;       /* px/сек, сглажено */
+    pvy = pvy*.55 + ((e.clientY-ly)/d*1000)*.45;
+  }
+  lx = e.clientX; ly = e.clientY; lt = t; pX = e.clientX; pY = e.clientY;
+  kick();
+}
+function onScroll(){
+  var v = W.pageYOffset || D.documentElement.scrollTop || 0;
+  scrollAcc += v - sy; sy = v; kick();
+}
+
+if (rich){
+  W.addEventListener('pointermove', onMove, {passive:true});
+  W.addEventListener('scroll', onScroll, {passive:true});
+  /* rAF в фоновой вкладке заморожен: вернувшись, перечитываем позицию, иначе
+     первый кадр получит гигантскую «скорость скролла» и дёрнет снимки */
+  D.addEventListener('visibilitychange', function(){
+    if (!D.hidden){ sy = W.pageYOffset || 0; scrollAcc = 0; svel = 0; }
+  });
+  /* затухание скоростей — первым в кадре, чтобы все подписчики читали одно и то же */
+  subs.push(function(dt){
+    var dp = Math.exp(-dt*10), ds = Math.exp(-dt*7);
+    pvx *= dp; pvy *= dp;
+    svel = (svel + scrollAcc) * ds; scrollAcc = 0;
+    if (Math.abs(pvx) < 2) pvx = 0;
+    if (Math.abs(pvy) < 2) pvy = 0;
+    if (Math.abs(svel) < .6) svel = 0;
+    return !!(pvx || pvy || svel);
+  });
+}
+
+function ready(fn){
+  if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', fn, {once:true});
+  else fn();
+}
+
+ready(function(){
+
+/* ═════════ 1. ПОРТФОЛИО ═════════ */
+var cards = [].slice.call(D.querySelectorAll('#portfolio .sy-pf'));
+
+if (rich && cards.length){
+  var PH_BASE = 1.08;                        /* запас под параллакс: 4% с каждой стороны */
+  var PH_MAX  = (PH_BASE-1)/2*100 - .1;      /* потолок сдвига снимка, дальше обнажится край */
+  var CS = [];
+
+  cards.forEach(function(el){
+    var st = {
+      el:el, ph:el.querySelector('.sy-pf__photo'), body:el.querySelector('.sy-pf__b'), sheen:null,
+      rx:new Spring(190,15.5), ry:new Spring(190,15.5), tx:new Spring(190,15.5), ty:new Spring(190,15.5),
+      sc:new Spring(230,21), pz:new Spring(210,21), lag:new Spring(120,13),
+      glow:0, glowT:0, hot:false, down:false, live:false, seen:true,
+      dtop:0, dleft:0, w:0, h:0, mx:.5, my:.5
+    };
+    st.sc.v = st.sc.t = 1;
+    el.classList.add('uqe-card');
+    if (st.ph) st.ph.classList.add('uqe-ph');
+    var sh = D.createElement('i');
+    sh.className = 'uqe-sheen'; sh.setAttribute('aria-hidden','true');
+    el.appendChild(sh); st.sheen = sh;
+    CS.push(st);
+  });
+
+  function measure(st){
+    var r = st.el.getBoundingClientRect();
+    st.dtop = r.top + (W.pageYOffset||0); st.dleft = r.left; st.w = r.width; st.h = r.height;
+  }
+  CS.forEach(measure);
+
+  /* Геометрию не читаем в кадре (это форсированный reflow), а обновляем по
+     событиям: показ/скрытие карточки, ресайз, перестройка сетки фильтром. */
+  if ('IntersectionObserver' in W){
+    var io = new IntersectionObserver(function(es){
+      for (var i=0;i<es.length;i++){
+        var e = es[i], st = null;
+        for (var j=0;j<CS.length;j++) if (CS[j].el === e.target){ st = CS[j]; break; }
+        if (!st) continue;
+        st.seen = e.isIntersecting;
+        var r = e.boundingClientRect;                  /* готовый rect — бесплатно, без reflow */
+        st.dtop = r.top + (W.pageYOffset||0); st.dleft = r.left; st.w = r.width; st.h = r.height;
+        if (st.seen) kick();
+      }
+    }, {rootMargin:'140px 0px'});
+    CS.forEach(function(st){ io.observe(st.el); });
+  }
+  var grid = D.querySelector('.sy-pf__grid');
+  if (grid && 'ResizeObserver' in W) new ResizeObserver(function(){ CS.forEach(measure); }).observe(grid);
+  W.addEventListener('resize', function(){ CS.forEach(measure); }, {passive:true});
+  [].forEach.call(D.querySelectorAll('.sy-filter__b'), function(b){
+    b.addEventListener('click', function(){ setTimeout(function(){ CS.forEach(measure); }, 420); });
+  });
+
+  CS.forEach(function(st){
+    st.el.addEventListener('pointerenter', function(e){
+      if (e.pointerType === 'touch') return;
+      /* .sy-rev держит непоявившуюся карточку сдвинутой; пока нет класса in,
+         свой transform не пишем — иначе съедим её же появление */
+      if (st.el.classList.contains('sy-rev') && !st.el.classList.contains('in')) return;
+      measure(st);                                     /* один read вне кадра — безопасно */
+      st.hot = true; st.live = true;
+      st.el.classList.add('uqe-live');
+      kick();
+    });
+    st.el.addEventListener('pointerleave', function(){ st.hot = false; st.down = false; kick(); });
+    st.el.addEventListener('pointerdown', function(e){ if (e.pointerType !== 'touch'){ st.down = true; kick(); } });
+    W.addEventListener('pointerup', function(){ if (st.down){ st.down = false; kick(); } }, {passive:true});
+  });
+
+  subs.push(function(dt){
+    var alive = false;
+    var lagT = 1.7 * soft(svel/70);                    /* отставание снимка от рамки при скролле */
+
+    for (var i=0;i<CS.length;i++){
+      var st = CS[i];
+
+      /* — цели —
+         Наклон и магнит считаются от позиции курсора, плюс добавка от его
+         СКОРОСТИ: рука дёрнулась — карточка перелетела и качнулась обратно.
+         Скорость сама гаснет за ~100мс, цель возвращается, а пружина
+         доигрывает качание. Это и читается как вес. */
+      if (st.hot && st.w){
+        var px = clamp((pX - st.dleft)/st.w, 0, 1);
+        var py = clamp((pY - (st.dtop - sy))/st.h, 0, 1);
+        st.mx = px; st.my = py;
+        st.ry.t = (px-.5)*9 + clamp(pvx*.0022, -2.6, 2.6);
+        st.rx.t = (.5-py)*8 + clamp(-pvy*.0016, -1.8, 1.8);
+        st.tx.t = (px-.5)*7;
+        st.ty.t = (py-.5)*5 - 9 + (st.down ? 3 : 0);
+        st.sc.t = st.down ? .988 : 1.012;
+        st.pz.t = 1; st.glowT = 1;
+      } else {
+        st.ry.t = st.rx.t = st.tx.t = st.ty.t = 0;
+        st.sc.t = 1; st.pz.t = 0; st.glowT = 0;
+      }
+
+      /* побитовое & вместо && — нужно шагнуть КАЖДОЙ пружиной, а не выйти на первой */
+      var rest = st.rx.step(dt) & st.ry.step(dt) & st.tx.step(dt) & st.ty.step(dt) & st.sc.step(dt) & st.pz.step(dt);
+      st.lag.t = st.seen ? lagT : 0;
+      var lrest = st.lag.step(dt);
+      var g = st.glow + (st.glowT - st.glow) * Math.min(1, dt*9);
+      if (Math.abs(g - st.glowT) < .004) g = st.glowT;
+      st.glow = g;
+
+      /* — запись —
+         Карточку трогаем, только пока она «живая»: в покое инлайн-стиль
+         снимаем совсем и возвращаем управление CSS (в том числе .sy-rev). */
+      if (st.live){
+        st.el.style.transform =
+          'perspective(1200px) translate3d(' + st.tx.v.toFixed(2) + 'px,' + st.ty.v.toFixed(2) + 'px,0)' +
+          ' rotateX(' + st.rx.v.toFixed(2) + 'deg) rotateY(' + st.ry.v.toFixed(2) + 'deg)' +
+          ' scale(' + st.sc.v.toFixed(4) + ')';
+        /* текстовый блок идёт чуть дальше карточки — слои на разной глубине */
+        if (st.body) st.body.style.transform = 'translate3d(' + (st.tx.v*.55).toFixed(2) + 'px,' + (st.ty.v*.2).toFixed(2) + 'px,0)';
+        st.sheen.style.opacity = st.glow.toFixed(3);
+        st.sheen.style.transform = 'translate3d(' + (st.mx*st.w).toFixed(1) + 'px,' + (st.my*st.h).toFixed(1) + 'px,0)';
+        if (rest && !st.hot && st.glow === 0){
+          st.live = false;
+          st.el.classList.remove('uqe-live');
+          st.el.style.transform = '';
+          if (st.body) st.body.style.transform = '';
+        } else alive = true;
+      }
+
+      /* Снимок живёт отдельно: позиционный параллакс + отставание по скорости
+         скролла + микросдвиг за курсором. Только transform, ничего больше. */
+      if (st.ph && st.seen && st.h){
+        var p = clamp(((st.dtop - sy) + st.h/2 - vh/2)/vh, -1, 1);
+        var oy = clamp(-p*1.8 + st.lag.v + (st.my-.5)*1.0*st.pz.v, -PH_MAX, PH_MAX);
+        var ox = clamp((st.mx-.5)*1.0*st.pz.v, -PH_MAX, PH_MAX);
+        st.ph.style.transform =
+          'translate3d(' + ox.toFixed(2) + '%,' + oy.toFixed(2) + '%,0) scale(' + (PH_BASE + .05*st.pz.v).toFixed(4) + ')';
+        if (!lrest || svel) alive = true;
+      }
+    }
+    return alive;
+  });
+}
+
+/* ═════════ 2. МАГНИТНЫЕ CTA ═════════
+   Поле притяжения выходит за габарит: кнопка тянется к руке ещё до наведения
+   и отпускает с перелётом. Этим она и отличается от старого магнита, который
+   просто повторял курсор внутри своей рамки и мгновенно возвращался. */
+if (rich){
+  var MG = [];
+  [].forEach.call(D.querySelectorAll('.sy-midcta .sy-btn, .sy-form-sec .sy-btn, .sy-filter__b'), function(el){
+    /* первый экран, мобильная плашка, конфигуратор и воронка — не наши */
+    if (el.closest('.sy-hero') || el.closest('.sy-sticky') || el.closest('.up') || el.closest('.uqf')) return;
+    var small = el.classList.contains('sy-filter__b');
+    var st = {
+      el:el, small:small,
+      tx:new Spring(200,16), ty:new Spring(200,16), sc:new Spring(240,22),
+      glow:0, glowT:0, down:false, live:false,
+      dtop:0, dleft:0, w:0, h:0, mx:.5, my:.5, sheen:null
+    };
+    st.sc.v = st.sc.t = 1;
+    el.classList.add('uqe-mag');
+    if (!small){
+      var sh = D.createElement('i');
+      sh.className = 'uqe-sheen' + (el.classList.contains('sy-btn--main') ? ' uqe-sheen--white' : '');
+      sh.setAttribute('aria-hidden','true');
+      el.appendChild(sh); st.sheen = sh;
+    }
+    el.addEventListener('pointerdown', function(e){ if (e.pointerType !== 'touch'){ st.down = true; kick(); } });
+    W.addEventListener('pointerup', function(){ if (st.down){ st.down = false; kick(); } }, {passive:true});
+    MG.push(st);
+  });
+
+  if (MG.length){
+    var mgMeasure = function(){
+      for (var i=0;i<MG.length;i++){
+        var st = MG[i], r = st.el.getBoundingClientRect();
+        st.dtop = r.top + (W.pageYOffset||0); st.dleft = r.left; st.w = r.width; st.h = r.height;
+      }
+    };
+    mgMeasure();
+    W.addEventListener('resize', mgMeasure, {passive:true});
+    W.addEventListener('load', mgMeasure);
+    setTimeout(mgMeasure, 1500);                       /* шрифты доехали — габариты могли поехать */
+    /* Блоки выше кнопки живые (лента заявок сама добавляет строки), поэтому
+       страница подрастает и кэш координат протухает — поле притяжения
+       оказывается смещённым. Перемеряем после каждой остановки скролла:
+       вне кадра, значит без принудительного reflow в анимации. */
+    var mgT = 0;
+    W.addEventListener('scroll', function(){
+      clearTimeout(mgT); mgT = setTimeout(mgMeasure, 140);
+    }, {passive:true});
+
+    subs.push(function(dt){
+      var alive = false;
+      for (var i=0;i<MG.length;i++){
+        var st = MG[i], R = st.small ? 46 : 78;        /* насколько поле выходит за край кнопки */
+        var top = st.dtop - sy;
+        var pull = 0, dx = 0, dy = 0;
+        if (st.w > 0 && top < vh + R && top + st.h > -R){
+          var cx = st.dleft + st.w/2, cy = top + st.h/2;
+          dx = pX - cx; dy = pY - cy;
+          var ax = Math.max(0, Math.abs(dx) - st.w/2), ay = Math.max(0, Math.abs(dy) - st.h/2);
+          var dist = Math.sqrt(ax*ax + ay*ay);
+          pull = dist >= R ? 0 : (1 - dist/R)*(1 - dist/R);
+          if (pull > 0 && st.h){
+            st.mx = clamp((pX - st.dleft)/st.w, -.4, 1.4);
+            st.my = clamp((pY - top)/st.h, -.4, 1.4);
+          }
+        }
+        var mxp = st.small ? 7 : 12, myp = st.small ? 5 : 8;
+        st.tx.t = clamp(dx*.24, -mxp, mxp) * pull;
+        st.ty.t = clamp(dy*.30, -myp, myp) * pull - (st.small ? 1 : 2)*pull;
+        st.sc.t = st.down ? .965 : (1 + (st.small ? .022 : .018)*pull);
+        st.glowT = pull;
+
+        var rest = st.tx.step(dt) & st.ty.step(dt) & st.sc.step(dt);
+        var g = st.glow + (st.glowT - st.glow)*Math.min(1, dt*8);
+        if (Math.abs(g - st.glowT) < .004) g = st.glowT;
+        st.glow = g;
+
+        if (!st.live && (pull > 0 || !rest || g > 0)){ st.live = true; st.el.classList.add('uqe-live'); }
+        if (st.live){
+          st.el.style.transform = 'translate3d(' + st.tx.v.toFixed(2) + 'px,' + st.ty.v.toFixed(2) + 'px,0) scale(' + st.sc.v.toFixed(4) + ')';
+          if (st.sheen){
+            st.sheen.style.opacity = (g*.95).toFixed(3);
+            st.sheen.style.transform = 'translate3d(' + (st.mx*st.w).toFixed(1) + 'px,' + (st.my*st.h).toFixed(1) + 'px,0)';
+          }
+          if (rest && pull === 0 && g === 0){
+            st.live = false; st.el.classList.remove('uqe-live'); st.el.style.transform = '';
+          } else alive = true;
+        }
+      }
+      return alive;
+    });
+  }
+}
+
+/* ═════════ 3. КУРСОР-КОМПАНЬОН ═════════
+   Кольцо отстаёт от курсора и сплющивается вдоль направления движения — так
+   ведёт себя жидкость в стакане. Родной курсор НЕ прячем: подмена системного
+   курсора ломает привычку и читается как клоунада, а не как дорого. */
+if (rich && D.body){
+  var wrap = D.createElement('div'); wrap.className = 'uqe-cwrap'; wrap.setAttribute('aria-hidden','true');
+  var ring = D.createElement('div'); ring.className = 'uqe-ring';
+  var pill = D.createElement('div'); pill.className = 'uqe-pill'; pill.textContent = 'открыть';
+  wrap.appendChild(ring); wrap.appendChild(pill); D.body.appendChild(wrap);
+
+  var cx2 = -300, cy2 = -300, mode = '', prevMode = '-', shown = 0;
+  var ZONE = '#portfolio .sy-pf, .uqe-mag';
+
+  D.addEventListener('pointerover', function(e){
+    if (e.pointerType === 'touch') return;
+    var t = (e.target && e.target.closest) ? e.target.closest(ZONE) : null;
+    mode = !t ? '' : (t.classList.contains('sy-pf') ? 'card' : 'btn');
+    kick();
+  }, {passive:true});
+  D.addEventListener('pointerout', function(e){ if (!e.relatedTarget){ mode = ''; kick(); } }, {passive:true});
+  W.addEventListener('blur', function(){ mode = ''; kick(); });
+
+  subs.push(function(dt){
+    if (pX < -1000) return false;                      /* курсора ещё не видели — кольцу нечего догонять */
+    /* Первый показ и возврат курсора из другого окна — телепорт, а не полёт
+       через весь экран: догонялка длиной в пол-экрана выглядит как баг. */
+    if (Math.abs(pX-cx2) > 380 || Math.abs(pY-cy2) > 380){ cx2 = pX; cy2 = pY; }
+    /* экспонента, приведённая к dt: на 30 fps кольцо отстаёт ровно так же, как на 60 */
+    var k = 1 - Math.pow(.001, dt);                    /* ≈0.11 за кадр при 60 fps */
+    cx2 += (pX - cx2) * k; cy2 += (pY - cy2) * k;
+
+    var want = mode ? 1 : 0;
+    shown += (want - shown) * Math.min(1, dt*10);
+    if (Math.abs(shown - want) < .01) shown = want;
+
+    var sp = Math.sqrt(pvx*pvx + pvy*pvy);
+    var sq = Math.min(.26, sp/4200);                   /* сплющивание по скорости */
+    var ang = sp > 24 ? Math.atan2(pvy, pvx)*57.2958 : 0;
+    var base = mode === 'card' ? 1.5 : (mode === 'btn' ? .62 : 1);
+
+    ring.style.transform = 'translate3d(' + cx2.toFixed(1) + 'px,' + cy2.toFixed(1) + 'px,0) rotate(' + ang.toFixed(1) + 'deg)' +
+                           ' scale(' + (base*(1+sq)).toFixed(3) + ',' + (base*(1-sq)).toFixed(3) + ')';
+    ring.style.opacity = shown.toFixed(3);
+    if (mode !== prevMode){ ring.classList.toggle('uqe-oncard', mode === 'card'); prevMode = mode; }
+
+    var pv = mode === 'card' ? 1 : 0;
+    pill.style.opacity = (shown*pv).toFixed(3);
+    pill.style.transform = 'translate3d(' + (cx2+24).toFixed(1) + 'px,' + (cy2+16).toFixed(1) + 'px,0) scale(' + (.86 + .14*shown*pv).toFixed(3) + ')';
+
+    return shown > 0 || Math.abs(pX-cx2) > .5 || Math.abs(pY-cy2) > .5;
+  });
+}
+
+/* ═════════ 4. ТАЧ: чистая деградация ═════════
+   Ни магнита, ни наклона, ни курсора — но нажатие должно чувствоваться
+   физическим. Это чистый CSS-класс: на телефоне не крутится ни один кадр. */
+if (!rich){
+  var taps = cards.concat([].slice.call(D.querySelectorAll('.sy-midcta .sy-btn, .sy-form-sec .sy-btn, .sy-filter__b')));
+  taps.forEach(function(el){
+    if (el.closest('.sy-hero') || el.closest('.sy-sticky') || el.closest('.up') || el.closest('.uqf')) return;
+    el.classList.add('uqe-tap');
+    var off = function(){ el.classList.remove('uqe-down'); };
+    el.addEventListener('pointerdown', function(){ el.classList.add('uqe-down'); }, {passive:true});
+    el.addEventListener('pointerup', off, {passive:true});
+    el.addEventListener('pointercancel', off, {passive:true});
+    el.addEventListener('pointerleave', off, {passive:true});
+  });
+}
+
+kick();
+});
 })();
 </script>
 </body>
