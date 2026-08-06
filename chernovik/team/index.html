@@ -61,13 +61,17 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
   gap:var(--gap);justify-content:center;align-content:center}
 
 .card{position:relative;height:100%;aspect-ratio:13/16;margin:0;border-radius:clamp(10px,1vw,16px);
-  overflow:hidden;background:transparent;isolation:isolate;--focus:0;--edge:0;will-change:transform}
+  overflow:hidden;background:transparent;isolation:isolate;--focus:0;--edge:0;--pre:0;will-change:transform}
 /* масштаб на время сборки не анимируем через transition — тянулся бы за скроллом */
+/* Расфокус даётся вторым слоем с постоянным блюром, а не анимацией filter:
+   пересчёт размытия на каждый кадр — самое дорогое, что можно делать в скролле.
+   Здесь меняется только прозрачность, её вытягивает видеокарта. */
 .card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;
-  opacity:var(--focus);
-  filter:blur(calc((1 - var(--focus)) * 9px)) brightness(calc(.8 + var(--focus) * .2));
   transition:transform .55s cubic-bezier(.2,.7,.2,1)}
-.card:hover img{transform:scale(1.045)}
+.card .ph--soft{filter:blur(11px) brightness(.85);transform:scale(1.06);
+  opacity:calc(var(--pre,0) * (1 - var(--focus)))}
+.card .ph--sharp{opacity:var(--focus)}
+.card:hover .ph--sharp{transform:scale(1.045)}
 /* каркас сетки проступает раньше фото — лицам из точек нужна опора */
 .card__edge{position:absolute;inset:0;border-radius:inherit;z-index:3;pointer-events:none;
   border:1px solid rgba(148,163,184,.16);opacity:var(--edge);transition:border-color .35s}
@@ -101,7 +105,7 @@ body.frame-mode .stage{height:100svh}
 @media (prefers-reduced-motion:reduce){
   .fx{display:none}
   .head,.card__cap,.card__flag{opacity:1!important;transform:none!important}
-  .card{--focus:1;--edge:1;transform:none!important}
+  .card{--focus:1;--edge:1;--pre:1;transform:none!important}
 }
 </style>
 </head>
@@ -126,14 +130,14 @@ body.frame-mode .stage{height:100svh}
     </div>
 
     <div class="grid" id="grid">
-      <figure class="card"><img src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Матвей</b></figcaption></figure>
-      <figure class="card"><img src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Илья</b></figcaption></figure>
-      <figure class="card"><img src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Ведущий дизайнер</b></figcaption></figure>
-      <figure class="card"><img src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Full-stack разработчик</b></figcaption></figure>
-      <figure class="card"><img src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Backend-разработчик</b></figcaption></figure>
-      <figure class="card"><img src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Frontend-разработчик</b></figcaption></figure>
-      <figure class="card"><img src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Проджект-менеджер</b></figcaption></figure>
-      <figure class="card"><img src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Team&nbsp;Lead</b></figcaption></figure>
+      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><img class="ph--sharp" src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Матвей</b></figcaption></figure>
+      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><img class="ph--sharp" src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Илья</b></figcaption></figure>
+      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Ведущий дизайнер</b></figcaption></figure>
+      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Full-stack разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Backend-разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Frontend-разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Проджект-менеджер</b></figcaption></figure>
+      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Team&nbsp;Lead</b></figcaption></figure>
     </div>
   </div>
 </section>
@@ -518,7 +522,8 @@ function resize(){
   // именно она делает портрет из точек читаемым
   N = Math.round(clamp((W*H)/19, 24000, 58000));
 
-  stage.style.setProperty('--runway', (W<760 ? 150 : 175) + 'svh');
+  stage.style.setProperty('--runway', (W<760 ? 260 : 320) + 'svh');
+  measureStage();
   if (gl){
     gl.viewport(0,0,fx.width,fx.height);
     gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);  // буфер сохраняется между кадрами — стираем начисто
@@ -584,6 +589,8 @@ function applyDom(p){
 
   // каркас появляется раньше фото: сначала проступает сетка, потом в неё садятся лица
   const edge = smooth(clamp((p-0.56)/0.18,0,1));
+  // размытая заготовка проступает под точками — фото как будто наводится на резкость
+  const pre  = smooth(clamp((p-0.63)/0.15,0,1));
 
   for (let i=0;i<cards.length;i++){
     const off = i*0.022;
@@ -591,6 +598,7 @@ function applyDom(p){
     cards[i].style.transform = `scale(${0.972+0.028*k})`;
     cards[i].style.setProperty('--focus', k.toFixed(3));
     cards[i].style.setProperty('--edge', (edge*(0.45+0.55*k)).toFixed(3));
+    cards[i].style.setProperty('--pre', pre.toFixed(3));
     caps[i].style.opacity = cap;
     caps[i].style.transform = `translate3d(0,${(1-cap)*6}px,0)`;
     if (flags[i]) flags[i].style.opacity = cap;
@@ -599,9 +607,15 @@ function applyDom(p){
 }
 
 /* ── цикл ────────────────────────────────────────────────────────── */
+// offsetHeight в цикле заставляет браузер пересчитывать раскладку каждый кадр —
+// держим высоты в переменных и обновляем только при ресайзе
+let stageH = 0, vpH = 0, span = 1;
+function measureStage(){
+  stageH = stage.offsetHeight; vpH = vp.offsetHeight;
+  span = Math.max(1, stageH - vpH);
+}
 function readProgress(){
-  const r = stage.getBoundingClientRect();
-  return clamp(-r.top / Math.max(1, stage.offsetHeight - vp.offsetHeight), 0, 1);
+  return clamp(-stage.getBoundingClientRect().top / span, 0, 1);
 }
 
 let eased = -1, lastNow = 0;
@@ -609,14 +623,14 @@ let eased = -1, lastNow = 0;
 function frame(now){
   const r = stage.getBoundingClientRect();
   if (r.top < window.innerHeight && r.bottom > 0){
-    const target = clamp(-r.top/Math.max(1, stage.offsetHeight - vp.offsetHeight), 0, 1);
+    const target = clamp(-r.top/span, 0, 1);
     if (eased < 0) eased = target;
 
     // сцена догоняет скролл с инерцией, а не прыгает за ним: при быстром
     // листании кадры перестают мелькать и движение остаётся связным
     const dt = clamp((now - lastNow) / 1000, 0.001, 0.05);
     lastNow = now;
-    const k = 1 - Math.exp(-dt * 4.6);
+    const k = 1 - Math.exp(-dt * 3.4);
     const prev = eased;
     eased += (target - eased) * k;
     if (Math.abs(target - eased) < 0.0004) eased = target;
@@ -624,7 +638,7 @@ function frame(now){
     const speed = Math.abs(eased - prev) / dt * 0.001;   // доли прогресса в мс
     progress = eased;
     render(eased, now, speed);
-    if (Math.abs(eased-shown) > 0.0002){ applyDom(eased); shown = eased; }
+    if (Math.abs(eased-shown) > 0.0012){ applyDom(eased); shown = eased; }
   }
   requestAnimationFrame(frame);
 }
