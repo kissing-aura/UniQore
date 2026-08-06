@@ -54,10 +54,10 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
 .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px rgba(205,255,79,.9)}
 .head h2{font-family:'Unbounded';font-weight:700;letter-spacing:-.025em;line-height:1.1;
   font-size:clamp(18px,2.4vw,31px);margin:9px 0 0}
-.head p{margin:7px auto 0;max-width:54ch;color:var(--dim);font-size:clamp(12px,1.1vw,14px);line-height:1.5}
+.head p{margin:7px auto 0;max-width:60ch;color:var(--dim);font-size:clamp(12px,1.1vw,14px);line-height:1.5;text-wrap:balance}
 
 .grid{position:absolute;z-index:4;left:0;right:0;
-  top:clamp(100px,17vh,186px);bottom:clamp(18px,4.2vh,44px);
+  top:clamp(86px,14.5vh,158px);bottom:clamp(16px,3.4vh,34px);
   padding:0 clamp(14px,3vw,44px);
   display:grid;grid-template-columns:repeat(4,auto);grid-auto-rows:1fr;
   gap:var(--gap);justify-content:center;align-content:center}
@@ -65,8 +65,14 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
 .card{position:relative;height:100%;aspect-ratio:13/16;margin:0;border-radius:clamp(10px,1vw,16px);
   overflow:hidden;background:#0A0E1A;isolation:isolate;opacity:0;will-change:opacity,transform}
 .card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
+.card{--focus:0}
+/* масштаб на время сборки не трогаем: transition на transform дал бы лаг за скроллом.
+   Сборку показывает расфокус, hover — отдельный плавный зум. */
+.card img{filter:blur(calc((1 - var(--focus)) * 7px));transition:transform .5s cubic-bezier(.2,.7,.2,1)}
 .card__edge{position:absolute;inset:0;border-radius:inherit;z-index:3;pointer-events:none;
-  border:1px solid rgba(148,163,184,.16)}
+  border:1px solid rgba(148,163,184,.16);transition:border-color .35s}
+.card:hover .card__edge{border-color:rgba(205,255,79,.42)}
+.card:hover img{transform:scale(1.04)}
 .card__cap{position:absolute;left:0;right:0;bottom:0;z-index:2;
   padding:30px clamp(8px,.85vw,13px) clamp(8px,.85vw,12px);
   background:linear-gradient(transparent,rgba(6,9,17,.72) 52%,rgba(6,9,17,.93));opacity:0}
@@ -77,13 +83,16 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
   padding:3px 8px;border-radius:999px;opacity:0;box-shadow:0 4px 14px -4px rgba(205,255,79,.6)}
 /* блик по кромке в момент проявления карточки */
 .card__sheen{position:absolute;inset:0;border-radius:inherit;z-index:5;pointer-events:none;opacity:0;
-  background:linear-gradient(100deg,transparent 34%,rgba(205,255,79,.55) 50%,transparent 66%);
-  background-size:260% 100%}
+  background:linear-gradient(102deg,transparent 45%,rgba(205,255,79,.75) 50%,rgba(255,255,255,.35) 52%,transparent 57%);
+  background-size:300% 100%}
 
 @media (max-width:760px){
-  .grid{grid-template-columns:repeat(2,auto);top:clamp(92px,15.5vh,150px)}
+  /* шапке нужен свой запас: на узком экране подзаголовок уходит в две строки */
+  .grid{grid-template-columns:repeat(2,auto);top:clamp(130px,19.5vh,178px);bottom:clamp(12px,2.4vh,26px)}
   .card{aspect-ratio:1/1}
   .card img{object-position:50% 58%}
+  .head h2{font-size:clamp(17px,4.7vw,25px)}
+  .head p{font-size:11.5px;max-width:34ch}
 }
 
 /* режим одиночного кадра (?frame=…): сцена одна на экране */
@@ -159,12 +168,16 @@ const ctx  = fx.getContext('2d');
 const gctx = glowC.getContext('2d');
 
 /* тайминги сцены в долях прогресса скролла */
-const T = { hold:0.13, flyEnd:0.74, fadeIn:0.70, fadeEnd:0.89, capIn:0.87, headIn:0.58 };
+const T = { hold:0.13, flyEnd:0.74,
+             fadeIn:0.79, fadeEnd:0.94,      // точки гаснут
+             cardIn:0.755, cardEnd:0.91,   // фото проявляются
+             capIn:0.90, headIn:0.60 };
 
 let W=0, H=0, dpr=1, gq=1;      // gq — множитель канвы свечения
 let N=0, P=null, dustN=0, dust=null;
 let ready=false, progress=0, shown=-1;
 
+let mx=0, my=0, mtx=0, mty=0;      // параллакс за курсором
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const smooth=t=>t*t*(3-2*t);
 const easeInOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
@@ -190,11 +203,11 @@ function resize(){
   glowC.width  = Math.max(1, Math.round(W * gq));
   glowC.height = Math.max(1, Math.round(H * gq));
 
-  N = Math.round(clamp((W * H) / 118, 4200, 11500));
+  N = Math.round(clamp((W * H) / 132, 4000, 10000));
   dustN = W < 700 ? 90 : 180;
   allocBuckets(N * 2);            // запас на следы
 
-  stage.style.setProperty('--runway', (W < 760 ? 170 : 195) + 'svh');
+  stage.style.setProperty('--runway', (W < 760 ? 155 : 175) + 'svh');
   build();
 }
 
@@ -261,16 +274,28 @@ function samplePortraits(n){
       data = g.getImageData(0,0,sw,sh).data;
     }
 
-    // светлое лицо получает больше точек, тёмный фон — меньше
+    // Куда сажать точки. Одной яркости мало — выходит ровное пятно.
+    // Основной вес даёт контур (глаза, губы, край лица, волосы): по нему
+    // портрет узнаётся даже парой тысяч точек.
+    const lum = new Float32Array(sw*sh);
+    if (data) for (let i=0;i<sw*sh;i++)
+      lum[i] = (data[i*4]*.299 + data[i*4+1]*.587 + data[i*4+2]*.114)/255;
+
     const cum = new Float32Array(sw*sh);
     let acc=0;
-    for (let i=0;i<sw*sh;i++){
+    for (let y=0;y<sh;y++) for (let x=0;x<sw;x++){
+      const i = y*sw+x;
       let w = 0.12;
       if (data){
-        const L = (data[i*4]*.299 + data[i*4+1]*.587 + data[i*4+2]*.114)/255;
-        // резкий вес: точки идут на лицо, фон карточки почти не набирает частиц,
-        // иначе вместо портрета получается ровное пятно
-        w = 0.012 + Math.pow(L,2.6)*4.2;
+        let edge = 0;
+        if (x>0 && x<sw-1 && y>0 && y<sh-1){
+          const gx = lum[i-1] - lum[i+1];
+          const gy = lum[i-sw] - lum[i+sw];
+          edge = Math.min(1, Math.sqrt(gx*gx + gy*gy) * 2.6);
+        }
+        w = 0.010 + Math.pow(lum[i],2.4)*1.5 + Math.pow(edge,1.15)*5.0;
+        // лицо важнее плеч: смещаем плотность в верхнюю часть кадра
+        w *= y < sh*0.52 ? 1.55 : (y < sh*0.72 ? 0.85 : 0.45);
       }
       acc += w; cum[i]=acc;
     }
@@ -384,10 +409,12 @@ function allocBuckets(n){
 // цвет корзины: базовый (белый / лаймовый) → тон портрета по мере перелёта
 function bucketColor(lime, stage, tone){
   const e = (stage + 0.5) / B_STAGE;
-  const mix = e < 0.62 ? 0 : smooth((e - 0.62) / 0.38);
-  const L = Math.min(255, ((tone + 0.5) / B_TONE) * 255 * 1.5);
+  // до конца не уходим в цвет фото: иначе портрет из точек получается тёмным
+  // силуэтом вместо светящегося облака
+  const mix = (e < 0.58 ? 0 : smooth((e - 0.58) / 0.42)) * 0.72;
+  const L = Math.min(255, 70 + ((tone + 0.5) / B_TONE) * 255 * 1.55);
   let r = lime ? 205 : 226, g = lime ? 255 : 238, b = lime ? 79 : 255;
-  r += (L - r) * mix; g += (L - g) * mix; b += (L * 1.02 - b) * mix;
+  r += (L - r) * mix; g += (L * 1.03 - g) * mix; b += (L * 1.06 - b) * mix;
   return [r|0, g|0, b|0];
 }
 
@@ -404,6 +431,10 @@ function render(p, time){
   const t0  = Math.max(0, p-T.hold) / (T.flyEnd-T.hold);
   const gs  = gw/W;
 
+  // облако едва заметно ведётся за курсором и замирает, когда собралось в лица
+  mx += (mtx - mx) * 0.06; my += (mty - my) * 0.06;
+  const par = vis * 14, parX = mx * par, parY = my * par * 0.7;
+
   if (vis > 0.004){
     bCount.fill(0);
     let n = 0;
@@ -418,18 +449,20 @@ function render(p, time){
 
       const air = Math.sin(Math.PI*t);           // 0 на концах, 1 в середине полёта
       const idle = t<=0 ? 1 : 0;
-      x += Math.sin(time*0.0009 + P.sd[i])     * (0.8*idle + air*5.0);
-      y += Math.cos(time*0.0011 + P.sd[i]*1.7) * (0.8*idle + air*5.0);
+      x += Math.sin(time*0.0009 + P.sd[i])     * (0.8*idle + air*5.0) + parX*(1-e*0.85);
+      y += Math.cos(time*0.0011 + P.sd[i]*1.7) * (0.8*idle + air*5.0) + parY*(1-e*0.85);
 
-      const S = (P.sw[i] + (P.sp[i]-P.sw[i])*e) * (1+air*0.42) * dpr;
+      const S = (P.sw[i] + (P.sp[i]-P.sw[i])*e) * (1+air*0.22) * dpr;
       const stage = clamp((e*B_STAGE)|0, 0, B_STAGE-1);
       const bk = (P.lm[i] ? B_STAGE*B_TONE : 0) + stage*B_TONE + P.tn[i];
 
       bx[n]=x*dpr; by[n]=y*dpr; bs[n]=S; bBucket[n]=bk; bCount[bk]++; n++;
 
       // след по вектору — читается как motion blur на быстром скролле
+      // след рисуем не всем и только на заметном движении — иначе фаза разлёта
+      // упирается в заливку и кадр проседает
       const vx=x-P.px[i], vy=y-P.py[i];
-      if (vx*vx+vy*vy > 4.5 && n < bx.length){
+      if ((i&3)===0 && vx*vx+vy*vy > 9 && n < bx.length){
         bx[n]=(x-vx*0.5)*dpr; by[n]=(y-vy*0.5)*dpr; bs[n]=S*0.7;
         bBucket[n]=bk; bCount[bk]++; n++;
       }
@@ -449,7 +482,7 @@ function render(p, time){
       const stage = (rest / B_TONE) | 0, tone = rest % B_TONE;
       const col = bucketColor(lime, stage, tone);
       const air = Math.sin(Math.PI * ((stage+0.5)/B_STAGE));
-      const a = clamp((0.78 + air*0.30) * vis, 0, 1);
+      const a = clamp((0.90 + air*0.26) * vis, 0, 1);
 
       ctx.fillStyle  = `rgba(${col[0]},${col[1]},${col[2]},${a.toFixed(3)})`;
       gctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${(a*0.85).toFixed(3)})`;
@@ -479,7 +512,7 @@ function render(p, time){
 
 /* ── DOM по прогрессу ────────────────────────────────────────────── */
 function applyDom(p){
-  const rev = smooth(clamp((p-T.fadeIn)/(T.fadeEnd-T.fadeIn),0,1));
+  const rev = smooth(clamp((p-T.cardIn)/(T.cardEnd-T.cardIn),0,1));
   const cap = smooth(clamp((p-T.capIn)/(1-T.capIn),0,1));
   const hd  = smooth(clamp((p-T.headIn)/0.18,0,1));
 
@@ -487,10 +520,11 @@ function applyDom(p){
   head.style.transform = `translate3d(0,${(1-hd)*10}px,0)`;
 
   for (let i=0;i<cards.length;i++){
-    const off = i*0.05;                       // лесенка, чтобы не включались щелчком
+    const off = i*0.022;                      // лесенка, чтобы не включались щелчком
     const k = smooth(clamp((rev-off)/(1-off),0,1));
     cards[i].style.opacity = k;
     cards[i].style.transform = `scale(${0.975+0.025*k})`;
+    cards[i].style.setProperty('--focus', k.toFixed(3));   // фото схлопывается из расфокуса
     caps[i].style.opacity = cap;
     caps[i].style.transform = `translate3d(0,${(1-cap)*6}px,0)`;
     if (flags[i]) flags[i].style.opacity = cap;
@@ -552,6 +586,13 @@ Promise.all([
 let rt=0;
 const reflow = () => { clearTimeout(rt); rt=setTimeout(resize,150); };
 new ResizeObserver(reflow).observe(vp);
+
+if (matchMedia('(pointer:fine)').matches){
+  addEventListener('pointermove', e => {
+    mtx = (e.clientX / innerWidth  - 0.5) * 2;
+    mty = (e.clientY / innerHeight - 0.5) * 2;
+  }, {passive:true});
+}
 addEventListener('orientationchange', () => setTimeout(resize,320));
 })();
 </script>
