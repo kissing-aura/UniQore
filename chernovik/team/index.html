@@ -21,8 +21,8 @@
   --gap:clamp(8px,.9vw,14px);
 }
 *{box-sizing:border-box}
-html{background:var(--ink);-webkit-text-size-adjust:100%;overflow-x:clip}
-body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-ui,sans-serif;overflow-x:clip}
+html{background:var(--ink);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-ui,sans-serif;overflow-x:hidden}
 
 .pad{min-height:70svh;display:grid;place-items:center;padding:60px 20px;text-align:center}
 .pad p{max-width:46ch;color:var(--dim);font-size:15px;line-height:1.65;margin:12px auto 0}
@@ -762,7 +762,8 @@ function frame(now){
         const fps = statFrames / ((now - statT)/1000);
         statMin = Math.min(statMin, fps);
         statEl.textContent = `${fps.toFixed(0)} кадр/с  (мин ${statMin.toFixed(0)})\n`
-          + `точек ${Math.round(drawN)} из ${N}\nкадр ${frameAvg.toFixed(1)} мс`;
+          + `точек ${Math.round(drawN)} из ${N}\nкадр ${frameAvg.toFixed(1)} мс\n`
+          + `сцена ${(eased*100).toFixed(0)}%  прокрутка ${Math.round(scrollY)}/${Math.round(span)}`;
         statFrames = 0; statT = now;
       }
     }
