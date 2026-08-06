@@ -180,6 +180,8 @@ let W=0,H=0,dpr=1,N=0;
 let gl=null, prog=null, buf={}, loc={}, ready=false;
 let progress=0, shown=-1;
 let mtx=0,mty=0,mx=0,my=0;
+let mPx=-9999, mPy=-9999, mOn=0, mOnT=0;        // курсор в координатах сцены
+let hoverCard=-1, hoverAmt=0, hoverT=0;         // карточка под курсором
 
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const smooth=t=>t*t*(3-2*t);
@@ -204,6 +206,10 @@ uniform float u_t0;        // прогресс перелёта
 uniform float u_time;
 uniform float u_dpr;
 uniform vec2  u_par;       // параллакс за курсором
+uniform vec2  u_mouse;     // курсор в координатах сцены
+uniform float u_mouseOn;   // курсор в кадре
+uniform float u_hoverCard; // карточка под курсором, -1 если нет
+uniform float u_hoverAmt;  // насколько она рассыпана обратно в точки
 uniform float u_vis;       // общая видимость точек
 uniform float u_p;         // прогресс сцены
 uniform vec2  u_fade;      // начало и конец растворения точек
@@ -242,6 +248,14 @@ void main(){
   // параллакс: ближние слои ведутся сильнее
   pos += u_par * (0.4 + depth) * (1.0 - e*0.8);
 
+  // курсор расталкивает точки — облако живое даже когда сцена доиграла
+  vec2 dm = pos - u_mouse;
+  float dist = length(dm) + 0.001;
+  float R = 115.0;
+  float push = u_mouseOn * smoothstep(R, 0.0, dist);
+  pos += (dm / dist) * push * 19.0;          // возмущение, а не взрыв: лицо должно читаться
+  float lit = push * 0.55;                   // и лёгкая подсветка рядом с курсором
+
   gl_Position = vec4((pos / u_res) * 2.0 - 1.0, 0.0, 1.0);
   gl_Position.y = -gl_Position.y;
 
@@ -252,9 +266,13 @@ void main(){
   float off  = a_card * 0.022;
   float rise = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
   float melt = smoothstep(a_ry.x - 0.30, a_ry.x + 0.30, rise);
+  // наведение возвращает частицы этой карточки: человек рассыпается под курсором
+  float onCard = step(abs(a_card - u_hoverCard), 0.5) * u_hoverAmt;
+  melt *= 1.0 - onCard;
 
   float size = mix(a_size.x, a_size.y, e) * (1.0 + air * 0.12) * (0.62 + depth * 0.75);
   size *= 1.0 - melt * 0.55;                 // на прощание точка ужимается, а не просто гаснет
+  size *= 1.0 + lit * 0.35;
   float haze = step(0.88, fract(seed * 7.31));      // редкие крупные и мягкие — дымка
   size *= mix(1.0, 2.6, haze);
   gl_PointSize = size * u_dpr;
@@ -269,7 +287,7 @@ void main(){
   // дымка вокруг слова тусклая, пока слово стоит, и разгорается в полёте
   float mist = a_ry.y * (1.0 - smoothstep(0.0, 0.45, e));
   v_alpha = u_vis * u_gain * (1.0 - melt) * (1.30 - air * 0.45) * (0.66 + depth * 0.44)
-          * mix(1.0, 0.30, haze) * (1.0 - mist * 0.82);
+          * mix(1.0, 0.30, haze) * (1.0 - mist * 0.82) * (1.0 + lit * 0.55);
 }`;
 
 const FRAG = `
@@ -330,7 +348,7 @@ function initGL(){
   gl.useProgram(prog);
 
   ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry'].forEach(n => { loc[n] = gl.getAttribLocation(prog, n); });
-  ['u_res','u_t0','u_time','u_dpr','u_par','u_vis','u_gain','u_p','u_fade'].forEach(n => { loc[n] = gl.getUniformLocation(prog, n); });
+  ['u_res','u_t0','u_time','u_dpr','u_par','u_vis','u_gain','u_p','u_fade','u_mouse','u_mouseOn','u_hoverCard','u_hoverAmt'].forEach(n => { loc[n] = gl.getUniformLocation(prog, n); });
   ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry'].forEach(n => { buf[n] = gl.createBuffer(); });
 
   const fv = compile(gl.VERTEX_SHADER, FADE_VERT), ff = compile(gl.FRAGMENT_SHADER, FADE_FRAG);
@@ -607,7 +625,7 @@ function render(p, time, speed){
   const gain = (1 - keep) * 1.42;
 
   // растворением теперь управляет шейдер покарточно; здесь только общий хвост
-  const vis = 1 - smooth(clamp((p-T.cardEnd-0.02)/0.06,0,1));
+  const vis = Math.max(1 - smooth(clamp((p-T.cardEnd-0.02)/0.06,0,1)), hoverAmt);
   if (vis <= 0.004) return;
 
   mx += (mtx-mx)*0.06; my += (mty-my)*0.06;
@@ -623,6 +641,12 @@ function render(p, time, speed){
   gl.uniform1f(loc.u_gain, gain);
   gl.uniform1f(loc.u_p, p);
   gl.uniform2f(loc.u_fade, T.cardIn, T.cardEnd);
+  mOn += (mOnT - mOn) * 0.12;
+  hoverAmt += (hoverT - hoverAmt) * 0.16;
+  gl.uniform2f(loc.u_mouse, mPx, mPy);
+  gl.uniform1f(loc.u_mouseOn, mOn);
+  gl.uniform1f(loc.u_hoverCard, hoverCard);
+  gl.uniform1f(loc.u_hoverAmt, hoverAmt);
   gl.drawArrays(gl.POINTS, 0, N);
 }
 
@@ -646,7 +670,8 @@ function applyDom(p){
     const rise = clamp((revLin-off)/(1-off),0,1);
     const k = smooth(clamp((rev-off)/(1-off),0,1));
     cards[i].style.transform = `scale(${0.972+0.028*k})`;
-    cards[i].style.setProperty('--rise', rise.toFixed(3));
+    const back = (i === hoverCard) ? hoverAmt : 0;
+    cards[i].style.setProperty('--rise', (rise * (1 - back)).toFixed(3));
     cards[i].style.setProperty('--focus', k.toFixed(3));
     cards[i].style.setProperty('--edge', (edge*(0.45+0.55*k)).toFixed(3));
     caps[i].style.opacity = cap;
@@ -734,7 +759,19 @@ if (matchMedia('(pointer:fine)').matches){
   addEventListener('pointermove', e => {
     mtx = (e.clientX/innerWidth - 0.5)*2;
     mty = (e.clientY/innerHeight - 0.5)*2;
+    const r = vp.getBoundingClientRect();
+    mPx = e.clientX - r.left;
+    mPy = e.clientY - r.top;
+    mOnT = (mPx > -60 && mPy > -60 && mPx < r.width + 60 && mPy < r.height + 60) ? 1 : 0;
   }, {passive:true});
+  addEventListener('pointerleave', () => { mOnT = 0; }, {passive:true});
+
+  // наведение на человека возвращает его в точки, уход — собирает обратно
+  cards.forEach((c, i) => {
+    // наводить имеет смысл только когда сцена доиграла — иначе мешает самой анимации
+    c.addEventListener('pointerenter', () => { if (progress > 0.9){ hoverCard = i; hoverT = 1; } });
+    c.addEventListener('pointerleave', () => { hoverT = 0; });
+  });
 }
 })();
 </script>
