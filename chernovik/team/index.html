@@ -338,7 +338,7 @@ function bindAttribs(){
 
 function initGL(){
   gl = fx.getContext('webgl', {alpha:true, premultipliedAlpha:true, antialias:false,
-                               depth:false, preserveDrawingBuffer:true});
+                               depth:false, preserveDrawingBuffer:false});
   if (!gl){ DBG.step='no-webgl'; return false; }
   const vs = compile(gl.VERTEX_SHADER, VERT), fs = compile(gl.FRAGMENT_SHADER, FRAG);
   if (!vs || !fs) return false;
@@ -555,6 +555,7 @@ function build(){
   put('a_card',aCard,1); put('a_ry',aRy,2);
 
   ready = true; shown = -1;
+  drawN = Math.min(N, 45000);        // стартуем с безопасного числа
   DBG.step='built'; DBG.N=N; DBG.W=W; DBG.H=H;
   DBG.render=render; DBG.applyDom=applyDom; DBG.resize=resize;
   DBG.at = p => { render(p, performance.now()); applyDom(p); };
@@ -568,7 +569,7 @@ function resize(){
   if (ready && nw===W && nh===H) return;
   W=nw; H=nh;
 
-  dpr = Math.min(2, window.devicePixelRatio || 1);
+  dpr = Math.min(1.5, window.devicePixelRatio || 1);
   fx.width  = Math.round(W*dpr);
   fx.height = Math.round(H*dpr);
 
@@ -616,13 +617,9 @@ function render(p, time, speed){
   if (!ready || !gl) return;
   gl.viewport(0,0,fx.width,fx.height);
 
-  // в покое кадр гаснет почти мгновенно, на быстром листании держится дольше:
-  // движение читается мягким смазом, а не рябью
-  const keep = clamp(0.30 + (speed||0)*13, 0.30, 0.86);
-  fadeFrame(keep);
-  // кадры накладываются друг на друга, поэтому вклад одного кадра гасим —
-  // иначе на быстром листании картинка уходит в пересвет
-  const gain = (1 - keep) * 1.42;
+  gl.clearColor(0,0,0,0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  const gain = 1;
 
   // растворением теперь управляет шейдер покарточно; здесь только общий хвост
   const vis = Math.max(1 - smooth(clamp((p-T.cardEnd-0.02)/0.06,0,1)), hoverAmt);
@@ -647,7 +644,7 @@ function render(p, time, speed){
   gl.uniform1f(loc.u_mouseOn, mOn);
   gl.uniform1f(loc.u_hoverCard, hoverCard);
   gl.uniform1f(loc.u_hoverAmt, hoverAmt);
-  gl.drawArrays(gl.POINTS, 0, N);
+  gl.drawArrays(gl.POINTS, 0, drawN || N);
 }
 
 /* ── DOM по прогрессу ────────────────────────────────────────────── */
@@ -694,6 +691,10 @@ function readProgress(){
 }
 
 let eased = -1, lastNow = 0;
+// Сколько точек реально рисуем. Стартуем осторожно и наращиваем, пока кадры
+// укладываются в бюджет; если машина не тянет — снимаем. Так на слабом железе
+// сцена остаётся плавной, а на сильном показывает всё.
+let drawN = 0, frameAvg = 16;
 
 function frame(now){
   const r = stage.getBoundingClientRect();
@@ -712,6 +713,11 @@ function frame(now){
 
     const speed = Math.abs(eased - prev) / dt * 0.001;   // доли прогресса в мс
     progress = eased;
+
+    // автоподстройка плотности: держим кадр в бюджете
+    frameAvg += (dt*1000 - frameAvg) * 0.1;
+    if (frameAvg > 19 && drawN > N*0.18) drawN = Math.max(N*0.18, drawN * 0.94);
+    else if (frameAvg < 13.5 && drawN < N) drawN = Math.min(N, drawN * 1.03 + 400);
     render(eased, now, speed);
     if (Math.abs(eased-shown) > 0.0012){ applyDom(eased); shown = eased; }
   }
