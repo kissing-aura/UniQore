@@ -499,6 +499,16 @@ function build(){
   Array.prototype.sort.call(wi,(a,b)=>wk[a]-wk[b]);
   Array.prototype.sort.call(di,(a,b)=>dk[a]-dk[b]);
 
+  // Порядок записи перемешиваем: рисуется первые drawN точек, и если оставить
+  // их отсортированными по горизонтали, при снижении плотности пропадают целые
+  // куски сцены, а не равномерная часть.
+  const slot = new Uint32Array(N);
+  for (let i=0;i<N;i++) slot[i]=i;
+  for (let i=N-1;i>0;i--){
+    const j = (rnd(i*7.77) * (i+1)) | 0;
+    const t = slot[i]; slot[i] = slot[j]; slot[j] = t;
+  }
+
   const aWord=new Float32Array(N*2), aCtrl=new Float32Array(N*2), aDst=new Float32Array(N*2);
   const aMeta=new Float32Array(N*4), aCol=new Float32Array(N*3), aSize=new Float32Array(N*2);
   const aCard=new Float32Array(N), aRy=new Float32Array(N*2);
@@ -510,6 +520,7 @@ function build(){
 
   for (let i=0;i<N;i++){
     const a=wi[i], b=di[i];
+    const o = slot[i];                       // куда кладём: порядок перемешан
     // в буквы кладём меньше половины частиц: при такой плотности слово иначе
     // заливается в сплошное пятно. Остальные висят дымкой вокруг и разгораются
     // уже в полёте
@@ -519,13 +530,13 @@ function build(){
       const ang = rnd(i*4.77)*6.2832, rad = Math.sqrt(rnd(i*5.53));
       sx = cX + Math.cos(ang)*rad*W*0.42;
       sy = cY + Math.sin(ang)*rad*H*0.30;
-      aRy[i*2+1] = 1;
+      aRy[o*2+1] = 1;
     }
     const tx=dst.xs[b], ty=dst.ys[b];
     const depth = rnd(i*12.7);
 
-    aWord[i*2]=sx; aWord[i*2+1]=sy;
-    aDst[i*2]=tx;  aDst[i*2+1]=ty;
+    aWord[o*2]=sx; aWord[o*2+1]=sy;
+    aDst[o*2]=tx;  aDst[o*2+1]=ty;
 
     const mx2=(sx+tx)/2, my2=(sy+ty)/2;
     let nx=mx2-cX, ny=my2-cY;
@@ -533,21 +544,21 @@ function build(){
     // дуга короткая: при большом выбросе кадр превращается в ровный шум,
     // а нужно читаемое движение потоком
     const blast=(0.06+rnd(i*3.77)*0.20)*scale*(0.7+depth*0.5);
-    aCtrl[i*2]   = mx2 + nx*blast*0.7 - Math.abs(nx)*0 + (rnd(i*5.19)-.5)*W*0.05;
-    aCtrl[i*2+1] = my2 + ny*blast*0.5 - blast*0.55 + (rnd(i*6.31)-.5)*H*0.05;
+    aCtrl[o*2]   = mx2 + nx*blast*0.7 + (rnd(i*5.19)-.5)*W*0.05;
+    aCtrl[o*2+1] = my2 + ny*blast*0.5 - blast*0.55 + (rnd(i*6.31)-.5)*H*0.05;
 
     // волна распада слева направо, длительность у всех близкая
-    aMeta[i*4]   = ((sx-minX)/span)*0.50 + rnd(i*1.13)*0.11;
-    aMeta[i*4+1] = 0.30 + rnd(i*2.71)*0.10;
-    aMeta[i*4+2] = rnd(i*9.41);
-    aMeta[i*4+3] = depth;
+    aMeta[o*4]   = ((sx-minX)/span)*0.50 + rnd(i*1.13)*0.11;
+    aMeta[o*4+1] = 0.30 + rnd(i*2.71)*0.10;
+    aMeta[o*4+2] = rnd(i*9.41);
+    aMeta[o*4+3] = depth;
 
-    aCol[i*3]=dst.cr[b]; aCol[i*3+1]=dst.cg[b]; aCol[i*3+2]=dst.cb[b];
-    aCard[i]=dst.cardOf[b]; aRy[i*2]=dst.ryOf[b];
+    aCol[o*3]=dst.cr[b]; aCol[o*3+1]=dst.cg[b]; aCol[o*3+2]=dst.cb[b];
+    aCard[o]=dst.cardOf[b]; aRy[o*2]=dst.ryOf[b];
 
     const L = dst.cr[b]*0.299 + dst.cg[b]*0.587 + dst.cb[b]*0.114;
-    aSize[i*2]   = 0.86 + rnd(i*8.13)*0.56;                     // в слове видны отдельные точки
-    aSize[i*2+1] = (0.96 + rnd(i*8.13)*0.58) * (0.72 + L*0.7);  // в портрете светлое крупнее — даёт объём
+    aSize[o*2]   = 0.86 + rnd(i*8.13)*0.56;                     // в слове видны отдельные точки
+    aSize[o*2+1] = (0.96 + rnd(i*8.13)*0.58) * (0.72 + L*0.7);  // в портрете светлое крупнее — даёт объём
   }
 
   const put=(name,arr,size)=>{
@@ -699,7 +710,7 @@ let eased = -1, lastNow = 0;
 // Сколько точек реально рисуем. Стартуем осторожно и наращиваем, пока кадры
 // укладываются в бюджет; если машина не тянет — снимаем. Так на слабом железе
 // сцена остаётся плавной, а на сильном показывает всё.
-let drawN = 0, frameAvg = 16;
+let drawN = 0, frameAvg = 16, clean = 0;
 let statEl = null, statFrames = 0, statT = 0, statMin = 999;
 
 function frame(now){
@@ -732,8 +743,12 @@ function frame(now){
         statFrames = 0; statT = now;
       }
     }
-    if (frameAvg > 19 && drawN > N*0.18) drawN = Math.max(N*0.18, drawN * 0.94);
-    else if (frameAvg < 13.5 && drawN < N) drawN = Math.min(N, drawN * 1.03 + 400);
+    // При вертикальной синхронизации кадр всегда 16.6 мс — по нему запаса не
+    // видно, поэтому считаем по пропускам: идём чисто — добавляем точек,
+    // словили длинный кадр — снимаем.
+    const ms = dt * 1000;
+    if (ms > 24){ drawN = Math.max(N*0.15, drawN * 0.90); clean = 0; }
+    else if (++clean > 45 && drawN < N){ drawN = Math.min(N, drawN * 1.06 + 1500); clean = 0; }
     render(eased, now, speed);
     if (Math.abs(eased-shown) > 0.0012){ applyDom(eased); shown = eased; }
   }
