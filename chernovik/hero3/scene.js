@@ -32,7 +32,7 @@
     var p = панели[активная];
     var шаг = p.offsetWidth + parseFloat(getComputedStyle(рельс).gap || 0);
     var центр = (дека.clientWidth - p.offsetWidth) / 2;
-    рельс.style.transform = 'translateX(' + (центр - активная * шаг) + 'px)';
+    рельс.style.translate = (центр - активная * шаг) + 'px';
   }
 
   function показать(i, вручную) {
