@@ -646,10 +646,14 @@ function render(p, time, speed){
   const gain = 1;
 
   // растворением теперь управляет шейдер покарточно; здесь только общий хвост
+  // плавности считаем до раннего выхода: иначе наведение никогда не стартует —
+  // точек нет, отрисовка выходит, а значит и hoverAmt не растёт
+  mx += (mtx-mx)*0.06; my += (mty-my)*0.06;
+  mOn += (mOnT - mOn) * 0.12;
+  hoverAmt += (hoverT - hoverAmt) * 0.16;
+
   const vis = Math.max(1 - smooth(clamp((p-T.cardEnd+0.01)/0.04,0,1)), hoverAmt * 1.15);
   if (vis <= 0.004) return;
-
-  mx += (mtx-mx)*0.06; my += (mty-my)*0.06;
 
   gl.useProgram(prog);
   bindAttribs();
@@ -662,8 +666,6 @@ function render(p, time, speed){
   gl.uniform1f(loc.u_gain, gain);
   gl.uniform1f(loc.u_p, p);
   gl.uniform2f(loc.u_fade, T.cardIn, T.cardEnd);
-  mOn += (mOnT - mOn) * 0.12;
-  hoverAmt += (hoverT - hoverAmt) * 0.16;
   gl.uniform2f(loc.u_mouse, mPx, mPy);
   gl.uniform1f(loc.u_mouseOn, mOn);
   gl.uniform1f(loc.u_hoverCard, hoverCard);
