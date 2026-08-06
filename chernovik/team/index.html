@@ -61,16 +61,18 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
   gap:var(--gap);justify-content:center;align-content:center}
 
 .card{position:relative;height:100%;aspect-ratio:13/16;margin:0;border-radius:clamp(10px,1vw,16px);
-  overflow:hidden;background:transparent;isolation:isolate;--focus:0;--edge:0;--pre:0;will-change:transform}
+  overflow:hidden;background:transparent;isolation:isolate;--focus:0;--edge:0;--rise:0;will-change:transform}
 /* масштаб на время сборки не анимируем через transition — тянулся бы за скроллом */
-/* Расфокус даётся вторым слоем с постоянным блюром, а не анимацией filter:
-   пересчёт размытия на каждый кадр — самое дорогое, что можно делать в скролле.
-   Здесь меняется только прозрачность, её вытягивает видеокарта. */
+/* Фото проявляется резким и наливается снизу вверх через маску.
+   Промежуточная размытая стадия убрана: кадр из восьми расфокусированных лиц
+   читался как «фото не загрузились». Маска — это композитинг, скролл не тормозит. */
 .card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;
   transition:transform .55s cubic-bezier(.2,.7,.2,1)}
-.card .ph--soft{filter:blur(11px) brightness(.85);transform:scale(1.06);
-  opacity:calc(var(--pre,0) * (1 - var(--focus)))}
-.card .ph--sharp{opacity:var(--focus)}
+.card .ph--sharp{
+  /* растушёвка на половину кадра и лёгкий наклон: ровная горизонталь читалась
+     как обрезанное лицо */
+  -webkit-mask-image:linear-gradient(188deg,transparent calc(100% - var(--rise,0) * 168%),#000 calc(148% - var(--rise,0) * 168%));
+  mask-image:linear-gradient(188deg,transparent calc(100% - var(--rise,0) * 168%),#000 calc(148% - var(--rise,0) * 168%))}
 .card:hover .ph--sharp{transform:scale(1.045)}
 /* каркас сетки проступает раньше фото — лицам из точек нужна опора */
 .card__edge{position:absolute;inset:0;border-radius:inherit;z-index:3;pointer-events:none;
@@ -105,7 +107,7 @@ body.frame-mode .stage{height:100svh}
 @media (prefers-reduced-motion:reduce){
   .fx{display:none}
   .head,.card__cap,.card__flag{opacity:1!important;transform:none!important}
-  .card{--focus:1;--edge:1;--pre:1;transform:none!important}
+  .card{--focus:1;--edge:1;--rise:1;transform:none!important}
 }
 </style>
 </head>
@@ -130,14 +132,14 @@ body.frame-mode .stage{height:100svh}
     </div>
 
     <div class="grid" id="grid">
-      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><img class="ph--sharp" src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Матвей</b></figcaption></figure>
-      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><img class="ph--sharp" src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Илья</b></figcaption></figure>
-      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Ведущий дизайнер</b></figcaption></figure>
-      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Full-stack разработчик</b></figcaption></figure>
-      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Backend-разработчик</b></figcaption></figure>
-      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Frontend-разработчик</b></figcaption></figure>
-      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Проджект-менеджер</b></figcaption></figure>
-      <figure class="card"><img class="ph--soft" aria-hidden="true" src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><img class="ph--sharp" src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Team&nbsp;Lead</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/matvei.webp?v=1" alt="Матвей — основатель Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Матвей</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/ilya.webp?v=1" alt="Илья — сооснователь Uniqore" width="560" height="689" fetchpriority="high"><span class="card__flag">Основатель</span><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Илья</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/designer.webp?v=1" alt="Ведущий дизайнер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Ведущий дизайнер</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/dev_full.webp?v=1" alt="Full-stack разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Full-stack разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/dev_back.webp?v=1" alt="Backend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Backend-разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/dev_front.webp?v=1" alt="Frontend-разработчик Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Frontend-разработчик</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/pm.webp?v=1" alt="Проджект-менеджер Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Проджект-менеджер</b></figcaption></figure>
+      <figure class="card"><img class="ph--sharp" src="faces/teamlead.webp?v=1" alt="Team Lead команды Uniqore" width="560" height="689"><span class="card__sheen"></span><span class="card__edge"></span><figcaption class="card__cap"><b>Team&nbsp;Lead</b></figcaption></figure>
     </div>
   </div>
 </section>
@@ -195,6 +197,7 @@ attribute vec4 a_meta;     // delay, dur, seed, depth
 attribute vec3 a_col;      // цвет пикселя портрета
 attribute vec2 a_size;     // размер в слове / в портрете
 attribute float a_card;    // индекс карточки: точки тают в такт своему фото
+attribute float a_ry;      // высота внутри карточки: 0 у макушки, 1 у низа
 
 uniform vec2  u_res;
 uniform float u_t0;        // прогресс перелёта
@@ -242,12 +245,13 @@ void main(){
   gl_Position = vec4((pos / u_res) * 2.0 - 1.0, 0.0, 1.0);
   gl_Position.y = -gl_Position.y;
 
-  // точки тают ровно по той же лесенке, по какой проявляется фото их карточки,
-  // но с отставанием — сначала под точками проступает снимок, потом они гаснут
+  // фото карточки наливается снизу вверх — точка гаснет тогда, когда волна
+  // дошла до её высоты. Никакого промежуточного размытия: где снимок появился,
+  // там точек уже нет
   float rev  = clamp((u_p - u_fade.x) / max(0.001, u_fade.y - u_fade.x), 0.0, 1.0);
-  float off  = a_card * 0.022 + 0.14;
-  float melt = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
-  melt = melt * melt * (3.0 - 2.0 * melt);
+  float off  = a_card * 0.022;
+  float rise = clamp((rev - off) / max(0.001, 1.0 - off), 0.0, 1.0);
+  float melt = smoothstep(a_ry - 0.30, a_ry + 0.30, rise);
 
   float size = mix(a_size.x, a_size.y, e) * (1.0 + air * 0.55) * (0.62 + depth * 0.75);
   size *= 1.0 - melt * 0.55;                 // на прощание точка ужимается, а не просто гаснет
@@ -322,9 +326,9 @@ function initGL(){
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)){ DBG.linkError = gl.getProgramInfoLog(prog); return false; }
   gl.useProgram(prog);
 
-  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card'].forEach(n => { loc[n] = gl.getAttribLocation(prog, n); });
+  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry'].forEach(n => { loc[n] = gl.getAttribLocation(prog, n); });
   ['u_res','u_t0','u_time','u_dpr','u_par','u_vis','u_gain','u_p','u_fade'].forEach(n => { loc[n] = gl.getUniformLocation(prog, n); });
-  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card'].forEach(n => { buf[n] = gl.createBuffer(); });
+  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry'].forEach(n => { buf[n] = gl.createBuffer(); });
 
   const fv = compile(gl.VERTEX_SHADER, FADE_VERT), ff = compile(gl.FRAGMENT_SHADER, FADE_FRAG);
   if (!fv || !ff) return false;
@@ -386,7 +390,7 @@ function samplePortraits(n){
   const per = Math.floor(n / cards.length);
   const xs=new Float32Array(n), ys=new Float32Array(n);
   const cr=new Float32Array(n), cg=new Float32Array(n), cb=new Float32Array(n);
-  const cardOf=new Float32Array(n);
+  const cardOf=new Float32Array(n), ryOf=new Float32Array(n);
   let k=0;
 
   const c = document.createElement('canvas');
@@ -444,10 +448,11 @@ function samplePortraits(n){
       if (data){ cr[k]=data[lo*4]/255; cg[k]=data[lo*4+1]/255; cb[k]=data[lo*4+2]/255; }
       else { cr[k]=0.6; cg[k]=0.65; cb[k]=0.75; }
       cardOf[k]=ci;
+      ryOf[k]=1 - py/sh;          // 0 у низа кадра, 1 у макушки
       k++;
     }
   });
-  return {xs,ys,cr,cg,cb,cardOf};
+  return {xs,ys,cr,cg,cb,cardOf,ryOf};
 }
 
 /* ── сборка буферов ──────────────────────────────────────────────── */
@@ -468,7 +473,7 @@ function build(){
 
   const aWord=new Float32Array(N*2), aCtrl=new Float32Array(N*2), aDst=new Float32Array(N*2);
   const aMeta=new Float32Array(N*4), aCol=new Float32Array(N*3), aSize=new Float32Array(N*2);
-  const aCard=new Float32Array(N);
+  const aCard=new Float32Array(N), aRy=new Float32Array(N);
 
   const cX=W/2, cY=H*0.46, scale=Math.min(W,H);
   let minX=1e9, maxX=-1e9;
@@ -500,7 +505,7 @@ function build(){
     aMeta[i*4+3] = depth;
 
     aCol[i*3]=dst.cr[b]; aCol[i*3+1]=dst.cg[b]; aCol[i*3+2]=dst.cb[b];
-    aCard[i]=dst.cardOf[b];
+    aCard[i]=dst.cardOf[b]; aRy[i]=dst.ryOf[b];
 
     const L = dst.cr[b]*0.299 + dst.cg[b]*0.587 + dst.cb[b]*0.114;
     aSize[i*2]   = 0.95 + rnd(i*8.13)*0.70;                     // в слове видны отдельные точки
@@ -514,7 +519,7 @@ function build(){
   };
   put('a_word',aWord,2); put('a_ctrl',aCtrl,2); put('a_dst',aDst,2);
   put('a_meta',aMeta,4); put('a_col',aCol,3);   put('a_size',aSize,2);
-  put('a_card',aCard,1);
+  put('a_card',aCard,1); put('a_ry',aRy,1);
 
   ready = true; shown = -1;
   DBG.step='built'; DBG.N=N; DBG.W=W; DBG.H=H;
@@ -606,7 +611,10 @@ function render(p, time, speed){
 
 /* ── DOM по прогрессу ────────────────────────────────────────────── */
 function applyDom(p){
-  const rev = smooth(clamp((p-T.cardIn)/(T.cardEnd-T.cardIn),0,1));
+  // линейный прогресс — тот же, что уходит в шейдер: волна маски и волна
+  // гашения точек обязаны идти строго вместе
+  const revLin = clamp((p-T.cardIn)/(T.cardEnd-T.cardIn),0,1);
+  const rev = smooth(revLin);
   const cap = smooth(clamp((p-T.capIn)/(1-T.capIn),0,1));
   const hd  = smooth(clamp((p-T.headIn)/0.26,0,1));
 
@@ -615,16 +623,15 @@ function applyDom(p){
 
   // каркас появляется раньше фото: сначала проступает сетка, потом в неё садятся лица
   const edge = smooth(clamp((p-0.56)/0.18,0,1));
-  // размытая заготовка проступает под точками — фото как будто наводится на резкость
-  const pre  = smooth(clamp((p-0.63)/0.15,0,1));
 
   for (let i=0;i<cards.length;i++){
     const off = i*0.022;
+    const rise = clamp((revLin-off)/(1-off),0,1);
     const k = smooth(clamp((rev-off)/(1-off),0,1));
     cards[i].style.transform = `scale(${0.972+0.028*k})`;
+    cards[i].style.setProperty('--rise', rise.toFixed(3));
     cards[i].style.setProperty('--focus', k.toFixed(3));
     cards[i].style.setProperty('--edge', (edge*(0.45+0.55*k)).toFixed(3));
-    cards[i].style.setProperty('--pre', pre.toFixed(3));
     caps[i].style.opacity = cap;
     caps[i].style.transform = `translate3d(0,${(1-cap)*6}px,0)`;
     if (flags[i]) flags[i].style.opacity = cap;
@@ -672,7 +679,7 @@ function frame(now){
 function boot(){
   if (!initGL()){                       // без WebGL показываем собранный состав
     applyDom(1);
-    cards.forEach(c => { c.style.setProperty('--focus','1'); c.style.setProperty('--edge','1'); });
+    cards.forEach(c => { c.style.setProperty('--focus','1'); c.style.setProperty('--edge','1'); c.style.setProperty('--rise','1'); });
     return;
   }
   resize();
@@ -690,7 +697,7 @@ function boot(){
 
   const p = readProgress();
   render(p, performance.now()); applyDom(p);
-  if (reduce){ applyDom(1); cards.forEach(c=>{ c.style.setProperty('--focus','1'); c.style.setProperty('--edge','1'); }); return; }
+  if (reduce){ applyDom(1); cards.forEach(c=>{ c.style.setProperty('--focus','1'); c.style.setProperty('--edge','1'); c.style.setProperty('--rise','1'); }); return; }
   requestAnimationFrame(frame);
 }
 
