@@ -215,15 +215,26 @@ function resize(){
 function sampleWord(n){
   const q = 2;
   const c = document.createElement('canvas');
-  c.width = Math.round(W*q); c.height = Math.round(H*q);
+  // канва шире экрана: слово должно попасть в неё целиком, иначе обрезанные
+  // глифы теряются ещё до замера и ужать их уже нечем
+  const OV = 1.7;
+  c.width = Math.round(W*q*OV); c.height = Math.round(H*q);
+  const offX = (W*OV - W)/2;
   const g = c.getContext('2d', {willReadFrequently:true});
 
   const target = W * (W < 760 ? 0.86 : 0.56);
   g.font = '700 200px Unbounded, sans-serif';
   const probe = g.measureText('uniqore').width || 1;
-  const size = Math.min(200 * target / probe, H * 0.27);
+  let size = Math.min(200 * target / probe, H * 0.27);
 
-  g.font = `700 ${size*q}px Unbounded, sans-serif`;
+  // подгоняем по факту: если шрифт применился позже замера, расчётный кегль
+  // окажется великоват и слово уедет за экран
+  for (let k=0;k<5;k++){
+    g.font = `700 ${size*q}px Unbounded, sans-serif`;
+    const w = g.measureText('uniqore').width / q;
+    if (w <= target) break;
+    size *= (target / w) * 0.985;
+  }
   g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='#fff';
   g.fillText('uniqore', c.width/2, c.height*0.46);
 
@@ -231,7 +242,7 @@ function sampleWord(n){
   const hits=[];
   for (let y=0; y<c.height; y+=2)
     for (let x=0; x<c.width; x+=2)
-      if (d[(y*c.width+x)*4+3] > 140) hits.push(x/q, y/q);
+      if (d[(y*c.width+x)*4+3] > 140) hits.push(x/q - offX, y/q);
 
   const total = hits.length/2;
   const out = new Float32Array(n*2);
@@ -240,6 +251,19 @@ function sampleWord(n){
     const k = Math.floor(i*total/n)*2;
     out[i*2]   = hits[k]   + (rnd(i*1.7)-.5)*1.8;
     out[i*2+1] = hits[k+1] + (rnd(i*3.1)-.5)*1.8;
+  }
+
+  // страховка: если шрифт не успел примениться к моменту замера, слово выходит
+  // за экран. Ужимаем к центру по факту, а не по расчёту.
+  let x0=1e9, x1=-1e9;
+  for (let i=0;i<n;i++){ const v=out[i*2]; if(v<x0)x0=v; if(v>x1)x1=v; }
+  const wid = x1-x0, lim = W*0.92;
+  if (wid > lim){
+    const k = lim/wid, cx = (x0+x1)/2, cy = H*0.46;
+    for (let i=0;i<n;i++){
+      out[i*2]   = cx + (out[i*2]-cx)*k;
+      out[i*2+1] = cy + (out[i*2+1]-cy)*k;
+    }
   }
   return out;
 }
@@ -563,6 +587,14 @@ function boot(){
     const p = clamp(forced, 0, 1);
     render(p, 0);
     applyDom(p);
+    if (new URLSearchParams(location.search).has('dbg')){
+      let x0=1e9,x1=-1e9;
+      for (let i=0;i<N;i++){ const v=P.x0[i]; if(v<x0)x0=v; if(v>x1)x1=v; }
+      const el = document.createElement('div');
+      el.style.cssText='position:fixed;left:6px;top:6px;z-index:99;color:#CDFF4F;font:12px monospace;background:#000a;padding:5px 8px;border-radius:6px';
+      el.textContent = `vw=${innerWidth} W=${W} N=${N} word=[${Math.round(x0)}..${Math.round(x1)}] шир=${Math.round(x1-x0)} fonts=${document.fonts.check('700 100px Unbounded')}`;
+      document.body.appendChild(el);
+    }
     return;
   }
 
@@ -575,7 +607,10 @@ function boot(){
 
 // без шрифта и фото слово и портреты сэмплируются пустыми
 Promise.all([
-  document.fonts ? document.fonts.load('800 100px Unbounded').catch(()=>{}) : Promise.resolve(),
+  // ждём именно тот вес, которым рисуем слово, иначе замер уйдёт по fallback-шрифту
+  document.fonts
+    ? document.fonts.load('700 100px Unbounded').then(() => document.fonts.ready).catch(()=>{})
+    : Promise.resolve(),
   ...cards.map(c => { const im=c.querySelector('img');
     return im.complete ? Promise.resolve() : new Promise(r => { im.onload=im.onerror=r; }); })
 ]).then(() => { DBG.step = 'assets-ready'; boot(); })
