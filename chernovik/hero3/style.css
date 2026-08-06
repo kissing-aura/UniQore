@@ -972,7 +972,17 @@ a{color:inherit;text-decoration:none}
   .h1{order:2}
   .sub{order:3}
   .cta{order:4}
-  .shell{order:5}
+  .deck{order:5;padding:22px 0 40px}
+  /* подглядывание уменьшено: на 358px ширины по 42px с каждой стороны
+     съедали четверть панели, окно становилось нечитаемым */
+  .deck{--peek:15px;--gap:10px}
+  /* стрелки мельче и не наезжают на панель — основной жест здесь свайп */
+  .deck__arw{width:34px;height:34px}
+  .deck__arw svg{width:16px;height:16px}
+  .deck__arw--prev{left:-4px}
+  .deck__arw--next{right:-4px}
+  .deck__tag{top:-20px;font-size:10px}
+  .deck__dot{font-size:11px;padding:5px 10px}
   .marks{order:6;margin-top:30px}
   /* лид на телефоне подрос с 15 до 16px и утянул мокап на 41px вниз —
      возвращаем запас отступами, чтобы окно осталось над сгибом Safari */

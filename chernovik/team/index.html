@@ -182,7 +182,7 @@ function resize(){
 
   // точки светятся и мелкие — полный ретина-буфер им не нужен,
   // зато вдвое дешевле очистка кадра
-  dpr = Math.min(1.5, window.devicePixelRatio || 1);
+  dpr = Math.min(1.35, window.devicePixelRatio || 1);
   fx.width  = Math.round(W * dpr);
   fx.height = Math.round(H * dpr);
 
@@ -190,9 +190,9 @@ function resize(){
   glowC.width  = Math.max(1, Math.round(W * gq));
   glowC.height = Math.max(1, Math.round(H * gq));
 
-  N = Math.round(clamp((W * H) / 88, 5000, 17000));
+  N = Math.round(clamp((W * H) / 118, 4200, 11500));
   dustN = W < 700 ? 90 : 180;
-  allocBuckets(N * 3);            // запас на следы
+  allocBuckets(N * 2);            // запас на следы
 
   stage.style.setProperty('--runway', (W < 760 ? 170 : 195) + 'svh');
   build();
@@ -349,7 +349,7 @@ function build(){
     P.tn[i] = Math.min(B_TONE-1, (L*B_TONE)|0);
     // в слове точка крупнее (буквы должны читаться), в портрете мельче (нужна деталь)
     P.sw[i]=1.30+rnd(i*8.13)*0.70;
-    P.sp[i]=0.95+rnd(i*8.13)*0.75;
+    P.sp[i]=0.88+rnd(i*8.13)*0.62;
     P.sd[i]=rnd(i*9.41)*6.283;
     P.lm[i]=rnd(i*11.7)<0.12?1:0;
   }
@@ -429,12 +429,9 @@ function render(p, time){
 
       // след по вектору — читается как motion blur на быстром скролле
       const vx=x-P.px[i], vy=y-P.py[i];
-      if (vx*vx+vy*vy > 3.0 && n+2 < bx.length){
-        for (let s=1;s<=2;s++){
-          const f=s/3;
-          bx[n]=(x-vx*f)*dpr; by[n]=(y-vy*f)*dpr; bs[n]=S*(1-f*0.45);
-          bBucket[n]=bk; bCount[bk]++; n++;
-        }
+      if (vx*vx+vy*vy > 4.5 && n < bx.length){
+        bx[n]=(x-vx*0.5)*dpr; by[n]=(y-vy*0.5)*dpr; bs[n]=S*0.7;
+        bBucket[n]=bk; bCount[bk]++; n++;
       }
       P.px[i]=x; P.py[i]=y;
     }
@@ -459,7 +456,7 @@ function render(p, time){
       for (let j=c0;j<c1;j++){
         const i=bOrder[j], s=bs[i];
         ctx.fillRect(bx[i]-s*0.5, by[i]-s*0.5, s, s);
-        if ((j & 3) === 0){
+        if ((j & 7) === 0){
           const gsz = s*gs*3.2;
           gctx.fillRect(bx[i]*gs/dpr - gsz*0.5, by[i]*gs/dpr - gsz*0.5, gsz, gsz);
         }
