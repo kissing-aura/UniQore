@@ -209,6 +209,7 @@ attribute vec3 a_col;      // цвет пикселя портрета
 attribute vec2 a_size;     // размер в слове / в портрете
 attribute float a_card;    // индекс карточки: точки тают в такт своему фото
 attribute vec2 a_ry;       // x: высота в карточке (0 макушка, 1 низ), y: метка дымки
+attribute vec4 a_rect;     // границы своей карточки: точка не должна из неё вылезать
 
 uniform vec2  u_res;
 uniform float u_t0;        // прогресс перелёта
@@ -270,15 +271,16 @@ void main(){
   // параллакс: ближние слои ведутся сильнее
   pos += u_par * (0.4 + depth) * (1.0 - e*0.8);
 
-  // Наведение срывает точки с их мест: каждая уходит на свою орбиту и живёт
-  // там, пока курсор на карточке. Человек рассыпается целиком, а не только
-  // под самим курсором.
-  float spin = seed * 39.7 + u_time * (0.45 + seed * 1.25);
-  float orbit = (14.0 + seed * 96.0) * onCard;
-  pos += vec2(cos(spin), sin(spin)) * orbit;
-  pos.y += sin(u_time * 0.85 + seed * 21.0) * 22.0 * onCard;
-  pos.x += cos(u_time * 0.62 + seed * 15.0) * 18.0 * onCard;
-  float lit = onCard * 0.35;
+  // Наведение рассыпает человека в хаос. Смещение по кругу одного радиуса
+  // давало кольцо с пустотой внутри — здесь корень от случайного числа даёт
+  // равномерное облако, где точки есть и в центре, и по краям.
+  float ang1 = fract(seed * 91.7) * 6.2832;
+  float rad1 = sqrt(fract(seed * 47.31)) * 118.0;
+  vec2 scatter = vec2(cos(ang1), sin(ang1)) * rad1;
+  float tt = u_time * (0.22 + fract(seed * 23.13) * 0.55);
+  scatter += vec2(sin(tt + seed * 31.0), cos(tt * 0.87 + seed * 19.0)) * 30.0;
+  pos += scatter * onCard;
+  float lit = onCard * 0.3;
 
   gl_Position = vec4((pos / u_res) * 2.0 - 1.0, 0.0, 1.0);
   gl_Position.y = -gl_Position.y;
@@ -299,7 +301,14 @@ void main(){
 
   // дымка вокруг слова тусклая, пока слово стоит, и разгорается в полёте
   float mist = a_ry.y * (1.0 - smoothstep(0.0, 0.45, e));
-  v_alpha = u_vis * u_gain * (1.0 - melt) * (1.30 - air * 0.45) * (0.66 + depth * 0.44)
+  // Пока точка летит — она свободна. Когда прилетела в карточку, за её края
+  // выходить нельзя: иначе в зазорах между кадрами висят столбики.
+  float landed = smoothstep(0.55, 0.95, e);
+  vec2 lo = a_rect.xy, hi = a_rect.xy + a_rect.zw;
+  float inside = step(lo.x, pos.x) * step(pos.x, hi.x) * step(lo.y, pos.y) * step(pos.y, hi.y);
+  float clip = mix(1.0, inside, landed * (1.0 - onCard));   // под курсором точки свободны
+
+  v_alpha = clip * u_vis * u_gain * (1.0 - melt) * (1.30 - air * 0.45) * (0.66 + depth * 0.44)
           * mix(1.0, 0.30, haze) * (1.0 - mist * 0.82) * (1.0 + lit * 0.55);
 }`;
 
@@ -360,9 +369,9 @@ function initGL(){
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)){ DBG.linkError = gl.getProgramInfoLog(prog); return false; }
   gl.useProgram(prog);
 
-  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry'].forEach(n => { loc[n] = gl.getAttribLocation(prog, n); });
+  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry','a_rect'].forEach(n => { loc[n] = gl.getAttribLocation(prog, n); });
   ['u_res','u_t0','u_time','u_dpr','u_par','u_vis','u_gain','u_p','u_fade','u_mouse','u_mouseOn','u_hoverCard','u_hoverAmt'].forEach(n => { loc[n] = gl.getUniformLocation(prog, n); });
-  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry'].forEach(n => { buf[n] = gl.createBuffer(); });
+  ['a_word','a_ctrl','a_dst','a_meta','a_col','a_size','a_card','a_ry','a_rect'].forEach(n => { buf[n] = gl.createBuffer(); });
 
   const fv = compile(gl.VERTEX_SHADER, FADE_VERT), ff = compile(gl.FRAGMENT_SHADER, FADE_FRAG);
   if (!fv || !ff) return false;
@@ -426,7 +435,7 @@ function samplePortraits(n){
   const per = Math.floor(n / cards.length);
   const xs=new Float32Array(n), ys=new Float32Array(n);
   const cr=new Float32Array(n), cg=new Float32Array(n), cb=new Float32Array(n);
-  const cardOf=new Float32Array(n), ryOf=new Float32Array(n);
+  const cardOf=new Float32Array(n), ryOf=new Float32Array(n), rectOf=new Float32Array(n*4);
   let k=0;
 
   const c = document.createElement('canvas');
@@ -485,10 +494,11 @@ function samplePortraits(n){
       else { cr[k]=0.6; cg[k]=0.65; cb[k]=0.75; }
       cardOf[k]=ci;
       ryOf[k]=1 - py/sh;          // 0 у низа кадра, 1 у макушки
+      rectOf[k*4]=left; rectOf[k*4+1]=top; rectOf[k*4+2]=r.width; rectOf[k*4+3]=r.height;
       k++;
     }
   });
-  return {xs,ys,cr,cg,cb,cardOf,ryOf};
+  return {xs,ys,cr,cg,cb,cardOf,ryOf,rectOf};
 }
 
 /* ── сборка буферов ──────────────────────────────────────────────── */
@@ -519,7 +529,7 @@ function build(){
 
   const aWord=new Float32Array(N*2), aCtrl=new Float32Array(N*2), aDst=new Float32Array(N*2);
   const aMeta=new Float32Array(N*4), aCol=new Float32Array(N*3), aSize=new Float32Array(N*2);
-  const aCard=new Float32Array(N), aRy=new Float32Array(N*2);
+  const aCard=new Float32Array(N), aRy=new Float32Array(N*2), aRect=new Float32Array(N*4);
 
   const cX=W/2, cY=H*0.46, scale=Math.min(W,H);
   let minX=1e9, maxX=-1e9;
@@ -563,6 +573,8 @@ function build(){
 
     aCol[o*3]=dst.cr[b]; aCol[o*3+1]=dst.cg[b]; aCol[o*3+2]=dst.cb[b];
     aCard[o]=dst.cardOf[b]; aRy[o*2]=dst.ryOf[b];
+    aRect[o*4]=dst.rectOf[b*4]; aRect[o*4+1]=dst.rectOf[b*4+1];
+    aRect[o*4+2]=dst.rectOf[b*4+2]; aRect[o*4+3]=dst.rectOf[b*4+3];
 
     const L = dst.cr[b]*0.299 + dst.cg[b]*0.587 + dst.cb[b]*0.114;
     aSize[o*2]   = 0.86 + rnd(i*8.13)*0.56;                     // в слове видны отдельные точки
@@ -576,7 +588,7 @@ function build(){
   };
   put('a_word',aWord,2); put('a_ctrl',aCtrl,2); put('a_dst',aDst,2);
   put('a_meta',aMeta,4); put('a_col',aCol,3);   put('a_size',aSize,2);
-  put('a_card',aCard,1); put('a_ry',aRy,2);
+  put('a_card',aCard,1); put('a_ry',aRy,2); put('a_rect',aRect,4);
 
   ready = true; shown = -1;
   drawN = Math.min(N, 45000);        // стартуем с безопасного числа
