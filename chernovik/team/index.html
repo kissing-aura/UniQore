@@ -308,7 +308,7 @@ void main(){
   float inside = step(lo.x, pos.x) * step(pos.x, hi.x) * step(lo.y, pos.y) * step(pos.y, hi.y);
   float clip = mix(1.0, inside, landed * (1.0 - onCard));   // под курсором точки свободны
 
-  v_alpha = clip * u_vis * u_gain * (1.0 - melt) * (1.30 - air * 0.45) * (0.66 + depth * 0.44)
+  v_alpha = clip * u_vis * u_gain * (1.0 - melt) * (1.75 - air * 0.55) * (0.66 + depth * 0.44)
           * mix(1.0, 0.30, haze) * (1.0 - mist * 0.82) * (1.0 + lit * 0.55);
 }`;
 
@@ -321,7 +321,7 @@ void main(){
   vec2 d = gl_PointCoord - 0.5;
   float r = dot(d, d) * 4.0;                 // 0 в центре, 1 на краю
   float core = smoothstep(1.0, 0.0, r);
-  float a = core * core * v_alpha;
+  float a = pow(core, 1.45) * v_alpha;
   if (a < 0.004) discard;
   gl_FragColor = vec4(v_col * a, a);
 }`;
@@ -577,8 +577,8 @@ function build(){
     aRect[o*4+2]=dst.rectOf[b*4+2]; aRect[o*4+3]=dst.rectOf[b*4+3];
 
     const L = dst.cr[b]*0.299 + dst.cg[b]*0.587 + dst.cb[b]*0.114;
-    aSize[o*2]   = 0.86 + rnd(i*8.13)*0.56;                     // в слове видны отдельные точки
-    aSize[o*2+1] = (0.96 + rnd(i*8.13)*0.58) * (0.72 + L*0.7);  // в портрете светлое крупнее — даёт объём
+    aSize[o*2]   = 1.18 + rnd(i*8.13)*0.62;                     // в слове видны отдельные точки
+    aSize[o*2+1] = (1.10 + rnd(i*8.13)*0.62) * (0.72 + L*0.7);  // в портрете светлое крупнее — даёт объём
   }
 
   const put=(name,arr,size)=>{
