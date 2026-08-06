@@ -391,7 +391,7 @@ function initGL(){
 
 /* ── точки слова ─────────────────────────────────────────────────── */
 function sampleWord(n){
-  const q = 1.5, OV = 1.7;
+  const q = 2, OV = 1.7;
   const c = document.createElement('canvas');
   c.width = Math.round(W*q*OV); c.height = Math.round(H*q);
   const offX = (W*OV - W)/2;
@@ -412,10 +412,10 @@ function sampleWord(n){
 
   const d = g.getImageData(0,0,c.width,c.height).data;
   const hits=[];
-  // шаг 2: при большом экране проход по каждому пикселю — это миллионы итераций,
-  // а точек для выборки хватает и так
-  for (let y=0; y<c.height; y+=2)
-    for (let x=0; x<c.width; x+=2)
+  // шаг 1: с прореживанием контуры букв рвались и внутри появлялись дыры.
+  // Это разовый проход при сборке, кадры он не трогает.
+  for (let y=0; y<c.height; y+=1)
+    for (let x=0; x<c.width; x+=1)
       if (d[(y*c.width+x)*4+3] > 140) hits.push(x/q - offX, y/q);
 
   const total = hits.length/2;
