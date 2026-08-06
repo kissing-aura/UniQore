@@ -191,6 +191,7 @@ let gl=null, prog=null, buf={}, loc={}, ready=false;
 let progress=0, shown=-1;
 let mtx=0,mty=0,mx=0,my=0;
 let mPx=-9999, mPy=-9999, mOn=0, mOnT=0;        // курсор в координатах сцены
+let hoverAmt = 0;                              // самое сильное влияние на кадре
 const infl = new Float32Array(8);              // насколько рассыпана каждая карточка
 const inflT = new Float32Array(8);             // и куда она стремится
 const rects = [];                              // геометрия карточек, обновляется при ресайзе
