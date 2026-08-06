@@ -159,7 +159,7 @@ const ctx  = fx.getContext('2d');
 const gctx = glowC.getContext('2d');
 
 /* тайминги сцены в долях прогресса скролла */
-const T = { hold:0.10, flyEnd:0.62, fadeIn:0.58, fadeEnd:0.80, capIn:0.80, headIn:0.50 };
+const T = { hold:0.13, flyEnd:0.74, fadeIn:0.70, fadeEnd:0.89, capIn:0.87, headIn:0.58 };
 
 let W=0, H=0, dpr=1, gq=1;      // gq — множитель канвы свечения
 let N=0, P=null, dustN=0, dust=null;
@@ -273,7 +273,9 @@ function samplePortraits(n){
       let w = 0.12;
       if (data){
         const L = (data[i*4]*.299 + data[i*4+1]*.587 + data[i*4+2]*.114)/255;
-        w = 0.04 + Math.pow(L,1.5)*2.8;
+        // резкий вес: точки идут на лицо, фон карточки почти не набирает частиц,
+        // иначе вместо портрета получается ровное пятно
+        w = 0.012 + Math.pow(L,2.6)*4.2;
       }
       acc += w; cum[i]=acc;
     }
@@ -341,9 +343,9 @@ function build(){
     const mx=(sx+tx)/2, my=(sy+ty)/2;
     let nx=mx-cX, ny=my-cY;
     const nl=Math.hypot(nx,ny)||1; nx/=nl; ny/=nl;
-    const blast=(0.14+rnd(i*3.77)*0.46)*blastScale*0.40;
-    P.cx[i]=mx+nx*blast+(rnd(i*5.19)-.5)*W*0.09;
-    P.cy[i]=my+ny*blast*0.6+(rnd(i*6.31)-.5)*H*0.09;
+    const blast=(0.22+rnd(i*3.77)*0.72)*blastScale*0.60;
+    P.cx[i]=mx+nx*blast+(rnd(i*5.19)-.5)*W*0.14;
+    P.cy[i]=my+ny*blast*0.62+(rnd(i*6.31)-.5)*H*0.13;
 
     P.r1[i]=dst.cr[b]; P.g1[i]=dst.cg[b]; P.b1[i]=dst.cb[b];
     // в слове точка крупнее (буквы должны читаться), в портрете мельче (нужна деталь)
@@ -411,8 +413,13 @@ function render(p, time){
 
       let r,g,b;
       if (P.lm[i]){ r=205; g=255; b=79; } else { r=226; g=238; b=255; }
-      r += (P.r1[i]-r)*e; g += (P.g1[i]-g)*e; b += (P.b1[i]-b)*e;
-      r += (205-r)*air*0.28; g += (255-g)*air*0.28; b += (79-b)*air*0.28;
+      // цвет фото берём только под конец: иначе частицы темнеют на полпути
+      // и разлёт выглядит тусклым вместо искр
+      const mix = e < 0.62 ? 0 : smooth((e - 0.62) / 0.38);
+      r += (Math.min(255, P.r1[i]*1.45) - r) * mix;
+      g += (Math.min(255, P.g1[i]*1.45) - g) * mix;
+      b += (Math.min(255, P.b1[i]*1.45) - b) * mix;
+      r += (205-r)*air*0.30; g += (255-g)*air*0.30; b += (79-b)*air*0.30;
 
       const a = (0.80 + air*0.30) * vis;
       const S = (P.sw[i] + (P.sp[i]-P.sw[i])*e) * (1+air*0.45) * dpr;
@@ -437,7 +444,7 @@ function render(p, time){
       }
       P.px[i]=x; P.py[i]=y;
 
-      if ((i&1)===0) splat(gd,gw,gh,x*gx,y*gy,r,g,b,a*0.5);
+      if ((i&1)===0) splat(gd,gw,gh,x*gx,y*gy,r,g,b,a*0.75);
     }
   }
 

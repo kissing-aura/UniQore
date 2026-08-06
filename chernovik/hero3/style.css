@@ -177,10 +177,13 @@ a{color:inherit;text-decoration:none}
 }
 .deck__p{
   position:relative;flex:0 0 auto;width:var(--pw);
-  transition:opacity .5s ease,filter .5s ease,transform .62s cubic-bezier(.32,.72,.28,1);
-  opacity:.34;filter:saturate(.55);transform:scale(.955);transform-origin:center 60%;
+  transition:opacity .5s ease,filter .5s ease;
+  /* Без scale: уменьшение сжимало соседа к его собственному центру и
+     отодвигало край от кромки деки — подглядывание падало с 28px до 9.
+     Глубину дают прозрачность и обесцвечивание, этого достаточно. */
+  opacity:.3;filter:saturate(.5) brightness(.8);
 }
-.deck__p.is-on{opacity:1;filter:none;transform:scale(1)}
+.deck__p.is-on{opacity:1;filter:none}
 /* соседние панели не перехватывают курсор — иначе пауза автопоказа
    срабатывает от края, которого человек даже не заметил */
 .deck__p:not(.is-on){pointer-events:none}
