@@ -188,7 +188,7 @@ let gl=null, prog=null, buf={}, loc={}, ready=false;
 let progress=0, shown=-1;
 let mtx=0,mty=0,mx=0,my=0;
 let mPx=-9999, mPy=-9999, mOn=0, mOnT=0;        // курсор в координатах сцены
-let hoverCard=-1, hoverAmt=0, hoverT=0;         // карточка под курсором
+let hoverCard=-1, hoverAmt=0, hoverT=0, pendingCard=-1;   // карточка под курсором
 const riseArr = new Array(8).fill(0);           // насколько проявлено фото каждой
 
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
@@ -274,10 +274,11 @@ void main(){
   // давало кольцо с пустотой внутри — здесь корень от случайного числа даёт
   // равномерное облако, где точки есть и в центре, и по краям.
   float ang1 = fract(seed * 91.7) * 6.2832;
-  float rad1 = sqrt(fract(seed * 47.31)) * 118.0;
+  float reach = min(a_rect.z, a_rect.w) * 0.42;      // от размера карточки, а не в пикселях
+  float rad1 = sqrt(fract(seed * 47.31)) * reach;
   vec2 scatter = vec2(cos(ang1), sin(ang1)) * rad1;
   float tt = u_time * (0.22 + fract(seed * 23.13) * 0.55);
-  scatter += vec2(sin(tt + seed * 31.0), cos(tt * 0.87 + seed * 19.0)) * 30.0;
+  scatter += vec2(sin(tt + seed * 31.0), cos(tt * 0.87 + seed * 19.0)) * reach * 0.22;
   pos += scatter * onCard;
   float lit = onCard * 0.3;
 
@@ -662,6 +663,9 @@ function render(p, time, speed){
   mx += (mtx-mx)*0.06; my += (mty-my)*0.06;
   mOn += (mOnT - mOn) * 0.12;
   hoverAmt += (hoverT - hoverAmt) * 0.16;
+  if (pendingCard >= 0 && hoverAmt < 0.05){        // предыдущий собрался — берём следующего
+    hoverCard = pendingCard; pendingCard = -1; hoverT = 1;
+  }
 
   const vis = Math.max(1 - smooth(clamp((p-T.cardEnd+0.01)/0.04,0,1)), hoverAmt * 1.15);
   if (vis <= 0.004) return;
@@ -773,7 +777,10 @@ function frame(now){
     if (ms > 24){ drawN = Math.max(N*0.15, drawN * 0.90); clean = 0; }
     else if (++clean > 45 && drawN < N){ drawN = Math.min(N, drawN * 1.06 + 1500); clean = 0; }
     render(eased, now, speed);
-    if (Math.abs(eased-shown) > 0.0012){ applyDom(eased); shown = eased; }
+    // Пересчитывать стили только по скроллу нельзя: наведение его не двигает,
+    // и снимок после ухода курсора некому вернуть — карточка остаётся пустой.
+    const hoverLive = hoverAmt > 0.002 || hoverT > 0;
+    if (Math.abs(eased-shown) > 0.0012 || hoverLive){ applyDom(eased); shown = eased; }
   }
   requestAnimationFrame(frame);
 }
@@ -837,8 +844,15 @@ if (matchMedia('(pointer:fine)').matches){
     // наводить имеет смысл только когда снимок уже собран: до этого сцена
     // сама занята переходом. Смотрим на состояние карточки, а не на скролл —
     // в режиме одиночного кадра прогресса нет вовсе
-    c.addEventListener('pointerenter', () => { if (riseArr[i] > 0.85){ hoverCard = i; hoverT = 1; } });
-    c.addEventListener('pointerleave', () => { hoverT = 0; });
+    c.addEventListener('pointerenter', () => {
+      if (riseArr[i] <= 0.85) return;
+      if (hoverCard >= 0 && hoverCard !== i && hoverAmt > 0.08){
+        pendingCard = i; hoverT = 0;      // предыдущего сначала собираем, потом рассыпаем нового
+      } else {
+        hoverCard = i; pendingCard = -1; hoverT = 1;
+      }
+    });
+    c.addEventListener('pointerleave', () => { hoverT = 0; pendingCard = -1; });
   });
 }
 })();
