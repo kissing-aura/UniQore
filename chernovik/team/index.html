@@ -102,7 +102,16 @@ body{margin:0;background:var(--ink);color:var(--txt);font-family:'Geist',system-
   box-shadow:inset 0 0 0 1px rgba(205,255,79,.55), 0 0 26px -6px rgba(205,255,79,.45)}
 
 @media (max-width:760px){
-  .grid{grid-template-columns:repeat(2,auto);bottom:clamp(12px,2.4vh,26px)}
+  /* три ряда, как было в прежнем блоке команды: восемь портретов ложатся
+     3+3+2. В две колонки получалось четыре ряда и сетка уезжала вниз. */
+    .grid{grid-template-columns:repeat(3,minmax(0,1fr));bottom:clamp(12px,2.4vh,26px)}
+    /* min-width:0 обязателен: у grid-элемента минимум по умолчанию равен
+       min-content, поэтому карточка не сжималась до колонки в 99px,
+       оставалась 212px и налезала на соседнюю */
+    /* width:100% обязателен вместе с min-width:0. Иначе aspect-ratio:1/1
+       считает ширину от высоты ряда, а не от колонки: карточка оставалась
+       212px при колонке 99 и налезала на соседнюю. */
+    .card{min-width:0;width:100%;height:auto;align-self:start}
   .card{aspect-ratio:1/1}
   .card img{object-position:50% 58%}
   .head h2{font-size:clamp(17px,4.7vw,25px)}
