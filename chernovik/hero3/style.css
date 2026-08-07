@@ -631,10 +631,6 @@ a{color:inherit;text-decoration:none}
 
 /* Списки в разделах «Сайт» и «Реклама» несут другие подписи, чем источники
    заявок: имена форм длиннее, а значения — суммы в тысячах, а не штуки */
-[data-view="site"] .src__n{width:132px}
-[data-view="site"] .src__v{width:18px}
-[data-view="site"] .src__foot b{margin-left:auto}
-[data-view="site"] .ai__b b{font-size:11px}
 
 /* ══ Раздел «Клиенты» ══════════════════════════════════════════════════
    Сетка карточек, а не таблица: третий подряд табличный экран читался бы
@@ -1135,3 +1131,215 @@ a{color:inherit;text-decoration:none}
 .tbl tbody tr{transition:background-color .16s cubic-bezier(.25,.46,.45,.94)}
 .tbl tbody tr.is-hover td{background:rgba(255,255,255,.035)}
 .tbl tbody tr.is-warn.is-hover td{background:rgba(240,121,107,.08)}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Панель «Сайт под ключ» — в окне живой демо-сайт, а не отчёт по трафику.
+
+   Приём перенесён с /sayty/, где он утверждён: браузерное окно, внутри
+   сайт, поверх — стеклянные бейджи. Здесь без наклона: панели карусели
+   едут вбок, и поворот дрался бы со сдвигом ленты.
+
+   Сайдбара у этой панели нет — у сайта не бывает админского меню. Это же
+   и разводит две панели визуально: слева сайт, справа система, и они
+   больше не выглядят близнецами.
+
+   Ниши переключаются сами (кофейня → автосервис → магазин), вместе с
+   адресом в планке. Кегль заголовка здесь 34px — правило «10–14px внутри
+   мокапа» про интерфейс приложения, а это отрисованный сайт, у него своя
+   типографика, иначе он не похож на сайт.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* .app__body НЕ переводим в block: у .main высота берётся от флекса, и в
+   блочном режиме .views{flex:1} схлопывался в ноль — окно оставалось пустым.
+   Сайдбара просто нет, .main и так занимает всю ширину. */
+
+.lm{
+  position:relative;flex:1;min-height:0;display:flex;flex-direction:column;
+  background:#0B111D;overflow:hidden;
+}
+/* Свет за содержимым: два пятна в цвете ниши. Пятна, а не свечение по всей
+   панели — сплошной глоу в чёрном списке анти-слопа. */
+.lm__aurora{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(58% 44% at 76% 6%, color-mix(in srgb, var(--ac) 26%, transparent), transparent 68%),
+    radial-gradient(46% 40% at 12% 92%, color-mix(in srgb, var(--ac) 12%, transparent), transparent 70%),
+    linear-gradient(155deg, rgba(255,255,255,.035), transparent 42%);
+}
+/* Тот же тайл зерна, что у сцены героя: 96px, overlay, 5% */
+.lm__grain{
+  position:absolute;inset:0;pointer-events:none;z-index:4;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.lm > *:not(.lm__aurora):not(.lm__grain):not(.lm__cur){position:relative;z-index:2}
+
+/* ── Шапка сайта ── */
+.lm__nav{display:flex;align-items:center;gap:18px;padding:14px 26px;border-bottom:1px solid rgba(255,255,255,.07);flex:none}
+.lm__logo{display:flex;align-items:center;gap:10px;font:800 15px/1 'Unbounded',var(--font);letter-spacing:-.02em;white-space:nowrap}
+.lm__logo i{
+  width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;
+  font:800 12px/1 'Unbounded',var(--font);font-style:normal;
+  color:var(--ac-ink);background:var(--ac);box-shadow:0 0 16px -3px color-mix(in srgb, var(--ac) 60%, transparent);
+}
+.lm__links{display:flex;gap:20px;margin-left:auto;font-size:13px;color:#8e99ad;white-space:nowrap}
+.lm__cta{
+  flex:none;font-size:13px;font-weight:600;padding:9px 18px;border-radius:999px;white-space:nowrap;
+  color:var(--ac-ink);background:var(--ac);box-shadow:0 8px 22px -8px color-mix(in srgb, var(--ac) 75%, transparent);
+}
+
+/* ── Первый экран сайта ── */
+.lm__hero{flex:1;min-height:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;padding:0 26px}
+.lm__chip{
+  font:600 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ac);border:1px solid color-mix(in srgb, var(--ac) 34%, transparent);
+  background:color-mix(in srgb, var(--ac) 12%, transparent);
+  padding:6px 13px;border-radius:999px;margin-bottom:16px;
+}
+.lm__t{
+  font:800 34px/1.05 'Unbounded',var(--font);letter-spacing:-.035em;color:#fff;
+  margin-bottom:14px;
+}
+.lm__t em{font-style:normal;color:var(--ac)}
+.lm__lead{font-size:13.5px;line-height:1.5;color:#98a3b6;max-width:52%;margin-bottom:20px}
+.lm__btns{display:flex;align-items:center;gap:18px}
+.lm__b1{
+  font-size:13.5px;font-weight:600;padding:12px 24px;border-radius:999px;white-space:nowrap;
+  color:var(--ac-ink);background:var(--ac);box-shadow:0 10px 28px -10px color-mix(in srgb, var(--ac) 80%, transparent);
+}
+.lm__b2{font-size:13.5px;font-weight:600;color:#dfe4ec;border-bottom:1px solid rgba(255,255,255,.28);padding-bottom:3px;white-space:nowrap}
+
+/* ── Карточки товара ── */
+.lm__cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 26px 14px;flex:none}
+.lm__card{
+  display:flex;align-items:baseline;gap:10px;padding:13px 15px;border-radius:12px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.lm__card--ac{background:color-mix(in srgb, var(--ac) 11%, rgba(255,255,255,.02));border-color:color-mix(in srgb, var(--ac) 26%, transparent)}
+.lm__card b{font-size:13px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.lm__card i{margin-left:auto;font-style:normal;font-size:12px;color:#98a3b6;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lm__card--ac i{color:var(--ac)}
+
+/* ── Полоса доверия ── */
+.lm__strip{
+  display:flex;align-items:center;gap:12px;margin:0 26px 22px;padding:13px 16px;border-radius:12px;flex:none;
+  background:color-mix(in srgb, var(--ac) 9%, rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.06);
+}
+.lm__strip b{font:800 15px/1 'Unbounded',var(--font);color:var(--ac);white-space:nowrap}
+.lm__strip span{font-size:11.5px;color:#98a3b6}
+
+/* Курсор ходит по сайту и нажимает — тот же приём, что на /sayty/.
+   Это не «пульсация»: одно осмысленное движение с паузами, а не мигание. */
+.lm__cur{position:absolute;z-index:5;width:19px;height:19px;pointer-events:none;
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.55));
+  animation:lmCur 13s cubic-bezier(.5,0,.2,1) infinite}
+@keyframes lmCur{
+  0%,6%    {left:36%;top:74%;scale:1}
+  18%,26%  {left:calc(100% - 96px);top:26px;scale:1}
+  28%      {left:calc(100% - 96px);top:26px;scale:.82}
+  30%,46%  {left:calc(100% - 96px);top:26px;scale:1}
+  58%,66%  {left:23%;top:calc(100% - 168px);scale:1}
+  68%      {left:23%;top:calc(100% - 168px);scale:.82}
+  70%,88%  {left:23%;top:calc(100% - 168px);scale:1}
+  100%     {left:36%;top:74%;scale:1}
+}
+
+/* ── Стеклянные бейджи поверх окна ── */
+.fcard{
+  position:absolute;z-index:6;display:flex;align-items:center;gap:9px;
+  padding:9px 13px;border-radius:13px;pointer-events:none;
+  background:rgba(14,20,34,.78);border:1px solid rgba(255,255,255,.11);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:0 12px 30px -10px rgba(6,9,18,.7), inset 0 1px 0 rgba(255,255,255,.06);
+  font-size:12px;font-weight:600;letter-spacing:-.01em;
+}
+.fcard__ic{
+  width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;
+  color:var(--lime);background:linear-gradient(135deg,rgba(205,255,79,.22),rgba(205,255,79,.05));
+  border:1px solid rgba(205,255,79,.36);box-shadow:0 0 14px -5px rgba(205,255,79,.55);
+}
+.fcard__ic svg{width:14px;height:14px}
+.fcard__b{display:flex;flex-direction:column;line-height:1.25}
+.fcard__b i{font-style:normal;font-size:10px;font-weight:500;color:var(--dim2);margin-top:1px}
+.fcard--a{top:120px;right:20px}
+.fcard--b{top:186px;right:20px}
+
+/* ── Оркестровка: сайт собирается сверху вниз, как настоящая загрузка ── */
+.view.is-on .lm__nav,
+.view.is-on .lm__chip,
+.view.is-on .lm__t,
+.view.is-on .lm__lead,
+.view.is-on .lm__btns,
+.view.is-on .lm__card,
+.view.is-on .lm__strip{animation:uqRise .5s cubic-bezier(.22,.61,.36,1) backwards}
+.view.is-on .lm__nav  {animation-delay:calc(var(--uqt, 0s) + .42s)}
+.view.is-on .lm__chip {animation-delay:calc(var(--uqt, 0s) + .50s)}
+.view.is-on .lm__t    {animation-delay:calc(var(--uqt, 0s) + .56s)}
+.view.is-on .lm__lead {animation-delay:calc(var(--uqt, 0s) + .62s)}
+.view.is-on .lm__btns {animation-delay:calc(var(--uqt, 0s) + .68s)}
+.view.is-on .lm__card:nth-child(1){animation-delay:calc(var(--uqt, 0s) + .74s)}
+.view.is-on .lm__card:nth-child(2){animation-delay:calc(var(--uqt, 0s) + .79s)}
+.view.is-on .lm__card:nth-child(3){animation-delay:calc(var(--uqt, 0s) + .84s)}
+.view.is-on .lm__strip{animation-delay:calc(var(--uqt, 0s) + .90s)}
+.app--site .fcard{animation:uqRise .5s cubic-bezier(.22,.61,.36,1) backwards}
+.app--site .fcard--a{animation-delay:calc(var(--uqt, 0s) + .96s)}
+.app--site .fcard--b{animation-delay:calc(var(--uqt, 0s) + 1.02s)}
+
+/* ── Раскладки ────────────────────────────────────────────────────────
+   Окно 620 → 486 → 472. Ужимается типографика сайта, а не выбрасываются
+   блоки: сайт без цен и без полосы доверия перестаёт быть сайтом. */
+@media (min-width:1180.02px) and (max-width:1400px){
+  .lm__t{font-size:29px}
+  .lm__lead{font-size:13px;max-width:60%}
+  .lm__nav,.lm__hero{padding-left:22px;padding-right:22px}
+  .lm__cards{padding:0 22px 12px}
+  .lm__strip{margin:0 22px 18px}
+  .fcard--a{top:108px;right:16px}
+  .fcard--b{top:170px;right:16px}
+}
+@media (max-width:1180.01px){
+  .lm__t{font-size:26px}
+  .lm__lead{font-size:12.5px;max-width:66%;margin-bottom:16px}
+  .lm__chip{margin-bottom:13px}
+  .lm__nav{padding:12px 20px}
+  .lm__hero{padding:0 20px}
+  .lm__cards{padding:0 20px 11px;gap:8px}
+  .lm__card{padding:11px 12px}
+  .lm__strip{margin:0 20px 16px;padding:11px 13px}
+  .fcard--a{top:96px;right:14px}
+  .fcard--b{top:154px;right:14px}
+  .lm__cur{display:none}   /* курсор на планшете читается как мусор: мыши нет */
+}
+@media (max-width:720px){
+  /* Окно 328×472. Ссылки шапки уходят — на телефоне у сайта гамбургер,
+     а не три пункта в строку; карточки встают в столбик. */
+  .lm__links{display:none}
+  .lm__logo{font-size:14px}
+  .lm__cta{font-size:11.5px;padding:7px 13px}
+  .lm__nav{padding:11px 16px;gap:10px}
+  .lm__hero{padding:0 16px}
+  .lm__t{font-size:23px;margin-bottom:11px}
+  .lm__lead{font-size:12px;max-width:100%;margin-bottom:15px}
+  .lm__chip{font-size:9.5px;padding:5px 10px;margin-bottom:11px}
+  .lm__btns{gap:13px}
+  .lm__b1{font-size:12.5px;padding:10px 18px}
+  .lm__b2{font-size:12.5px}
+  .lm__cards{grid-template-columns:1fr;gap:6px;padding:0 16px 10px}
+  .lm__card{padding:9px 12px}
+  .lm__card b{font-size:12px}
+  .lm__strip{margin:0 16px 14px;padding:10px 12px;gap:9px}
+  .lm__strip span{font-size:10.5px}
+  /* Бейджи на телефоне уходят совсем: в окне 328px любая их позиция
+     накрывает заголовок сайта (замер: 26×43px на автосервисе). Срок
+     «4–6 дней» и так стоит в лиде над мокапом. */
+  .fcard{display:none}
+}
+@media (max-width:400px){
+  .lm__t{font-size:21px}
+}
+@media (prefers-reduced-motion:reduce){
+  .lm__cur{animation:none}
+  .view.is-on .lm__nav,.view.is-on .lm__chip,.view.is-on .lm__t,
+  .view.is-on .lm__lead,.view.is-on .lm__btns,.view.is-on .lm__card,
+  .view.is-on .lm__strip,.app--site .fcard{animation:none!important}
+}

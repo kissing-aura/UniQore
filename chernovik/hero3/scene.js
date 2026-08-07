@@ -108,14 +108,20 @@
     var ЦИКЛЫ = {
       crm: [{k:'dash', u:'crm.uniqore.pro/dashboard', t:7000},
             {k:'deals', u:'crm.uniqore.pro/deals', t:6000},
-            {k:'stats', u:'crm.uniqore.pro/analytics', t:6000}]
+            {k:'stats', u:'crm.uniqore.pro/analytics', t:6000}],
+      /* у сайта разделов нет — переключаются НИШИ. Одна кофейня показала бы
+         один сайт, а продаём мы сборку под любую нишу; адрес в планке
+         меняется вместе с сайтом, поэтому подмена читается сразу */
+      site: [{k:'cafe', u:'lumen-coffee.ru', t:6500},
+             {k:'auto', u:'virazh-service.ru', t:6500},
+             {k:'shop', u:'nord-store.ru', t:6500}]
     };
     var ЦИКЛ = ЦИКЛЫ[окно.dataset.panel] || [];
     var АДРЕСА = {
       dash:'crm.uniqore.pro/dashboard', deals:'crm.uniqore.pro/deals',
       stats:'crm.uniqore.pro/analytics', clients:'crm.uniqore.pro/clients',
       tasks:'crm.uniqore.pro/tasks', setup:'crm.uniqore.pro/settings',
-      site:'uniqore.pro/site/overview'
+      cafe:'lumen-coffee.ru', auto:'virazh-service.ru', shop:'nord-store.ru'
     };
 
     var текущий = 0, таймер = null, подсветка = null, пауза = false, ручная = 0, паузаДо = 0;
