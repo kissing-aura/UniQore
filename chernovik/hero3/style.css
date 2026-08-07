@@ -160,6 +160,11 @@ a{color:inherit;text-decoration:none}
    больше начинает спорить с активной панелью за внимание. */
 .deck{
   position:relative;width:100%;overflow:hidden;padding:26px 0 46px;
+  /* Гасим соседа к кромке. Растушёвка ровно на ширину подглядывания:
+     активная панель стоит на --peek от края и остаётся нетронутой, а
+     обрезанный край соседа перестаёт читаться как баг вёрстки. */
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--peek),#000 calc(100% - var(--peek)),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 var(--peek),#000 calc(100% - var(--peek)),transparent 100%);
   /* Панель заведомо уже деки: разница уходит на «подглядывание» соседей.
      По 38px с каждой стороны — этого хватает, чтобы прочитать «там ещё
      дашборды», и мало, чтобы сосед начал спорить с активной панелью. */
@@ -214,8 +219,8 @@ a{color:inherit;text-decoration:none}
 .deck__arw:active{transform:scale(.96)}
 /* стрелки прижаты к краям самой панели, а не экрана */
 /* стрелки стоят НАД краем соседней панели — оттуда они и «вытягивают» её */
-.deck__arw--prev{left:calc(var(--peek) - 32px)}
-.deck__arw--next{right:calc(var(--peek) - 32px)}
+.deck__arw--prev{left:-2px}
+.deck__arw--next{right:-2px}
 
 /* Точки-подписи вместо безымянных кружков: человек сразу видит, что там
    не «слайд 2», а конкретная услуга */
@@ -444,6 +449,10 @@ a{color:inherit;text-decoration:none}
 }
 .tbl td{padding:7px 7px 7px 0;border-bottom:1px solid rgba(255,255,255,.035);white-space:nowrap}
 .tbl tbody tr:last-child td{border-bottom:0}
+/* Правый отступ последней колонки — мёртвый: у бокса есть свой padding.
+   Из-за него таблица просила на 7px больше, чем бокс отдавал, и «Сумма»
+   подбривалась по кромке окна: +1,9px на 1440 и +5,3px на 1600. */
+.tbl th:nth-child(4),.tbl td:nth-child(4){padding-right:0}
 .tbl td:first-child{display:flex;align-items:center;gap:7px;font-weight:500}
 .tbl .num{font-variant-numeric:tabular-nums}
 .tbl .dim{color:var(--dim2);font-size:11px}
@@ -891,9 +900,14 @@ a{color:inherit;text-decoration:none}
   .cli__c:nth-child(n+13){display:none}
   .cnt::before{content:attr(data-m)}
   .set{grid-template-columns:140px minmax(0,1fr)}
-  /* колонка доски тут 152px: «Автосервис «Драйв»» просил 116 при доступных
-     112 и обрезался многоточием — полкегля и трекинг возвращают его целиком */
+  /* Колонка доски во всей этой полосе 108–152px, а заголовку карточки нужно
+     до 111 даже на кегле 11: на 1181 обрезаны были все 18 из 18, на 1331 —
+     два. Уходит четвёртая колонка «Оплачено»: у неё свой скоуп (оплаты
+     недели), а «18 в работе · 2,80 млн» в шапке — это первые три (6+7+5).
+     Так же поступает планшетная раскладка. Колонка вырастает до 147. */
   .kcard__t{font-size:11px;letter-spacing:-.012em}
+  [data-panel="crm"] .kan{grid-template-columns:repeat(3,1fr)}
+  [data-panel="crm"] .kcol:last-child{display:none}
   /* кнопки действий съедали 50px ширины, заголовки переносились на вторую
      строку и блок вылезал на 27px за низ окна */
   .ai__go{display:none}
@@ -972,6 +986,14 @@ a{color:inherit;text-decoration:none}
   [data-panel="crm"] .ai li{padding:6px 9px}
   [data-panel="crm"] .ai__b > span{display:none}
 }
+/* Полоса 1401–1440: тесные правила уже отключились, а окно ещё узкое — 847
+   против 866 на 1440. Замер на 1401: таблица вылетает на 5,8px вправо, блок
+   «Требует внимания» — на 3,6 вниз. Порядок отказа тот же, что полосой ниже:
+   сначала «Источник» (он продублирован блоком слева), потом кнопки действий. */
+@media (min-width:1400.02px) and (max-width:1439.98px){
+  .tbl th:nth-child(3),.tbl td:nth-child(3){display:none}
+  .ai__go{display:none}
+}
 @media (max-width:1180.01px){
   /* колонки складываются: сначала обещание, под ним продукт */
   .grid{grid-template-columns:1fr;gap:44px;padding:0 24px;max-width:900px}
@@ -983,6 +1005,11 @@ a{color:inherit;text-decoration:none}
   /* строк ровно столько, сколько влезает целиком: полстроки на срезе
      читается как баг, а не как «данных больше» */
   .tbl tbody tr:nth-child(n+7){display:none}
+  /* Вылет у таблицы был не вбок, а ВНИЗ: по ширине она укладывалась в 428
+     из 428, а шесть строк по 34,5px не помещались в ряд на 1,5px. Снимаем
+     по пикселю с вертикальных отступов ячейки — строка 32,5, шесть строк
+     экономят 12px. Резать шестую строку не нужно. */
+  .tbl td{padding-top:6px;padding-bottom:6px}
   .tbl th:nth-child(5),.tbl td:nth-child(5){display:none}
   .tbl th:nth-child(3),.tbl td:nth-child(3){display:none}
   /* карточка KPI сужается до 135px, и подпись с отступом под спарклайн
@@ -991,6 +1018,11 @@ a{color:inherit;text-decoration:none}
   .kpi__d{padding-right:0}
   .kan{grid-template-columns:repeat(3,1fr)}
   .kcol:last-child{display:none}
+  /* колонке тут 151px: «0,80 млн» в шапке вылетала на 28,4px вправо —
+     сумма уходит, счётчик этапа остаётся; заголовок карточки просил 116
+     при доступных 111 и обрезался многоточием */
+  .kcol__h em{display:none}
+  .kcard__t{font-size:11px;letter-spacing:-.014em}
   /* окно во всю ширину экрана, но само уже: карточек в ряд — три, а
      навигация настроек уходит, оставляя содержимое */
   .cli{grid-template-columns:repeat(3,1fr)}
@@ -1005,7 +1037,6 @@ a{color:inherit;text-decoration:none}
   .tsk__g--done ~ .tsk__i{display:none}
   .team,
   .set__h2 ~ .set__h2{display:none}
-  .set__rule:last-of-type{display:none}   /* убираем последнее, а не первое: на первое ссылаются алерт и задачи */
   .set__h2 .box__m{display:none}
   .tsk{padding:8px 12px 0}
   .tsk__i{padding:5px 8px;margin-bottom:3px}
@@ -1013,7 +1044,7 @@ a{color:inherit;text-decoration:none}
   .tsk__b b{font-size:11px}
   .tsk__b > span{font-size:10px}
   /* окно тут 486px → колонке достаётся 389, это ровно четыре карточки */
-  .kcol > :nth-child(n+6){display:none}
+  .kcol > :nth-child(n+5){display:none}   /* четвёртая карточка вылезала на 18px за низ */
   .an{grid-template-columns:1fr}
   .an__side{display:none}
 }
@@ -1080,6 +1111,10 @@ a{color:inherit;text-decoration:none}
      несоответствие. Названия переносятся, а не обрезаются: места хватает. */
   .tsk{padding:8px 12px 0}
   .tsk__i{padding:7px 8px}
+  /* Три правила автоматизации по 49,4px + отступы просили 365 при доступных
+     359 — блок вылезал на 5,8px. Снимаем по 4px с карточки и по 3 с отступа:
+     ни одно правило не выбрасываем, на первое ссылаются алерт и задачи. */
+  .set__rule{padding:7px 10px;margin-top:9px}
   .tsk__g:nth-of-type(3),
   .tsk__g:nth-of-type(3) ~ .tsk__i{display:none}
   .tsk__b b{white-space:normal}
@@ -1174,7 +1209,7 @@ a{color:inherit;text-decoration:none}
 .lm > *:not(.lm__aurora):not(.lm__grain):not(.lm__cur){position:relative;z-index:2}
 
 /* ── Шапка сайта ── */
-.lm__nav{display:flex;align-items:center;gap:18px;padding:14px 26px;border-bottom:1px solid rgba(255,255,255,.07);flex:none}
+.lm__nav{display:flex;align-items:center;gap:18px;padding:12px 26px;border-bottom:1px solid rgba(255,255,255,.07);flex:none}
 .lm__logo{display:flex;align-items:center;gap:10px;font:800 15px/1 'Unbounded',var(--font);letter-spacing:-.02em;white-space:nowrap}
 .lm__logo i{
   width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;
@@ -1193,36 +1228,61 @@ a{color:inherit;text-decoration:none}
   font:600 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
   color:var(--ac);border:1px solid color-mix(in srgb, var(--ac) 34%, transparent);
   background:color-mix(in srgb, var(--ac) 12%, transparent);
-  padding:6px 13px;border-radius:999px;margin-bottom:16px;
+  padding:6px 13px;border-radius:999px;margin-bottom:14px;
 }
 .lm__t{
-  font:800 34px/1.05 'Unbounded',var(--font);letter-spacing:-.035em;color:#fff;
+  font:800 36px/1.04 'Unbounded',var(--font);letter-spacing:-.036em;color:#fff;
   margin-bottom:14px;
 }
 .lm__t em{font-style:normal;color:var(--ac)}
-.lm__lead{font-size:13.5px;line-height:1.5;color:#98a3b6;max-width:52%;margin-bottom:20px}
+.lm__lead{font-size:14.5px;line-height:1.5;color:#9aa5b8;max-width:50%;margin-bottom:18px}
 .lm__btns{display:flex;align-items:center;gap:18px}
 .lm__b1{
-  font-size:13.5px;font-weight:600;padding:12px 24px;border-radius:999px;white-space:nowrap;
+  font-size:14px;font-weight:600;padding:13px 26px;border-radius:999px;white-space:nowrap;
   color:var(--ac-ink);background:var(--ac);box-shadow:0 10px 28px -10px color-mix(in srgb, var(--ac) 80%, transparent);
 }
-.lm__b2{font-size:13.5px;font-weight:600;color:#dfe4ec;border-bottom:1px solid rgba(255,255,255,.28);padding-bottom:3px;white-space:nowrap}
+.lm__b2{font-size:14px;font-weight:600;color:#dfe4ec;border-bottom:1px solid rgba(255,255,255,.28);padding-bottom:3px;white-space:nowrap}
+
+/* Заголовок секции: без него пауза перед ценами читалась как пустота.
+   С ним она читается как граница двух секций живого сайта. */
+.lm__sec{display:flex;align-items:baseline;gap:12px;padding:0 26px 9px;flex:none}
+.lm__sec b{font:800 15px/1 'Unbounded',var(--font);letter-spacing:-.02em}
+.lm__sec i{margin-left:auto;font-style:normal;font-size:11.5px;color:#8e99ad;white-space:nowrap}
 
 /* ── Карточки товара ── */
-.lm__cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 26px 14px;flex:none}
+.lm__cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 26px 12px;flex:none}
+/* Карточка вертикальная, с плашкой вместо фото: три горизонтальные полоски
+   с ценой занимали 59px, и в окне 620 оставалось 150px пустоты. Настоящее
+   меню выглядит так — картинка, название, состав, цена. */
 .lm__card{
-  display:flex;align-items:baseline;gap:10px;padding:13px 15px;border-radius:12px;
+  display:flex;flex-direction:column;padding:9px 10px 10px;border-radius:14px;
   background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);min-width:0;
 }
 .lm__card--ac{background:color-mix(in srgb, var(--ac) 11%, rgba(255,255,255,.02));border-color:color-mix(in srgb, var(--ac) 26%, transparent)}
-.lm__card b{font-size:13px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
-.lm__card i{margin-left:auto;font-style:normal;font-size:12px;color:#98a3b6;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lm__ph{
+  height:40px;border-radius:9px;margin-bottom:9px;flex:none;
+  background:
+    radial-gradient(70% 120% at 24% 8%, color-mix(in srgb, var(--ac) 34%, transparent), transparent 62%),
+    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.015));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+}
+.lm__card b{font-size:13.5px;font-weight:600;letter-spacing:-.012em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lm__card u{font-size:10.5px;color:#7f8b9f;text-decoration:none;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lm__card i{margin-top:7px;font-style:normal;font-size:13px;font-weight:600;color:#c3cad4;white-space:nowrap;font-variant-numeric:tabular-nums}
 .lm__card--ac i{color:var(--ac)}
+
+/* Подвал: настоящая страница им заканчивается */
+.lm__foot{
+  display:flex;align-items:center;gap:10px;flex:none;
+  padding:9px 26px;border-top:1px solid rgba(255,255,255,.06);
+  font-size:10.5px;color:#7f8b9f;
+}
+.lm__foot span:last-child{margin-left:auto}
 
 /* ── Полоса доверия ── */
 .lm__strip{
-  display:flex;align-items:center;gap:12px;margin:0 26px 22px;padding:13px 16px;border-radius:12px;flex:none;
+  display:flex;align-items:center;gap:12px;margin:0 26px 10px;padding:11px 15px;border-radius:12px;flex:none;
   background:color-mix(in srgb, var(--ac) 9%, rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.06);
 }
 .lm__strip b{font:800 15px/1 'Unbounded',var(--font);color:var(--ac);white-space:nowrap}
@@ -1264,12 +1324,27 @@ a{color:inherit;text-decoration:none}
 .fcard--a{top:120px;right:20px}
 .fcard--b{top:186px;right:20px}
 
+/* Три одинаковых плашки читаются как шаблон — это прямой пункт из
+   анти-слоп-чек-листа. Разводим их светом: у каждой свой угол падения и
+   своя сила подсветки, как у трёх разных снимков товара. */
+.lm__card:nth-child(2) .lm__ph{
+  background:
+    radial-gradient(64% 110% at 78% 14%, color-mix(in srgb, var(--ac) 20%, transparent), transparent 60%),
+    linear-gradient(115deg, rgba(255,255,255,.055), rgba(255,255,255,.012));
+}
+.lm__card:nth-child(3) .lm__ph{
+  background:
+    radial-gradient(80% 130% at 46% 96%, color-mix(in srgb, var(--ac) 24%, transparent), transparent 64%),
+    linear-gradient(175deg, rgba(255,255,255,.06), rgba(255,255,255,.014));
+}
+
 /* ── Оркестровка: сайт собирается сверху вниз, как настоящая загрузка ── */
 .view.is-on .lm__nav,
 .view.is-on .lm__chip,
 .view.is-on .lm__t,
 .view.is-on .lm__lead,
 .view.is-on .lm__btns,
+.view.is-on .lm__sec,
 .view.is-on .lm__card,
 .view.is-on .lm__strip{animation:uqRise .5s cubic-bezier(.22,.61,.36,1) backwards}
 .view.is-on .lm__nav  {animation-delay:calc(var(--uqt, 0s) + .42s)}
@@ -1277,10 +1352,12 @@ a{color:inherit;text-decoration:none}
 .view.is-on .lm__t    {animation-delay:calc(var(--uqt, 0s) + .56s)}
 .view.is-on .lm__lead {animation-delay:calc(var(--uqt, 0s) + .62s)}
 .view.is-on .lm__btns {animation-delay:calc(var(--uqt, 0s) + .68s)}
+.view.is-on .lm__sec  {animation-delay:calc(var(--uqt, 0s) + .72s)}
 .view.is-on .lm__card:nth-child(1){animation-delay:calc(var(--uqt, 0s) + .74s)}
 .view.is-on .lm__card:nth-child(2){animation-delay:calc(var(--uqt, 0s) + .79s)}
 .view.is-on .lm__card:nth-child(3){animation-delay:calc(var(--uqt, 0s) + .84s)}
 .view.is-on .lm__strip{animation-delay:calc(var(--uqt, 0s) + .90s)}
+.view.is-on .lm__foot{animation:uqRise .5s cubic-bezier(.22,.61,.36,1) calc(var(--uqt, 0s) + .95s) backwards}
 .app--site .fcard{animation:uqRise .5s cubic-bezier(.22,.61,.36,1) backwards}
 .app--site .fcard--a{animation-delay:calc(var(--uqt, 0s) + .96s)}
 .app--site .fcard--b{animation-delay:calc(var(--uqt, 0s) + 1.02s)}
@@ -1289,11 +1366,14 @@ a{color:inherit;text-decoration:none}
    Окно 620 → 486 → 472. Ужимается типографика сайта, а не выбрасываются
    блоки: сайт без цен и без полосы доверия перестаёт быть сайтом. */
 @media (min-width:1180.02px) and (max-width:1400px){
-  .lm__t{font-size:29px}
-  .lm__lead{font-size:13px;max-width:60%}
+  .lm__lead{font-size:14px;max-width:58%}
   .lm__nav,.lm__hero{padding-left:22px;padding-right:22px}
+  .lm__sec{padding:0 22px 9px}
   .lm__cards{padding:0 22px 12px}
-  .lm__strip{margin:0 22px 18px}
+  .lm__t{font-size:34px}
+  .lm__strip{margin:0 22px 14px}
+  .lm__ph{height:46px}
+  .lm__foot{padding:10px 22px}
   .fcard--a{top:108px;right:16px}
   .fcard--b{top:170px;right:16px}
 }
@@ -1303,9 +1383,13 @@ a{color:inherit;text-decoration:none}
   .lm__chip{margin-bottom:13px}
   .lm__nav{padding:12px 20px}
   .lm__hero{padding:0 20px}
+  .lm__sec{padding:0 20px 8px}
+  .lm__sec b{font-size:13.5px}
   .lm__cards{padding:0 20px 11px;gap:8px}
-  .lm__card{padding:11px 12px}
-  .lm__strip{margin:0 20px 16px;padding:11px 13px}
+  .lm__card{padding:9px 9px 10px}
+  .lm__ph{height:42px;margin-bottom:8px}
+  .lm__foot{padding:10px 20px}
+  .lm__strip{margin:0 20px 12px;padding:11px 13px}
   .fcard--a{top:96px;right:14px}
   .fcard--b{top:154px;right:14px}
   .lm__cur{display:none}   /* курсор на планшете читается как мусор: мыши нет */
@@ -1324,10 +1408,16 @@ a{color:inherit;text-decoration:none}
   .lm__btns{gap:13px}
   .lm__b1{font-size:12.5px;padding:10px 18px}
   .lm__b2{font-size:12.5px}
-  .lm__cards{grid-template-columns:1fr;gap:6px;padding:0 16px 10px}
-  .lm__card{padding:9px 12px}
+  .lm__sec{padding:0 16px 7px}
+  .lm__sec b{font-size:12.5px}
+  .lm__sec i{font-size:10.5px}
+  .lm__cards{grid-template-columns:1fr;gap:5px;padding:0 16px 9px}
+  .lm__card{flex-direction:row;align-items:baseline;padding:9px 12px}
   .lm__card b{font-size:12px}
-  .lm__strip{margin:0 16px 14px;padding:10px 12px;gap:9px}
+  .lm__ph,.lm__card u{display:none}
+  .lm__card i{margin:0 0 0 auto;font-size:12px}
+  .lm__foot{padding:9px 16px;font-size:10px}
+  .lm__strip{margin:0 16px 10px;padding:10px 12px;gap:9px}
   .lm__strip span{font-size:10.5px}
   /* Бейджи на телефоне уходят совсем: в окне 328px любая их позиция
      накрывает заголовок сайта (замер: 26×43px на автосервисе). Срок
@@ -1341,5 +1431,5 @@ a{color:inherit;text-decoration:none}
   .lm__cur{animation:none}
   .view.is-on .lm__nav,.view.is-on .lm__chip,.view.is-on .lm__t,
   .view.is-on .lm__lead,.view.is-on .lm__btns,.view.is-on .lm__card,
-  .view.is-on .lm__strip,.app--site .fcard{animation:none!important}
+  .view.is-on .lm__strip,.view.is-on .lm__sec,.view.is-on .lm__foot,.app--site .fcard{animation:none!important}
 }
