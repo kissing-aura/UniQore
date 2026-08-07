@@ -700,10 +700,10 @@ a{color:inherit;text-decoration:none}
 
 
 .set__h2{margin-top:14px}
-.team{list-style:none;display:flex;flex-direction:column;gap:7px}
-.team li{display:flex;align-items:center;gap:8px;font-size:11.5px;line-height:1}
-.team__n{font-weight:500;color:#c3cad4}
-.team__r{font-size:10.5px;color:var(--dim2)}
+.set__team{list-style:none;display:flex;flex-direction:column;gap:7px}
+.set__team li{display:flex;align-items:center;gap:8px;font-size:11.5px;line-height:1}
+.set__team__n{font-weight:500;color:#c3cad4}
+.set__team__r{font-size:10.5px;color:var(--dim2)}
 
 /* закрытые задачи приглушены и зачёркнуты: они показывают, что система
    не только копит дела, но и закрывает их. Строка компактнее открытой —
@@ -1035,7 +1035,7 @@ a{color:inherit;text-decoration:none}
      их отсутствие ничего не искажает. Открытые задачи остаются все семь */
   .tsk__g--done,
   .tsk__g--done ~ .tsk__i{display:none}
-  .team,
+  .set__team,
   .set__h2 ~ .set__h2{display:none}
   .set__h2 .box__m{display:none}
   .tsk{padding:8px 12px 0}
