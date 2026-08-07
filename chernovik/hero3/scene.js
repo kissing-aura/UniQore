@@ -108,20 +108,14 @@
     var ЦИКЛЫ = {
       crm: [{k:'dash', u:'crm.uniqore.pro/dashboard', t:7000},
             {k:'deals', u:'crm.uniqore.pro/deals', t:6000},
-            {k:'stats', u:'crm.uniqore.pro/analytics', t:6000}],
-      /* у рекламы своя тройка: деньги → кампании → объявления. Один экран
-         показал бы только расход, а продают здесь решения автопилота */
-      ads: [{k:'ads', u:'uniqore.pro/ads/overview', t:7000},
-            {k:'camp', u:'uniqore.pro/ads/campaigns', t:6000},
-            {k:'creo', u:'uniqore.pro/ads/creatives', t:6000}]
+            {k:'stats', u:'crm.uniqore.pro/analytics', t:6000}]
     };
     var ЦИКЛ = ЦИКЛЫ[окно.dataset.panel] || [];
     var АДРЕСА = {
       dash:'crm.uniqore.pro/dashboard', deals:'crm.uniqore.pro/deals',
       stats:'crm.uniqore.pro/analytics', clients:'crm.uniqore.pro/clients',
       tasks:'crm.uniqore.pro/tasks', setup:'crm.uniqore.pro/settings',
-      site:'uniqore.pro/site/overview', ads:'uniqore.pro/ads/overview',
-      camp:'uniqore.pro/ads/campaigns', creo:'uniqore.pro/ads/creatives'
+      site:'uniqore.pro/site/overview'
     };
 
     var текущий = 0, таймер = null, подсветка = null, пауза = false, ручная = 0, паузаДо = 0;
