@@ -1224,6 +1224,7 @@ a{color:inherit;text-decoration:none}
 
 /* ── Первый экран сайта ── */
 .lm__hero{flex:1;min-height:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;padding:0 26px}
+.lm__hero > *{flex:none}
 .lm__chip{
   font:600 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
   color:var(--ac);border:1px solid color-mix(in srgb, var(--ac) 34%, transparent);
@@ -1378,9 +1379,11 @@ a{color:inherit;text-decoration:none}
   .fcard--b{top:170px;right:16px}
 }
 @media (max-width:1180.01px){
-  .lm__t{font-size:26px}
-  .lm__lead{font-size:12.5px;max-width:66%;margin-bottom:16px}
-  .lm__chip{margin-bottom:13px}
+  .lm__t{font-size:24px;margin-bottom:12px}
+  /* 66% давали лиду кофейни три строки — первый экран переполнялся на 5px.
+     На 76% он ложится в две, а строка всё ещё не тянется на всю ширину. */
+  .lm__lead{font-size:12.5px;max-width:76%;margin-bottom:12px}
+  .lm__chip{margin-bottom:10px}
   .lm__nav{padding:12px 20px}
   .lm__hero{padding:0 20px}
   .lm__sec{padding:0 20px 8px}
@@ -1388,14 +1391,37 @@ a{color:inherit;text-decoration:none}
   .lm__cards{padding:0 20px 11px;gap:8px}
   .lm__card{padding:9px 9px 10px}
   .lm__ph{height:42px;margin-bottom:8px}
-  .lm__foot{padding:10px 20px}
+  /* Окно тут 486, содержимому остаётся 452, а просит 481: первый экран сайта
+     переполнял свой блок на 29px и чип наезжал на меню — вылета за окно при
+     этом не было, .lm__hero центрируется и лезет в обе стороны. Подвал уходит
+     так же, как на телефоне: он несёт меньше всех, а отдаёт 40px. */
+  .lm__foot{display:none}
   .lm__strip{margin:0 20px 12px;padding:11px 13px}
   .fcard--a{top:96px;right:14px}
   .fcard--b{top:154px;right:14px}
   .lm__cur{display:none}   /* курсор на планшете читается как мусор: мыши нет */
 }
 @media (max-width:720px){
-  /* Окно 328×472. Ссылки шапки уходят — на телефоне у сайта гамбургер,
+  /* Окно 328×472, на содержимое остаётся 438. Замер показал 465 — чип
+     наезжал на меню на 13px, а заголовок секции на кнопки на 12: .lm__hero
+     центрируется и при переполнении лезет в обе стороны, поэтому вылета за
+     окно не было и проверка его не видела. Срезаем 60px по мелочи. */
+  .lm__strip span i{display:none}   /* хвост полосы уводил её в две строки: 49px вместо 34 */
+  .lm__nav{padding:9px 16px}
+  .lm__lead{margin-bottom:12px}
+  .lm__chip{margin-bottom:9px}
+  .lm__sec{padding-bottom:6px}
+  .lm__card{padding:7px 12px}
+  /* Подвал уходит целиком: он несёт меньше всех («© 2026 · сделано в
+     Uniqore»), а освобождает 42px — ровно столько не хватало, чтобы чип
+     перестал наезжать на меню, а заголовок секции на кнопки. Десять
+     микроподрезок дали бы тот же итог и рассыпали бы ритм. */
+  .lm__foot{display:none}
+  /* Стрелки на телефоне лежали на содержимом окна (15px внахлёст с каждой
+     стороны, ровно по строке «Хиты сезона»). Основной жест здесь свайп,
+     а что панелей две — говорят точки под окном. */
+  .deck__arw{display:none}
+  /* Ссылки шапки уходят — на телефоне у сайта гамбургер,
      а не три пункта в строку; карточки встают в столбик. */
   .lm__links{display:none}
   .lm__logo{font-size:14px}
