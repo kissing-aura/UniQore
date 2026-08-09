@@ -150,6 +150,12 @@
     }
     /* фикс: длинный заголовок FAQ не влезал в 300px-колонку и наезжал на список */
     .faq__header .section-title { font-size: clamp(26px, 3vw, 44px); overflow-wrap: break-word; }
+    .article-faq { margin-top: 40px; max-width: 720px; margin-left: auto; margin-right: auto; }
+    .article-faq h2 { font-family: var(--font-display); font-weight: 700; font-size: 26px; margin: 0 0 16px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
   </style>
   <!-- Google Analytics 4 — подключается ТОЛЬКО после явного «Принять» в баннере cookie -->
   <script>
@@ -534,6 +540,14 @@
         </div>
       </div>
     </section>
+
+        <div class="article-faq">
+          <h2>Частые вопросы</h2>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Чем CRM под ключ отличается от готовой CRM-платформы?</div>
+            <div class="article-faq__a">Готовая платформа (Bitrix24, amoCRM) — универсальный продукт, который подгоняют под бизнес настройками и плагинами. CRM под ключ строится с нуля именно под ваши процессы: только нужные разделы, своя логика воронки, нативные интеграции с мессенджерами.</div>
+          </div>
+        </div>
 
   </main>
 

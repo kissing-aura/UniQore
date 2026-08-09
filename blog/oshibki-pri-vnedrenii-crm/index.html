@@ -80,6 +80,12 @@
     @media (max-width: 768px) {
       .nav__cta { display: none; }
     }
+    .article-faq { margin-top: 40px; max-width: 720px; margin-left: auto; margin-right: auto; }
+    .article-faq h2 { font-family: var(--font-display); font-weight: 700; font-size: 26px; margin: 0 0 16px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
   </style>
   <!-- Google Analytics 4 — подключается ТОЛЬКО после явного «Принять» в баннере cookie -->
   <script>
@@ -240,6 +246,22 @@
 
         <h2>Итог</h2>
         <p>Большинство неудачных внедрений CRM — это не проблема самой системы, а отсутствие ясной цели, обучения и владельца процесса внутри компании. Технология вторична по отношению к этим трём вещам.</p>
+
+        <div class="article-faq">
+          <h2>Частые вопросы</h2>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Можно ли внедрить CRM без остановки текущей работы?</div>
+            <div class="article-faq__a">Да, обычно переход идёт параллельно — старые процессы работают, пока новая система не протестирована на реальных данных.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Сколько времени нужно команде на адаптацию к новой CRM?</div>
+            <div class="article-faq__a">Обычно 1-2 недели активного использования, если интерфейс не перегружен лишними функциями.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Что делать, если команда сопротивляется переходу на CRM?</div>
+            <div class="article-faq__a">Показать конкретную пользу для их же рутины — меньше ручных отчётов, меньше потерянных задач — а не только пользу для руководителя.</div>
+          </div>
+        </div>
 
         <div class="article-cta">
           <p>Хотите такую систему для своего бизнеса?</p>

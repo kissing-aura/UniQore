@@ -74,6 +74,20 @@
     .blog-related__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); letter-spacing: .05em; margin-bottom: 16px; }
     .blog-related__item { display: block; color: var(--color-text-secondary); font-size: 15px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .blog-related__item:hover { color: var(--color-accent); }
+    .article-tldr { border: 1px solid rgba(205,255,79,0.22); border-left-width: 3px; border-radius: 12px; padding: 20px 22px; margin: 0 0 32px; background: rgba(205,255,79,0.035); }
+    .article-tldr__label { color: var(--color-accent); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+    .article-tldr p { margin-bottom: 10px; }
+    .article-tldr p:last-child { margin-bottom: 0; }
+    .article-faq { margin-top: 40px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
+    .article-table { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 15px; }
+    .article-table th, .article-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--color-text-secondary); }
+    .article-table th { color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
+    .article-table td:first-child { color: var(--color-text-primary); }
+    .article-table__wrap { overflow-x: auto; }
     .breadcrumb { padding: 100px 0 0; font-size: 13px; color: var(--color-text-muted); }
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
@@ -221,6 +235,14 @@
     <section class="container">
       <div class="article-body">
 
+
+        <div class="article-tldr">
+          <div class="article-tldr__label">Короткий ответ</div>
+          <p><strong>1С и Excel отвечают на вопрос «что продано».</strong> Это учёт: товары, остатки, деньги, документы. Здесь их менять не надо.</p>
+          <p><strong>CRM отвечает на вопрос «что с покупателем».</strong> Кто он, откуда пришёл, что писал, почему не купил повторно. Этих данных в 1С нет.</p>
+          <p><strong>Признак, что связки уже мало:</strong> вы не можете за минуту сказать, сколько заявок пришло вчера из всех каналов и на какие из них не ответили.</p>
+        </div>
+
         <p>1С считает деньги и остатки для бухгалтерии, Excel закрывает точечные задачи — но ни то, ни другое не решает проблему разрозненных заказов из разных каналов продаж. Это разные инструменты для разных задач, и путать их — частая ошибка.</p>
 
         <h2>Что не умеет связка 1С + Excel</h2>
@@ -238,6 +260,72 @@
 
         <h2>Итог</h2>
         <p>1С и Excel продолжают закрывать свои задачи — бухгалтерию и точечные расчёты. CRM закрывает то, что между ними: живую работу с заказами и клиентами по всем каналам сразу.</p>
+
+        <h2>Где именно проходит граница</h2>
+        <p>Путаница возникает потому, что и 1С, и CRM хранят «заказы». Но объект учёта у них разный, и это не вопрос предпочтений.</p>
+        <div class="article-table__wrap">
+        <table class="article-table">
+          <thead><tr><th>Вопрос</th><th>Кто отвечает</th></tr></thead>
+          <tbody>
+            <tr><td>Сколько товара на складе</td><td>1С</td></tr>
+            <tr><td>Какая себестоимость и маржа</td><td>1С</td></tr>
+            <tr><td>Откуда пришёл этот покупатель</td><td>CRM</td></tr>
+            <tr><td>На какие заявки вчера не ответили</td><td>CRM</td></tr>
+            <tr><td>Кто покупал раз в месяц и перестал</td><td>CRM</td></tr>
+            <tr><td>Какие документы по отгрузке</td><td>1С</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Ни одна из этих систем не заменяет другую. Правильная конфигурация для магазина — обе, связанные обменом, где 1С остаётся источником правды по товарам и деньгам, а CRM — по покупателям и заявкам.</p>
+
+        <h2>Что теряется без CRM — в деньгах</h2>
+        <p>Три потери, которые не видны в 1С, потому что 1С их не измеряет:</p>
+        <ul>
+          <li><strong>Необработанные заявки.</strong> Сообщение в мессенджере в час пик, на которое не ответили. В 1С этой заявки никогда не было — она не стала заказом, значит для учёта её не существует.</li>
+          <li><strong>Брошенные корзины и незавершённые заказы.</strong> Человек хотел купить и остановился. Без CRM с ним никто не свяжется.</li>
+          <li><strong>Ушедшие постоянные.</strong> Покупатель брал раз в месяц и пропал на три. В отчёте по выручке это не видно — там просто «стало меньше», без имён.</li>
+        </ul>
+        <p>Последний пункт обычно самый дорогой: вернуть того, кто уже покупал, дешевле привлечения нового в разы, но для этого нужен список — а список может дать только система, которая ведёт покупателя, а не заказ.</p>
+
+        <div class="article-faq">
+          <h2>Частые вопросы</h2>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Зачем магазину CRM, если есть 1С?</div>
+            <div class="article-faq__a">Потому что у них разный объект учёта. 1С отвечает на вопрос «что продано»: товары, остатки, себестоимость, документы. CRM отвечает на вопрос «что с покупателем»: откуда пришёл, что писал, на какие заявки не ответили, кто покупал регулярно и перестал. В 1С этих данных просто нет.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Заменит ли CRM программу учёта?</div>
+            <div class="article-faq__a">Нет, и не должна. Правильная конфигурация — обе системы, связанные обменом: 1С остаётся источником правды по товарам, остаткам и деньгам, CRM — по покупателям и заявкам. Попытка заменить учётную часть обычно обходится дороже, чем настройка обмена между двумя системами.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Что теряется без CRM в деньгах?</div>
+            <div class="article-faq__a">Три вещи, невидимые в 1С: заявки из мессенджеров, на которые не ответили в час пик (они не стали заказами, значит для учёта не существовали); незавершённые заказы, с которыми никто не связался; и ушедшие постоянные покупатели — в отчёте по выручке это выглядит как «стало меньше», без конкретных имён.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Как понять, что связки 1С и Excel уже мало?</div>
+            <div class="article-faq__a">Проверка на минуту: сможете ли вы прямо сейчас сказать, сколько заявок пришло вчера из всех каналов и на какие из них не ответили. Если для этого нужно открывать переписки в нескольких мессенджерах — заявки у вас нигде не учитываются, и часть из них теряется ежедневно.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Сколько стоит CRM для интернет-магазина?</div>
+            <div class="article-faq__a">Специализированные системы для e-commerce работают по подписке, часто с тарифом от числа заказов. Своя система под ключ у Uniqore — от <span data-usd="1200">$1200</span> разово плюс <span data-usd="150">$150</span> в месяц за хостинг, поддержку и правки. Для чистой торговли готовое решение обычно выгоднее; своя оправдана, когда в заказе есть работа — замер, изготовление, монтаж.</div>
+          </div>
+        </div>
+
+        <div class="article-faq">
+          <h2>Частые вопросы</h2>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Заменяет ли CRM бухгалтерскую систему вроде 1С?</div>
+            <div class="article-faq__a">Нет, CRM решает другую задачу — учёт клиентов и заказов, а не бухгалтерию. Системы обычно работают параллельно.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Что если у магазина только один канал продаж — сайт?</div>
+            <div class="article-faq__a">Тогда эффект CRM меньше, но учёт истории клиентов и повторных покупок всё равно даёт пользу для маркетинга.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Сколько времени занимает подключение всех каналов продаж?</div>
+            <div class="article-faq__a">Обычно 4-6 дней на полную систему, включая интеграции с существующими каналами.</div>
+          </div>
+        </div>
 
         <div class="article-cta">
           <p>Хотите такую систему для своего бизнеса?</p>

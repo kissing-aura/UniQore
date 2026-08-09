@@ -80,6 +80,12 @@
     @media (max-width: 768px) {
       .nav__cta { display: none; }
     }
+    .article-faq { margin-top: 40px; max-width: 720px; margin-left: auto; margin-right: auto; }
+    .article-faq h2 { font-family: var(--font-display); font-weight: 700; font-size: 26px; margin: 0 0 16px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
   </style>
   <!-- Google Analytics 4 — подключается ТОЛЬКО после явного «Принять» в баннере cookie -->
   <script>
@@ -240,6 +246,22 @@
 
         <h2>Итог</h2>
         <p>Автоматизация склада окупается не эффектным интерфейсом, а тем, что перестают теряться конкретные товарные позиции и часы работы менеджеров на ручной сверке.</p>
+
+        <div class="article-faq">
+          <h2>Частые вопросы</h2>
+          <div class="article-faq__item">
+            <div class="article-faq__q">С чего начать автоматизацию склада, если сейчас всё в Excel?</div>
+            <div class="article-faq__a">С единой базы остатков — она нужна раньше, чем GPS-трекинг или OCR, и даёт эффект уже в первую неделю.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Подходит ли автоматизация для склада с одним сотрудником?</div>
+            <div class="article-faq__a">Да, эффект пропорционален количеству товарных позиций, а не числу сотрудников — путаница с остатками возникает при любом штате.</div>
+          </div>
+          <div class="article-faq__item">
+            <div class="article-faq__q">Что делать с уже накопленными данными в Excel при переходе?</div>
+            <div class="article-faq__a">Данные переносятся в систему на старте — это часть внедрения, а не отдельная задача владельца.</div>
+          </div>
+        </div>
 
         <div class="article-cta">
           <p>Хотите такую систему для своего бизнеса?</p>
