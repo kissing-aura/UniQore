@@ -322,7 +322,7 @@ function showView(key) {
   const n = navItem(key), main = document.getElementById('main');
   document.title = (n ? n.label + ' · ' : '') + (R.brand?.name || 'CRM');
   main.innerHTML = `<div class="page-head"><div class="page-title">${esc(n.label)}</div><button class="btn hidden" id="pageAdd"></button></div><div id="viewBody"></div>`;
-  const R_ = { dashboard: viewDashboard, records: viewRecords, kanban: viewKanban, payments: viewPayments, tasks: viewTasks, team: viewTeam, analytics: viewAnalytics, finance: viewFinance, goals: viewGoals, docs: viewDocs, calendar: viewCalendar, reference: viewReference, activity: viewActivity, notifications: viewNotifications, automation: viewAutomation, roles: viewRoles, knowledge: viewKnowledge, integrations: viewIntegrations, files: viewFiles, portal: viewPortal, settings: viewSettings, aiscan: viewAiScan };
+  const R_ = { dashboard: viewDashboard, records: viewRecords, kanban: viewKanban, payments: viewPayments, tasks: viewTasks, team: viewTeam, analytics: viewAnalytics, finance: viewFinance, goals: viewGoals, docs: viewDocs, calendar: viewCalendar, reference: viewReference, activity: viewActivity, notifications: viewNotifications, automation: viewAutomation, roles: viewRoles, knowledge: viewKnowledge, integrations: viewIntegrations, files: viewFiles, portal: viewPortal, settings: viewSettings };
   try {
     (R_[n.type] || viewRecords)(n);
   } catch (err) {
@@ -1030,13 +1030,6 @@ function analyticsWidget(w, wi, draws) {
 }
 function viewAnalytics() { const draws = [], widgets = (R.analytics && R.analytics.length) ? R.analytics : defaultAnalytics(); document.getElementById('viewBody').innerHTML = `<div class="an-grid">${widgets.map((w, i) => analyticsWidget(w, i, draws)).join('')}</div>`; bindRowClicks(); setTimeout(() => draws.forEach(fn => fn()), 0); }
 
-/* ── ИИ-диагностика (вау-раздел, aiscan.js) ── */
-function viewAiScan() {
-  const vb = document.getElementById('viewBody');
-  if (window.UQ_AISCAN) { vb.innerHTML = window.UQ_AISCAN.html(); setTimeout(() => window.UQ_AISCAN.init(), 0); }
-  else vb.innerHTML = '<div class="empty-hint" style="padding:24px">ИИ-модуль не загружен (aiscan.js).</div>';
-}
-
 /* ── helpers ── */
 /* ── Attention (дашборд отвечает на вопросы) ── */
 function attentionCards() {
@@ -1417,7 +1410,7 @@ function checkQuota() {
 
 /* ── валидатор рецепта ── */
 function validateRecipe() {
-  const MODULE_TYPES = ['dashboard', 'records', 'kanban', 'payments', 'tasks', 'team', 'analytics', 'finance', 'goals', 'docs', 'calendar', 'reference', 'activity', 'notifications', 'automation', 'roles', 'knowledge', 'integrations', 'files', 'portal', 'settings', 'aiscan'];
+  const MODULE_TYPES = ['dashboard', 'records', 'kanban', 'payments', 'tasks', 'team', 'analytics', 'finance', 'goals', 'docs', 'calendar', 'reference', 'activity', 'notifications', 'automation', 'roles', 'knowledge', 'integrations', 'files', 'portal', 'settings'];
   const FIELD_TYPES = ['text', 'number', 'money', 'date', 'select', 'textarea', 'computed', 'gallery'];
   const errs = [];
   try {
