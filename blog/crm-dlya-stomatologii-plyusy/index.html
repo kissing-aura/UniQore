@@ -74,6 +74,20 @@
     .blog-related__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); letter-spacing: .05em; margin-bottom: 16px; }
     .blog-related__item { display: block; color: var(--color-text-secondary); font-size: 15px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .blog-related__item:hover { color: var(--color-accent); }
+    .article-tldr { border: 1px solid rgba(205,255,79,0.22); border-left-width: 3px; border-radius: 12px; padding: 20px 22px; margin: 0 0 32px; background: rgba(205,255,79,0.035); }
+    .article-tldr__label { color: var(--color-accent); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+    .article-tldr p { margin-bottom: 10px; }
+    .article-tldr p:last-child { margin-bottom: 0; }
+    .article-faq { margin-top: 40px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
+    .article-table { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 15px; }
+    .article-table th, .article-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--color-text-secondary); }
+    .article-table th { color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
+    .article-table td:first-child { color: var(--color-text-primary); }
+    .article-table__wrap { overflow-x: auto; }
     .breadcrumb { padding: 100px 0 0; font-size: 13px; color: var(--color-text-muted); }
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
@@ -227,6 +241,14 @@
     <section class="container">
       <div class="article-body">
 
+
+        <div class="article-tldr">
+          <div class="article-tldr__label">Короткий ответ</div>
+          <p><strong>Клиника на 1–2 кресла</strong> — обычно хватает журнала записи и карт. CRM окупается не на объёме приёмов, а на повторных визитах.</p>
+          <p><strong>Работаете с ДМС</strong> — вот главный аргумент: ручное формирование реестров съедает часы администратора каждый месяц и даёт отказы страховых из-за ошибок.</p>
+          <p><strong>Ключевая метрика</strong> — доля пациентов, вернувшихся на профосмотр. Если она ниже половины, вы каждый месяц заново покупаете тех, кто уже был.</p>
+        </div>
+
         <p>Стоматологии редко думают о CRM как о приоритете — кажется, что это инструмент для отделов продаж, а не для медицины. На практике медицинская CRM решает конкретные ежедневные проблемы клиники, которые обычно списывают на «просто так сложилось».</p>
 
         <h2>1. Реестры для ДМС формируются сами</h2>
@@ -262,6 +284,37 @@
             <div class="article-faq__a">Доступ только у сотрудников клиники с нужным уровнем прав, данные не передаются третьим лицам.</div>
           </div>
         </div>
+
+        <h2>Почему стоматология — особый случай</h2>
+        <p>В большинстве услуг клиент возвращается, когда захочет. В стоматологии есть <strong>медицински обоснованный срок</strong>: профосмотр раз в полгода, замена пломбы через несколько лет, контроль после лечения через определённое время.</p>
+        <p>Это значит, что повод для повторного контакта не выдуманный маркетинговый, а настоящий — и пациент воспринимает напоминание как заботу, а не как рассылку. Клиника, которая этого не делает, теряет самый дешёвый источник загрузки кресел, какой у неё есть.</p>
+        <p>Механически для этого нужны две вещи: история лечения, привязанная к зубу и дате, и правило, по которому система сама поднимает пациента к нужному сроку. Без первого второе не работает — напоминать будет не о чем.</p>
+
+        <h2>Загрузка кресел, а не запись к врачу</h2>
+        <p>Обычная запись отвечает на вопрос «свободен ли врач». Клинике нужен другой ответ: <strong>свободны ли одновременно врач, кресло и ассистент</strong>, и хватит ли времени на конкретную процедуру.</p>
+        <ul>
+          <li><strong>Длительность по типу процедуры.</strong> Осмотр и имплантация занимают разное время, и слоты нельзя резать одинаково.</li>
+          <li><strong>Ассистент как отдельный ресурс.</strong> Если он один на двух врачей, параллельные сложные приёмы невозможны.</li>
+          <li><strong>Резерв под острую боль.</strong> Забитый в ноль день означает, что пациент с флюсом уедет к соседям — и, скорее всего, останется там.</li>
+        </ul>
+
+        <h2>Что считать до покупки</h2>
+        <p>Три цифры, которые превращают решение из эмоционального в расчётное:</p>
+        <div class="article-table__wrap">
+        <table class="article-table">
+          <thead><tr><th>Что замерить</th><th>Как</th></tr></thead>
+          <tbody>
+            <tr><td>Возвращаемость</td><td>Доля вчерашних пациентов, которые были у вас раньше. Меньше половины — вы живёте на потоке новых</td></tr>
+            <tr><td>Время на реестры ДМС</td><td>Часы администратора в месяц × стоимость часа</td></tr>
+            <tr><td>Простой кресел</td><td>Свободные часы в рабочее время × средний чек приёма</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Обычно самая крупная сумма выходит по третьей строке, а самая обидная — по первой: вернуть пациента, который уже лечился, стоит несопоставимо дешевле привлечения нового.</p>
+
+        <h2>Про данные пациентов — честно</h2>
+        <p>Медицинские данные — чувствительная категория, и это накладывает требования на любую систему: разграничение доступа, чтобы администратор не видел клиническую часть, журнал действий, резервное копирование, размещение на контролируемых серверах.</p>
+        <p>Это стоит обсуждать с подрядчиком до начала работ, а не после. Если на вопрос о хранении и доступе отвечают общими словами — это повод насторожиться сильнее, чем любой пункт функциональности.</p>
 
         <div class="article-cta">
           <p>Хотите такую систему для своего бизнеса?</p>

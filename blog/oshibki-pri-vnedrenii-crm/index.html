@@ -74,6 +74,20 @@
     .blog-related__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); letter-spacing: .05em; margin-bottom: 16px; }
     .blog-related__item { display: block; color: var(--color-text-secondary); font-size: 15px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .blog-related__item:hover { color: var(--color-accent); }
+    .article-tldr { border: 1px solid rgba(205,255,79,0.22); border-left-width: 3px; border-radius: 12px; padding: 20px 22px; margin: 0 0 32px; background: rgba(205,255,79,0.035); }
+    .article-tldr__label { color: var(--color-accent); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+    .article-tldr p { margin-bottom: 10px; }
+    .article-tldr p:last-child { margin-bottom: 0; }
+    .article-faq { margin-top: 40px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
+    .article-table { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 15px; }
+    .article-table th, .article-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--color-text-secondary); }
+    .article-table th { color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
+    .article-table td:first-child { color: var(--color-text-primary); }
+    .article-table__wrap { overflow-x: auto; }
     .breadcrumb { padding: 100px 0 0; font-size: 13px; color: var(--color-text-muted); }
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
@@ -227,6 +241,14 @@
     <section class="container">
       <div class="article-body">
 
+
+        <div class="article-tldr">
+          <div class="article-tldr__label">Короткий ответ</div>
+          <p><strong>Большинство провалов внедрения — не про софт.</strong> Система работает, но ей не пользуются, потому что не договорились с людьми.</p>
+          <p><strong>Самая частая ошибка — включить всё сразу.</strong> Команда не может освоить десять новых привычек за неделю и возвращается к старым.</p>
+          <p><strong>Признак, что идёт не так:</strong> через месяц часть данных по-прежнему в старом чате или таблице. Значит система стала вторым местом учёта, а не первым.</p>
+        </div>
+
         <p>CRM сама по себе не решает проблемы бизнеса — она инструмент, который можно внедрить неправильно и получить дорогую систему, которой никто не пользуется. Вот пять ошибок, которые встречаются чаще всего.</p>
 
         <h2>1. Внедрение без чёткой цели</h2>
@@ -262,6 +284,37 @@
             <div class="article-faq__a">Показать конкретную пользу для их же рутины — меньше ручных отчётов, меньше потерянных задач — а не только пользу для руководителя.</div>
           </div>
         </div>
+
+        <h2>Как выглядит провал, если смотреть честно</h2>
+        <p>Внедрение редко проваливается громко. Обычно это происходит так: первые две недели все заносят данные, на третьей появляется «потом внесу», на второй месяц половина сделок ведётся мимо системы, а руководитель смотрит отчёты, которые построены на половине данных — и принимает решения хуже, чем до внедрения.</p>
+        <p>Поэтому главный показатель успеха на старте — не количество настроенных функций, а <strong>доля работы, которая реально идёт через систему</strong>. Если через месяц она ниже 90%, проблема уже есть, и чем позже её заметят, тем дороже возврат.</p>
+
+        <h2>Что снижает сопротивление на практике</h2>
+        <p>Сопротивление — не вредность, а рациональное поведение: новая система в первые недели действительно замедляет человека. Работают вещи, которые уменьшают эту цену:</p>
+        <ul>
+          <li><strong>Минимум обязательных полей.</strong> Каждое лишнее поле на входе — секунды, умноженные на сотни операций в месяц.</li>
+          <li><strong>Выгода видна тому, кто вносит.</strong> Если данные вносит менеджер, а пользу получает только руководитель, мотивации нет. Свяжите систему с тем, что важно самому сотруднику, — расчётом заработка, снятием отчётности, отсутствием звонков «когда будет готово».</li>
+          <li><strong>Старый канал закрывается.</strong> Пока рабочий чат жив, часть работы останется там. Это самое непопулярное и самое действенное решение.</li>
+          <li><strong>Один ответственный внутри компании.</strong> Не подрядчик, а свой человек, к которому идут с вопросами и который решает спорные ситуации.</li>
+        </ul>
+
+        <h2>Порядок включения важнее набора функций</h2>
+        <div class="article-table__wrap">
+        <table class="article-table">
+          <thead><tr><th>Очередь</th><th>Что включать</th><th>Зачем в этом порядке</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Приём заявок и карточка клиента</td><td>Без данных остальное бессмысленно</td></tr>
+            <tr><td>2</td><td>Одна функция с быстрой отдачей</td><td>Команда видит пользу, а не только новую обязанность</td></tr>
+            <tr><td>3</td><td>Отчёты</td><td>Появляются, когда есть на чём считать</td></tr>
+            <tr><td>4</td><td>Автоматизации и интеграции</td><td>Настраиваются на устоявшемся процессе</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Вторая строка — ключевая и её чаще всего пропускают. Что именно это будет, зависит от бизнеса: напоминания о повторном визите, статус заказа для клиента, автоматический расчёт зарплаты. Важно, чтобы отдача была заметна в первые недели, пока команда ещё привыкает.</p>
+
+        <h2>Про перенос старых данных</h2>
+        <p>Отдельная ошибка — перенести всё как есть. Дубли клиентов, брошенные сделки пятилетней давности и статусы, записанные по-разному, переезжают вместе с базой и делают новую систему такой же неудобной, как старую.</p>
+        <p>Разумный подход: переносить активное и данные за последний год-два полностью, остальное — архивной выгрузкой отдельно. Чистку делать до переноса, а не после: в старом файле это механическая работа, в новой системе — уже ручная правка карточек.</p>
 
         <div class="article-cta">
           <p>Хотите такую систему для своего бизнеса?</p>

@@ -74,6 +74,20 @@
     .blog-related__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); letter-spacing: .05em; margin-bottom: 16px; }
     .blog-related__item { display: block; color: var(--color-text-secondary); font-size: 15px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .blog-related__item:hover { color: var(--color-accent); }
+    .article-tldr { border: 1px solid rgba(205,255,79,0.22); border-left-width: 3px; border-radius: 12px; padding: 20px 22px; margin: 0 0 32px; background: rgba(205,255,79,0.035); }
+    .article-tldr__label { color: var(--color-accent); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+    .article-tldr p { margin-bottom: 10px; }
+    .article-tldr p:last-child { margin-bottom: 0; }
+    .article-faq { margin-top: 40px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
+    .article-table { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 15px; }
+    .article-table th, .article-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--color-text-secondary); }
+    .article-table th { color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
+    .article-table td:first-child { color: var(--color-text-primary); }
+    .article-table__wrap { overflow-x: auto; }
     .breadcrumb { padding: 100px 0 0; font-size: 13px; color: var(--color-text-muted); }
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
@@ -227,6 +241,14 @@
     <section class="container">
       <div class="article-body">
 
+
+        <div class="article-tldr">
+          <div class="article-tldr__label">Короткий ответ</div>
+          <p><strong>Telegram-магазин выгоден там, где аудитория уже в мессенджере</strong> — и почти бесполезен как единственный канал: у него нет поискового трафика.</p>
+          <p><strong>Сильная сторона — не витрина, а повторные продажи.</strong> Рассылка по своей базе доходит почти до всех, в отличие от почты.</p>
+          <p><strong>Слабая сторона — вы арендуете аудиторию.</strong> База подписчиков живёт внутри платформы, и правила её использования задаёт не вы.</p>
+        </div>
+
         <p>Магазин в Telegram — не урезанная версия сайта, а отдельный канал продаж со своими правилами: клиент ожидает мгновенный ответ, а не форму обратной связи с ожиданием менеджера.</p>
 
         <h2>Шаг 1: каталог внутри бота</h2>
@@ -262,6 +284,32 @@
             <div class="article-faq__a">Да, логика магазина и база клиентов остаются те же, просто добавляется ещё один канал приёма заказов.</div>
           </div>
         </div>
+
+        <h2>Кому это действительно подходит</h2>
+        <p>Telegram-магазин — не универсальная замена сайту, и честно очертить круг важнее, чем расписывать возможности.</p>
+        <ul>
+          <li><strong>Подходит:</strong> повторяемый товар с коротким циклом решения — еда, косметика, расходники, цифровые продукты; аудитория, которая уже читает ваш канал; ниши, где покупка совершается импульсивно и не требует долгого сравнения.</li>
+          <li><strong>Не подходит как основной канал:</strong> дорогие покупки с долгим выбором, товары, которые ищут через поиск, и всё, где клиенту нужно сравнивать характеристики в большом каталоге.</li>
+        </ul>
+        <p>Причина простая: <strong>в Telegram нет входящего поискового трафика</strong>. Человек не ищет там товар — он приходит туда, где уже подписан. Поэтому магазин в мессенджере работает как канал удержания и повторных продаж, а не как канал привлечения.</p>
+
+        <h2>Что реально даёт прирост — и это не витрина</h2>
+        <p>Каталог внутри бота обычно оказывается наименее ценной частью. Работают три другие вещи:</p>
+        <div class="article-table__wrap">
+        <table class="article-table">
+          <thead><tr><th>Механика</th><th>Почему работает</th></tr></thead>
+          <tbody>
+            <tr><td>Рассылка по своей базе</td><td>Сообщение видят почти все подписчики — несопоставимо с почтой</td></tr>
+            <tr><td>Повторный заказ в два тапа</td><td>История заказов уже есть, повтор не требует заново вводить данные</td></tr>
+            <tr><td>Статус заказа в том же чате</td><td>Клиент не уходит никуда и не звонит спрашивать</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Отсюда вывод для запуска: если у вас ещё нет аудитории в Telegram, магазин там сам по себе её не создаст. Сначала канал и подписчики, потом витрина.</p>
+
+        <h2>Риск, о котором стоит знать до старта</h2>
+        <p>Ваша база подписчиков находится внутри чужой платформы, и правила рассылок, оплаты и работы ботов определяет она. Изменение правил или блокировка бота — сценарий, который надо держать в голове, а не считать невозможным.</p>
+        <p>Практическая защита простая: <strong>выгружайте контакты покупателей в собственную базу</strong> (телефон, история заказов) и не делайте Telegram единственным местом, где живут ваши клиенты. Тогда канал остаётся инструментом, а не точкой отказа для всего бизнеса.</p>
 
         <div class="article-cta">
           <p>Хотите такую систему для своего бизнеса?</p>

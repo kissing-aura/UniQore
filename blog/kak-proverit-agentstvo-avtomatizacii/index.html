@@ -74,6 +74,20 @@
     .blog-related__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); letter-spacing: .05em; margin-bottom: 16px; }
     .blog-related__item { display: block; color: var(--color-text-secondary); font-size: 15px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .blog-related__item:hover { color: var(--color-accent); }
+    .article-tldr { border: 1px solid rgba(205,255,79,0.22); border-left-width: 3px; border-radius: 12px; padding: 20px 22px; margin: 0 0 32px; background: rgba(205,255,79,0.035); }
+    .article-tldr__label { color: var(--color-accent); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+    .article-tldr p { margin-bottom: 10px; }
+    .article-tldr p:last-child { margin-bottom: 0; }
+    .article-faq { margin-top: 40px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
+    .article-table { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 15px; }
+    .article-table th, .article-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--color-text-secondary); }
+    .article-table th { color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
+    .article-table td:first-child { color: var(--color-text-primary); }
+    .article-table__wrap { overflow-x: auto; }
     .breadcrumb { padding: 100px 0 0; font-size: 13px; color: var(--color-text-muted); }
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
@@ -227,6 +241,14 @@
     <section class="container">
       <div class="article-body">
 
+
+        <div class="article-tldr">
+          <div class="article-tldr__label">Короткий ответ</div>
+          <p><strong>Пять проверок ниже занимают один разговор</strong> и отсеивают большинство рискованных исполнителей до того, как вы что-то заплатили.</p>
+          <p><strong>Самая надёжная из них — демо, которое можно потрогать.</strong> Презентация и портфолио доказывают только то, что человек умеет делать презентации.</p>
+          <p><strong>Отдельный флаг — обещание окупаемости.</strong> Если вам говорят, что своя система «окупится за счёт экономии на подписке», попросите расчёт: на малой команде это обычно неправда.</p>
+        </div>
+
         <p>Рынок разработки CRM и автоматизации не регулируется — заплатить аванс и остаться без системы (или с системой, которая не работает) реально. Вот пять проверяемых признаков, которые снижают этот риск — не требуют доверия на слово, только фактов, которые можно посмотреть до подписания.</p>
 
         <h2>1. Цена зафиксирована в договоре, а не «обсудим по ходу»</h2>
@@ -262,6 +284,32 @@
             <div class="article-faq__a">Требовать срок в договоре с конкретной датой, а не диапазоном «от 2 недель». Без даты нет способа зафиксировать факт просрочки.</div>
           </div>
         </div>
+
+        <h2>Что спросить про деньги — три конкретных вопроса</h2>
+        <ul>
+          <li><strong>«Что входит в названную сумму, а что оплачивается отдельно?»</strong> Отдельно чаще всего оказываются хостинг, доработки после сдачи, интеграции и обучение. Нормально, когда это названо заранее; ненормально — когда всплывает по ходу.</li>
+          <li><strong>«Сколько будет стоить владение через год?»</strong> Разовая цена без стоимости года — половина информации. У любой системы есть либо подписка, либо расходы на поддержку, либо и то и другое.</li>
+          <li><strong>«Что происходит, если я перестану платить?»</strong> Ответ должен быть конкретным. Если подписка обязательна и без неё что-то отключается — это надо услышать до договора, а не после.</li>
+        </ul>
+        <p>Мы сами отвечаем на третий так: код и данные остаются у клиента, но без ежемесячной оплаты прекращается наш хостинг и поддержка, и систему нужно переносить на свой сервер. Это не самый удобный ответ, но именно такой ответ и стоит требовать от любого подрядчика.</p>
+
+        <h2>Как проверить, что демо настоящее</h2>
+        <p>Самый практичный тест из всех пяти. Просите не показать демо, а <strong>дать вам в руки</strong> — и сделайте три вещи:</p>
+        <div class="article-table__wrap">
+        <table class="article-table">
+          <thead><tr><th>Действие</th><th>Что проверяете</th></tr></thead>
+          <tbody>
+            <tr><td>Создайте новую запись сами</td><td>Что это работающая система, а не набор экранов</td></tr>
+            <tr><td>Введите заведомо неверные данные</td><td>Есть ли проверки — их отсутствие видно сразу</td></tr>
+            <tr><td>Проведите свой реальный сценарий</td><td>Ложится ли ваш процесс или его придётся ломать</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Двадцать минут такого теста дают больше, чем час рассказа о возможностях.</p>
+
+        <h2>Флаг, который появился недавно</h2>
+        <p>С распространением готовых сборок стало частым обещание «сделаем за несколько дней» без уточнения, что именно делается за эти дни. Быстрый срок сам по себе не проблема — он честен, если у подрядчика есть отработанная основа и он это прямо говорит.</p>
+        <p>Проблема, когда быстрый срок обещают на уникальную разработку с нуля. Уточняющий вопрос простой: <strong>«это адаптация вашей готовой основы или разработка с нуля?»</strong> Оба ответа нормальные, но они означают разную цену, разные сроки доработок и разный уровень риска. Уклончивый ответ здесь — сам по себе флаг.</p>
 
         <div class="article-cta">
           <p>Хотите зафиксированную цену и живую демо-версию до старта?</p>

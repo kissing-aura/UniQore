@@ -74,6 +74,20 @@
     .blog-related__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); letter-spacing: .05em; margin-bottom: 16px; }
     .blog-related__item { display: block; color: var(--color-text-secondary); font-size: 15px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .blog-related__item:hover { color: var(--color-accent); }
+    .article-tldr { border: 1px solid rgba(205,255,79,0.22); border-left-width: 3px; border-radius: 12px; padding: 20px 22px; margin: 0 0 32px; background: rgba(205,255,79,0.035); }
+    .article-tldr__label { color: var(--color-accent); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+    .article-tldr p { margin-bottom: 10px; }
+    .article-tldr p:last-child { margin-bottom: 0; }
+    .article-faq { margin-top: 40px; }
+    .article-faq__item { border-bottom: 1px solid rgba(255,255,255,0.08); padding: 18px 0; }
+    .article-faq__item:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
+    .article-faq__q { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--color-text-primary); margin-bottom: 8px; }
+    .article-faq__a { color: var(--color-text-secondary); font-size: 16px; line-height: 1.75; }
+    .article-table { width: 100%; border-collapse: collapse; margin: 8px 0 20px; font-size: 15px; }
+    .article-table th, .article-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--color-text-secondary); }
+    .article-table th { color: var(--color-text-primary); font-family: var(--font-mono); font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
+    .article-table td:first-child { color: var(--color-text-primary); }
+    .article-table__wrap { overflow-x: auto; }
     .breadcrumb { padding: 100px 0 0; font-size: 13px; color: var(--color-text-muted); }
     .breadcrumb a { color: var(--color-text-muted); }
     .breadcrumb a:hover { color: var(--color-accent); }
@@ -227,6 +241,14 @@
     <section class="container">
       <div class="article-body">
 
+
+        <div class="article-tldr">
+          <div class="article-tldr__label">Короткий ответ</div>
+          <p><strong>Начинать надо не с программы, а с инвентаризации.</strong> Автоматизировать неизвестные остатки бессмысленно — система просто зафиксирует неправду.</p>
+          <p><strong>Главный источник ошибок — не учёт, а приёмка.</strong> То, что неправильно принято, будет неправильно лежать в любой системе.</p>
+          <p><strong>Первое, что стоит внедрить</strong> — не отчёты, а уведомление о минимальном остатке. Оно возвращает деньги сразу: нет упущенных продаж из-за «закончилось незаметно».</p>
+        </div>
+
         <p>Складской учёт чаще всего автоматизируют последним — после CRM для продаж, хотя именно на складе теряются деньги незаметнее всего: пересорт, забытые остатки, задвоенные заказы поставщикам.</p>
 
         <h2>Шаг 1: единая база остатков</h2>
@@ -262,6 +284,26 @@
             <div class="article-faq__a">Данные переносятся в систему на старте — это часть внедрения, а не отдельная задача владельца.</div>
           </div>
         </div>
+
+        <h2>Почему автоматизация начинается с инвентаризации</h2>
+        <p>Любая складская система работает с тем, что вы в неё занесли. Если фактические остатки не совпадают с учётными, автоматизация не исправит расхождение — она его зафиксирует и будет уверенно показывать неверные цифры, на которые вы начнёте опираться при закупках.</p>
+        <p>Поэтому порядок такой: сначала пересчёт, потом ввод в систему, потом правила, которые не дают расхождению вернуться. Пропуск первого шага — самая частая причина, по которой складской учёт «не прижился»: люди быстро понимают, что данным нельзя верить, и возвращаются к тетради.</p>
+
+        <h2>Приёмка — место, где рождаются все ошибки</h2>
+        <p>Расхождения почти никогда не возникают на отгрузке; они возникают на входе. Что должно быть зафиксировано в момент приёмки:</p>
+        <ul>
+          <li><strong>Сверка с накладной по количеству</strong> до подписания, а не после — потом претензия поставщику уже не работает.</li>
+          <li><strong>Партия и срок годности</strong>, если товар этого требует. Задним числом восстановить невозможно.</li>
+          <li><strong>Место хранения</strong> сразу при оприходовании. Товар, который «где-то на складе», по факту отсутствует: его не найдут и закажут повторно.</li>
+          <li><strong>Кто принял.</strong> Не для наказания, а чтобы вопрос по расхождению было кому задать через неделю.</li>
+        </ul>
+
+        <h2>С чего получить эффект в первую неделю</h2>
+        <p>Не с отчётов — они появятся, когда накопятся данные. Быстрее всего окупается <strong>уведомление о минимальном остатке</strong>: система сообщает, что позиция подходит к порогу, до того как она кончилась.</p>
+        <p>Эффект прямой и считаемый: вы перестаёте терять продажи из-за того, что ходовой товар закончился незаметно, и перестаёте замораживать деньги в срочных закупках по завышенной цене. Порог для каждой позиции считается из скорости расхода и срока поставки — это единственная настройка, которую стоит сделать внимательно.</p>
+
+        <h2>Чего система не решит</h2>
+        <p>Честно: автоматизация не уменьшит воровство сама по себе — она только сделает недостачу видимой и адресной. Не исправит она и планирование закупок, если решение принимается «на глаз» вопреки данным. И не заменит физический порядок на складе: если товар лежит не там, где записано, поиск всё равно будет ручным.</p>
 
         <div class="article-cta">
           <p>Хотите такую систему для своего бизнеса?</p>
